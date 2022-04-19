@@ -1,0 +1,35 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-incontactmobilesdk-staging-213426-authRole",
+      "UnauthRoleArn": "arn:aws:iam::815407490078:role/amplify-incontactmobilesdk-staging-213426-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::815407490078:role/amplify-incontactmobilesdk-staging-213426-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-incontactmobilesdk-staging-213426-deployment",
+      "UnauthRoleName": "amplify-incontactmobilesdk-staging-213426-unauthRole",
+      "StackName": "amplify-incontactmobilesdk-staging-213426",
+      "StackId": "arn:aws:cloudformation:us-west-2:815407490078:stack/amplify-incontactmobilesdk-staging-213426/d1dadce0-3ced-11ec-b789-0a3d5c77df4d",
+      "AmplifyAppId": "d2etzujra1te9k",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-incontactmobilesdk-staging-213426-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "cognitoef7b96e8": {},
+        "true": {}
+      },
+      "function": {
+        "notifications": {
+          "deploymentBucketName": "amplify-incontactmobilesdk-staging-213426-deployment",
+          "s3Key": "amplify-builds/notifications-71796930704f35644b76-build.zip"
+        }
+      },
+      "notifications": {
+        "Pinpoint": {
+          "Name": "incontactmobilesdk-staging",
+          "Id": "782f473b2d7543cabbd3a627eb3c40cb",
+          "Region": "us-west-2"
+        }
+      }
+    }
+  }
+}

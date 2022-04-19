@@ -1,0 +1,59 @@
+# Xcode
+# Build, test, and archive an Xcode workspace on macOS.
+# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
+
+trigger:
+  - env/staging
+
+pool:
+  name: Mac Mini
+
+jobs:
+  # Generates the documentation for the SDK and creates an artifact.
+  - job: generate_docs
+    variables:
+      - name: DOCC_PATH
+        value: .ci-items/Build/Products/Debug-iphonesimulator/iOS_SDK.doccarchive
+    displayName: Generate documentation
+    steps:
+      - task: Xcode@5
+        inputs:
+          actions: "docbuild"
+          # The following three items must remain empty in order to function.
+          configuration:
+          sdk:
+          xcWorkspacePath:
+          scheme: "CXOneChatSDK"
+          packageApp: false
+          destinationPlatformOption: "iOS"
+          destinationSimulators: "iPhone 13 Pro"
+          args: "-derivedDataPath .ci-items"
+      # TODO: Compress this .doccarchive into a .zip to publish; takes too long otherwise
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     PathtoPublish: '$(DOCC_PATH)'
+      #     ArtifactName: 'docc-archive'
+      #     publishLocation: 'Container'
+      - task: CmdLine@2
+        inputs:
+          script: |
+            git clone https://github.com/DoccZz/docc2html.git
+
+            cd docc2html
+
+            swift run docc2html ../$(DOCC_PATH) ../.ci-items/html
+
+            cd ..
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: ".ci-items/html"
+          includeRootFolder: false
+          archiveType: "zip"
+          archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+          replaceExistingArchive: true
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+          ArtifactName: "ios-docs"
+          publishLocation: "Container"

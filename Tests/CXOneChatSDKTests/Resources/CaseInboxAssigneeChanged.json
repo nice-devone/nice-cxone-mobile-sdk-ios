@@ -1,0 +1,25 @@
+{
+    "eventId": "String",
+    "eventObject": "String",
+    "eventType": "String",
+    "createdAt": "String",
+    "data": {
+        "brand": {
+            "id": 1
+        },
+        "channel": {
+            "id": "String"
+        },
+        "case": {
+            "threadId": "String"
+        },
+        "inboxAssignee": {
+            "incontactId": "String",
+            "firstName": "String",
+            "surname": "String",
+            "imageUrl": "String",
+            "isBotUser": true,
+            "isSurveyUser": false
+        }
+    }
+}

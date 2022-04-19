@@ -1,0 +1,44 @@
+{
+    "eventId": "String",
+    "eventObject": "String",
+    "eventType": "String",
+    "createdAt": "String",
+    "data": {
+        "brand": {
+            "id": 1
+        },
+        "message": {
+            "id": "String",
+            "idOnExternalPlatform": "8355EABD-2517-440B-94A7-DEF99675A638",
+            "postId": "String",
+            "threadId": "String",
+            "messageContent": {
+                "type": "message",
+                "payload": {
+                    "text": "String",
+                    "elements": [
+                        {
+                            "id": "String",
+                            "type": "String",
+                            "text": "String",
+                            "postback": "String",
+                            "url": "String",
+                            "elements": [
+                                {
+                                    "id": "String",
+                                    "type": "String",
+                                    "text": "String",
+                                    "postback": "String",
+                                    "url": "String",
+                                    "fileName": "String",
+                                    "mimeType": null
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "isRead": null
+        }
+    }
+}

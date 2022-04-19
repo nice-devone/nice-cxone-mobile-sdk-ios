@@ -1,0 +1,129 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-incontactmobilesdk-staging-213426-authRole",
+      "UnauthRoleArn": "arn:aws:iam::815407490078:role/amplify-incontactmobilesdk-staging-213426-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::815407490078:role/amplify-incontactmobilesdk-staging-213426-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-incontactmobilesdk-staging-213426-deployment",
+      "UnauthRoleName": "amplify-incontactmobilesdk-staging-213426-unauthRole",
+      "StackName": "amplify-incontactmobilesdk-staging-213426",
+      "StackId": "arn:aws:cloudformation:us-west-2:815407490078:stack/amplify-incontactmobilesdk-staging-213426/d1dadce0-3ced-11ec-b789-0a3d5c77df4d",
+      "AmplifyAppId": "d2etzujra1te9k"
+    }
+  },
+  "function": {
+    "notifications": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "output": {
+        "Region": "us-west-2",
+        "Arn": "arn:aws:lambda:us-west-2:815407490078:function:notifications-staging",
+        "Name": "notifications-staging",
+        "LambdaExecutionRole": "incontactmobilesdkLambdaRolea8167a93-staging"
+      },
+      "lastPushTimeStamp": "2021-12-08T21:10:50.952Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-incontactmobilesdk-staging-213426-deployment/amplify-cfn-templates/function/notifications-cloudformation-template.json",
+        "logicalId": "functionnotifications"
+      },
+      "s3Bucket": {
+        "deploymentBucketName": "amplify-incontactmobilesdk-staging-213426-deployment",
+        "s3Key": "amplify-builds/notifications-71796930704f35644b76-build.zip"
+      },
+      "lastBuildTimeStamp": "2021-12-08T16:11:16.715Z",
+      "lastBuildType": "PROD",
+      "lastPackageTimeStamp": "2021-12-08T16:11:16.773Z",
+      "distZipFilename": "notifications-71796930704f35644b76-build.zip",
+      "lastPushDirHash": "5gn9rXu7AuPOFc62mTvpNHIl0Xk="
+    }
+  },
+  "auth": {
+    "cognitoef7b96e8": {
+      "service": "Cognito",
+      "serviceType": "managed",
+      "providerPlugin": "awscloudformation",
+      "frontendAuthConfig": {
+        "loginMechanisms": [
+          "PREFERRED_USERNAME"
+        ],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": []
+      },
+      "dependsOn": [],
+      "output": {
+        "CreatedSNSRole": "arn:aws:iam::815407490078:role/snsef7b96e8213426-staging",
+        "UserPoolId": "us-west-2_XSll0PqgG",
+        "AppClientIDWeb": "5r84eth4n3mu49iub13s0t7hj7",
+        "AppClientID": "6ujqolfgsvv5vc205hs5aggbd",
+        "IdentityPoolId": "us-west-2:f91a6e3a-b673-4e24-8750-f3a2953d0c17",
+        "UserPoolArn": "arn:aws:cognito-idp:us-west-2:815407490078:userpool/us-west-2_XSll0PqgG",
+        "IdentityPoolName": "incontactmobilesdk_identitypool_ef7b96e8__staging",
+        "UserPoolName": "incontactmobilesdk_userpool_ef7b96e8"
+      },
+      "lastPushTimeStamp": "2021-12-08T21:10:50.958Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-incontactmobilesdk-staging-213426-deployment/amplify-cfn-templates/auth/cognitoef7b96e8-cloudformation-template.json",
+        "logicalId": "authcognitoef7b96e8"
+      },
+      "lastPushDirHash": "hdRZw+Hz4+XCwIqLF2IUpbASPlM="
+    }
+  },
+  "api": {},
+  "analytics": {
+    "incontactmobilesdk": {
+      "service": "Pinpoint",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "appName": "incontactmobilesdk-staging",
+        "Region": "us-west-2",
+        "Id": "782f473b2d7543cabbd3a627eb3c40cb"
+      },
+      "lastPushTimeStamp": "2021-12-08T21:10:50.960Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-incontactmobilesdk-staging-213426-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
+        "logicalId": "analyticsincontactmobilesdk"
+      },
+      "lastPushDirHash": "31KP1cVFkLQ8GFqyfF3nbQe23l4="
+    }
+  },
+  "notifications": {
+    "incontactmobilesdk": {
+      "service": "Pinpoint",
+      "output": {
+        "Id": "782f473b2d7543cabbd3a627eb3c40cb",
+        "Name": "incontactmobilesdk-staging",
+        "Region": "us-west-2",
+        "APNS": {
+          "ApplicationId": "782f473b2d7543cabbd3a627eb3c40cb",
+          "CreationDate": "2021-12-08T16:37:42.912Z",
+          "DefaultAuthenticationMethod": "Certificate",
+          "Enabled": true,
+          "HasCredential": true,
+          "HasTokenKey": false,
+          "Id": "apns",
+          "IsArchived": false,
+          "LastModifiedDate": "2021-12-08T21:10:20.653Z",
+          "Platform": "APNS",
+          "Version": 2
+        }
+      },
+      "lastPushTimeStamp": "2021-12-08T21:09:12.158Z"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "appName": "incontactmobilesdk",
+    "roleName": "pinpointLambdaRolec535b399",
+    "cloudformationPolicyName": "cloudformationPolicyc535b399",
+    "cloudWatchPolicyName": "cloudWatchPolicyc535b399",
+    "pinpointPolicyName": "pinpointPolicyc535b399",
+    "authPolicyName": "pinpoint_amplify_c535b399",
+    "unauthPolicyName": "pinpoint_amplify_c535b399",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

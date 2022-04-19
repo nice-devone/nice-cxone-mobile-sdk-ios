@@ -1,0 +1,73 @@
+{
+    "eventId": "2AF1A2CD-33A7-4277-A08C-D73D589699B4",
+    "postback": {
+        "eventType": "ThreadMetadataLoaded",
+        "data": {
+            "ownerAssignee": null,
+            "lastMessage": {
+                "messageId": "a30e1c01-63a4-4ee6-971c-0cc442bd2530",
+                "idOnExternalPlatform": "1C336A22-132B-4859-9D30-909B75D96F32",
+                "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_43C193A3-0F80-4DEE-A19C-80FA0E5D0E35",
+                "isOwn": false,
+                "caseId": "127035328302",
+                "replyToMessageId": "",
+                "replyToMessageIdOnExternalPlatform": "",
+                "url": "",
+                "createdAt": "2022-02-24T21:50:05+0000",
+                "createdAtIso": "2022-02-24T21:50:05+00:00",
+                "receivedAt": "2022-02-24T21:50:05+00:00",
+                "title": "",
+                "messageContent": {
+                    "text": "  Ugandan ",
+                    "type": "TEXT",
+                    "payload": {
+                        "text": "  Ugandan ",
+                        "postback": "",
+                        "elements": []
+                    }
+                },
+                "sentiment": "neutral",
+                "tagIds": [],
+                "isRead": false,
+                "readAt": null,
+                "messageAssignedUser": null,
+                "attachments": [],
+                "semanticEntities": [],
+                "socialAttributes": {
+                    "likes": 0,
+                    "twitterFavorties": 0,
+                    "facebookLikes": 0,
+                    "isDeletedOnExternalPlatform": false
+                },
+                "endUser": {
+                    "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                    "name": "Yoel Jimenez del valle",
+                    "nickname": ""
+                },
+                "seen": [],
+                "delivered": [],
+                "recipients": [],
+                "userFingerprint": {
+                    "browser": "",
+                    "browserVersion": "",
+                    "os": "",
+                    "osVersion": "",
+                    "language": "",
+                    "ip": "152.207.144.46",
+                    "location": "",
+                    "country": "",
+                    "deviceType": ""
+                },
+                "authorEndUserIdentity": {
+                    "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                    "firstName": "Yoel Jimenez del",
+                    "lastName": "valle",
+                    "nickname": "Yoel Jimenez del valle",
+                    "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                    "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                    "fullName": "Yoel Jimenez del valle"
+                }
+            }
+        }
+    }
+}

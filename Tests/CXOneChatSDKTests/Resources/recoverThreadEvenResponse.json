@@ -1,0 +1,518 @@
+{
+    "eventId": "9C5DB805-8BAA-400E-A7F1-98FDD7AFF513",
+    "postback": {
+        "eventType": "ThreadRecovered",
+        "data": {
+            "consumerContact": {
+                "status": "open",
+                "createdAt": "2022-02-09T15:12:42-0700",
+                "statusUpdatedAt": "2022-02-09T15:22:15-0700",
+                "statistics": {
+                    "firstResponseTime": 389,
+                    "resolutionTime": 389,
+                    "totalResponses": 4,
+                    "agentResponses": 1,
+                    "customerResponses": 3
+                },
+                "customer": {
+                    "customerId": "chat_7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                    "name": "nine",
+                    "surname": "eight",
+                    "customerIdent": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A"
+                },
+                "routingQueueId": "6618c229-bc8c-497a-83cf-964343153627",
+                "routingQueuePriority": 1,
+                "isOwn": false,
+                "sentiment": "neutral",
+                "ownerAssignee": 11944,
+                "inboxAssignee": 11944,
+                "recipients": [
+                    {
+                        "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "name": "nine eight",
+                        "isPrimary": true,
+                        "isPrivate": false
+                    },
+                    {
+                        "idOnExternalPlatform": "51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                        "name": "InContact SDK",
+                        "isPrimary": true,
+                        "isPrivate": false
+                    }
+                ],
+                "caseId": "127035306189",
+                "messagesId": [
+                    "342e08f3-b8d1-4e69-bbf7-437aeaa0edfa",
+                    "d71cd4fc-a41e-42dd-aafa-26ca8aa8f31f",
+                    "8774bf0a-aca4-4159-8910-a02be9a7611a",
+                    "1973aa32-1736-4e50-996a-70cbe50b7658",
+                    "a7c9d5ac-63f0-4897-856b-fc41c7efe1bc"
+                ],
+                "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                "agentName": "Yoel Jiminez",
+                "sourceId": 0,
+                "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                "caseDetailUrl": "https://app-de-na1.niceincontact.com/care?redirect=no#/care/tab/chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46/case/127035306189"
+            },
+            "ownerAssignee": {
+                "id": 11944,
+                "username": "yoel.jiminez@customerdynamics.com",
+                "loginUsername": "yoel.jiminez@customerdynamics.com",
+                "name": "Yoel",
+                "firstName": "Yoel",
+                "surname": "Jiminez",
+                "fullName": "Yoel Jiminez",
+                "image": "https://app-de-na1.niceincontact.com/img/user/y.png",
+                "imagePublic": "",
+                "email": "yoel.jiminez@customerdynamics.com",
+                "emailAddress": "yoel.jiminez@customerdynamics.com",
+                "nickname": "",
+                "inContactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                "incontactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                "inContactSharedUser": false,
+                "isChatbot": false,
+                "isBotUser": false,
+                "isSurveyUser": false
+            },
+            "messages": [
+                {
+                    "messageId": "a7c9d5ac-63f0-4897-856b-fc41c7efe1bc",
+                    "idOnExternalPlatform": "43E91C40-A9A4-4E85-BF1A-2AAE2EE14972",
+                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                    "isOwn": false,
+                    "caseId": "127035306189",
+                    "replyToMessageId": "",
+                    "replyToMessageIdOnExternalPlatform": "",
+                    "url": "",
+                    "createdAt": "2022-02-09T22:22:14+0000",
+                    "createdAtIso": "2022-02-09T22:22:14+00:00",
+                    "receivedAt": "2022-02-09T22:22:15+00:00",
+                    "title": "",
+                    "messageContent": {
+                        "text": "Guíe hung ",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "Guíe hung ",
+                            "postback": "",
+                            "elements": []
+                        }
+                    },
+                    "sentiment": "neutral",
+                    "tagIds": [],
+                    "isRead": false,
+                    "readAt": null,
+                    "messageAssignedUser": null,
+                    "attachments": [],
+                    "semanticEntities": [],
+                    "socialAttributes": {
+                        "likes": 0,
+                        "twitterFavorties": 0,
+                        "facebookLikes": 0,
+                        "isDeletedOnExternalPlatform": false
+                    },
+                    "endUser": {
+                        "id": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "name": "nine eight",
+                        "nickname": ""
+                    },
+                    "seen": [],
+                    "delivered": [],
+                    "recipients": [
+                        {
+                            "idOnExternalPlatform": "51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                            "name": "InContact SDK",
+                            "isPrimary": true,
+                            "isPrivate": false
+                        }
+                    ],
+                    "userFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "",
+                        "osVersion": "",
+                        "language": "",
+                        "ip": "152.207.243.121",
+                        "location": "",
+                        "country": "",
+                        "deviceType": ""
+                    },
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "firstName": "nine",
+                        "lastName": "eight",
+                        "nickname": "nine eight",
+                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                        "id": "chat_7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "fullName": "nine eight"
+                    }
+                },
+                {
+                    "messageId": "1973aa32-1736-4e50-996a-70cbe50b7658",
+                    "idOnExternalPlatform": "57c1a76e-2b0d-49a8-a94b-229ec1ac81e5",
+                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                    "isOwn": true,
+                    "caseId": "127035306189",
+                    "replyToMessageId": "8774bf0a-aca4-4159-8910-a02be9a7611a",
+                    "replyToMessageIdOnExternalPlatform": "8ADD6C1C-8DB1-46ED-88DC-3BED5C749883",
+                    "url": "",
+                    "createdAt": "2022-02-09T22:19:11+0000",
+                    "createdAtIso": "2022-02-09T22:19:11+00:00",
+                    "receivedAt": "2022-02-09T22:19:11+00:00",
+                    "title": "",
+                    "messageContent": {
+                        "text": "hi",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "hi",
+                            "postback": "",
+                            "elements": []
+                        }
+                    },
+                    "sentiment": "positive",
+                    "tagIds": [],
+                    "isRead": true,
+                    "readAt": {
+                        "date": "2022-02-09 22:19:11.000000",
+                        "timezone_type": 1,
+                        "timezone": "+00:00"
+                    },
+                    "messageAssignedUser": {
+                        "id": 11944,
+                        "username": "yoel.jiminez@customerdynamics.com",
+                        "loginUsername": "yoel.jiminez@customerdynamics.com",
+                        "name": "Yoel",
+                        "firstName": "Yoel",
+                        "surname": "Jiminez",
+                        "fullName": "Yoel Jiminez",
+                        "image": "https://app-de-na1.niceincontact.com/img/user/y.png",
+                        "imagePublic": "",
+                        "email": "yoel.jiminez@customerdynamics.com",
+                        "emailAddress": "yoel.jiminez@customerdynamics.com",
+                        "nickname": "",
+                        "inContactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "incontactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "inContactSharedUser": false,
+                        "isChatbot": false,
+                        "isBotUser": false,
+                        "isSurveyUser": false
+                    },
+                    "attachments": [],
+                    "semanticEntities": [],
+                    "socialAttributes": {
+                        "likes": 0,
+                        "twitterFavorties": 0,
+                        "facebookLikes": 0,
+                        "isDeletedOnExternalPlatform": false
+                    },
+                    "endUser": {
+                        "id": "51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                        "name": "InContact SDK",
+                        "nickname": ""
+                    },
+                    "seen": [],
+                    "delivered": [],
+                    "recipients": [
+                        {
+                            "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                            "name": "",
+                            "isPrimary": true,
+                            "isPrivate": false
+                        }
+                    ],
+                    "userFingerprint": [],
+                    "authorEndUserIdentity": null
+                },
+                {
+                    "messageId": "8774bf0a-aca4-4159-8910-a02be9a7611a",
+                    "idOnExternalPlatform": "8ADD6C1C-8DB1-46ED-88DC-3BED5C749883",
+                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                    "isOwn": false,
+                    "caseId": "127035306189",
+                    "replyToMessageId": "",
+                    "replyToMessageIdOnExternalPlatform": "",
+                    "url": "",
+                    "createdAt": "2022-02-09T22:15:07+0000",
+                    "createdAtIso": "2022-02-09T22:15:07+00:00",
+                    "receivedAt": "2022-02-09T22:15:08+00:00",
+                    "title": "",
+                    "messageContent": {
+                        "text": "Bye ",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "Bye ",
+                            "postback": "",
+                            "elements": []
+                        }
+                    },
+                    "sentiment": "positive",
+                    "tagIds": [],
+                    "isRead": true,
+                    "readAt": {
+                        "date": "2022-02-09 22:19:11.000000",
+                        "timezone_type": 1,
+                        "timezone": "+00:00"
+                    },
+                    "messageAssignedUser": {
+                        "id": 11944,
+                        "username": "yoel.jiminez@customerdynamics.com",
+                        "loginUsername": "yoel.jiminez@customerdynamics.com",
+                        "name": "Yoel",
+                        "firstName": "Yoel",
+                        "surname": "Jiminez",
+                        "fullName": "Yoel Jiminez",
+                        "image": "https://app-de-na1.niceincontact.com/img/user/y.png",
+                        "imagePublic": "",
+                        "email": "yoel.jiminez@customerdynamics.com",
+                        "emailAddress": "yoel.jiminez@customerdynamics.com",
+                        "nickname": "",
+                        "inContactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "incontactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "inContactSharedUser": false,
+                        "isChatbot": false,
+                        "isBotUser": false,
+                        "isSurveyUser": false
+                    },
+                    "attachments": [],
+                    "semanticEntities": [],
+                    "socialAttributes": {
+                        "likes": 0,
+                        "twitterFavorties": 0,
+                        "facebookLikes": 0,
+                        "isDeletedOnExternalPlatform": false
+                    },
+                    "endUser": {
+                        "id": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "name": "nine eight",
+                        "nickname": ""
+                    },
+                    "seen": [],
+                    "delivered": [],
+                    "recipients": [],
+                    "userFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "",
+                        "osVersion": "",
+                        "language": "",
+                        "ip": "152.207.243.121",
+                        "location": "",
+                        "country": "",
+                        "deviceType": ""
+                    },
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "firstName": "nine",
+                        "lastName": "eight",
+                        "nickname": "nine eight",
+                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                        "id": "chat_7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "fullName": "nine eight"
+                    }
+                },
+                {
+                    "messageId": "d71cd4fc-a41e-42dd-aafa-26ca8aa8f31f",
+                    "idOnExternalPlatform": "B490E352-8598-45D5-9D21-AD473AB5DC8C",
+                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                    "isOwn": false,
+                    "caseId": "127035306189",
+                    "replyToMessageId": "",
+                    "replyToMessageIdOnExternalPlatform": "",
+                    "url": "",
+                    "createdAt": "2022-02-09T22:13:51+0000",
+                    "createdAtIso": "2022-02-09T22:13:51+00:00",
+                    "receivedAt": "2022-02-09T22:13:51+00:00",
+                    "title": "",
+                    "messageContent": {
+                        "text": "Hello",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "Hello",
+                            "postback": "",
+                            "elements": []
+                        }
+                    },
+                    "sentiment": "neutral",
+                    "tagIds": [],
+                    "isRead": true,
+                    "readAt": {
+                        "date": "2022-02-09 22:19:11.000000",
+                        "timezone_type": 1,
+                        "timezone": "+00:00"
+                    },
+                    "messageAssignedUser": {
+                        "id": 11944,
+                        "username": "yoel.jiminez@customerdynamics.com",
+                        "loginUsername": "yoel.jiminez@customerdynamics.com",
+                        "name": "Yoel",
+                        "firstName": "Yoel",
+                        "surname": "Jiminez",
+                        "fullName": "Yoel Jiminez",
+                        "image": "https://app-de-na1.niceincontact.com/img/user/y.png",
+                        "imagePublic": "",
+                        "email": "yoel.jiminez@customerdynamics.com",
+                        "emailAddress": "yoel.jiminez@customerdynamics.com",
+                        "nickname": "",
+                        "inContactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "incontactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "inContactSharedUser": false,
+                        "isChatbot": false,
+                        "isBotUser": false,
+                        "isSurveyUser": false
+                    },
+                    "attachments": [],
+                    "semanticEntities": [],
+                    "socialAttributes": {
+                        "likes": 0,
+                        "twitterFavorties": 0,
+                        "facebookLikes": 0,
+                        "isDeletedOnExternalPlatform": false
+                    },
+                    "endUser": {
+                        "id": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "name": "nine eight",
+                        "nickname": ""
+                    },
+                    "seen": [],
+                    "delivered": [],
+                    "recipients": [],
+                    "userFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "",
+                        "osVersion": "",
+                        "language": "",
+                        "ip": "152.207.243.121",
+                        "location": "",
+                        "country": "",
+                        "deviceType": ""
+                    },
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "firstName": "nine",
+                        "lastName": "eight",
+                        "nickname": "nine eight",
+                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                        "id": "chat_7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "fullName": "nine eight"
+                    }
+                },
+                {
+                    "messageId": "342e08f3-b8d1-4e69-bbf7-437aeaa0edfa",
+                    "idOnExternalPlatform": "F00C85C2-8FEE-4B50-ABA7-CAE7D5651D68",
+                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                    "isOwn": false,
+                    "caseId": "127035306189",
+                    "replyToMessageId": "",
+                    "replyToMessageIdOnExternalPlatform": "",
+                    "url": "",
+                    "createdAt": "2022-02-09T22:12:41+0000",
+                    "createdAtIso": "2022-02-09T22:12:41+00:00",
+                    "receivedAt": "2022-02-09T22:12:42+00:00",
+                    "title": "",
+                    "messageContent": {
+                        "text": "",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "",
+                            "postback": "",
+                            "elements": []
+                        }
+                    },
+                    "sentiment": "neutral",
+                    "tagIds": [],
+                    "isRead": true,
+                    "readAt": {
+                        "date": "2022-02-09 22:19:11.000000",
+                        "timezone_type": 1,
+                        "timezone": "+00:00"
+                    },
+                    "messageAssignedUser": {
+                        "id": 11944,
+                        "username": "yoel.jiminez@customerdynamics.com",
+                        "loginUsername": "yoel.jiminez@customerdynamics.com",
+                        "name": "Yoel",
+                        "firstName": "Yoel",
+                        "surname": "Jiminez",
+                        "fullName": "Yoel Jiminez",
+                        "image": "https://app-de-na1.niceincontact.com/img/user/y.png",
+                        "imagePublic": "",
+                        "email": "yoel.jiminez@customerdynamics.com",
+                        "emailAddress": "yoel.jiminez@customerdynamics.com",
+                        "nickname": "",
+                        "inContactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "incontactId": "11ec6d71-f031-0840-bbd7-0242ac110002",
+                        "inContactSharedUser": false,
+                        "isChatbot": false,
+                        "isBotUser": false,
+                        "isSurveyUser": false
+                    },
+                    "attachments": [],
+                    "semanticEntities": [],
+                    "socialAttributes": {
+                        "likes": 0,
+                        "twitterFavorties": 0,
+                        "facebookLikes": 0,
+                        "isDeletedOnExternalPlatform": false
+                    },
+                    "endUser": {
+                        "id": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "name": "nine eight",
+                        "nickname": ""
+                    },
+                    "seen": [],
+                    "delivered": [],
+                    "recipients": [],
+                    "userFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "",
+                        "osVersion": "",
+                        "language": "",
+                        "ip": "152.207.243.121",
+                        "location": "",
+                        "country": "",
+                        "deviceType": ""
+                    },
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "firstName": "nine",
+                        "lastName": "eight",
+                        "nickname": "nine eight",
+                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                        "id": "chat_7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                        "fullName": "nine eight"
+                    }
+                }
+            ],
+            "messagesScrollToken": "",
+            "thread": {
+                "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                "idOnExternalPlatform": "6FDAA5CC-C963-4A0B-8E28-9AA1BC7B9D46",
+                "ticketNumber": "",
+                "content": "",
+                "title": "",
+                "threadName": "",
+                "url": "",
+                "isOwn": false,
+                "createdAt": "2022-02-09T22:12:39+00:00",
+                "updatedAt": "2022-02-09T22:22:15+00:00",
+                "author": {
+                    "id": "7F3028BC-A9F7-40DA-91FA-521A30B3E69A",
+                    "name": "nine eight",
+                    "nickname": ""
+                },
+                "image": "",
+                "tagIds": [],
+                "likes": 0,
+                "attachments": [],
+                "recipients": [],
+                "canAddMoreMessages": true,
+                "deletedOnExternalPlatform": false,
+                "unseenMessagesCount": 5,
+                "unseenByUserMessagesCount": 5,
+                "unseenByEndUserMessagesCount": 1
+            }
+        }
+    }
+}
