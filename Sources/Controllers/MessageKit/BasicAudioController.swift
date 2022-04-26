@@ -4,7 +4,6 @@
 
 import AVFoundation
 import MessageKit
-
 /// The `BasicAudioController` update UI for current audio cell that is playing a sound
 /// and also creates and manage an `AVAudioPlayer` states, play, pause and stop.
 open class BasicAudioController: NSObject, AVAudioPlayerDelegate {

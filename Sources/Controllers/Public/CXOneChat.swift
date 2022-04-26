@@ -2,11 +2,9 @@
 //  Created by user.id Dynamics Development on 8/31/21.
 //
 
-import Amplify
-import AWSCognitoAuthPlugin
-import AWSPinpointAnalyticsPlugin
-import AWSPinpoint
 import Foundation
+import KeychainSwift
+import AWSPinpoint
 
 /// Allows for interacting with chat features of the CXOne platform.
 @available(macOS 10.15, iOS 13.0, *)
@@ -91,7 +89,8 @@ public class CXOneChat {
     /// The customer currently using the app.
     public var customer: Customer? {
         get {
-            if let customerData = UserDefaults.standard.data(forKey: "customer") {
+            let customerData = KeychainSwift().getData("customer")
+            if let customerData = customerData {
                 return try? JSONDecoder().decode(Customer.self, from: customerData)
             } else {
                 return nil
@@ -99,7 +98,8 @@ public class CXOneChat {
         }
         set(customer) {
             let encodedCustomer = try? JSONEncoder().encode(customer)
-            UserDefaults.standard.set(encodedCustomer, forKey: "customer")
+            guard let encodedCustomer = encodedCustomer else { return }
+            KeychainSwift().set(encodedCustomer, forKey: "customer")
         }
     }
         
@@ -158,15 +158,17 @@ public class CXOneChat {
     
     var visitorId: UUID? {
         get {
-            if let customerData = UserDefaults.standard.data(forKey: "visitor") {
-                return try? JSONDecoder().decode(UUID.self, from: customerData)
+            let visititorData = KeychainSwift().getData("visitorId")
+            if let visititorData =  visititorData {
+                return try? JSONDecoder().decode(UUID.self, from: visititorData)
             } else {
                 return nil
             }
         }
         set(visitorId) {
             let encodedCustomer = try? JSONEncoder().encode(visitorId)
-            UserDefaults.standard.set(encodedCustomer, forKey: "visitor")
+            guard let encodedCustomer = encodedCustomer else { return }
+            KeychainSwift().set(encodedCustomer, forKey:  "visitorId")
         }
     }
     
@@ -174,22 +176,6 @@ public class CXOneChat {
     var destinationId: UUID?
     
     internal var loadThreadDataClosure: (() -> Void)?
-    
-    /// In order to keep a single instance of this class, the `init` is private to only share one instance.
-    private init() {
-        amplifyInit()
-    }
-
-    /// Initializes Amplify services for future use.
-    fileprivate func amplifyInit() {
-        do {
-            try Amplify.add(plugin: AWSCognitoAuthPlugin())
-            try Amplify.add(plugin: AWSPinpointAnalyticsPlugin())
-            
-            try Amplify.configure(AmplifyConfiguration.init(configurationFile: Bundle.module.url(forResource: "amplifyconfiguration", withExtension: "json")!))
-        } catch {
-        }
-    }
     
     // MARK: Exposed methods
     
@@ -242,7 +228,7 @@ public class CXOneChat {
         if socketService.socket == nil {
             throw CXOneChatError.socketNotReady
         }else {
-            if customer != nil {
+            if authorizationCode.isEmpty  && customer != nil {
                 do {
                     try reconnectCustomer()
                 }catch {
@@ -257,7 +243,6 @@ public class CXOneChat {
                     throw(error)
                 }
             }
-            
         }
     }
     

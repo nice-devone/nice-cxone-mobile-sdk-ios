@@ -1,6 +1,6 @@
-# InConnect iOS SDK
+# CXOne Chat SDK
 
-This package is used to connect an application to InConnect's WebSocket
+This package is used to connect an application to CXOne Chat
 
 ## Overview
 

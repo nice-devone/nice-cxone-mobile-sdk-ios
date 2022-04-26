@@ -19,7 +19,7 @@ class TestImageMediaItem: XCTestCase {
     }
 
     func testInitWithImageNotNil() {
-        let image = UIImage(named: "test", in: .module, with: nil)
+        let image = UIImage()
         let unwrapedImage = try! XCTUnwrap(image)
         let imagenMediaItem =  ImageMediaItem(image: unwrapedImage)
         XCTAssertNotNil(imagenMediaItem)

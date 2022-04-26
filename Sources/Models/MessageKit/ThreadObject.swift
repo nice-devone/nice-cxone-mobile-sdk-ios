@@ -12,6 +12,7 @@ public struct ThreadObject {
 	public var messages: [Message] = []
 	public var threadAgent: Customer
     public var active: Bool = false
+    public var canAddMoreMessages = true
 }
 @available(iOS 13.0, *)
 extension ThreadObject: Identifiable {}

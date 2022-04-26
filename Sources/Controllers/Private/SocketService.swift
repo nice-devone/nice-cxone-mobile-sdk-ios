@@ -3,7 +3,7 @@
 //
 
 import Foundation
-
+import KeychainSwift
 @available(iOS 13.0, *)
 /// Class for interacting with the WebSocket.
 public class SocketService: NSObject {
@@ -20,15 +20,19 @@ public class SocketService: NSObject {
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
     var accessToken: AccessToken? {
         get {
-            if let accessTokenData = UserDefaults.standard.data(forKey: "accessToken") {
+            let keychain = KeychainSwift()
+            let accessTokenData = keychain.getData("accessToken")
+            if let accessTokenData = accessTokenData {
                 return try? JSONDecoder().decode(AccessToken.self, from: accessTokenData)
             } else {
                 return nil
             }
         }
         set(accessToken) {
+            let keychain = KeychainSwift()
             let encodedToken = try? JSONEncoder().encode(accessToken)
-            UserDefaults.standard.set(encodedToken, forKey: "accessToken")
+            guard let encodedToken = encodedToken else {return}
+            keychain.set(encodedToken, forKey: "accessToken")
             semaphore.signal()
         }
     }
@@ -163,14 +167,10 @@ extension SocketService: URLSessionWebSocketDelegate {
 	public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
 		self.delegate?.didCloseConnection()
 	}
+#if DEBUG
     /// allow to maninthemiddle in debug to inspect trafic in tools like proxyman or charlesApp 
-//    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-//        #if DEBUG
-//        completionHandler(.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
-//        #endif
-//        #if RELEASE
-//        completionHandler(.performDefaultHandling, nil)
-//        #endif
-
-//    }
+    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        completionHandler(.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
+    }
+#endif
 }

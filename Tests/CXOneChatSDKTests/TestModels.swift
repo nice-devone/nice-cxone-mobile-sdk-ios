@@ -73,32 +73,32 @@ class TestModels: XCTestCase {
         XCTAssertTrue(second.isEmpty == false)
     }
     
-    func testconfigModelWithLiveChatTrueAndmultipleThreadFalse() {
-        let data = loadStubFromBundle(withName: "loadConfigResponse", extension: "json")
-        let config = try! JSONDecoder().decode(ChannelConfiguration.self, from: data)
-        XCTAssertNotNil(config)
-        XCTAssertTrue(config.isLiveChat)
-        XCTAssertFalse(config.settings.hasMultipleThreadsPerEndUser)
-    }
+//    func testconfigModelWithLiveChatTrueAndmultipleThreadFalse() {
+//        let data = loadStubFromBundle(withName: "loadConfigResponse", extension: "json")
+//        let config = try! JSONDecoder().decode(ChannelConfiguration.self, from: data)
+//        XCTAssertNotNil(config)
+//        XCTAssertTrue(config.isLiveChat)
+//        XCTAssertFalse(config.settings.hasMultipleThreadsPerEndUser)
+//    }
     
-    func testConfigModelWithLiveChatFalseandMultipleTHreadFalse() {
-        let string = """
-        {
-          "name": "Test LiveChat",
-          "isLiveChat": false,
-          "settings": {
-            "hasMultipleThreadsPerEndUser": false,
-            "liveChatAllowAudioNotification": true
-            }
-          }
-        """
-        let data = string.data(using: .utf8)
-        XCTAssertNotNil(data)
-        let config = try! JSONDecoder().decode(ChannelConfiguration.self, from: data!)
-        XCTAssertNotNil(config)
-        XCTAssertFalse(config.isLiveChat)
-        XCTAssertFalse(config.settings.hasMultipleThreadsPerEndUser)
-    }
+//    func testConfigModelWithLiveChatFalseandMultipleTHreadFalse() {
+//        let string = """
+//        {
+//          "name": "Test LiveChat",
+//          "isLiveChat": false,
+//          "settings": {
+//            "hasMultipleThreadsPerEndUser": false,
+//            "liveChatAllowAudioNotification": true
+//            }
+//          }
+//        """
+//        let data = string.data(using: .utf8)
+//        XCTAssertNotNil(data)
+//        let config = try! JSONDecoder().decode(ChannelConfiguration.self, from: data!)
+//        XCTAssertNotNil(config)
+//        XCTAssertFalse(config.isLiveChat)
+//        XCTAssertFalse(config.settings.hasMultipleThreadsPerEndUser)
+//    }
     
     func testConfigResponseWithNullLiveChatNotDecode() {
         let string = """

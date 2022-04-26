@@ -127,8 +127,20 @@ extension CXOneChat: CXOneChatDelegate {
     func addMessages(messages: [MessagePostback]) {
         var messagesArray: [Message] = []
         for message in messages {
-            let newMessage = Message(threadId: threadIdOnExternalPlatform ?? UUID(), message: message)
-            messagesArray.append(newMessage)
+            var newMessage: Message
+            if !message.attachments.isEmpty {
+                for attachment in message.attachments {
+                    newMessage = Message(attachment: attachment, threadId: threadIdOnExternalPlatform ?? UUID(), message: message)
+                    messagesArray.append(newMessage)
+                }
+                if !message.messageContent.payload.text.isEmpty {
+                    newMessage = Message(threadId: threadIdOnExternalPlatform ?? UUID(), message: message)
+                    messagesArray.append(newMessage)
+                }
+            }else {
+                newMessage = Message(threadId: threadIdOnExternalPlatform ?? UUID(), message: message)
+                messagesArray.append(newMessage)
+            }
         }
         messagesArray.sort(by: {
             $0.sentDate < $1.sentDate
@@ -264,7 +276,9 @@ extension CXOneChat: CXOneChatDelegate {
         guard let brandId = brandId else {return}
         guard let channel = channelId else {return}
         guard let customer = getIdentity(with: true) else {return}
-        guard let token = socketService.accessToken?.token else {return}
+        guard let token = socketService.accessToken?.token else {
+            onTokenRefreshFailed?()
+            return}
         var auth = customer
         auth.firstName = nil
         auth.lastName = nil
@@ -360,7 +374,7 @@ extension CXOneChat: CXOneChatDelegate {
                 ThreadObject(id: $0.id ?? "",
                              idOnExternalPlatform: UUID(uuidString: $0.idOnExternalPlatform ?? "") ?? UUID(),
                              messages: [],
-                             threadAgent: Customer(senderId: $0.author?.id ?? "", displayName: getFullName(name: $0.author?.name ?? "") ))
+                             threadAgent: Customer(senderId: UUID().uuidString, displayName: "" ), canAddMoreMessages: $0.canAddMoreMessages ?? true)
             })
             self.didReceiveThreads(threads ?? [])
         case .customerAuthorized:
