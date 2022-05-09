@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import UIKit
 
 public struct Attachment {
 	public var url: String
@@ -122,8 +123,8 @@ public struct BrowserFingerprint {
     var ip = ""
     var language = ""
     var location = ""
-    var os = ""
-    var osVersion = ""
+    var os = "iOS"
+    var osVersion = UIDevice.current.systemVersion
     var deviceType = "mobile"
     public var deviceToken = ""
 }
