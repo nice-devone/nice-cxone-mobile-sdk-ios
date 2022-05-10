@@ -817,9 +817,6 @@ public class CXOneChat {
                                                                                    ip: "",
                                                                                    language: "",
                                                                                    location: "",
-                                                                                   os: "",
-                                                                                   osVersion: "",
-                                                                                   deviceType: "",
                                                                                    deviceToken: self.token ?? ""),
                                                             journey: nil,
                                                             customVariables: nil)))
