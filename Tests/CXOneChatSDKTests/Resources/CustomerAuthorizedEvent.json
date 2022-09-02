@@ -1,0 +1,14 @@
+{
+    "eventId": "C5E3C164-2361-452C-A5EF-44A924CBC0B0",
+    "status": "success",
+    "postback": {
+        "eventType": "ConsumerAuthorized",
+        "data": {
+            "consumerIdentity": {
+                "idOnExternalPlatform": "E0C4BD81-0864-4A8C-9B65-4F4D67DA0AF0",
+                "firstName": "",
+                "lastName": ""
+            }
+        }
+    }
+}

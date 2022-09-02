@@ -1,0 +1,250 @@
+{
+    "eventId": "ca606da7-6c92-4bc7-b8f5-b0b56a12a005",
+    "eventObject": "Message",
+    "eventType": "MessageCreated",
+    "createdAt": "2022-08-04T19:27:35+01:00",
+    "createdAtWithMilliseconds": "2022-08-04T19:27:35.450+01:00",
+    "data": {
+        "brand": {
+            "id": 1386,
+            "tenantId": "11e885fb-cfb6-0c20-bb51-0242ac110002",
+            "businessUnitId": 4597607
+        },
+        "message": {
+            "id": "f1a654aa-a2fd-4863-bc99-f26cb12fd0f8",
+            "idOnExternalPlatform": "126FDE8F-56CD-4A74-82AF-594D431E0A7C",
+            "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "threadId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "threadIdOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "messageContent": {
+                "text": "A message",
+                "type": "TEXT",
+                "payload": {
+                    "text": "A message",
+                    "postback": "",
+                    "elements": []
+                },
+                "fallbackText": "Unsupported message content",
+                "isAutoTranslated": false
+            },
+            "createdAt": "2022-08-04T18:27:34+00:00",
+            "isMadeByUser": false,
+            "direction": "inbound",
+            "user": null,
+            "authorUser": null,
+            "authorEndUserIdentity": {
+                "idOnExternalPlatform": "725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                "lastName": "valle",
+                "nickname": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                "externalPlatformId": "chat",
+                "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                "fullName": "Yoel Jimenez del valle Yoel Jimenez del valle"
+            },
+            "isRead": false,
+            "attachments": [],
+            "tags": [],
+            "sentiment": "neutral",
+            "deletedOnExternalPlatform": false,
+            "isDeletedOnExternalPlatform": false,
+            "isHiddenOnExternalPlatform": false,
+            "reactionStatistics": {
+                "likes": 0,
+                "shares": 0,
+                "isLikedByChannel": false,
+                "isSharedByChannel": false
+            },
+            "contentRemoved": null,
+            "authorNameRemoved": null,
+            "replyToMessage": null,
+            "readAt": null,
+            "title": "",
+            "recipients": [],
+            "url": null,
+            "replyChannel": null,
+            "customerStatistics": {
+                "seenAt": null
+            },
+            "userStatistics": {
+                "seenAt": null,
+                "readAt": null,
+                "createdToReadSeconds": null
+            },
+            "contactNumber": "131988342510",
+            "isReplyAllowed": false,
+            "seen": [],
+            "delivered": []
+        },
+        "channel": {
+            "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+            "idOnExternalPlatform": "51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+            "name": "iOS SDK",
+            "channelIntegrationId": "963b1313-8dcf-401a-ac8b-7b086096d69c",
+            "integrationBoxIdentifier": "chat",
+            "realExternalPlatformId": "chat",
+            "externalPlatformAvatar": "https://app-de-na1.niceincontact.com/img/source-default.png",
+            "externalPlatformIcon": "live-chat",
+            "isPrivate": true,
+            "hasReply": true,
+            "hasTreeStructure": false,
+            "hasPostAsPlaceholder": true,
+            "contentFormat": "plain",
+            "hasCustomerOnThirdParty": false,
+            "isPostWritable": true,
+            "hasAbilityToQuoteMessage": false,
+            "hasAbilityToLike": false,
+            "isHidden": false,
+            "isDeleted": false,
+            "wysiwygEnabled": false,
+            "hasAbilityToTag": false,
+            "ownerUserId": 9332,
+            "hasPublishing": false,
+            "hasAbilityToSendFiles": true,
+            "hasOutboundFlow": false,
+            "hasOutboundTemplates": false,
+            "hasAbilityToShare": false,
+            "hasAbilityToDelete": false,
+            "hasAbilityToHide": false,
+            "replyPrefixMentionTemplate": "",
+            "nicknameOnExternalPlatform": "",
+            "isLiveChat": false,
+            "hasAbilityToChangeRecipient": false,
+            "hasMultipleRecipient": false,
+            "hasCcAndBcc": false,
+            "hasVisibleTitle": false,
+            "hasEditableTitle": false,
+            "hasVisibleRecipients": false,
+            "hasAbilityToForwardMessage": false,
+            "canSaveResponse": false,
+            "hasAbilityToChangeFrom": false,
+            "isAutomaticSignatureAttached": false,
+            "isCaseBasedStorage": true,
+            "hasMultipleThreadsPerEndUser": true,
+            "translationGroup": "default",
+            "studioScript": null,
+            "mediaType": 3,
+            "canAgentInviteCustomersToContact": false,
+            "canReplyToAnyMessage": false
+        },
+        "case": {
+            "id": "131988342510",
+            "threadId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "threadIdOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+            "interactionId": "10a73eb1-5d3c-448c-8e0a-8131b7a6b1a4",
+            "consumerContactStorageId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "contactId": "e3f2d83e-adb5-414e-a772-13981e75cfd9",
+            "customerContactId": "1a5b9fe7-b0f4-457b-837b-397ad4f42855",
+            "status": "open",
+            "statusUpdatedAt": "2022-08-04T18:27:35+00:00",
+            "routingQueueId": "6618c229-bc8c-497a-83cf-964343153627",
+            "routingQueuePriority": 1,
+            "inboxAssignee": null,
+            "inboxAssigneeLastAssignedAt": "2022-04-27T15:01:51+00:00",
+            "inboxAssigneeUser": null,
+            "ownerAssigneeUser": {
+                "id": 12328,
+                "incontactId": "11ec77e1-3608-18d0-9ca1-0242ac110003",
+                "emailAddress": "tyler.hendrickson@cxonedemo.com",
+                "loginUsername": "tyler.hendrickson@cxonedemo.com",
+                "firstName": "Tyler",
+                "surname": "Hendrickson",
+                "nickname": "",
+                "imageUrl": "https://app-de-na1.niceincontact.com/img/user/t.png",
+                "publicImageUrl": null,
+                "isBotUser": false,
+                "isSurveyUser": false
+            },
+            "inboxPreAssigneeUser": null,
+            "ownerAssignee": 12328,
+            "endUserRecipients": [],
+            "recipients": [
+                {
+                    "idOnExternalPlatform": "725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                    "name": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                    "isPrimary": true,
+                    "isPrivate": false
+                }
+            ],
+            "recipientsCustomers": [
+                {
+                    "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                    "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                    "surname": "valle",
+                    "fullName": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                    "customFields": [],
+                    "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                    "identities": [
+                        {
+                            "idOnExternalPlatform": "725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                            "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                            "lastName": "valle",
+                            "nickname": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                            "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                            "externalPlatformId": "chat",
+                            "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4"
+                        }
+                    ]
+                }
+            ],
+            "detailUrl": "https://app-de-na1.niceincontact.com/care?redirect=no#/care/tab/chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7/case/131988342510",
+            "authorEndUserIdentity": {
+                "idOnExternalPlatform": "725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                "lastName": "valle",
+                "nickname": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                "externalPlatformId": "chat",
+                "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                "fullName": "Yoel Jimenez del valle Yoel Jimenez del valle"
+            },
+            "direction": "inbound",
+            "createdAt": "2022-04-27T14:26:25+00:00",
+            "inboxPreAssignee": null,
+            "customFields": [],
+            "userFingerprint": {
+                "browser": "",
+                "browserVersion": "",
+                "os": "",
+                "osVersion": "",
+                "language": "",
+                "ip": "152.206.239.252",
+                "location": "",
+                "country": "",
+                "deviceType": "",
+                "deviceToken": "",
+                "applicationType": ""
+            },
+            "statistics": {
+                "inboxAssigneeResponseTime": null
+            },
+            "endUser": {
+                "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                "surname": "valle",
+                "fullName": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                "customFields": [],
+                "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                "identities": [
+                    {
+                        "idOnExternalPlatform": "725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4",
+                        "firstName": "Yoel Jimenez del valle Yoel Jimenez del",
+                        "lastName": "valle",
+                        "nickname": "Yoel Jimenez del valle Yoel Jimenez del valle",
+                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
+                        "externalPlatformId": "chat",
+                        "id": "chat_725937784f763da6005d125d0f6f48e2278acfc8be086026a51ce2381d79abc4"
+                    }
+                ]
+            }
+        },
+        "thread": {
+            "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "idOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+            "threadName": ""
+        },
+        "agentContact": null
+    },
+    "context": []
+}

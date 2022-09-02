@@ -1,28 +1,18 @@
-//
-//  IOSSDKClienteDelegateTest.swift
-//  
-//
-//  Created by kjoe on 1/10/22.
-//
-
 import XCTest
 @testable import CXOneChatSDK
 @available(iOS 13.0, *)
-class IOSSDKClientDelegateTest: XCTestCase, CXOneChatController {
+class IOSSDKClientDelegateTest: XCTestCase {
     func onMessageReceivedFromOtherThread(message: Message) {
     }
     func didReceiveMetaData() {
     }
     
-    func didReceiveThreads(threads: [ThreadObject]) {
+    func didReceiveThreads(threads: [ChatThread]) {
         assert(threads.isEmpty == false)
     }
     
-    func clientAuthorized() {
-        print("authorized")
+    func customerAuthorized() {
     }
-
-
     
     func configurationLoaded(config: ChannelConfiguration) {
     }
@@ -59,7 +49,7 @@ class IOSSDKClientDelegateTest: XCTestCase, CXOneChatController {
 //        self.webSocketClient.brand =  1386
 //        self.webSocketClient.channelId = "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4"
 //        self.webSocketClient.user = Customer(senderId: "3b89fa26-8cdb-4a5e-a012-41881fada590", displayName: "")
-        self.webSocketClient.connect(environment: .NA1, brandId: 1386, channelId: "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4")
+        try! self.webSocketClient.connect(environment: .NA1, brandId: 1386, channelId: "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4")
        // webSocketClient.delegate = self
     }
 
@@ -70,7 +60,7 @@ class IOSSDKClientDelegateTest: XCTestCase, CXOneChatController {
 //    func testAssigneeChanged() {
 //        let user = User(senderId: "idis", displayName: "yj")
 //        agentDidChangeExpectation = expectation(description: "Agent did Change")
-//        webSocketClient.createThread( threadName: "my thread", postId: "id")
+//        webSocketClient.createThread( threadName: "my thread")
 //        webSocketClient.assigneeDidChange(currentThreadId, user: user)
 //        wait(for: [agentDidChangeExpectation], timeout: 3.0)
 //    }
@@ -80,19 +70,6 @@ class IOSSDKClientDelegateTest: XCTestCase, CXOneChatController {
 //        webSocketClient.didReceiveMessageWasRead("currentThread")
 //        wait(for: [agentDidReadMessagesExpectation], timeout: 1.0)
 //    }
-    func testAvatarWith0000ID() {
-        let customer = Customer(senderId: "000000", displayName: "YJ")
-        let avatar = webSocketClient.getAvatarFor(sender: customer)
-        XCTAssertNotNil(avatar)
-        XCTAssertTrue(avatar.initials == "SS")
-    }
-    func testAvatarWith000000IDISNotDifferentFromSS() {
-        let customer = Customer(senderId: "000000", displayName: "YJ")
-        let avatar = webSocketClient.getAvatarFor(sender: customer)
-        XCTAssertNotNil(avatar)
-        XCTAssertFalse(avatar.initials == "YJ")
-    }
-    
 //    func testAvatarStringIDEqualsDisplayNameInitials() {
 //        let customer = Customer(senderId: "asdas", displayName: "YJ")
 //        let avatar = webSocketClient.getAvatarFor(sender: customer)
@@ -100,45 +77,6 @@ class IOSSDKClientDelegateTest: XCTestCase, CXOneChatController {
 //        XCTAssertTrue(avatar.initials == "YY", avatar.initials)
 //    }
 
-    func threadAdded() {
-        threadAddedExpectation.fulfill()
-    }
-    
-    func messageAddedToThread(_ message: Message) {
-        messageAddedToThreadExpectation.fulfill()
-    }
-    
-    func messageAddedToChatView(_ message: Message) {
-        messageAddedToChatViewExpectation.fulfill()
-    }
-    
-    func typingDidStart() {
-        typingDidStartExpectation.fulfill()
-    }
-    
-    func typingDidEnd() {
-        typingDidEndExpectation.fulfill()
-    }
-    
-    func agentDidReadMessage(thread: String) {
-        agentDidChangeExpectation = expectation(description: "agend read received message")
-        agentDidReadMessagesExpectation.fulfill()
-    }
-    
-    func agentDidChange() {
-        agentDidChangeExpectation.fulfill()
-    }
-    
-    func contactFieldsWereSet() {
-        
-    }
-    
-    func customFieldsWereSet() {
-        
-    }
-    
-    func didReceiveError() {
-        
-    }
+
 
 }

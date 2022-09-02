@@ -1,10 +1,3 @@
-//
-//  EndpointTest.swift
-//  
-//
-//  Created by kjoe on 3/7/22.
-//
-
 import XCTest
 @testable import CXOneChatSDK
 class EndpointTest: XCTestCase {

@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 3/15/22.
-//
-
 import Foundation
 class MockURLProtocol: URLProtocol {
 

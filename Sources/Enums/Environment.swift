@@ -1,35 +1,28 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 2/2/22.
-//
-
 import Foundation
 
 
-/// The environment used for CXOne.
-public enum Environment: String, CaseIterable, EnvironmentDetails {
-    
+/// The environment used for CXone.
+public enum Environment: String, CaseIterable, EnvironmentDetails, Codable {
+
     /// Environment for North America.
     case NA1
-    
+
     /// Environment for Europe.
     case EU1
-    
+
     /// Environment for Australia.
     case AU1
-    
+
     /// Environment for Canada.
     case CA1
-    
+
     /// Environment for the United Kingdom.
     case UK1
-    
+
     /// Environment for Japan.
     case JP1
-    
-   public var location: String {
+
+    public var location: String {
         switch self {
         case .NA1:
            return "North America"
@@ -44,9 +37,8 @@ public enum Environment: String, CaseIterable, EnvironmentDetails {
         case .JP1:
             return "Japan"
         }
-       
     }
-    
+
     internal var chatURL: String {
         switch self {
         case .NA1:
@@ -63,7 +55,7 @@ public enum Environment: String, CaseIterable, EnvironmentDetails {
             return "https://channels-de-jp1.niceincontact.com/chat"
         }
     }
-    
+
     internal var socketURL: String {
         switch self {
         case .NA1:

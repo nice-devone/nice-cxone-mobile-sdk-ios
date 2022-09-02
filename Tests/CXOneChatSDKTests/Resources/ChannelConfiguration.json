@@ -1,0 +1,226 @@
+{
+    "name": "Test LiveChat",
+    "availability": {
+        "status": "offline"
+    },
+    "isLiveChat": true,
+    "settings": {
+        "features": {
+            "liveChatLogoHidden": false,
+            "isCreditCardMaskingEnabled": false,
+            "isCoBrowsingEnabled": false,
+            "isAwsApiGatewayEnabledPoc": true,
+            "isAwsApiGatewayEnabledSimpleEvents": false,
+            "isAwsApiGatewayEnabledMessageEvents": false,
+            "isAwsApiGatewayEnabledChatInitialization": false,
+            "isAwsApiGatewayEnabledMultithread": false
+        },
+        "liveChatLogoHidden": false,
+        "isCreditCardMaskingEnabled": false,
+        "isCoBrowsingEnabled": false,
+        "isAwsApiGatewayEnabledPoc": true,
+        "isAwsApiGatewayEnabledSimpleEvents": false,
+        "isAwsApiGatewayEnabledMessageEvents": false,
+        "isAwsApiGatewayEnabledChatInitialization": false,
+        "isAwsApiGatewayEnabledMultithread": false,
+        "liveChatShowOfflineForm": false,
+        "liveChatOfflineForm": {
+            "isEnabled": false,
+            "isCustom": false,
+            "html": ""
+        },
+        "liveChatHiddenOnOffline": false,
+        "liveChatAllowTranscript": true,
+        "liveChatTranscriptChannelId": "email_michal.brauner@post.cz",
+        "liveChatTransferUrl": "",
+        "hasPageViews": true,
+        "hasMultipleThreadsPerEndUser": false,
+        "isProactiveChatEnabled": false,
+        "liveChatAllowAudioNotification": true
+    },
+    "translations": {
+        "onlineFormText": "Welcome to our support chat! Tell us, how we should call you and let’s start solving your issues!",
+        "weAreOffline": "We're offline",
+        "weAreOnline": "We're online",
+        "endChat": "End chat",
+        "beginButton": "Begin Conversation",
+        "waitingForAgent": "Waiting for agent...",
+        "ending": "Ending ...",
+        "systemChattingWith": "You are now chatting with {name}",
+        "replyBoxPlaceholder": "Write here, press<enter> to send",
+        "chattedWith": "You chatted with {name}",
+        "startNewChat": "Start a new chat",
+        "offlineFormText": "We are not available at the moment, but you can leave us a message. We will respond as soon as possible.",
+        "yourNameLabel": "Your name",
+        "systemIsTyping": "{name} is Typing",
+        "waitingInQueue": "Waiting for agent. You're {queue} in queue.",
+        "offlineFormDesc": "We are not available at the moment, but you can leave us a message. We will respond as soon as possible.",
+        "EmailLabel": "E-mail",
+        "messageLabel": "Message",
+        "sendMessageButton": "Send Message",
+        "offlineFormSuccessMsgHead": "Your email has been successfuly sent!",
+        "offlineFormSuccessMsgSub": "We'll get back to you soon.",
+        "networkErrorText": "There was a network Error. Please try again.",
+        "validationMandatory": "This field is mandatory",
+        "validationShorterName": "Please use shorter name",
+        "validationInvalidEmail": "E-mail address is not valid",
+        "validationShortMessage": "Your messge is too short",
+        "getTranscriptDescription": "Send transcript of this conversation to the following email address:",
+        "transciptSuccesfullySent": "Transcipt succesfully sent!",
+        "sendTranscript": "Send transcript",
+        "startChatInPopup": "Start chat",
+        "ipAddressBlocked": "IP address is blocked",
+        "waitingDescription": "One of our agents will talk to you shortly.",
+        "endChatTitle": "Are you sure you want to end this conversation?",
+        "endChatButton": "End Chat",
+        "surveySuccesfullySent": "Thanks for your feedback!",
+        "cancel": "Cancel",
+        "topic": "Topic",
+        "pleaseSelect": "Please select...",
+        "getTranscriptLink": "Get chat transcript",
+        "change": "Change",
+        "tryAgainButton": "Try Again",
+        "allAgentsForQueueAreBusy": "All our agents dedicated to your queue are currently busy. There {queue, plural,one {is} other {are}} <strong>{queue, number}</strong> {queue, plural, one {person} other {people} ahead of you in the queue.",
+        "caseNumber": "Case #{caseNumber}",
+        "commonErrorText": "There was an unexpected error. Please try again later.",
+        "done": "Done",
+        "dragAndDropDropzone": "Drag & drop files here, to send them",
+        "dragAndDropDropzoneRejected": "Impossible to upload file :|",
+        "endGame": "End game",
+        "fileSendingFailed": "File sending failed",
+        "invalidToken": "Invalid token",
+        "loading": "Loading ...",
+        "loadPreviousButton": "Load previous conversations",
+        "newCase": "New case",
+        "noAgentOnlineForQueue": "No agent is available for your queue at the moment.",
+        "online": "Online",
+        "poweredBy": "Powered by",
+        "preparingSession": "Preparing session...",
+        "retry": "Retry",
+        "sendFileTextSize": "Please upload files smaller than {filesize} MB and of following file types:",
+        "sendFileTextSupportedFormat": "supported formats.",
+        "sendFileTextSupportedFormatDesc": "Images, Videos, {fileFormats}",
+        "sendNewEmail": "Send new email",
+        "snakeWaiting": "You are {queue} in queue.",
+        "statusReconnecting": "Trying to connect…",
+        "transciptSentFailed": "Send failed.",
+        "unexpectedError": "Unexpected error.",
+        "waiting": "Waiting...",
+        "waitingFooter": "Hit <spacebar> to shorten the waiting.",
+        "messageSendingFailed": "Message sending failed",
+        "noRunningConversations": "No running conversations",
+        "chattedWithAgent": "You chatted with",
+        "agent": "Agent",
+        "backToConversations": "Back to the conversation",
+        "archive": "Archive",
+        "archiveMsg": "This conversation was archived",
+        "lastMessage": "Last message...",
+        "fileAttachment": "File attachment",
+        "active": "Active",
+        "pluginMessage": "Interactive message received",
+        "conversationLabelPlaceholder": "Conversation name",
+        "openSurvey": "Open Survey",
+        "uploadFailed": "Upload failed",
+        "uploadMessage": "Your file is either too large or has incompatible file type. For further information, please contact our agent.",
+        "turnOffAudioNotification": "Audio Notification Off",
+        "turnOnAudioNotification": "Audio Notification On",
+        "weAreConnectingYouWithAnAgent": "Please wait, we are connecting you with an agent."
+    },
+    "colors": {
+        "buttonColor": "#faac4b",
+        "headerBgColor": "#faac4b",
+        "headerFontColor": "#000000",
+        "themeColor": "#faac4b",
+        "textColor": "#000000",
+        "widgetBgColor": "#faac4b",
+        "widgetFontColor": "#000000"
+    },
+    "widget": {
+        "appearance": "bar",
+        "position": "right"
+    },
+    "popups": [],
+    "endUserCustomFields": [
+        {
+            "ident": "city",
+            "label": "City",
+            "type": "text",
+            "required": false,
+            "values": [],
+            "liveChatVisibility": "visible",
+            "postDetailVisibility": "visible",
+            "isEditable": true
+        },
+        {
+            "ident": "category",
+            "label": "Category",
+            "type": "list",
+            "required": false,
+            "values": [
+                {
+                    "name": "1",
+                    "value": "Spam"
+                },
+                {
+                    "name": "2",
+                    "value": "Priority"
+                }
+            ],
+            "liveChatVisibility": "hidden",
+            "postDetailVisibility": "hidden",
+            "isEditable": false
+        }
+    ],
+    "caseCustomFields": [
+        {
+            "ident": "email",
+            "label": "Email",
+            "type": "email",
+            "required": false,
+            "values": [],
+            "liveChatVisibility": "hidden",
+            "postDetailVisibility": "visible",
+            "isEditable": true
+        },
+        {
+            "ident": "sentiment",
+            "label": "sentiment",
+            "type": "list",
+            "required": false,
+            "values": [
+                {
+                    "name": "1",
+                    "value": "Positive"
+                },
+                {
+                    "name": "2",
+                    "value": "Negative"
+                }
+            ],
+            "liveChatVisibility": "hidden",
+            "postDetailVisibility": "hidden",
+            "isEditable": false
+        },
+        {
+            "ident": "score",
+            "label": "Score",
+            "type": "text",
+            "required": false,
+            "values": [],
+            "liveChatVisibility": "hidden",
+            "postDetailVisibility": "visible",
+            "isEditable": true
+        },
+        {
+            "ident": "color",
+            "label": "Color",
+            "type": "text",
+            "required": false,
+            "values": [],
+            "liveChatVisibility": "hidden",
+            "postDetailVisibility": "visible",
+            "isEditable": true
+        }
+    ],
+    "isAuthorizationEnabled": false
+}

@@ -1,14 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 3/22/22.
-//
-
 import Foundation
+
 enum StoreVisitorEventData: Encodable {
     case visitorEvent(VisitorsEvents)
-    case storeVisitorPayload(StoreVisitorPayload)
+    case storeVisitorPayload(Visitor)
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -20,7 +14,4 @@ enum StoreVisitorEventData: Encodable {
         }
     }
 }
-struct VisitorsEvents {
-    let visitorEvents: [VisitorEvent]
-}
-extension VisitorsEvents: Encodable {}
+

@@ -1,36 +1,32 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 3/21/22.
-//
-
 import Foundation
-enum VisitorEventType: String, Codable {
-    case visitorVisit = "VisitorVisit"
-    case pageView = "PageView"
-    case chatWindowOpened = "ChatWindowOpened"
-    case conversion = "Conversion"
-    case proactiveActionDisplayed = "ProactiveActionDisplayed"
-    case proactiveActionClicked = "ProactiveActionClicked"
-    case proactiveActionSuccess = "ProactiveActionSuccess"
-    case proactiveActionFailed = "ProactiveActionFailed"
-    case custom = "Custom"
-}
-enum VisitorEventData: Encodable {
-    case pageViewData(PageViewData)
-    case conversionData(ConversionData)
-    case proActiveAction(ProactiveActionEventData)
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch self {
-        case .pageViewData(let data):
-            try container.encode(data)
-        case .conversionData(let data):
-            try container.encode(data)
-        case .proActiveAction(let data):
-            try container.encode(data)
-        }
-    }
+/// The different types of visitor events.
+enum VisitorEventType: String, Codable {
+    
+    /// Event for the visitor starting a new page visit.
+    case visitorVisit = "VisitorVisit"
+    
+    /// Event for the visitor viewing a page.
+    case pageView = "PageView"
+    
+    /// Event that the chat window was opened by the visitor.
+    case chatWindowOpened = "ChatWindowOpened"
+    
+    /// Event that the visitor has followed a proactive action to start a chat.
+    case conversion = "Conversion"
+    
+    /// Event that the proactive action was successfully displayed to the visitor.
+    case proactiveActionDisplayed = "ProactiveActionDisplayed"
+    
+    /// Event that the proactive action was clicked by the visitor.
+    case proactiveActionClicked = "ProactiveActionClicked"
+    
+    /// Event that the proactive action has successfully led to a conversion.
+    case proactiveActionSuccess = "ProactiveActionSuccess"
+    
+    /// Event that the proactive action has not led to a conversion within a certain time span.
+    case proactiveActionFailed = "ProactiveActionFailed"
+    
+    /// A custom visitor event to send any additional data.
+    case custom = "Custom"
 }

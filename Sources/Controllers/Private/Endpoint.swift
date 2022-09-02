@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by kjoe on 3/4/22.
-//
-
 import Foundation
 protocol Endpoint {
     var environment: EnvironmentDetails {get set}

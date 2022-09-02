@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 3/4/22.
-//
-
 import Foundation
 
 
@@ -28,5 +21,5 @@ public protocol URLSessionWebSocketTaskProtocol {
     var delegate: URLSessionTaskDelegate? { get set }
 }
 
-extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {    
+extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
 }

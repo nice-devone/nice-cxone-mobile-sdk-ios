@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by kjoe on 3/10/22.
-//
-
 import Foundation
 import XCTest
 @testable import CXOneChatSDK
@@ -12,21 +5,20 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
     var delegate: URLSessionTaskDelegate?
     
     var closure: ((String) -> Void)?
-    
+        
     func send(_ message: URLSessionWebSocketTask.Message, completionHandler: @escaping (Error?) -> Void) {
         
-        completionHandler(nil)
-        var messageString = ""
+        var messageString = "messageString"
         if case URLSessionWebSocketTask.Message.string(let string) =  message{
-            print(string)
-            if string != "{\"action\":\"heartbeat\"}" {                
+            if string != "{\"action\":\"heartbeat\"}" {
                 let data = string.data(using: .utf8)
                 let decode = try! JSONDecoder().decode(EventPayLoadCodable.self, from: data!)
                 switch decode.payload.eventType {
                 case .authorizeCustomer:
                     let data = loadStubFromBundle(withName: "authorize", extension: "json")
                     messageString = String(data: data, encoding: .utf8)!
-                case .customerAuthorized, .tokenRefreshed, .messageCreated, .moreMessagesLoaded, .messageReadChanged, .threadRecovered, .livechatRecovered,  .threadListFetched, .threadMetadataLoaded, .threadArchived, .threadUpdated, .contactCreated, .contactToRoutingQueueAssignmentChanged,.contactStatusChanged, .contactRecipientsChanged, .contactInboxAssigneeChanged, .messageSeenByCustomer,.reconnectConsumer:
+                    closure?(messageString)
+                case .customerAuthorized, .tokenRefreshed, .messageCreated, .moreMessagesLoaded, .messageReadChanged, .threadRecovered,   .threadListFetched, .threadMetadataLoaded, .threadArchived, .contactInboxAssigneeChanged, .messageSeenByCustomer,.reconnectCustomer:
                     break
                 case .refreshToken:
                     break
@@ -36,10 +28,13 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
                 case .loadThreadMetadata:
                     let data = loadStubFromBundle(withName: "threadMetadaLoaded", extension: "json")
                     messageString = String(data: data, encoding: .utf8)!
+                    closure?(messageString)
                 default:
                     break
                 }
                 closure?(messageString)
+            } else {
+                closure?(string)
             }
         }
     }
@@ -51,7 +46,6 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
     }
 
     func sendPing(pongReceiveHandler: @escaping (Error?) -> Void) {
-        print("senPing")
         pongReceiveHandler(nil)
     }
 
@@ -59,16 +53,16 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
         
     }
     func resume() {
-        print("resume")
     }
     
     func loadStubFromBundle(withName name: String, extension: String) ->  Data {
         let url = URL(forResource: name, type: `extension`)
         return try! Data(contentsOf: url)
     }
+    
 }
 
-class URLSessionMock: URLSessionProtocol {
+class URLSessionMock: URLProtocol ,URLSessionProtocol {
     var delegate: URLSessionDelegate?
     
     func webSocketTask(with request: URLRequest) -> URLSessionWebSocketTaskMock {
@@ -78,5 +72,18 @@ class URLSessionMock: URLSessionProtocol {
 //    init(delegate: URLSessionDelegate = CXOneChatSDK)) {
 //        self.delegate = delegate
 //    }
+    
+    override class func canInit(with request: URLRequest) -> Bool {
+      return true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+      return request
+    }
+    
+    override func startLoading() {
+    }
+    override func stopLoading() {
+    }
     
 }

@@ -1,16 +1,26 @@
-//
-//  File.swift
-//  
-//
-//  Created by Tyler Hendrickson on 3/7/22.
-//
-
 import Foundation
 
 /// The different types of errors that may be experienced.
 public enum CXOneChatError: Error, LocalizedError {
-    /// The configuration for the channel is not loaded and the operation could not be performed.
-    case missingChannelConfig
+    // MARK: Errors when calling any method
+    
+    /// An attempt was made to use a method without connecting first. Make sure you call the `connect` method first.
+    case notConnected
+    
+    /// The method being called is not supported with the current channel configuration.
+    case unsupportedChannelConfig
+    
+    /// The conversion from object instance to data failed.
+    case invalidData
+    
+    /// The provided ID for the thread was invalid, so the action could not be performed.
+    case invalidThread
+    
+    /// There aren't any other messages, so additional messages could not be loaded.
+    case noMoreMessages
+
+    /// The provided attachment was unable to be sent.
+    case attachmentError
 
     /// The case id was invalid and the operation is unable to be performed.
     case invalidCaseId
@@ -18,59 +28,90 @@ public enum CXOneChatError: Error, LocalizedError {
     /// The server experienced an internal error and was unable to perform the action.
     case serverError
     
-    /// The conversion from object instance to data failed.
-    case invalidData
+    
+    // MARK: Errors when calling connect
+    
+    /// The WebSocket refused to connect.
+    case webSocketConnectionFailure
+    
+    /// The channel configuration could not be retrieved.
+    case channelConfigFailure
+    
+    /// The customer could not be authorized anonymously.
+    case anonymousAuthorizationFailure
+    
+    /// The customer could not be authorized using the OAuth details configured on the channel.
+    case oAuthAuthorizationFailure
+    
+    /// The auth code has not been set, but an attempt has been made to authorize.
+    case missingAuthCode
+    
+    /// The returning customer could not be reconnected.
+    case reconnectFailure
+    
+    /// The customer was successfully authorized, but an access token wasn't returned.
+    case missingAccessToken
+    
+    /// The customer was successfully authorized, but a customerId wasn't returned.
+    case missingCustomerId
+    
+    /// The customer could not be associated with a visitor.
+    case customerVisitorAssociationFailure
     
     /// The request was invalid and couldn't be completed.
     case invalidRequest
-    
-    case socketNotReady
-    
-    case invalidBrandId
-    case invalidChannelId
+        
     case invalidCustomerId
-    case invalidThread
-    case missingcontactId
-    case noMoreMessages
-    
-    case invalidMessageId
-    
+    case missingContactId
+        
     case invalidOldestDate
-    
-    case invalidVisitor
-    
+        
     public var errorDescription: String? {
         switch self {
-        case .missingChannelConfig:
-            return "The configuration for the channel is not loaded and the operation could not be performed."
-        case .invalidCaseId:
-            return "Could not update customer contact field; need to send a message first to open channel"
-        case .serverError:
-            return "Internal server error"
+        case .notConnected:
+            return "You are trying to call a method without connecting first. Make sure you call connect first."
+        case .unsupportedChannelConfig:
+            return "The method you are trying to call is not supported with your current channel configuration. For example, archiving a thread is only supported on a channel configured for multiple threads."
         case .invalidData:
-            return "Data could not be converted"
-        case .invalidRequest:
-            return "Could not make the request because the URL was malformed"
-        case .socketNotReady:
-            return "Socket not connected, please call connect before calling this funtion"        
-        case .invalidBrandId:
-            return "the brand id is not valid"
-        case .invalidChannelId:
-            return "the channel id is not valid"
-        case .invalidCustomerId:
-            return "the customer id is not valid"
+            return "Data was in an unexpected format and could not be decoded."
         case .invalidThread:
-            return "No active thread."
-        case .missingcontactId:
-            return "Missing contact id"
+            return "The provided thread ID did not match any known threads"
         case .noMoreMessages:
-            return "this thread has no more message"
-        case .invalidMessageId:
-            return "message id is not valid"
+            return "There aren’t any other messages so additional messages could not be loaded."
+        case .attachmentError:
+            return "The provided attachment wasn't able to be sent."
+        case .webSocketConnectionFailure:
+            return "Something went wrong and the WebSocket refused to connect. If you are providing your own chatURL or socketURL, double check that these URLs are correct."
+        case .channelConfigFailure:
+            return "Something went wrong and the channel configuration could not be retrieved."
+        case .anonymousAuthorizationFailure:
+            return "Something went wrong and the customer could not be authorized."
+        case .oAuthAuthorizationFailure:
+            return "Something went wrong and the channel configuration could not be retrieved."
+        case .missingAuthCode:
+            return "You are trying to authorize a customer through OAuth, but haven’t provided the authorization code yet. Make sure you call setAuthCode before calling connect."
+        case .reconnectFailure:
+            return "Something went wrong and the returning customer could not be reconnected."
+        case .missingAccessToken:
+            return "The customer was successfully authorized using OAuth, but an access token wasn’t returned."
+        case .missingCustomerId:
+            return "The customer was successfully authorized using OAuth, but a customerId wasn’t returned."
+        case .customerVisitorAssociationFailure:
+            return "The customer could not be successfully associated with a visitor."
+        case .invalidCaseId:
+            return "Could not update customer contact field; need to send a message first to open channel."
+        case .serverError:
+            return "Internal server error."
+        
+        case .invalidRequest:
+            return "Could not make the request because the URL was malformed."
+        case .invalidCustomerId:
+            return "The customer id is not valid."
+        case .missingContactId:
+            return "Missing contact id."
+        
         case .invalidOldestDate:
-            return "no oldest message date is saved."
-        case .invalidVisitor:
-            return "Invalid visitor."
+            return "No oldest message date is saved."
         }
     }
 }
