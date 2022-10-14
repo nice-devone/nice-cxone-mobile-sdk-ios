@@ -225,7 +225,7 @@ extension CXOneChat: CXOneChatDelegate {
         guard let visitorId = visitorId else {return}
         guard let destinationId = destinationId else {return}
         guard let channelId = channelId else {return}
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId)),

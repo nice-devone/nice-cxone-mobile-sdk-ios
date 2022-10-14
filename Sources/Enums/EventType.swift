@@ -107,7 +107,7 @@ public enum EventType: String, Codable {
     /// An event to send to store a visitor and associate it with a customer (and device token for push notifications).
     case storeVisitor = "StoreVisitor"
 
-    case storeVisitorEvent = "StoreVisitorEvents"
+    case storeVisitorEvents = "StoreVisitorEvents"
     
     /// An event received when a proactive action has been fired.
     case fireProactiveAction = "FireProactiveAction"

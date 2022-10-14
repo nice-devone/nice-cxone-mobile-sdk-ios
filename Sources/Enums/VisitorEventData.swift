@@ -1,5 +1,5 @@
 /// The different types of data on a visitor event.
-enum VisitorEventData: Encodable {
+public enum VisitorEventData: Encodable {
     
     /// Data for the page view event.
     case pageViewData(PageViewData)
@@ -9,6 +9,9 @@ enum VisitorEventData: Encodable {
     
     /// Data for a proactive action event.
     case proactiveActionData(ProactiveActionDetails)
+    
+    /// Data for a custom visitor event. Any encoded string is accepted.
+    case custom(String)
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -19,6 +22,8 @@ enum VisitorEventData: Encodable {
             try container.encode(data)
         case .proactiveActionData(let data):
             try container.encode(data)
+        case .custom(let string):
+            try container.encode(string)
         }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Data to be sent on a conversion visitor event.
-struct ConversionData: Codable {
+public struct ConversionData: Codable {
     
     /// The type of conversion.
     public let conversionType: String

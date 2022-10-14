@@ -309,6 +309,7 @@ public class CXOneChat {
     
     /// Creates a new thread by sending an initial message to the thread.
     /// - Warning: If attempted on a channel that only supports a single thread, this will fail once a thread is already created.
+    /// - Returns: The threadIdOnExternalPlatform of the newly created thread.
     public func createThread() throws -> UUID {
         try checkForConnection()
         if !channelConfig!.settings.hasMultipleThreadsPerEndUser && !self.threads.isEmpty {
@@ -549,7 +550,7 @@ public class CXOneChat {
     ///   - uri: A URI uniquely identifying the page. This can be any unique identifier.
     public func reportPageView(title: String, uri: String) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -569,7 +570,7 @@ public class CXOneChat {
     /// Reports to CXone that the chat window/view has been opened by the visitor.
     public func reportChatWindowOpen() throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -589,7 +590,7 @@ public class CXOneChat {
     /// Reports to CXone that the visitor has visited the app.
     public func reportVisit() throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -612,7 +613,7 @@ public class CXOneChat {
     ///   - conversionValue: The value associated with the conversion (for example, unit amount). Can be any number.
     public func reportConversion(conversionType: String, conversionValue: Double) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -634,11 +635,10 @@ public class CXOneChat {
     /// Reports to CXone that some event occurred with the visitor. This can be used to report any custom event that may not be covered by
     /// other existing methods.
     /// - Parameters:
-    ///   - eventType: The type of event that occurred. Can be any string.
     ///   - data: Any data associated with the event.
-    public func reportCustomVisitorEvent(eventType: String, data: Any) throws {
+    public func reportCustomVisitorEvent(data: VisitorEventData) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                       brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -646,7 +646,7 @@ public class CXOneChat {
                                         VisitorEvent(id: LowerCaseUUID(uuid: UUID()),
                                                      type: .custom,
                                                      createdAtWithMilliseconds: Date().iso8601withFractionalSeconds,
-                                                     data: nil)])),
+                                                     data: data)])),
                                                channel: ChannelIdentifier(id: channelId ?? ""))
         let event = StoreVisitorEvents(action: .chatWindowEvent, eventId: UUID(), payload: payload)
         guard let data = getDataFrom(event) else {return}
@@ -658,7 +658,7 @@ public class CXOneChat {
     /// - Parameter data: The proactive action that was displayed.
     public func reportProactiveActionDisplay(data: ProactiveActionDetails) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                       brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -679,7 +679,7 @@ public class CXOneChat {
     /// - Parameter data: The proactive action that was clicked.
     public func reportProactiveActionClick(data: ProactiveActionDetails) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -699,7 +699,7 @@ public class CXOneChat {
     /// - Parameter data: The proactive action that was successful.
     public func reportProactiveActionSuccess(data: ProactiveActionDetails) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -719,7 +719,7 @@ public class CXOneChat {
     /// - Parameter data: The proactive action that failed.
     public func reportProactiveActionFail(data: ProactiveActionDetails) throws {
         try checkForConnection()
-        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvent,
+        let payload = StoreVisitorEventsPayload(eventType: .storeVisitorEvents,
                                                brand: Brand(id: brandId!),
                                                visitor: VisitorIdentifier(id: LowerCaseUUID(uuid: visitorId!)),
                                                destination: Destination(id: LowerCaseUUID(uuid: destinationId!)),
@@ -886,7 +886,7 @@ public class CXOneChat {
             guard (200 ... 299) ~= response.statusCode else { return }
             let decoded: AttachmentUploadSuccessResponse? = self.decodeData(data)
             guard let decoded = decoded else { return }
-            attachment.append(Attachment(url: decoded.fileUrl, friendlyName: "fileUpload.ext"))
+            attachment.append(Attachment(url: decoded.fileUrl, friendlyName: "fileUpload.ext", mimeType: "image/jpeg", fileName: "fileupload.jpg"))
             index += 1
         }
         if index >= attachments.count {

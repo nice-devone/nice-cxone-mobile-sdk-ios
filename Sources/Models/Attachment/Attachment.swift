@@ -7,6 +7,11 @@ public struct Attachment: Codable {
     
     /// A friendly name to display to the user.
     public var friendlyName: String
+
+    
+    public var mimeType: String
+    
+    public var fileName: String
     
     // Unused
 //    public var id: String
