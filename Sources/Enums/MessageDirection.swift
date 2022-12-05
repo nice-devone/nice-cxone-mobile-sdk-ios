@@ -1,3 +1,6 @@
+import Foundation
+
+
 /// The direction that the message is being sent in regards to an agent.
 public enum MessageDirection: String, Codable {
     

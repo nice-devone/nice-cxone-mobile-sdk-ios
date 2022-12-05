@@ -1,5 +1,6 @@
 import Foundation
 
+
 /// The different types of message content that can be sent or received.
 public enum MessageContentType: String, Codable {
     
@@ -11,6 +12,9 @@ public enum MessageContentType: String, Codable {
     
     /// Some unknown message type.
     case unknown
+    
+    
+    // MARK: - Init
     
     /// Allows for decoding with an unknown string.
     public init(from decoder: Decoder) throws {

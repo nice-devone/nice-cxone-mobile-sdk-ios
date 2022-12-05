@@ -1,5 +1,6 @@
 import Foundation
 
+
 /// The different types of visitor events.
 enum VisitorEventType: String, Codable {
     
