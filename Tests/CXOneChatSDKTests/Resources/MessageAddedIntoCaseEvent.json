@@ -1,0 +1,267 @@
+{
+  "eventObject": "Case",
+  "eventType": "MessageAddedIntoCase",
+  "data": {
+    "case": {
+      "authorEndUserIdentity": null,
+      "consumerContactStorageId": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc_F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "threadId": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc_F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "status": "open",
+      "inboxAssignee": null,
+      "userFingerprint": {
+        "location": "",
+        "os": "iOS",
+        "country": "",
+        "osVersion": "16.1",
+        "deviceType": "mobile",
+        "browserVersion": "",
+        "browser": "",
+        "language": "",
+        "applicationType": "native",
+        "ip": "109.80.14.23",
+        "deviceToken": ""
+      },
+      "endUser": {
+        "firstName": "Sed",
+        "id": "chat_03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+        "surname": "Des",
+        "fullName": "Sed Des",
+        "image": "https:\/\/app-eu1-qa.brandembassy.com\/img\/user-default.png",
+        "customFields": [
+          
+        ],
+        "identities": [
+          {
+            "idOnExternalPlatform": "03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+            "firstName": "Sed",
+            "nickname": "Sed Des",
+            "externalPlatformId": "chat",
+            "id": "chat_03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+            "image": "https:\/\/app-eu1-qa.brandembassy.com\/img\/user-default.png",
+            "lastName": "Des"
+          }
+        ]
+      },
+      "ownerAssigneeUser": null,
+      "interactionId": "0f43d655-952c-49d3-8f0f-1885f70067b9",
+      "inboxPreAssignee": null,
+      "abandon": null,
+      "inboxPreAssigneeUser": null,
+      "ownerAssignee": null,
+      "createdAt": "2022-11-07T12:20:51+00:00",
+      "inboxAssigneeLastAssignedAt": null,
+      "statusUpdatedAt": "2022-11-07T12:46:40+00:00",
+      "endUserRecipients": [
+        {
+          "isPrivate": false,
+          "idOnExternalPlatform": "ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+          "isPrimary": true,
+          "name": " "
+        }
+      ],
+      "contactId": "eddc87ef-8286-42d1-ba6a-37262353f73a",
+      "id": "5933567",
+      "detailUrl": "https:\/\/app-eu1-qa.brandembassy.com\/care?redirect=no#\/care\/tab\/chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc_F1D7B591-31CE-4111-B30E-ADB407EA928E\/case\/5933567",
+      "customFields": [
+        
+      ],
+      "recipientsCustomers": [
+        {
+          "firstName": "Sed",
+          "id": "chat_03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+          "surname": "Des",
+          "fullName": "Sed Des",
+          "image": "https:\/\/app-eu1-qa.brandembassy.com\/img\/user-default.png",
+          "customFields": [
+            
+          ],
+          "identities": [
+            {
+              "idOnExternalPlatform": "03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+              "firstName": "Sed",
+              "nickname": "Sed Des",
+              "externalPlatformId": "chat",
+              "id": "chat_03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+              "image": "https:\/\/app-eu1-qa.brandembassy.com\/img\/user-default.png",
+              "lastName": "Des"
+            }
+          ]
+        }
+      ],
+      "recipients": [
+        {
+          "isPrivate": false,
+          "idOnExternalPlatform": "ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+          "isPrimary": true,
+          "name": " "
+        },
+        {
+          "isPrivate": false,
+          "idOnExternalPlatform": "03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+          "isPrimary": true,
+          "name": "Sed Des"
+        }
+      ],
+      "statistics": {
+        "inboxAssigneeResponseTime": null
+      },
+      "direction": "outbound",
+      "threadIdOnExternalPlatform": "F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "routingQueuePriority": 0,
+      "customerContactId": "8d6dfb76-272d-4e01-a3a0-ed4d774fa703",
+      "routingQueueId": null,
+      "channelId": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+      "inboxAssigneeUser": null
+    },
+    "brand": {
+      "id": 6435,
+      "tenantId": null,
+      "businessUnitId": null
+    },
+    "channel": {
+      "canReplyToAnyMessage": false,
+      "isDeleted": false,
+      "id": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+      "replyPrefixMentionTemplate": "",
+      "hasAbilityToHide": false,
+      "studioScript": null,
+      "hasAbilityToTag": false,
+      "idOnExternalPlatform": "ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+      "realExternalPlatformId": "chat",
+      "hasAbilityToForwardMessage": false,
+      "channelIntegrationId": "2507eb36-065b-4e41-aca9-c5a07af4803d",
+      "canSaveResponse": false,
+      "isLiveChat": false,
+      "isAutomaticSignatureAttached": false,
+      "hasAbilityToChangeFrom": false,
+      "externalPlatformIcon": "live-chat",
+      "hasAbilityToQuoteMessage": false,
+      "hasTreeStructure": false,
+      "hasCustomerOnThirdParty": false,
+      "isPrivate": true,
+      "hasAbilityToChangeRecipient": false,
+      "hasCcAndBcc": false,
+      "hasVisibleTitle": false,
+      "name": "iOS channel",
+      "translationGroup": "default",
+      "isHidden": false,
+      "hasMultipleRecipient": false,
+      "hasEditableTitle": false,
+      "hasAbilityToSendFiles": true,
+      "hasVisibleRecipients": false,
+      "isCaseBasedStorage": false,
+      "hasPublishing": false,
+      "canAgentInviteCustomersToContact": false,
+      "integrationBoxIdentifier": "chat",
+      "externalPlatformAvatar": "https:\/\/channels-assets-qa.brandembassy.com\/all\/default\/external-platform-avatar\/chat.png",
+      "wysiwygEnabled": false,
+      "nicknameOnExternalPlatform": "",
+      "contentFormat": "plain",
+      "hasAbilityToDelete": false,
+      "hasAbilityToLike": false,
+      "hasOutboundTemplates": false,
+      "isPostWritable": true,
+      "hasOutboundFlow": false,
+      "ownerUserId": 62713508,
+      "hasAbilityToShare": false,
+      "hasMultipleThreadsPerEndUser": true,
+      "hasReply": true,
+      "hasPostAsPlaceholder": true,
+      "mediaType": 3
+    },
+    "message": {
+      "id": "1bbe003a-5faf-4fb3-8623-196810af9803",
+      "authorUser": null,
+      "threadId": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc_F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "direction": "inbound",
+      "contentRemoved": null,
+      "idOnExternalPlatform": "718A3121-AC2F-4F3D-B57B-7FB7D60E9DED",
+      "url": null,
+      "recipients": [
+        {
+          "isPrivate": false,
+          "idOnExternalPlatform": "ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+          "isPrimary": true,
+          "name": " "
+        }
+      ],
+      "postId": "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc_F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "attachments": [
+        
+      ],
+      "user": null,
+      "authorNameRemoved": null,
+      "reactionStatistics": {
+        "shares": 0,
+        "likes": 0,
+        "isLikedByChannel": false,
+        "isSharedByChannel": false
+      },
+      "threadIdOnExternalPlatform": "F1D7B591-31CE-4111-B30E-ADB407EA928E",
+      "deletedOnExternalPlatform": false,
+      "readAt": null,
+      "replyChannel": null,
+      "createdAt": "2022-11-08T08:41:14+00:00",
+      "sentiment": "neutral",
+      "userStatistics": {
+        "createdToReadSeconds": null,
+        "readAt": null,
+        "seenAt": null
+      },
+      "isReplyAllowed": false,
+      "authorEndUserIdentity": {
+        "idOnExternalPlatform": "03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+        "firstName": "Sed",
+        "nickname": "Sed Des",
+        "externalPlatformId": "chat",
+        "id": "chat_03881308-8021-4EFB-8C4C-A7527AFEBB7F",
+        "image": "https:\/\/app-eu1-qa.brandembassy.com\/img\/user-default.png",
+        "fullName": "Sed Des",
+        "lastName": "Des"
+      },
+      "seen": [
+        
+      ],
+      "messageContent": {
+        "postback": null,
+        "text": "Tak ale znovu",
+        "payload": {
+          "postback": "",
+          "text": "Tak ale znovu",
+          "elements": [
+            
+          ]
+        },
+        "type": "TEXT",
+        "fallbackText": "Unsupported message content",
+        "isAutoTranslated": false,
+        "parameters": [
+          
+        ]
+      },
+      "isRead": false,
+      "tags": [
+        
+      ],
+      "isDeletedOnExternalPlatform": false,
+      "isHiddenOnExternalPlatform": false,
+      "isMadeByUser": false,
+      "delivered": [
+        
+      ],
+      "title": "",
+      "customerStatistics": {
+        "seenAt": null
+      },
+      "replyToMessage": null,
+      "contactNumber": "5933567"
+    },
+    "agentContact": null
+  },
+  "context": [
+    
+  ],
+  "eventId": "01a0110d-6c51-4cb2-a8dc-42601d3315a9",
+  "createdAt": "2022-11-08T08:41:15+00:00",
+  "createdAtWithMilliseconds": "2022-11-08T08:41:15.231+00:00"
+}

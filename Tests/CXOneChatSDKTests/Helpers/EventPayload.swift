@@ -1,12 +1,12 @@
 import Foundation
-@testable import CXOneChatSDK
+@testable import CXoneChatSDK
 
-struct EventPayLoadCodable {
+
+struct EventPayLoadCodable: Codable {
     let action: String
     let payload: MockPayload
 }
-struct MockPayload {
+
+struct MockPayload: Codable {
     let eventType: EventType
 }
-extension MockPayload: Codable {}
-extension EventPayLoadCodable: Codable {}
