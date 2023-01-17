@@ -56,12 +56,8 @@ class MessagesService: MessagesProvider {
 
         try socketService.checkForConnection()
 
-        let contactFields = contactFieldsProvider
-            .get(for: chatThread.id)
-            .map { CustomFieldDTO(ident: $0.key, value: $0.value) }
-        let customerFields = customerFieldsProvider
-            .get()
-            .map { CustomFieldDTO(ident: $0.key, value: $0.value) }
+        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[chatThread.id] ?? []
+        let customerFields = (customerFieldsProvider as? CustomerCustomFieldsService)?.customerFields ?? []
         
         let eventData = EventDataType.sendMessageData(
             .init(
@@ -70,12 +66,12 @@ class MessagesService: MessagesProvider {
                     idOnExternalPlatform: chatThread.id,
                     threadName: chatThread.messages.isEmpty ? nil : chatThread.name
                 ),
-                messageContent: .init(type: .text, payload: .init(text: message, elements: []), fallbackText: ""),
+                contentType: .text(message),
                 idOnExternalPlatform: UUID(),
                 customer: .init(customFields: customerFields),
                 contact: .init(customFields: contactFields),
                 attachments: [],
-                browserFingerprint: .init(),
+                browserFingerprint: .init(deviceToken: connectionContext.deviceToken),
                 token: socketService.accessToken.map(\.token)
             )
         )
@@ -119,9 +115,8 @@ class MessagesService: MessagesProvider {
                 throw CXoneChatError.missingParameter("decodedData")
             }
             
-            attachment.append(
-                .init(url: decoded.fileUrl, friendlyName: "fileUpload.ext", mimeType: imageData.mimeType, fileName: imageData.fileName)
-            )
+            attachment.append(.init(url: decoded.fileUrl, friendlyName: imageData.fileName, mimeType: imageData.mimeType, fileName: imageData.fileName))
+            
             index += 1
         }
         
@@ -129,12 +124,8 @@ class MessagesService: MessagesProvider {
             throw CXoneChatError.attachmentError
         }
         
-        let contactFields = contactFieldsProvider
-            .get(for: chatThread.id)
-            .map { CustomFieldDTO(ident: $0.key, value: $0.value) }
-        let customerFields = customerFieldsProvider
-            .get()
-            .map { CustomFieldDTO(ident: $0.key, value: $0.value) }
+        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[chatThread.id] ?? []
+        let customerFields = (customerFieldsProvider as? CustomerCustomFieldsService)?.customerFields ?? []
         
         let eventData = EventDataType.sendMessageData(
             .init(
@@ -143,12 +134,12 @@ class MessagesService: MessagesProvider {
                     idOnExternalPlatform: chatThread.id,
                     threadName: chatThread.messages.isEmpty ? nil : chatThread.name
                 ),
-                messageContent: .init(type: .text, payload: .init(text: message, elements: []), fallbackText: ""),
+                contentType: .text(message),
                 idOnExternalPlatform: UUID(),
                 customer: .init(customFields: customerFields),
                 contact: .init(customFields: contactFields),
                 attachments: attachment,
-                browserFingerprint: .init(),
+                browserFingerprint: .init(deviceToken: connectionContext.deviceToken),
                 token: socketService.accessToken.map(\.token)
             )
         )

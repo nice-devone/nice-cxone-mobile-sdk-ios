@@ -9,49 +9,49 @@ struct MessageDTO: Codable {
     // MARK: - Properties
     
     /// The unique id for the message.
-     let idOnExternalPlatform: UUID
-
+    let idOnExternalPlatform: UUID
+    
     /// The thread id for the message.
-     let threadIdOnExternalPlatform: UUID
-
+    let threadIdOnExternalPlatform: UUID
+    
     /// The content of the message
-     let messageContent: MessageContentDTO
-
+    let contentType: MessageContentDTOType
+    
     /// The timestamp of when the message was created.
     let createdAt: Date
     
     /// The attachments on the message.
-     let attachments: [AttachmentDTO]
+    let attachments: [AttachmentDTO]
     
     /// The direction that the message is being sent (in regards to the agent).
-     let direction: MessageDirection
+    let direction: MessageDirectionType
     
     /// Statistic information about the message (read status, viewed status, etc.).
-     let userStatistics: UserStatisticsDTO
+    let userStatistics: UserStatisticsDTO
     
     /// The agent that sent the message. Only present if the direction is outbound.
-     let authorUser: AgentDTO?
+    let authorUser: AgentDTO?
     
     /// The customer that sent the message. Only present if the direction is inbound.
-     let authorEndUserIdentity: CustomerIdentityDTO?
-
+    let authorEndUserIdentity: CustomerIdentityDTO?
+    
     
     // MARK: - Init
     
     init(
         idOnExternalPlatform: UUID,
         threadIdOnExternalPlatform: UUID,
-        messageContent: MessageContentDTO,
+        contentType: MessageContentDTOType,
         createdAt: Date,
         attachments: [AttachmentDTO],
-        direction: MessageDirection,
+        direction: MessageDirectionType,
         userStatistics: UserStatisticsDTO,
         authorUser: AgentDTO?,
         authorEndUserIdentity: CustomerIdentityDTO?
     ) {
         self.idOnExternalPlatform = idOnExternalPlatform
         self.threadIdOnExternalPlatform = threadIdOnExternalPlatform
-        self.messageContent = messageContent
+        self.contentType = contentType
         self.createdAt = createdAt
         self.attachments = attachments
         self.direction = direction
@@ -80,10 +80,10 @@ struct MessageDTO: Codable {
         
         self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
         self.threadIdOnExternalPlatform = try container.decode(UUID.self, forKey: .threadIdOnExternalPlatform)
-        self.messageContent = try container.decode(MessageContentDTO.self, forKey: .messageContent)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)
-        self.direction = try container.decode(MessageDirection.self, forKey: .direction)
+        self.direction = try container.decode(MessageDirectionType.self, forKey: .direction)
+        self.contentType = try container.decode(MessageContentDTOType.self, forKey: .messageContent)
         self.userStatistics = try container.decode(UserStatisticsDTO.self, forKey: .userStatistics)
         self.authorUser = try container.decodeIfPresent(AgentDTO.self, forKey: .authorUser)
         self.authorEndUserIdentity = try container.decodeIfPresent(CustomerIdentityDTO.self, forKey: .authorEndUserIdentity)
@@ -94,10 +94,10 @@ struct MessageDTO: Codable {
         
         try container.encode(idOnExternalPlatform, forKey: .idOnExternalPlatform)
         try container.encode(threadIdOnExternalPlatform, forKey: .threadIdOnExternalPlatform)
-        try container.encode(messageContent, forKey: .messageContent)
         try container.encodeISODate(createdAt, forKey: .createdAt)
         try container.encode(attachments, forKey: .attachments)
         try container.encode(direction, forKey: .direction)
+        try container.encode(contentType, forKey: .messageContent)
         try container.encode(userStatistics, forKey: .userStatistics)
         try container.encodeIfPresent(authorUser, forKey: .authorUser)
         try container.encodeIfPresent(authorEndUserIdentity, forKey: .authorEndUserIdentity)

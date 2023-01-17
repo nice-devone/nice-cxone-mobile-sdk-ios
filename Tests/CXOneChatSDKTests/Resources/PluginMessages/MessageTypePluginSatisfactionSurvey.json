@@ -1,0 +1,36 @@
+{
+    "idOnExternalPlatform": "a91082b7-46f8-4d0d-af43-079994de98c6",
+    "threadIdOnExternalPlatform": "AD342920-C75E-4B06-B973-00494CC811B7",
+    "createdAt": "2022-03-15T17:54:50+0000",
+    "direction": "inbound",
+    "messageContent": {
+        "type": "PLUGIN",
+        "payload": {
+            "postback": "",
+            "elements": [
+                {
+                    "id": "7a0c5bbe-af0c-47aa-986d-499eb6064811",
+                    "type": "SATISFACTION_SURVEY",
+                    "elements": [
+                        {
+                            "id": "7a0c5bbe-af0c-47aa-986d-499eb6064811",
+                            "type": "TEXT",
+                            "text": "Please rate us",
+                            "mimeType": "text/plain"
+                        },
+                        {
+                            "id": "52c804ec-6287-48d9-bc14-55bc531105f9",
+                            "type": "IFRAME_BUTTON",
+                            "text": "Open survey",
+                            "url": "http://example.com/1/2/3"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "attachments": [],
+    "userStatistics": {
+        
+    }
+}

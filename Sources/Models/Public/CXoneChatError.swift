@@ -2,7 +2,7 @@ import Foundation
 
 
 /// The different types of errors that may be experienced.
-enum CXoneChatError: LocalizedError, Equatable {
+public enum CXoneChatError: LocalizedError, Equatable {
 
     // MARK: Errors when calling any method
 
@@ -30,6 +30,9 @@ enum CXoneChatError: LocalizedError, Equatable {
     /// The server experienced an internal error and was unable to perform the action.
     case serverError
 
+    /// The server experienced an error during recovering a thread or server does not contain any existing chat thread.
+    case recoveringThreadFailed
+    
     /// The parameter  has not been set properly.
     case missingParameter(String)
 
@@ -38,8 +41,10 @@ enum CXoneChatError: LocalizedError, Equatable {
 
     /// The WebSocket refused to connect.
     case webSocketConnectionFailure
+    
     /// The channel configuration could not be retrieved.
     case channelConfigFailure
+    
     /// The customer could not be authorized anonymously.
     case anonymousAuthorizationFailure
 
@@ -76,7 +81,7 @@ enum CXoneChatError: LocalizedError, Equatable {
 
     // MARK: - Properties
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .notConnected:
             return "You are trying to call a method without connecting first. Make sure you call connect first."
@@ -125,13 +130,15 @@ enum CXoneChatError: LocalizedError, Equatable {
             return "No oldest message date is saved."
         case .missingParameter(let param):
             return "Parameter \"\(param)\" was in an unexpected format or missing."
+        case .recoveringThreadFailed:
+            return "Could not get any existing chat thread."
         }
     }
 
 
     // MARK: - Methods
 
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         type(of: lhs) == type(of: rhs) && lhs.localizedDescription == rhs.localizedDescription
     }
 }

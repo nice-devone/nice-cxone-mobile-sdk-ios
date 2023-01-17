@@ -216,10 +216,12 @@ private extension ChatThreadsService {
             }
 
             do {
-                let customFields = customFields
-                    .get(for: thread.idOnExternalPlatform)
-                    .merge(with: customerFieldsProvider.get())
-                let parsedMessage = WelcomeMessageManager.parse(welcomeMessage, with: customFields, customer: customer)
+                let parsedMessage = WelcomeMessageManager.parse(
+                    welcomeMessage,
+                    contactFields: customFields.get(for: thread.idOnExternalPlatform),
+                    customerFields: customerFieldsProvider.get(),
+                    customer: customer
+                )
 
                 try sendOutboundMessage(parsedMessage, for: thread)
             } catch {
@@ -242,10 +244,12 @@ private extension ChatThreadsService {
                 }
 
                 do {
-                    let customFields = self.customFields
-                        .get(for: thread.idOnExternalPlatform)
-                        .merge(with: self.customerFieldsProvider.get())
-                    let parsedMessage = WelcomeMessageManager.parse(welcomeMessage, with: customFields, customer: customer)
+                    let parsedMessage = WelcomeMessageManager.parse(
+                        welcomeMessage,
+                        contactFields: self.customFields.get(for: thread.idOnExternalPlatform),
+                        customerFields: self.customerFieldsProvider.get(),
+                        customer: customer
+                    )
 
                     try self.sendOutboundMessage(parsedMessage, for: thread)
                 } catch {
@@ -260,9 +264,7 @@ private extension ChatThreadsService {
 
         try socketService.checkForConnection()
 
-        let customFields = customFields
-            .get(for: thread.idOnExternalPlatform)
-            .map { CustomFieldDTO(ident: $0.key, value: $0.value) }
+        let customFields = (customFields as? ContactCustomFieldsService)?.contactFields[thread.idOnExternalPlatform] ?? []
         let eventData = EventDataType.sendOutboundMessageData(
             .init(
                 thread: .init(
@@ -270,11 +272,11 @@ private extension ChatThreadsService {
                     idOnExternalPlatform: thread.idOnExternalPlatform,
                     threadName: thread.messages.isEmpty ? nil : thread.threadName
                 ),
-                messageContent: .init(type: .text, payload: .init(text: message, elements: []), fallbackText: ""),
+                contentType: .text(message),
                 idOnExternalPlatform: UUID(),
                 consumerContact: .init(customFields: customFields),
                 attachments: [],
-                browserFingerprint: .init(),
+                browserFingerprint: .init(deviceToken: connectionContext.deviceToken),
                 token: socketService.accessToken.map(\.token)
             )
         )

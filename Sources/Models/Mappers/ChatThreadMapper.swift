@@ -3,12 +3,12 @@ import Foundation
 
 enum ChatThreadMapper {
     
-    static func map(_ entity: ChatThread) -> ChatThreadDTO {
+    static func map(_ entity: ChatThread) throws -> ChatThreadDTO {
         .init(
             id: entity._id,
             idOnExternalPlatform: entity.id,
             threadName: entity.name,
-            messages: entity.messages.map(MessageMapper.map),
+            messages: try entity.messages.map(MessageMapper.map),
             threadAgent: entity.assignedAgent.map(AgentMapper.map),
             canAddMoreMessages: entity.canAddMoreMessages,
             contactId: entity.contactId,

@@ -25,9 +25,7 @@ public struct SenderInfo {
     
     /// - Parameter message: The info about a message in a chat.
     public init(message: Message) {
-        let isAgent = message.direction == .outbound
-        
-        if isAgent {
+        if message.direction == .toClient {
             self.id = String(message.authorUser?.id ?? 0)
             self.firstName = message.authorUser?.firstName ?? "Automated"
             self.lastName = message.authorUser?.surname ?? "Agent"

@@ -9,7 +9,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     private let message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+        contentType: .text(""),
         createdAt: Date(),
         attachments: [],
         direction: .inbound,

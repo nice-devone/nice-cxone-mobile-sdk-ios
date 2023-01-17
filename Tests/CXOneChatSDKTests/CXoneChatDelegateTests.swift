@@ -13,7 +13,7 @@ class CXoneChatDelegateTests: XCTestCase {
     private let message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+        contentType: .text(""),
         createdAt: Date(),
         attachments: [],
         direction: .inbound,
@@ -23,7 +23,7 @@ class CXoneChatDelegateTests: XCTestCase {
     )
     let agent = AgentDTO(
         id: 123,
-        inContactId: UUID(),
+        inContactId: "",
         emailAddress: nil,
         loginUsername: "kjoe",
         firstName: "name",
@@ -53,14 +53,6 @@ class CXoneChatDelegateTests: XCTestCase {
         CXoneChat.delegate = self
         
         CXoneChat.delegate?.onThreadLoad(chatThread)
-    }
-    
-    func testOnThreadLoadFailDefaultImplementationCalled() {
-        CXoneChat.delegate = self
-        
-        CXoneChat.delegate?.onThreadLoadFail(
-            OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "")
-        )
     }
     
     func testOnThreadArchiveDefaultImplementationCalled() {

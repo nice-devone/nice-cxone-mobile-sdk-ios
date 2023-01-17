@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 
 import PackageDescription
 import Foundation
@@ -6,14 +6,15 @@ import Foundation
 
 let package = Package(
     name: "CXoneChatSDK",
-	platforms: [
+    platforms: [
         .iOS(.v13),
         .macOS(.v10_15)
-	],
+    ],
     products: [
         .library(
             name: "CXoneChatSDK",
-            targets: ["CXoneChatSDK"]),
+            targets: ["CXoneChatSDK"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0")
@@ -24,14 +25,14 @@ let package = Package(
             dependencies: [
                 .product(name: "KeychainSwift", package: "keychain-swift")
             ],
-			path: "Sources",
+            path: "Sources",
             resources: [],
             plugins: []
         ),
         .testTarget(
             name: "CXoneChatSDKTests",
             dependencies: ["CXoneChatSDK"],
-			path: "Tests",
+            path: "Tests",
             resources: [
                 .copy("CXoneChatSDKTests/Resources/CaseInboxAssigneeChanged.json"),
                 .copy("CXoneChatSDKTests/Resources/ChannelConfiguration.json"),
@@ -51,8 +52,16 @@ let package = Package(
                 .copy("CXoneChatSDKTests/Resources/WelcomeMessage.json"),
                 .copy("CXoneChatSDKTests/Resources/CustomPopup.json"),
                 .copy("CXoneChatSDKTests/Resources/ProActiveActionCustomPopupWithEmtyVariables.json"),
-                .copy("CXoneChatSDKTests/Resources/StoreVisitorEventsPayloadDTO.json")
+                .copy("CXoneChatSDKTests/Resources/StoreVisitorEventsPayloadDTO.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypeText.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginDeeplink.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginTextAndButtons.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginQuickReplies.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginMenu.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginCustom.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginSatisfactionSurvey.json"),
+                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginGallery.json")
             ]
-        ),
+        )
     ]
 )

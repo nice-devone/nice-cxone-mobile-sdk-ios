@@ -14,10 +14,6 @@ public protocol CXoneChatDelegate: AnyObject {
     /// - Parameter thread: The loaded thread.
     func onThreadLoad(_ thread: ChatThread)
     
-    /// Callback to be called when loading a thread has failed. This can be used to prompt the user to create their first thread.
-    /// - Parameter error: The error indicates thread load failed.
-    func onThreadLoadFail(_ error: Error)
-    
     /// Callback to be called when a thread has been archived.
     func onThreadArchive()
     
@@ -55,8 +51,9 @@ public protocol CXoneChatDelegate: AnyObject {
     func onAgentReadMessage(threadId: UUID)
     
     /// Callback to be called when the agent has stopped typing.
+    /// - Parameter isTyping: An agent has started or ended typing.
     /// - Parameter threadId: The unique identifier of thread where typing state changed.
-    func onAgentTyping(_ didEnd: Bool, threadId: UUID)
+    func onAgentTyping(_ isTyping: Bool, threadId: UUID)
     
     /// Callback to be called when the custom fields are set for a contact.
     func onContactCustomFieldsSet()
@@ -89,7 +86,6 @@ public extension CXoneChatDelegate {
     func onConnect() { }
     func onUnexpectedDisconnect() { }
     func onThreadLoad(_ thread: ChatThread) { }
-    func onThreadLoadFail(_ error: Error) { }
     func onThreadArchive() { }
     func onThreadsLoad(_ threads: [ChatThread]) { }
     func onThreadInfoLoad(_ thread: ChatThread) { }

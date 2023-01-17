@@ -4,6 +4,8 @@ import Foundation
 
 extension Date {
     
+    // MARK: - Methods
+    
     static func ISO8601(from string: String) throws -> Date {
         let dateFormatter = ISO8601DateFormatter()
         

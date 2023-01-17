@@ -97,27 +97,6 @@ class ModelDecoderEncoderTests: XCTestCase {
         }
     }
     
-    // MARK: - ContentType
-    
-    func testMessageContentTypeDecodeCorrectly() throws {
-        let testCases: [(json: String, type: MessageContentType)] = [
-            ("{\"type\": \"text\"}", .unknown),
-            ("{\"type\": \"TEXT\"}", .text),
-            ("{\"type\": \"PLUGIN\"}", .plugin),
-            ("{\"type\": \"unknown\"}", .unknown)
-        ]
-        
-        try testCases.forEach { element in
-            guard let data = element.json.data(using: .utf8) else {
-                throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: element.json))
-            }
-            
-            let dictionary = try JSONDecoder().decode([String: MessageContentType].self, from: data)
-            
-            XCTAssertEqual(dictionary["type"], element.type)
-        }
-    }
-    
     
     // MARK: - AuthorizeCustomerEventDataDTO
     
@@ -214,7 +193,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             "customFields": [
                 {
                     "ident": "key",
-                    "value": "value"
+                    "value": "value",
+                    "updatedAt": "2022-06-07T21:10:49+01:00"
                 }
             ],
             "consumerContact": {
@@ -241,7 +221,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testProactiveActionDataDTOEncodeCorrectly() throws {
         var entity = ProactiveActionDataDTO(
             content: .init(bodyText: "bodyText", headlineText: "headlineText", headlineSecondaryText: nil, image: "image"),
-            customFields: [.init(ident: "key", value: "value")],
+            customFields: [.init(ident: "key", value: "value", updatedAt: Date())],
             templateType: .fullImage,
             call2action: .init(isVisible: false, text: "text"),
             design: .init(
@@ -272,16 +252,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testSendMessageEventDataDTODecodeCorrectly() throws {
         var entity = SendMessageEventDataDTO(
             thread: .init(id: UUID().uuidString, idOnExternalPlatform: UUID(), threadName: "name"),
-            messageContent: .init(
-                type: .text,
-                payload: .init(
-                    text: "text",
-                    elements: [
-                        .init(id: "id", type: .text, text: "text", postback: nil, url: nil, fileName: nil, mimeType: nil, elements: nil)
-                    ]
-                ),
-                fallbackText: ""
-            ),
+            contentType: .text("text"),
             idOnExternalPlatform: UUID(),
             customer: .init(customFields: []),
             contact: .init(customFields: []),
@@ -294,10 +265,12 @@ class ModelDecoderEncoderTests: XCTestCase {
         entity = try JSONDecoder().decode(SendMessageEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.thread.threadName, "name")
-        XCTAssertEqual(entity.messageContent.payload.text, "text")
-        XCTAssertEqual(entity.messageContent.payload.elements.count, 1)
-        XCTAssertEqual(entity.messageContent.payload.elements.first?.id, "id")
-        XCTAssertEqual(entity.messageContent.payload.elements.first?.text, "text")
+        
+        guard case .text(let text) = entity.contentType else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(text, "text")
         XCTAssertEqual(entity.token, "token")
     }
     
@@ -307,16 +280,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testSendOutboundMessageEventDataDTODecodeCorrectly() throws {
         var entity = SendOutboundMessageEventDataDTO(
             thread: .init(id: UUID().uuidString, idOnExternalPlatform: UUID(), threadName: "name"),
-            messageContent: .init(
-                type: .text,
-                payload: .init(
-                    text: "text",
-                    elements: [
-                        .init(id: "id", type: .text, text: "text", postback: nil, url: nil, fileName: nil, mimeType: nil, elements: nil)
-                    ]
-                ),
-                fallbackText: ""
-            ),
+            contentType: .text("text"),
             idOnExternalPlatform: UUID(),
             consumerContact: .init(customFields: []),
             attachments: [],
@@ -327,11 +291,13 @@ class ModelDecoderEncoderTests: XCTestCase {
         let data = try JSONEncoder().encode(entity)
         entity = try JSONDecoder().decode(SendOutboundMessageEventDataDTO.self, from: data)
         
+        guard case .text(let text) = entity.contentType else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(text, "text")
+        
         XCTAssertEqual(entity.thread.threadName, "name")
-        XCTAssertEqual(entity.messageContent.payload.text, "text")
-        XCTAssertEqual(entity.messageContent.payload.elements.count, 1)
-        XCTAssertEqual(entity.messageContent.payload.elements.first?.id, "id")
-        XCTAssertEqual(entity.messageContent.payload.elements.first?.text, "text")
         XCTAssertEqual(entity.token, "token")
     }
     
@@ -397,7 +363,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             .sendMessageData(
                 .init(
                     thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"),
-                    messageContent: .init(type: .text, payload: .init(text: "text", elements: []), fallbackText: ""),
+                    contentType: .text("text"),
                     idOnExternalPlatform: UUID(),
                     customer: .init(customFields: []),
                     contact: .init(customFields: []),
@@ -409,7 +375,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             .sendOutboundMessageData(
                 .init(
                     thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"),
-                    messageContent: .init(type: .text, payload: .init(text: "text", elements: []), fallbackText: ""),
+                    contentType: .text("text"),
                     idOnExternalPlatform: UUID(),
                     consumerContact: .init(customFields: []),
                     attachments: [],
@@ -528,5 +494,19 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertTrue(expectation.contains("c80f620c-7825-4695-aadd-cdfeb0bb7376"))
         XCTAssertTrue(encoded.contains("visitor"))
         XCTAssertTrue(encoded.contains("c80f620c-7825-4695-aadd-cdfeb0bb7376"))
+    }
+    
+    func testThreadRecoveredEventDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent", extension: "json")
+        
+        let threadRecover = try JSONDecoder().decode(ThreadRecoveredEventDTO.self, from: data)
+        
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.value, "24")
+        
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.count, 2)
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.value, "Sales")
     }
 }

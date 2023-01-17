@@ -7,7 +7,7 @@ struct SendOutboundMessageEventDataDTO: Codable {
     
     let thread: ThreadDTO
 
-    let messageContent: MessageContentDTO
+    let contentType: MessageContentDTOType
 
     let idOnExternalPlatform: UUID
 
@@ -24,7 +24,7 @@ struct SendOutboundMessageEventDataDTO: Codable {
     
     init(
         thread: ThreadDTO,
-        messageContent: MessageContentDTO,
+        contentType: MessageContentDTOType,
         idOnExternalPlatform: UUID,
         consumerContact: ContactCustomFieldsDataDTO,
         attachments: [AttachmentDTO],
@@ -32,7 +32,7 @@ struct SendOutboundMessageEventDataDTO: Codable {
         token: String?
     ) {
         self.thread = thread
-        self.messageContent = messageContent
+        self.contentType = contentType
         self.idOnExternalPlatform = idOnExternalPlatform
         self.consumerContact = consumerContact
         self.attachments = attachments
@@ -62,7 +62,7 @@ struct SendOutboundMessageEventDataDTO: Codable {
         let accessTokenContainer = try? container.nestedContainer(keyedBy: AccessTokenCodingKey.self, forKey: .accessToken)
         
         self.thread = try container.decode(ThreadDTO.self, forKey: .thread)
-        self.messageContent = try container.decode(MessageContentDTO.self, forKey: .messageContent)
+        self.contentType = try container.decode(MessageContentDTOType.self, forKey: .messageContent)
         self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
         self.consumerContact = try container.decode(ContactCustomFieldsDataDTO.self, forKey: .consumerContact)
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)
@@ -74,7 +74,7 @@ struct SendOutboundMessageEventDataDTO: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(thread, forKey: .thread)
-        try container.encode(messageContent, forKey: .messageContent)
+        try container.encode(contentType, forKey: .messageContent)
         try container.encode(idOnExternalPlatform, forKey: .idOnExternalPlatform)
         try container.encode(consumerContact, forKey: .consumerContact)
         try container.encode(attachments, forKey: .attachments)

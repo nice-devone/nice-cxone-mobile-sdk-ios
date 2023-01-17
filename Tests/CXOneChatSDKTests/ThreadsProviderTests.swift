@@ -14,7 +14,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     
     let agent = AgentDTO(
         id: 123,
-        inContactId: UUID(),
+        inContactId: "",
         emailAddress: nil,
         loginUsername: "kjoe",
         firstName: "name",
@@ -219,7 +219,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             MessageDTO(
                 idOnExternalPlatform: UUID(),
                 threadIdOnExternalPlatform: thread.idOnExternalPlatform,
-                messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+                contentType: .text(""),
                 createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
                 attachments: [],
                 direction: .inbound,
@@ -258,13 +258,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         id: UUID().uuidString,
                         threadIdOnExternalPlatform: UUID(),
                         status: .new,
-                        createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00")
+                        createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
+                        customFields: []
                     ),
                     messages: [
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
                             threadIdOnExternalPlatform: thread.id,
-                            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+                            contentType: .text(""),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
                             attachments: [],
                             direction: .inbound,
@@ -275,7 +276,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
                             threadIdOnExternalPlatform: thread.id,
-                            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+                            contentType: .text(""),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
                             attachments: [],
                             direction: .inbound,
@@ -284,7 +285,18 @@ class ThreadsProviderTests: CXoneXCTestCase {
                             authorEndUserIdentity: nil
                         )
                     ],
-                    ownerAssignee: nil,
+                    inboxAssignee: .init(
+                        id: 0,
+                        inContactId: UUID().uuidString,
+                        emailAddress: nil,
+                        loginUsername: "jdoe",
+                        firstName: "John",
+                        surname: "Doe",
+                        nickname: nil,
+                        isBotUser: false,
+                        isSurveyUser: false,
+                        imageUrl: ""
+                    ),
                     thread: ReceivedThreadDataDTO(
                         id: UUID().uuidString,
                         idOnExternalPlatform: thread.id,
@@ -294,7 +306,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         updatedAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
                         canAddMoreMessages: true
                     ),
-                    messagesScrollToken: "token"
+                    messagesScrollToken: "token",
+                    customerContactFields: []
                 )
             )
         )
@@ -373,9 +386,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
                 postback: .init(
                     eventType: .recoverThread,
                     data: .init(
-                        consumerContact: .init(id: UUID().uuidString, threadIdOnExternalPlatform: UUID(), status: .open, createdAt: Date()),
+                        consumerContact: .init(
+                            id: UUID().uuidString,
+                            threadIdOnExternalPlatform: UUID(),
+                            status: .open,
+                            createdAt: Date(),
+                            customFields: [.init(ident: "contact.customFields.location", value: "EU", updatedAt: Date())]
+                        ),
                         messages: [],
-                        ownerAssignee: nil,
+                        inboxAssignee: nil,
                         thread: .init(
                             id: "asd",
                             idOnExternalPlatform: UUID(),
@@ -385,7 +404,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
                             updatedAt: Date(),
                             canAddMoreMessages: true
                         ),
-                        messagesScrollToken: "asdasda"
+                        messagesScrollToken: "asdasda",
+                        customerContactFields: [.init(ident: "customer.customFields.age", value: "EU", updatedAt: Date())]
                     )
                 )
             )
@@ -497,10 +517,10 @@ class ThreadsProviderTests: CXoneXCTestCase {
             .init(
                 id: UUID(),
                 threadId: UUID(),
-                messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+                contentType: .text(""),
                 createdAt: Date(),
                 attachments: [],
-                direction: .inbound,
+                direction: .toAgent,
                 userStatistics: .init(seenAt: nil, readAt: nil),
                 authorUser: nil,
                 authorEndUserIdentity: nil
@@ -561,7 +581,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: UUID(),
-            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: Date(),
             attachments: [],
             direction: .inbound,
@@ -582,7 +602,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         let message = MessageDTO(
             idOnExternalPlatform: uuid,
             threadIdOnExternalPlatform: UUID(),
-            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: Date(),
             attachments: [],
             direction: .inbound,

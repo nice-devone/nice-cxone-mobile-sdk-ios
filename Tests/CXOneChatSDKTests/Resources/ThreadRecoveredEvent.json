@@ -1,917 +1,364 @@
 {
-    "eventId": "2DEDAD5D-5EAF-4693-80DC-F1F30312236B",
-    "postback": {
-        "eventType": "ThreadRecovered",
-        "data": {
-            "consumerContact": {
-                "status": "new",
-                "createdAt": "2022-03-15T11:54:51-0600",
-                "statusUpdatedAt": "2022-03-15T11:54:51-0600",
-                "statistics": {
-                    "firstResponseTime": 0,
-                    "resolutionTime": 0,
-                    "totalResponses": 0,
-                    "agentResponses": 0,
-                    "customerResponses": 0
-                },
-                "customer": {
-                    "customerId": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                    "name": "Yoel Jimenez del",
-                    "surname": "valle",
-                    "customerIdent": "1D392560-E1C0-4973-A9E1-1280DB66D0D5"
-                },
-                "routingQueueId": "6618c229-bc8c-497a-83cf-964343153627",
-                "routingQueuePriority": 1,
-                "isOwn": false,
-                "sentiment": "neutral",
-                "ownerAssignee": 9332,
-                "inboxAssignee": 9332,
-                "recipients": [
-                    {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel Jimenez del valle",
-                        "isPrimary": true,
-                        "isPrivate": false
-                    }
-                ],
-                "caseId": "127035369413",
-                "messagesId": [
-                    "a91082b7-46f8-4d0d-af43-079994de98c6"
-                ],
-                "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                "agentName": "Cameron Bruce",
-                "sourceId": 0,
-                "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                "caseDetailUrl": "https://app-de-na1.niceincontact.com/care?redirect=no#/care/tab/chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45/case/127035369413"
+  "eventId": "751c31be-9c89-4a25-aa43-bf1f2a51f822",
+  "postback": {
+    "eventType": "ThreadRecovered",
+    "data": {
+      "consumerContact": {
+        "id": "6098076",
+        "status": "resolved",
+        "createdAt": "2022-12-12T15:41:18+0100",
+        "statusUpdatedAt": "2022-12-12T15:41:45+0100",
+        "statistics": {
+          "firstResponseTime": 27,
+          "resolutionTime": 27,
+          "totalResponses": 2,
+          "agentResponses": 1,
+          "customerResponses": 1
+        },
+        "customer": {
+          "customerId": "chat_816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+          "name": "",
+          "surname": "",
+          "customerIdent": "816c5cc1-8341-4e5b-803b-08cfd3edb02e"
+        },
+        "routingQueueId": null,
+        "routingQueuePriority": 0,
+        "isOwn": false,
+        "sentiment": "neutral",
+        "ownerAssignee": 0,
+        "inboxAssignee": 0,
+        "recipients": [
+          {
+            "idOnExternalPlatform": "816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+            "name": " ",
+            "isPrimary": true,
+            "isPrivate": false
+          },
+          {
+            "idOnExternalPlatform": "e11131fa-f3a2-4728-9e22-bee2936ea855",
+            "name": "android chat",
+            "isPrimary": true,
+            "isPrivate": false
+          }
+        ],
+        "customFields": [
+          {
+            "ident": "contact.customFields.department",
+            "value": "Sales",
+            "value_number": 0,
+            "value_not_analyzed": "Sales",
+            "updatedAt": "2022-06-07T21:10:49+01:00"
+          },
+          {
+            "ident": "contact.customFields.location",
+            "value": "Northeast",
+            "value_number": 0,
+            "value_not_analyzed": "Northeast",
+            "updatedAt": "2022-06-07T21:10:49+01:00"
+          }
+        ],
+        "abandon": null,
+        "caseId": "6098076",
+        "messagesId": [
+          "b2a2c4e4-c5dc-49ea-b18e-84d85f925d2f",
+          "bb9b6ac9-20c2-4c43-a8c5-61490bc6ece6",
+          "01c292ed-3a1a-4a83-b19e-ba1a873f54d0"
+        ],
+        "postId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+        "agentName": null,
+        "sourceId": 0,
+        "channelId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855",
+        "caseDetailUrl": "https://app-eu1-qa.brandembassy.com/care?redirect=no#/care/tab/chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf/case/6098076",
+        "threadIdOnExternalPlatform": "1bb59beb-49bd-4dee-829a-9603ae6260cf"
+      },
+      "ownerAssignee": null,
+      "inboxAssignee": null,
+      "messages": [
+        {
+          "id": "01c292ed-3a1a-4a83-b19e-ba1a873f54d0",
+          "idOnExternalPlatform": "6c53766a-9d92-4d4b-964f-eecb54c1c2c3",
+          "postId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadIdOnExternalPlatform": "1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "messageContent": {
+            "text": "Hello",
+            "type": "TEXT",
+            "payload": {
+              "text": "Hello",
+              "postback": "",
+              "elements": []
             },
-            "ownerAssignee": {
-                "id": 9332,
-                "username": "cameron@cxonedemo.com",
-                "loginUsername": "cameron@cxonedemo.com",
-                "name": "Cameron",
-                "firstName": "Cameron",
-                "surname": "Bruce",
-                "fullName": "Cameron Bruce",
-                "image": "https://app-de-na1.niceincontact.com/img/user/c.png",
-                "imagePublic": "",
-                "email": "cameron@cxonedemo.com",
-                "emailAddress": "cameron@cxonedemo.com",
-                "nickname": "",
-                "inContactId": "11ea99f1-c4c9-d0b0-b68c-0242ac110003",
-                "incontactId": "11ea99f1-c4c9-d0b0-b68c-0242ac110003",
-                "inContactSharedUser": false,
-                "isChatbot": false,
-                "isBotUser": false,
-                "isSurveyUser": false
+            "fallbackText": "Unsupported message content",
+            "isAutoTranslated": false,
+            "parameters": [],
+            "postback": null
+          },
+          "createdAt": "2022-12-12T14:41:45+00:00",
+          "isMadeByUser": true,
+          "direction": "outbound",
+          "user": {
+            "id": 62713550,
+            "incontactId": null,
+            "emailAddress": "pavel.reiter@nice.com",
+            "loginUsername": "pavel.reiter@nice.com",
+            "firstName": "Pavel",
+            "surname": "Reiter",
+            "nickname": "",
+            "imageUrl": "https://app-eu1-qa.brandembassy.com/img/user/p.png",
+            "publicImageUrl": null,
+            "isBotUser": false,
+            "isSurveyUser": false
+          },
+          "authorUser": {
+            "id": 62713550,
+            "incontactId": null,
+            "emailAddress": "pavel.reiter@nice.com",
+            "loginUsername": "pavel.reiter@nice.com",
+            "firstName": "Pavel",
+            "surname": "Reiter",
+            "nickname": "",
+            "imageUrl": "https://app-eu1-qa.brandembassy.com/img/user/p.png",
+            "publicImageUrl": null,
+            "isBotUser": false,
+            "isSurveyUser": false
+          },
+          "authorEndUserIdentity": null,
+          "isRead": true,
+          "attachments": [],
+          "tags": [],
+          "sentiment": "neutral",
+          "deletedOnExternalPlatform": false,
+          "isDeletedOnExternalPlatform": false,
+          "isHiddenOnExternalPlatform": false,
+          "reactionStatistics": {
+            "likes": 0,
+            "shares": 0,
+            "isLikedByChannel": false,
+            "isSharedByChannel": false
+          },
+          "contentRemoved": null,
+          "authorNameRemoved": null,
+          "replyToMessage": {
+            "id": "bb9b6ac9-20c2-4c43-a8c5-61490bc6ece6",
+            "idOnExternalPlatform": "b1c12906-9feb-42cf-827e-69d8c9f87e6e"
+          },
+          "readAt": "2022-12-12T14:41:45+00:00",
+          "title": "",
+          "recipients": [
+            {
+              "idOnExternalPlatform": "816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+              "name": " ",
+              "isPrimary": true,
+              "isPrivate": false
+            }
+          ],
+          "url": null,
+          "replyChannel": null,
+          "customerStatistics": {
+            "seenAt": null
+          },
+          "userStatistics": {
+            "seenAt": null,
+            "readAt": "2022-12-12T14:41:45+00:00",
+            "createdToReadSeconds": {
+              "notReflectingBusinessHours": 0,
+              "reflectingBusinessHours": 0
+            }
+          },
+          "contactNumber": "6098076",
+          "isReplyAllowed": false,
+          "seen": [],
+          "delivered": []
+        },
+        {
+          "id": "bb9b6ac9-20c2-4c43-a8c5-61490bc6ece6, ",
+          "idOnExternalPlatform": "b1c12906-9feb-42cf-827e-69d8c9f87e6e",
+          "postId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadIdOnExternalPlatform": "1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "messageContent": {
+            "text": "Hi",
+            "type": "TEXT",
+            "payload": {
+              "text": "Hi",
+              "postback": "",
+              "elements": []
             },
-            "messages": [
-                {
-                    "messageId": "a91082b7-46f8-4d0d-af43-079994de98c6",
-                    "idOnExternalPlatform": "AD342920-C75E-4B06-B973-00494CC811B7",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035369413",
-                    "contactNumber": "127035369413",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-03-15T17:54:50+0000",
-                    "createdAtIso": "2022-03-15T17:54:50+00:00",
-                    "receivedAt": "2022-03-15T17:54:50+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Class ",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Class ",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": false,
-                    "readAt": null,
-                    "messageAssignedUser": null,
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel Jimenez del valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.213.156",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "02a4dd5c-bd00-43d7-9edf-0c70e7bfee53",
-                    "idOnExternalPlatform": "6FED6852-FD91-4E37-8B2E-2FF158D468EE",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035358266",
-                    "contactNumber": "127035358266",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-03-08T21:45:30+0000",
-                    "createdAtIso": "2022-03-08T21:45:30+00:00",
-                    "receivedAt": "2022-03-08T21:45:41+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Hugh. Hi. ",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Hugh. Hi. ",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-08 23:08:22.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel Jimenez del valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.174.253",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "d8a9094d-f619-429a-ab40-56fb8d2cad6e",
-                    "idOnExternalPlatform": "7C7DF2A1-CD73-4C59-805E-E7D952EEB90A",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035340186",
-                    "contactNumber": "127035340186",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-02-28T19:35:35+0000",
-                    "createdAtIso": "2022-02-28T19:35:35+00:00",
-                    "receivedAt": "2022-02-28T19:35:35+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Hhh. T",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Hhh. T",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-01 22:16:48.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.213.250",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "e7d4d241-dd11-4b08-906c-469e46af0400",
-                    "idOnExternalPlatform": "B8B15FAA-C7B4-410A-B900-C7520B743C17",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035340186",
-                    "contactNumber": "127035340186",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-02-28T19:25:57+0000",
-                    "createdAtIso": "2022-02-28T19:25:57+00:00",
-                    "receivedAt": "2022-02-28T19:25:57+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Lucha. Uc. I ",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Lucha. Uc. I ",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-01 22:16:48.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.213.250",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "5baad8bf-d1b4-4219-b88b-586ee29245fb",
-                    "idOnExternalPlatform": "09C78E7A-7734-43A1-BC17-686ED9ABE20A",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035340186",
-                    "contactNumber": "127035340186",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-02-28T19:23:38+0000",
-                    "createdAtIso": "2022-02-28T19:23:38+00:00",
-                    "receivedAt": "2022-02-28T19:23:39+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Uff ",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Uff ",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-01 22:16:48.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.207.145.250",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "2dae9fbd-fcf2-4ed0-ac7d-199e1540aa51",
-                    "idOnExternalPlatform": "37A50BE1-BD0B-4A47-A24E-4D63D4325BC2",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035340186",
-                    "contactNumber": "127035340186",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-02-28T17:26:28+0000",
-                    "createdAtIso": "2022-02-28T17:26:28+00:00",
-                    "receivedAt": "2022-02-28T17:26:29+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "Yo valle ",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "Yo valle ",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-01 22:16:48.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.213.250",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                },
-                {
-                    "messageId": "98944405-3376-4fdd-af5d-c44c31f524e0",
-                    "idOnExternalPlatform": "77CC3E22-3D10-4835-8B0B-999E13D8F234",
-                    "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                    "isOwn": false,
-                    "caseId": "127035340186",
-                    "contactNumber": "127035340186",
-                    "replyToMessageId": "",
-                    "replyToMessageIdOnExternalPlatform": "",
-                    "url": "",
-                    "createdAt": "2022-02-28T17:26:08+0000",
-                    "createdAtIso": "2022-02-28T17:26:08+00:00",
-                    "receivedAt": "2022-02-28T17:26:08+00:00",
-                    "title": "",
-                    "messageContent": {
-                        "text": "",
-                        "type": "TEXT",
-                        "payload": {
-                            "text": "",
-                            "postback": "",
-                            "elements": []
-                        },
-                        "fallbackText": "Unsupported message content"
-                    },
-                    "sentiment": "neutral",
-                    "tagIds": [],
-                    "isRead": true,
-                    "readAt": {
-                        "date": "2022-03-01 22:16:48.000000",
-                        "timezone_type": 1,
-                        "timezone": "+00:00"
-                    },
-                    "messageAssignedUser": {
-                        "id": 9616,
-                        "username": "oscar.garcia@cxonedemo.com",
-                        "loginUsername": "oscar.garcia@cxonedemo.com",
-                        "name": "Oscar",
-                        "firstName": "Oscar",
-                        "surname": "Garcia",
-                        "fullName": "Oscar Garcia",
-                        "image": "https://app-de-na1.niceincontact.com/img/user/o.png",
-                        "imagePublic": "",
-                        "email": "oscar.garcia@cxonedemo.com",
-                        "emailAddress": "oscar.garcia@cxonedemo.com",
-                        "nickname": "",
-                        "inContactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "incontactId": "11ec1b2a-9831-31e0-99ff-0242ac110002",
-                        "inContactSharedUser": false,
-                        "isChatbot": false,
-                        "isBotUser": false,
-                        "isSurveyUser": false
-                    },
-                    "attachments": [],
-                    "semanticEntities": [],
-                    "socialAttributes": {
-                        "likes": 0,
-                        "twitterFavorties": 0,
-                        "facebookLikes": 0,
-                        "isDeletedOnExternalPlatform": false
-                    },
-                    "endUser": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "name": "Yoel valle",
-                        "nickname": ""
-                    },
-                    "seen": [],
-                    "delivered": [],
-                    "recipients": [],
-                    "userFingerprint": {
-                        "browser": "",
-                        "browserVersion": "",
-                        "os": "",
-                        "osVersion": "",
-                        "language": "",
-                        "ip": "152.206.213.250",
-                        "location": "",
-                        "country": "",
-                        "deviceType": ""
-                    },
-                    "authorEndUserIdentity": {
-                        "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "firstName": "Yoel Jimenez del",
-                        "lastName": "valle",
-                        "nickname": "Yoel Jimenez del valle",
-                        "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                        "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                        "fullName": "Yoel Jimenez del valle"
-                    }
-                }
-            ],
-            "messagesScrollToken": "",
-            "thread": {
-                "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                "idOnExternalPlatform": "68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                "ticketNumber": "",
-                "content": "",
-                "title": "",
-                "threadName": "",
-                "url": "",
-                "isOwn": false,
-                "createdAt": "2022-02-28T17:26:07+00:00",
-                "updatedAt": "2022-03-15T20:16:28+00:00",
-                "author": {
-                    "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                    "name": "Yoel valle",
-                    "nickname": ""
-                },
-                "image": "",
-                "tagIds": [],
-                "likes": 0,
-                "attachments": [],
-                "recipients": [],
-                "canAddMoreMessages": true,
-                "deletedOnExternalPlatform": false,
-                "unseenMessagesCount": 7,
-                "unseenByUserMessagesCount": 7,
-                "unseenByEndUserMessagesCount": 0
+            "fallbackText": "Unsupported message content",
+            "isAutoTranslated": false,
+            "parameters": [],
+            "postback": null
+          },
+          "createdAt": "2022-12-12T14:41:22+00:00",
+          "isMadeByUser": false,
+          "direction": "inbound",
+          "user": null,
+          "authorUser": null,
+          "authorEndUserIdentity": {
+            "idOnExternalPlatform": "816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+            "firstName": "",
+            "lastName": "",
+            "nickname": " ",
+            "image": "https://app-eu1-qa.brandembassy.com/img/user-default.png",
+            "externalPlatformId": "chat",
+            "id": "chat_816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+            "fullName": " "
+          },
+          "isRead": true,
+          "attachments": [],
+          "tags": [],
+          "sentiment": "neutral",
+          "deletedOnExternalPlatform": false,
+          "isDeletedOnExternalPlatform": false,
+          "isHiddenOnExternalPlatform": false,
+          "reactionStatistics": {
+            "likes": 0,
+            "shares": 0,
+            "isLikedByChannel": false,
+            "isSharedByChannel": false
+          },
+          "contentRemoved": null,
+          "authorNameRemoved": null,
+          "replyToMessage": null,
+          "readAt": "2022-12-12T14:41:45+00:00",
+          "title": "",
+          "recipients": [],
+          "url": null,
+          "replyChannel": null,
+          "customerStatistics": {
+            "seenAt": null
+          },
+          "userStatistics": {
+            "seenAt": null,
+            "readAt": "2022-12-12T14:41:45+00:00",
+            "createdToReadSeconds": {
+              "notReflectingBusinessHours": 23,
+              "reflectingBusinessHours": 23
+            }
+          },
+          "contactNumber": "6098076",
+          "isReplyAllowed": false,
+          "seen": [],
+          "delivered": []
+        },
+        {
+          "id": "b2a2c4e4-c5dc-49ea-b18e-84d85f925d2f",
+          "idOnExternalPlatform": "fd7dfa24-1c41-4f47-91ed-be5e0f4ee5ad",
+          "postId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "threadIdOnExternalPlatform": "1bb59beb-49bd-4dee-829a-9603ae6260cf",
+          "messageContent": {
+            "text": "Dear , we would like to offer you a discount just for Northeast. ",
+            "type": "TEXT",
+            "payload": {
+              "text": "Dear , we would like to offer you a discount just for Northeast. ",
+              "postback": "",
+              "elements": []
             },
-            "contactHistory": [
-                {
-                    "eventId": "62c1b095-7d5d-4683-b258-ac032a7282f5",
-                    "eventObject": "Case",
-                    "eventType": "CaseInboxAssigneeChanged",
-                    "createdAt": "2022-03-15T19:28:10+00:00",
-                    "createdAtWithMilliseconds": "2022-03-15T19:28:10.000+00:00",
-                    "data": {
-                        "brand": {
-                            "id": 1386,
-                            "tenantId": "11e885fb-cfb6-0c20-bb51-0242ac110002",
-                            "businessUnitId": 4597607
-                        },
-                        "channel": {
-                            "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                            "idOnExternalPlatform": "51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                            "name": "iOS SDK",
-                            "channelIntegrationId": "963b1313-8dcf-401a-ac8b-7b086096d69c",
-                            "integrationBoxIdentifier": "chat",
-                            "realExternalPlatformId": "chat",
-                            "externalPlatformAvatar": "https://app-de-na1.niceincontact.com/img/source-default.png",
-                            "externalPlatformIcon": "live-chat",
-                            "isPrivate": true,
-                            "hasReply": true,
-                            "hasTreeStructure": false,
-                            "hasPostAsPlaceholder": true,
-                            "contentFormat": "plain",
-                            "hasCustomerOnThirdParty": false,
-                            "isPostWritable": true,
-                            "hasAbilityToQuoteMessage": false,
-                            "hasAbilityToLike": false,
-                            "isHidden": false,
-                            "isDeleted": false,
-                            "wysiwygEnabled": false,
-                            "hasAbilityToTag": false,
-                            "ownerUserId": 9332,
-                            "hasPublishing": false,
-                            "hasAbilityToSendFiles": true,
-                            "hasOutboundFlow": false,
-                            "hasOutboundTemplates": false,
-                            "hasAbilityToShare": false,
-                            "hasAbilityToDelete": false,
-                            "hasAbilityToHide": false,
-                            "replyPrefixMentionTemplate": "",
-                            "nicknameOnExternalPlatform": "",
-                            "isLiveChat": false,
-                            "hasAbilityToChangeRecipient": false,
-                            "hasMultipleRecipient": false,
-                            "hasCcAndBcc": false,
-                            "hasVisibleTitle": false,
-                            "hasEditableTitle": false,
-                            "hasVisibleRecipients": false,
-                            "hasAbilityToForwardMessage": false,
-                            "canSaveResponse": false,
-                            "hasAbilityToChangeFrom": false,
-                            "isAutomaticSignatureAttached": false,
-                            "isCaseBasedStorage": false,
-                            "hasMultipleThreadsPerEndUser": true,
-                            "translationGroup": "default",
-                            "studioScript": null,
-                            "mediaType": 3,
-                            "canAgentInviteCustomersToContact": false
-                        },
-                        "case": {
-                            "id": "127035369413",
-                            "threadId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                            "threadIdOnExternalPlatform": "68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                            "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                            "interactionId": "e373d0be-c93e-49bd-87c1-85c066360b61",
-                            "consumerContactStorageId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45",
-                            "contactId": "345870b5-26b2-4d73-a044-e467733b689c",
-                            "customerContactId": "3ca9bba6-64e5-468a-85a5-d89ad9f37cab",
-                            "status": "new",
-                            "routingQueueId": "6618c229-bc8c-497a-83cf-964343153627",
-                            "routingQueuePriority": 1,
-                            "inboxAssignee": 9332,
-                            "inboxAssigneeUser": {
-                                "id": 9332,
-                                "incontactId": "11ea99f1-c4c9-d0b0-b68c-0242ac110003",
-                                "emailAddress": "cameron@cxonedemo.com",
-                                "loginUsername": "cameron@cxonedemo.com",
-                                "firstName": "Cameron",
-                                "surname": "Bruce",
-                                "nickname": "",
-                                "imageUrl": "https://app-de-na1.niceincontact.com/img/user/c.png",
-                                "isBotUser": false,
-                                "isSurveyUser": false
-                            },
-                            "ownerAssigneeUser": {
-                                "id": 9332,
-                                "incontactId": "11ea99f1-c4c9-d0b0-b68c-0242ac110003",
-                                "emailAddress": "cameron@cxonedemo.com",
-                                "loginUsername": "cameron@cxonedemo.com",
-                                "firstName": "Cameron",
-                                "surname": "Bruce",
-                                "nickname": "",
-                                "imageUrl": "https://app-de-na1.niceincontact.com/img/user/c.png",
-                                "isBotUser": false,
-                                "isSurveyUser": false
-                            },
-                            "inboxPreAssigneeUser": null,
-                            "ownerAssignee": 9332,
-                            "endUserRecipients": [],
-                            "recipients": [
-                                {
-                                    "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                                    "name": "Yoel Jimenez del valle",
-                                    "isPrimary": true,
-                                    "isPrivate": false
-                                }
-                            ],
-                            "recipientsCustomers": [
-                                {
-                                    "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                                    "firstName": "Yoel Jimenez del",
-                                    "surname": "valle",
-                                    "fullName": "Yoel Jimenez del valle",
-                                    "customFields": [
-                                        {
-                                            "ident": "firstname",
-                                            "value": "No su. ",
-                                            "updatedAt": "2022-03-15T20:16:28+00:00"
-                                        },
-                                        {
-                                            "ident": "email",
-                                            "value": "Uyghurs@543.de",
-                                            "updatedAt": "2022-03-15T20:16:28+00:00"
-                                        }
-                                    ],
-                                    "image": "https://app-de-na1.niceincontact.com/img/user-default.png"
-                                }
-                            ],
-                            "detailUrl": "https://app-de-na1.niceincontact.com/care?redirect=no#/care/tab/chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_68A534A7-6A6D-4AF7-BCD8-4B6FAE01AC45/case/127035369413",
-                            "authorEndUserIdentity": {
-                                "idOnExternalPlatform": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                                "firstName": "Yoel Jimenez del",
-                                "lastName": "valle",
-                                "nickname": "Yoel Jimenez del valle",
-                                "image": "https://app-de-na1.niceincontact.com/img/user-default.png",
-                                "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                                "fullName": "Yoel Jimenez del valle"
-                            },
-                            "direction": "inbound",
-                            "createdAt": "2022-03-15T17:54:51+00:00",
-                            "inboxPreAssignee": null,
-                            "customFields": [
-                                {
-                                    "ident": "test",
-                                    "value": "Jung ",
-                                    "updatedAt": "2022-03-15T20:16:28+00:00"
-                                }
-                            ],
-                            "userFingerprint": {
-                                "browser": "",
-                                "browserVersion": "",
-                                "os": "",
-                                "osVersion": "",
-                                "language": "",
-                                "ip": "152.206.213.156",
-                                "location": "",
-                                "country": "",
-                                "deviceType": ""
-                            },
-                            "statistics": {
-                                "inboxAssigneeResponseTime": {
-                                    "valueInSeconds": 0,
-                                    "slaInSeconds": null,
-                                    "slaEnabled": false,
-                                    "isRunning": false
-                                }
-                            },
-                            "endUser": {
-                                "id": "chat_1D392560-E1C0-4973-A9E1-1280DB66D0D5",
-                                "firstName": "Yoel Jimenez del",
-                                "surname": "valle",
-                                "fullName": "Yoel Jimenez del valle",
-                                "customFields": [
-                                    {
-                                        "ident": "firstname",
-                                        "value": "No su. ",
-                                        "updatedAt": "2022-03-15T20:16:28+00:00"
-                                    },
-                                    {
-                                        "ident": "email",
-                                        "value": "Uyghurs@543.de",
-                                        "updatedAt": "2022-03-15T20:16:28+00:00"
-                                    }
-                                ],
-                                "image": "https://app-de-na1.niceincontact.com/img/user-default.png"
-                            }
-                        },
-                        "previousInboxAssignee": null,
-                        "inboxAssignee": {
-                            "id": 9332,
-                            "incontactId": "11ea99f1-c4c9-d0b0-b68c-0242ac110003",
-                            "emailAddress": "cameron@cxonedemo.com",
-                            "loginUsername": "cameron@cxonedemo.com",
-                            "firstName": "Cameron",
-                            "surname": "Bruce",
-                            "nickname": "",
-                            "imageUrl": "https://app-de-na1.niceincontact.com/img/user/c.png",
-                            "isBotUser": false,
-                            "isSurveyUser": false
-                        },
-                        "routingQueue": {
-                            "id": "6618c229-bc8c-497a-83cf-964343153627",
-                            "name": "iOS SDK Chat",
-                            "isSubqueue": false
-                        },
-                        "acceptRejectFlow": {
-                            "isEnabled": false,
-                            "refusalTimeoutSeconds": 0,
-                            "isTransfer": false
-                        }
-                    }
-                }
-            ]
+            "fallbackText": "Unsupported message content",
+            "isAutoTranslated": false,
+            "parameters": [],
+            "postback": null
+          },
+          "createdAt": "2022-12-12T14:41:17+00:00",
+          "isMadeByUser": false,
+          "direction": "inbound",
+          "user": null,
+          "authorUser": null,
+          "authorEndUserIdentity": {
+            "idOnExternalPlatform": "816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+            "firstName": "",
+            "lastName": "",
+            "nickname": " ",
+            "image": "https://app-eu1-qa.brandembassy.com/img/user-default.png",
+            "externalPlatformId": "chat",
+            "id": "chat_816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+            "fullName": " "
+          },
+          "isRead": true,
+          "attachments": [],
+          "tags": [],
+          "sentiment": "neutral",
+          "deletedOnExternalPlatform": false,
+          "isDeletedOnExternalPlatform": false,
+          "isHiddenOnExternalPlatform": false,
+          "reactionStatistics": {
+            "likes": 0,
+            "shares": 0,
+            "isLikedByChannel": false,
+            "isSharedByChannel": false
+          },
+          "contentRemoved": null,
+          "authorNameRemoved": null,
+          "replyToMessage": null,
+          "readAt": "2022-12-12T14:41:45+00:00",
+          "title": "",
+          "recipients": [],
+          "url": null,
+          "replyChannel": null,
+          "customerStatistics": {
+            "seenAt": "2022-12-12T14:41:21+00:00"
+          },
+          "userStatistics": {
+            "seenAt": null,
+            "readAt": "2022-12-12T14:41:45+00:00",
+            "createdToReadSeconds": {
+              "notReflectingBusinessHours": 28,
+              "reflectingBusinessHours": 28
+            }
+          },
+          "contactNumber": "6098076",
+          "isReplyAllowed": false,
+          "seen": [
+            {
+              "userId": 0,
+              "endUserId": "chat_816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+              "seenAt": "2022-12-12T14:41:21+00:00"
+            }
+          ],
+          "delivered": []
         }
+      ],
+      "messagesScrollToken": "OztiMmEyYzRlNC1jNWRjLTQ5ZWEtYjE4ZS04NGQ4NWY5MjVkMmY7OzE2NzA4NTYwNzc7OzE2NzA4NTYwNzg=",
+      "thread": {
+        "id": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855_1bb59beb-49bd-4dee-829a-9603ae6260cf",
+        "channelId": "chat_e11131fa-f3a2-4728-9e22-bee2936ea855",
+        "idOnExternalPlatform": "1bb59beb-49bd-4dee-829a-9603ae6260cf",
+        "ticketNumber": "",
+        "content": "",
+        "title": "",
+        "threadName": "",
+        "url": "",
+        "isOwn": false,
+        "createdAt": "2022-12-12T14:41:17+00:00",
+        "updatedAt": "2022-12-12T14:41:45+0,0:00",
+        "author": {
+          "id": "816c5cc1-8341-4e5b-803b-08cfd3edb02e",
+          "name": " ",
+          "nickname": ""
+        },
+        "image": "",
+        "tagIds": [],
+        "likes": 0,
+        "attachments": [],
+        "recipients": [],
+        "canAddMoreMessages": true,
+        "deletedOnExternalPlatform": false,
+        "unseenMessagesCount": 2,
+        "unseenByUserMessagesCount": 3,
+        "unseenByEndUserMessagesCount": 1
+      },
+      "customer": {
+        "customFields": [
+            {
+                "ident": "customer.customFields.age",
+                "value": "24",
+                "value_number": 0,
+                "value_not_analyzed": "24",
+                "updatedAt": "2022-06-07T21:10:49+01:00"
+            }
+        ]
+      }
     }
+  }
 }

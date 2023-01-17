@@ -5,8 +5,7 @@ class ContactCustomFieldsService: ContactCustomFieldsProvider {
     
     // MARK: - Properties
     
-    var contactFields = [UUID: [String: String]]()
-    
+    var contactFields = [UUID: [CustomFieldDTO]]()
     
     var socketService: SocketService
     var eventsService: EventsService
@@ -23,7 +22,9 @@ class ContactCustomFieldsService: ContactCustomFieldsProvider {
     // MARK: - Implementation
     
     func get(for threadId: UUID) -> [String: String] {
-        contactFields.first { $0.key == threadId }?.value ?? [:]
+        contactFields
+            .first { $0.key == threadId }?
+            .value.toDictionary() ?? [:]
     }
     
     func set(_ customFields: [String: String], for threadId: UUID) throws {
@@ -31,10 +32,10 @@ class ContactCustomFieldsService: ContactCustomFieldsProvider {
 
         try socketService.checkForConnection()
 
+        let customFields = customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) }
         contactFields[threadId] = customFields
         
         if let id = socketService.connectionContext.contactId {
-            let customFields = customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value) }
             let data = try eventsService.create(
                 .setCustomerContactCustomFields,
                 with: .setContactCustomFieldsData(
@@ -48,5 +49,17 @@ class ContactCustomFieldsService: ContactCustomFieldsProvider {
             
             socketService.send(message: data.utf8string)
         }
+    }
+    
+    
+    // MARK: - Internal methods
+    
+    func updateFields(_ fields: [CustomFieldDTO], for threadId: UUID) {
+        guard self.contactFields[threadId] != nil else {
+            self.contactFields[threadId] = fields
+            return
+        }
+        
+        contactFields[threadId]?.update(with: fields)
     }
 }

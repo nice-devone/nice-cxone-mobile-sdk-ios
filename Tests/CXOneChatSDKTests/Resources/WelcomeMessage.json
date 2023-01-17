@@ -20,7 +20,8 @@
                         "customFields": [
                             {
                                 "ident": "myFieldIdent",
-                                "value": "This is new value"
+                                "value": "This is new value",
+                                "updatedAt": "2022-06-07T21:10:49+01:00"
                             }
                         ]
                     }

@@ -3,14 +3,14 @@ import Foundation
 
 enum MessageMapper {
     
-    static func map(_ entity: Message) -> MessageDTO {
+    static func map(_ entity: Message) throws -> MessageDTO {
         .init(
             idOnExternalPlatform: entity.id,
             threadIdOnExternalPlatform: entity.threadId,
-            messageContent: MessageContentMapper.map(entity.messageContent),
+            contentType: try MessageContentTypeMapper.map(entity.contentType),
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),
-            direction: entity.direction,
+            direction: Self.map(entity.direction),
             userStatistics: .init(seenAt: entity.userStatistics.seenAt, readAt: entity.userStatistics.readAt),
             authorUser: entity.authorUser.map(AgentMapper.map),
             authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map)
@@ -21,13 +21,37 @@ enum MessageMapper {
         .init(
             id: entity.idOnExternalPlatform,
             threadId: entity.threadIdOnExternalPlatform,
-            messageContent: MessageContentMapper.map(entity.messageContent),
+            contentType: MessageContentTypeMapper.map(entity.contentType),
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),
-            direction: entity.direction,
+            direction: Self.map(entity.direction),
             userStatistics: .init(seenAt: entity.userStatistics.seenAt, readAt: entity.userStatistics.readAt),
             authorUser: entity.authorUser.map(AgentMapper.map),
             authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map)
         )
+    }
+}
+
+
+// MARK: - MessageDirection mapper
+
+private extension MessageMapper {
+    
+    static func map(_ direction: MessageDirectionType) -> MessageDirection {
+        switch direction {
+        case .inbound:
+            return .toAgent
+        case .outbound:
+            return .toClient
+        }
+    }
+    
+    static func map(_ direction: MessageDirection) -> MessageDirectionType {
+        switch direction {
+        case .toAgent:
+            return .inbound
+        case .toClient:
+            return .outbound
+        }
     }
 }

@@ -8,14 +8,14 @@ class MessageSenderInfoTest: XCTestCase {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
-            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
-            direction: .outbound,
+            direction: .toClient,
             userStatistics: .init(seenAt: nil, readAt: nil),
             authorUser: .init(
                 id: 12345,
-                inContactId: UUID(),
+                inContactId: "",
                 emailAddress: nil,
                 loginUsername: "kj",
                 firstName: "kjoe",
@@ -35,10 +35,10 @@ class MessageSenderInfoTest: XCTestCase {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
-            messageContent: .init(type: .text, payload: MessagePayload(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
-            direction: .inbound,
+            direction: .toAgent,
             userStatistics: .init(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: .init(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
@@ -51,10 +51,10 @@ class MessageSenderInfoTest: XCTestCase {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
-            messageContent: .init(type: .text, payload: MessagePayload(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
-            direction: .outbound,
+            direction: .toClient,
             userStatistics: .init(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: .init(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
@@ -67,14 +67,14 @@ class MessageSenderInfoTest: XCTestCase {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
-            messageContent: .init(type: .text, payload: MessagePayload(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
-            direction: .inbound,
+            direction: .toAgent,
             userStatistics: .init(seenAt: nil, readAt: nil),
             authorUser: .init(
                 id: 12345,
-                inContactId: UUID(),
+                inContactId: "",
                 emailAddress: nil,
                 loginUsername: "kj",
                 firstName: "kjoe",

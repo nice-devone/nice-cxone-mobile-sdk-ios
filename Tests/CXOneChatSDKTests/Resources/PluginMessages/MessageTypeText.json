@@ -1,0 +1,17 @@
+{
+    "idOnExternalPlatform": "a91082b7-46f8-4d0d-af43-079994de98c6",
+    "threadIdOnExternalPlatform": "AD342920-C75E-4B06-B973-00494CC811B7",
+    "createdAt": "2022-03-15T17:54:50+0000",
+    "direction": "inbound",
+    "messageContent": {
+        "type": "TEXT",
+        "payload": {
+            "text": "Hello world"
+        },
+        "fallbackText": "Unsupported message content"
+    },
+    "attachments": [],
+    "userStatistics": {
+        
+    }
+}

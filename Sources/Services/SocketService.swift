@@ -86,6 +86,8 @@ class SocketService: NSObject {
     func disconnect() {
         LogManager.trace("Closing the current websocket session.")
         
+        connectionContext.keychainSwift.clear()
+        
         socket?.cancel(with: .goingAway, reason: nil)
         socket = nil
 
@@ -221,7 +223,9 @@ extension SocketService: URLSessionWebSocketDelegate {
     ) {
         LogManager.trace("Did close connection")
         
-        delegate?.didCloseConnection()
+        if closeCode != .goingAway {
+            delegate?.didCloseConnection()
+        }
     }
     
     #if DEBUG

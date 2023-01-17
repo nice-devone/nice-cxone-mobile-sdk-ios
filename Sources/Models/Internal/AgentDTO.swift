@@ -10,7 +10,7 @@ struct AgentDTO: Codable {
     let id: Int
 
     /// The id of the agent in the inContact (CXone) system.
-    let inContactId: UUID?
+    let inContactId: String?
 
     /// The email address of the agent.
     let emailAddress: String?

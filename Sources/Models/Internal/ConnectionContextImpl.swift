@@ -63,12 +63,6 @@ struct ConnectionContextImpl: ConnectionContext {
     
     var customer: CustomerIdentityDTO? {
         get {
-            guard UserDefaults.standard.bool(forKey: "cxOneHasRun") else {
-                keychainSwift.clear()
-                UserDefaults.standard.set(true, forKey: "cxOneHasRun")
-                
-                return nil
-            }
             guard let customerData = keychainSwift.getData("customer") else {
                 return nil
             }

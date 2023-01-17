@@ -7,6 +7,8 @@ class SocketDelegateManager: SocketDelegate {
     
     // MARK: - Properties
     
+    private lazy var contactCustomFieldsService = threadsService?.customFields as? ContactCustomFieldsService
+    
     private let analyticsProvider: AnalyticsProvider
     private var threadsService: ChatThreadsService?
     private var customerFieldsService: CustomerCustomFieldsService?
@@ -113,7 +115,7 @@ class SocketDelegateManager: SocketDelegate {
     
     func didReceiveError(_ error: Error) {
         if let error = error as? OperationError, error.errorCode == .recoveringThreadFailed {
-            delegate?.onThreadLoadFail(error)
+            delegate?.onError(CXoneChatError.recoveringThreadFailed)
         } else if let error = error as? OperationError, error.errorCode == .customerReconnectFailed {
             do {
                 try refreshToken()
@@ -240,16 +242,24 @@ class SocketDelegateManager: SocketDelegate {
             return
         }
         
-        let postbackData = decoded.postback.data
+        if let service = contactCustomFieldsService {
+            service.updateFields(
+                decoded.postback.data.consumerContact.customFields,
+                for: decoded.postback.data.thread.idOnExternalPlatform
+            )
+        }
+        if let service = customerFieldsService {
+            service.updateFields(decoded.postback.data.customerContactFields)
+        }
         
-        if threadsService?.threads.index(of: postbackData.thread.idOnExternalPlatform) == nil {
+        if threadsService?.threads.index(of: decoded.postback.data.thread.idOnExternalPlatform) == nil {
             threadsService?.threads.append(
                 ChatThread(
-                    _id: postbackData.thread.id,
-                    id: postbackData.thread.idOnExternalPlatform,
-                    name: postbackData.thread.threadName,
-                    assignedAgent: postbackData.ownerAssignee.map(AgentMapper.map),
-                    scrollToken: postbackData.messagesScrollToken
+                    _id: decoded.postback.data.thread.id,
+                    id: decoded.postback.data.thread.idOnExternalPlatform,
+                    name: decoded.postback.data.thread.threadName,
+                    assignedAgent: decoded.postback.data.inboxAssignee.map(AgentMapper.map),
+                    scrollToken: decoded.postback.data.messagesScrollToken
                 )
             )
         }
@@ -338,10 +348,16 @@ class SocketDelegateManager: SocketDelegate {
             }
             
             socketService.accessToken = token
+            
+            let firstName = decoded.postback.data.consumerIdentity.firstName?
+                .mapNonEmpty { $0 } ?? socketService.connectionContext.customer?.firstName
+            let lastName = decoded.postback.data.consumerIdentity.lastName?
+                .mapNonEmpty { $0 } ?? socketService.connectionContext.customer?.lastName
+            
             socketService.connectionContext.customer = .init(
                 idOnExternalPlatform: decoded.postback.data.consumerIdentity.idOnExternalPlatform,
-                firstName: decoded.postback.data.consumerIdentity.firstName ?? "",
-                lastName: decoded.postback.data.consumerIdentity.lastName ?? ""
+                firstName: firstName,
+                lastName: lastName
             )
         }
         
@@ -366,7 +382,7 @@ class SocketDelegateManager: SocketDelegate {
             }
             
             if let fields = decode.data.data?.customFields {
-                fields.forEach { customerFieldsService?.customerFields[$0.ident] = $0.value }
+                customerFieldsService?.updateFields(fields)
             }
             
             UserDefaults.standard.set(messageData, forKey: "welcomeMessage")
@@ -496,6 +512,9 @@ class SocketDelegateManager: SocketDelegate {
         }
 
         thread.messages = thread.messages.sorted { $0.createdAt < $1.createdAt }
+        thread.assignedAgent = threadEvent.postback.data.inboxAssignee.map(AgentMapper.map)
+        thread.canAddMoreMessages = threadEvent.postback.data.thread.canAddMoreMessages
+        thread.contactId = threadEvent.postback.data.consumerContact.id
         thread.name = threadEvent.postback.data.thread.threadName
         
         if thread.messages.count > messageCount {

@@ -7,7 +7,7 @@ struct SendMessageEventDataDTO: Codable {
     
     let thread: ThreadDTO
 
-    let messageContent: MessageContentDTO
+    let contentType: MessageContentDTOType
 
     let idOnExternalPlatform: UUID
 
@@ -28,7 +28,7 @@ struct SendMessageEventDataDTO: Codable {
     
     init(
         thread: ThreadDTO,
-        messageContent: MessageContentDTO,
+        contentType: MessageContentDTOType,
         idOnExternalPlatform: UUID,
         customer: CustomerCustomFieldsDataDTO,
         contact: ContactCustomFieldsDataDTO,
@@ -37,7 +37,7 @@ struct SendMessageEventDataDTO: Codable {
         token: String?
     ) {
         self.thread = thread
-        self.messageContent = messageContent
+        self.contentType = contentType
         self.idOnExternalPlatform = idOnExternalPlatform
         self.customer = customer
         self.contact = contact
@@ -69,7 +69,7 @@ struct SendMessageEventDataDTO: Codable {
         let accessTokenContainer = try? container.nestedContainer(keyedBy: AccessTokenCodingKey.self, forKey: .accessToken)
         
         self.thread = try container.decode(ThreadDTO.self, forKey: .thread)
-        self.messageContent = try container.decode(MessageContentDTO.self, forKey: .messageContent)
+        self.contentType = try container.decode(MessageContentDTOType.self, forKey: .messageContent)
         self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
         self.customer = try container.decode(CustomerCustomFieldsDataDTO.self, forKey: .customer)
         self.contact = try container.decode(ContactCustomFieldsDataDTO.self, forKey: .contact)
@@ -82,7 +82,7 @@ struct SendMessageEventDataDTO: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(thread, forKey: .thread)
-        try container.encode(messageContent, forKey: .messageContent)
+        try container.encode(contentType, forKey: .messageContent)
         try container.encode(idOnExternalPlatform, forKey: .idOnExternalPlatform)
         try container.encode(customer, forKey: .customer)
         try container.encode(contact, forKey: .contact)

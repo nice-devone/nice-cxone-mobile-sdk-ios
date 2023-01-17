@@ -57,4 +57,23 @@ extension String {
         
         return String(subString[..<range.lowerBound])
     }
+    
+    func toDictionary() throws -> [String: AnyObject] {
+        guard let data = self.data(using: .utf8) else {
+            throw CXoneChatError.invalidData
+        }
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: AnyObject] else {
+            throw CXoneChatError.invalidData
+        }
+        
+        return dictionary
+    }
+    
+    func mapNonEmpty(_ transform: (String) throws -> String) rethrows -> String? {
+        guard self != "" else {
+            return nil
+        }
+        
+        return try? transform(self)
+    }
 }

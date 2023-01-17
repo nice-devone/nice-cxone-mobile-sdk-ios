@@ -13,7 +13,7 @@ public struct Message {
     public let threadId: UUID
     
     /// The content of the message
-    public let messageContent: MessageContent
+    public let contentType: MessageContentType
     
     /// The timestamp of when the message was created.
     public let createdAt: Date
@@ -27,10 +27,10 @@ public struct Message {
     /// Statistic information about the message (read status, viewed status, etc.).
     public let userStatistics: UserStatistics
     
-    /// The agent that sent the message. Only present if the direction is outbound.
+    /// The agent that sent the message. Only present if the direction is to client (outbound).
     public let authorUser: Agent?
     
-    /// The customer that sent the message. Only present if the direction is inbound.
+    /// The customer that sent the message. Only present if the direction is to agent (inbound).
     public let authorEndUserIdentity: CustomerIdentity?
     
     /// Information about the sender of a message.
@@ -49,12 +49,12 @@ public struct Message {
     ///   - attachments: The attachments on the message.
     ///   - direction: The direction that the message is being sent (in regards to the agent).
     ///   - userStatistics: Statistic information about the message (read status, viewed status, etc.).
-    ///   - authorUser: The agent that sent the message. Only present if the direction is outbound.
-    ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is inbound.
+    ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
+    ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
     public init(
         id: UUID,
         threadId: UUID,
-        messageContent: MessageContent,
+        contentType: MessageContentType,
         createdAt: Date,
         attachments: [Attachment],
         direction: MessageDirection,
@@ -64,7 +64,7 @@ public struct Message {
     ) {
         self.id = id
         self.threadId = threadId
-        self.messageContent = messageContent
+        self.contentType = contentType
         self.createdAt = createdAt
         self.attachments = attachments
         self.direction = direction

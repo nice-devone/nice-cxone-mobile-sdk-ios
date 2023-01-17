@@ -6,6 +6,8 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
     
     // MARK: - Properties
     
+    private let dayInterval: Double = 86_400
+    
     private let testData = ["key": "value"]
     private let testThread = ChatThread(id: UUID())
     
@@ -66,5 +68,54 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         )
         XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadA.id), dataA)
         XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadB.id), dataB)
+    }
+    
+    func testUpdateCustomerCustomFields() {
+        guard let service = CXoneChat.customerCustomFields as? CustomerCustomFieldsService else {
+            XCTFail("Could not get customer custom fields service")
+            return
+        }
+        
+        service.updateFields([
+            .init(ident: "key1", value: "value1", updatedAt: Date()),
+            .init(ident: "key2", value: "value2", updatedAt: Date().addingTimeInterval(-dayInterval))
+        ])
+        
+        let newCustomFields: [CustomFieldDTO] = [
+            .init(ident: "key1", value: "newValue1", updatedAt: Date().addingTimeInterval(-dayInterval)),
+            .init(ident: "key2", value: "newValue2", updatedAt: Date())
+        ]
+        
+        service.updateFields(newCustomFields)
+        
+        XCTAssertEqual(service.customerFields[0].value, "value1")
+        XCTAssertEqual(service.customerFields[1].value, "newValue2")
+    }
+    
+    func testUpdateContactCustomFields() {
+        guard let service = CXoneChat.threads.customFields as? ContactCustomFieldsService else {
+            XCTFail("Could not get customer custom fields service")
+            return
+        }
+        
+        let threadId = UUID()
+        
+        service.updateFields(
+            [
+                .init(ident: "key1", value: "value1", updatedAt: Date()),
+                .init(ident: "key2", value: "value2", updatedAt: Date().addingTimeInterval(-dayInterval))
+            ],
+            for: threadId
+        )
+        
+        let newCustomFields: [CustomFieldDTO] = [
+            .init(ident: "key1", value: "newValue1", updatedAt: Date().addingTimeInterval(-dayInterval)),
+            .init(ident: "key2", value: "newValue2", updatedAt: Date())
+        ]
+        
+        service.updateFields(newCustomFields, for: threadId)
+        
+        XCTAssertEqual(service.contactFields[threadId]?[0].value, "value1")
+        XCTAssertEqual(service.contactFields[threadId]?[1].value, "newValue2")
     }
 }

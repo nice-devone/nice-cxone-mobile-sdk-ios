@@ -8,7 +8,7 @@ public struct Agent {
     public let id: Int
 
     /// The id of the agent in the inContact (CXone) system.
-    public let inContactId: UUID?
+    public let inContactId: String?
 
     /// The email address of the agent.
     public let emailAddress: String?

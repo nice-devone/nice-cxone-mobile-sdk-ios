@@ -4,10 +4,13 @@ import Foundation
 /// The interface for interacting with chat features of the CXone platform.
 public protocol ChatProvider {
     
+    /// The version of the CXone chat SDK.
+    static var version: String { get }
+    
     /// The singleton instance of the CXone chat SDK.
     static var shared: ChatProvider { get set }
     
-    /// The handler for the logs occured in CXoneChat.
+    /// The handler for the logs occured in CXone chat.
     var logDelegate: LogDelegate? { get set }
     
     /// The handler for the chat events.

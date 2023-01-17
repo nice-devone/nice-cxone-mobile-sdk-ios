@@ -1,0 +1,40 @@
+{
+    "idOnExternalPlatform": "a91082b7-46f8-4d0d-af43-079994de98c6",
+    "threadIdOnExternalPlatform": "AD342920-C75E-4B06-B973-00494CC811B7",
+    "createdAt": "2022-03-15T17:54:50+0000",
+    "direction": "inbound",
+    "messageContent": {
+        "type": "PLUGIN",
+        "payload": {
+            "postback": "",
+            "elements": [
+                {
+                    "id": "Ek4tPy1h4",
+                    "type": "CUSTOM",
+                    "text": "See this page",
+                    "variables": {
+                        "color": "green",
+                        "buttons": [
+                            {
+                                "id": "0edc9bf6-4922-4695-a6ad-1bdb248dd42f",
+                                "name": "Confirm"
+                            },
+                            {
+                                "id": "0b4ad5a5-5f6b-477d-8013-d6dcf7b87704",
+                                "name": "Decline"
+                            }
+                        ],
+                        "size": {
+                            "ios": "big",
+                            "android": "middle"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "attachments": [],
+    "userStatistics": {
+        
+    }
+}

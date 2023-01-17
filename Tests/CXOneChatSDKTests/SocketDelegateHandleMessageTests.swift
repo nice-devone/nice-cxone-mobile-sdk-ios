@@ -10,12 +10,12 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     
     private lazy var brand = BrandDTO(id: brandId)
     private lazy var channel = ChannelIdentifierDTO(id: channelId)
-    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date())
+    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date(), customFields: [])
     private lazy var thread = ThreadDTO(id: nil, idOnExternalPlatform: UUID(), threadName: nil)
     private let message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+        contentType: .text(""),
         createdAt: Date(),
         attachments: [],
         direction: .inbound,
@@ -27,7 +27,7 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     private let accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
     private let agent = AgentDTO(
         id: 0,
-        inContactId: UUID(),
+        inContactId: "",
         emailAddress: nil,
         loginUsername: "agent",
         firstName: "John",

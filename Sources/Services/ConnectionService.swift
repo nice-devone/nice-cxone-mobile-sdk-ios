@@ -160,16 +160,15 @@ private extension ConnectionService {
     func connectToSocket() throws {
         LogManager.trace("Connecting to the socket.")
         
-        let brandItem = URLQueryItem(name: "brand", value: connectionContext.brandId.description)
-        let channelItem = URLQueryItem(name: "channelId", value: connectionContext.channelId)
-        let customerIdItem = URLQueryItem(name: "customerId", value: connectionContext.customer?.idOnExternalPlatform)
-        let vQItem = URLQueryItem(name: "v", value: "4.74")
-        let eioQItem = URLQueryItem(name: "EIO", value: "3")
-        let transportQItem = URLQueryItem(name: "transport", value: "polling")
-        let tQItem = URLQueryItem(name: "t", value: "NlrXzTa")
         let socketEndpoint = SocketEndpointDTO(
             environment: connectionContext.environment,
-            queryItems: [brandItem, channelItem, customerIdItem, vQItem, eioQItem, transportQItem, tQItem],
+            queryItems: [
+                .init(name: "brand", value: connectionContext.brandId.description),
+                .init(name: "channelId", value: connectionContext.channelId),
+                .init(name: "applicationType", value: "native"),
+                .init(name: "os", value: "iOS"),
+                .init(name: "clientVersion", value: CXoneChat.version)
+            ],
             method: .get
         )
         

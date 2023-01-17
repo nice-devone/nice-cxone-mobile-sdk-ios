@@ -10,12 +10,12 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
     
     private lazy var brand = BrandDTO(id: brandId)
     private lazy var channel = ChannelIdentifierDTO(id: channelId)
-    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date())
+    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date(), customFields: [])
     private lazy var thread = ThreadDTO(id: nil, idOnExternalPlatform: UUID(), threadName: nil)
     private let message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+        contentType: .text(""),
         createdAt: Date(),
         attachments: [],
         direction: .inbound,
@@ -27,7 +27,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
     private let accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
     private let agent = AgentDTO(
         id: 0,
-        inContactId: UUID(),
+        inContactId: "",
         emailAddress: nil,
         loginUsername: "agent",
         firstName: "John",
@@ -173,7 +173,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: chatThread.id,
-            messageContent: .init(type: .text, payload: .init(text: "", elements: []), fallbackText: ""),
+            contentType: .text(""),
             createdAt: Date(),
             attachments: [],
             direction: .inbound,
@@ -312,7 +312,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                 data: .init(
                     consumerContact: contact,
                     messages: [],
-                    ownerAssignee: nil,
+                    inboxAssignee: nil,
                     thread: .init(
                         id: thread._id ?? "",
                         idOnExternalPlatform: thread.id,
@@ -322,7 +322,8 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                         updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
-                    messagesScrollToken: "scroll_token"
+                    messagesScrollToken: "scroll_token",
+                    customerContactFields: []
                 )
             )
         )
@@ -345,7 +346,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                 data: .init(
                     consumerContact: contact,
                     messages: [message],
-                    ownerAssignee: nil,
+                    inboxAssignee: nil,
                     thread: .init(
                         id: thread._id ?? "",
                         idOnExternalPlatform: thread.id,
@@ -355,7 +356,8 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                         updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
-                    messagesScrollToken: "scroll_token"
+                    messagesScrollToken: "scroll_token",
+                    customerContactFields: []
                 )
             )
         )
@@ -371,14 +373,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: thread.idOnExternalPlatform,
-            messageContent: .init(
-                type: .text,
-                payload: .init(
-                    text: "",
-                    elements: [.init(id: "", type: .text, text: "", postback: nil, url: nil, fileName: nil, mimeType: nil, elements: nil)]
-                ),
-                fallbackText: ""
-            ),
+            contentType: .text(""),
             createdAt: Date(),
             attachments: [],
             direction: .inbound,
@@ -397,7 +392,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                 data: .init(
                     consumerContact: contact,
                     messages: [message],
-                    ownerAssignee: nil,
+                    inboxAssignee: nil,
                     thread: .init(
                         id: thread._id ?? "",
                         idOnExternalPlatform: thread.id,
@@ -407,7 +402,8 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
                         updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
-                    messagesScrollToken: "scroll_token"
+                    messagesScrollToken: "scroll_token",
+                    customerContactFields: []
                 )
             )
         )
