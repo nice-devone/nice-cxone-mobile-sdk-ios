@@ -6,18 +6,19 @@ class CXoneChatDelegateTests: XCTestCase {
     
     // MARK: - Properties
     
-    private let CXoneChat = CXoneChatSDK.CXoneChat(socketService: SocketServiceMock())
+    private let socketService = SocketServiceMock()
+    private lazy var CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
     private var currentExpectation = XCTestExpectation(description: "")
     
     private let chatThread = ChatThread(id: UUID())
-    private let message = MessageDTO(
+    private lazy var message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        contentType: .text(""),
-        createdAt: Date(),
+        contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+        createdAt: socketService.dateProvider.now,
         attachments: [],
         direction: .inbound,
-        userStatistics: .init(seenAt: nil, readAt: nil),
+        userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
         authorUser: nil,
         authorEndUserIdentity: nil
     )

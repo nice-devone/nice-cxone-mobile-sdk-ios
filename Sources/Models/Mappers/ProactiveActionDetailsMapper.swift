@@ -4,7 +4,7 @@ import Foundation
 enum ProactiveActionDetailsMapper {
     
     static func map(_ entity: ProactiveActionDetails) -> ProactiveActionDetailsDTO {
-        .init(
+        ProactiveActionDetailsDTO(
             actionId: LowerCaseUUID(uuid: entity.id),
             actionName: entity.name,
             actionType: entity.type,

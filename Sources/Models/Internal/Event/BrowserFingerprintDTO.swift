@@ -3,7 +3,7 @@ import UIKit
 
 
 /// Represents fingerprint data about the customer.
-struct BrowserFingerprintDTO: Codable {
+struct DeviceFingerprintDTO: Codable {
     
     var browser = ""
 

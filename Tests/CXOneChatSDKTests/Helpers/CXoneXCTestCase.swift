@@ -6,6 +6,7 @@ open class CXoneXCTestCase: XCTestCase {
     
     // MARK: - Properties
     
+    let dateProvider = DateProviderMock()
     lazy var CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
     lazy var socketService = SocketServiceMock(session: urlSession)
     
@@ -33,8 +34,7 @@ open class CXoneXCTestCase: XCTestCase {
             guard let url = URL(string: "\(self.channelURL)/\(self.channelId)/attachment"),
                   let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
             else {
-                XCTFail("Could not init URL.")
-                throw CXoneChatError.invalidRequest
+                throw XCTError("Could not init URL.")
             }
             
             return (response, Data())
@@ -46,7 +46,10 @@ open class CXoneXCTestCase: XCTestCase {
         
         (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         
         try await CXoneChat.connection.connect(environment: .NA1, brandId: brandId, channelId: channelId)

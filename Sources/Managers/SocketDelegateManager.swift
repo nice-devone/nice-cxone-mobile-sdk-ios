@@ -114,17 +114,18 @@ class SocketDelegateManager: SocketDelegate {
     }
     
     func didReceiveError(_ error: Error) {
-        if let error = error as? OperationError, error.errorCode == .recoveringThreadFailed {
+        switch error {
+        case _ where (error as? OperationError)?.errorCode == .recoveringThreadFailed:
             delegate?.onError(CXoneChatError.recoveringThreadFailed)
-        } else if let error = error as? OperationError, error.errorCode == .customerReconnectFailed {
+        case _ where (error as? OperationError)?.errorCode == .customerReconnectFailed:
             do {
                 try refreshToken()
             } catch {
                 delegate?.onError(error)
             }
-        } else if let error = error as? OperationError, error.errorCode == .tokenRefreshFailed {
+        case _ where (error as? OperationError)?.errorCode == .tokenRefreshFailed:
             delegate?.onTokenRefreshFailed()
-        } else {
+        default:
             delegate?.onError(error)
         }
     }
@@ -144,7 +145,7 @@ class SocketDelegateManager: SocketDelegate {
             throw CXoneChatError.missingAccessToken
         }
         
-        let data = try eventsService.create(.refreshToken, with: .refreshTokenPayload(.init(token: token)))
+        let data = try eventsService.create(.refreshToken, with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: token)))
         
         socketService.send(message: data.utf8string, shouldCheck: false)
     }
@@ -255,7 +256,6 @@ class SocketDelegateManager: SocketDelegate {
         if threadsService?.threads.index(of: decoded.postback.data.thread.idOnExternalPlatform) == nil {
             threadsService?.threads.append(
                 ChatThread(
-                    _id: decoded.postback.data.thread.id,
                     id: decoded.postback.data.thread.idOnExternalPlatform,
                     name: decoded.postback.data.thread.threadName,
                     assignedAgent: decoded.postback.data.inboxAssignee.map(AgentMapper.map),
@@ -290,6 +290,7 @@ class SocketDelegateManager: SocketDelegate {
     
     func processThreadLastMessage(_ lastMessage: MessageDTO) {
         LogManager.trace("processing thread first message.")
+        
         do {
             try appendMessageToThread(lastMessage)
             
@@ -326,7 +327,7 @@ class SocketDelegateManager: SocketDelegate {
         LogManager.trace("Processing thread list fetched.")
         
         let threads: [ChatThread] = event.postback?.threads?.map {
-            .init(_id: $0.id, id: $0.idOnExternalPlatform, name: $0.threadName, canAddMoreMessages: $0.canAddMoreMessages)
+            ChatThread(id: $0.idOnExternalPlatform, name: $0.threadName, canAddMoreMessages: $0.canAddMoreMessages)
         } ?? []
         
         threadsService?.threads = threads
@@ -354,7 +355,7 @@ class SocketDelegateManager: SocketDelegate {
             let lastName = decoded.postback.data.consumerIdentity.lastName?
                 .mapNonEmpty { $0 } ?? socketService.connectionContext.customer?.lastName
             
-            socketService.connectionContext.customer = .init(
+            socketService.connectionContext.customer = CustomerIdentityDTO(
                 idOnExternalPlatform: decoded.postback.data.consumerIdentity.idOnExternalPlatform,
                 firstName: firstName,
                 lastName: lastName

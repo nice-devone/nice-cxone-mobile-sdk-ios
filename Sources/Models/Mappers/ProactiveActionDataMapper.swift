@@ -4,7 +4,7 @@ import Foundation
 enum ProactiveActionDataMapper {
     
     static func map(with content: ProactiveActionDataMessageContent) -> ProactiveActionDataDTO {
-        .init(
+        ProactiveActionDataDTO(
             content: ProactiveActionDataMessageContentMapper.map(content),
             customFields: [],
             templateType: nil,

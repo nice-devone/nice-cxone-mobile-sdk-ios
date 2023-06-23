@@ -1,9 +1,7 @@
 import Foundation
 
 
-indirect enum CodableObject: Codable {
-    
-    // MARK: - Cases
+indirect enum CodableObject {
     
     case int(Int)
     
@@ -16,9 +14,12 @@ indirect enum CodableObject: Codable {
     case dictionary([String: CodableObject])
     
     case array([CodableObject])
+}
 
-    
-    // MARK: - Codable
+
+// MARK: - Codable
+
+extension CodableObject: Codable {
     
     init(from decoder: Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
@@ -36,7 +37,7 @@ indirect enum CodableObject: Codable {
         } else if let value = try? singleValueContainer.decode([CodableObject].self) {
             self = .array(value)
         } else {
-            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "CodableObject"))
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "CodableObject"))
         }
     }
     

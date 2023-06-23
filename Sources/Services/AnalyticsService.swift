@@ -5,15 +5,9 @@ class AnalyticsService: AnalyticsProvider {
     
     // MARK: - Properties
     
-    var visitorId: UUID? {
-        get { connectionContext.visitorId }
-        set { connectionContext.visitorId = newValue }
-    }
-    
     private let jsonEncoder = JSONEncoder()
     
     let socketService: SocketService
-    let eventsService: EventsService
     
     var connectionContext: ConnectionContext {
         get { socketService.connectionContext }
@@ -21,16 +15,26 @@ class AnalyticsService: AnalyticsProvider {
     }
     
     
+    // MARK: - Protocol Properties
+    
+    var visitorId: UUID? {
+        get { connectionContext.visitorId }
+        set { connectionContext.visitorId = newValue }
+    }
+    
+    
     // MARK: - Init
     
-    init(socketService: SocketService, eventsService: EventsService) {
+    init(socketService: SocketService) {
         self.socketService = socketService
-        self.eventsService = eventsService
     }
     
     
     // MARK: - Implementation
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func viewPage(title: String, uri: String) throws {
         LogManager.trace("Reporting page view - \(title).")
 
@@ -40,13 +44,16 @@ class AnalyticsService: AnalyticsProvider {
             StoreVisitorEventsDTO(
                 action: .chatWindowEvent,
                 eventId: UUID(),
-                payload: getVisitorEventsPayload(eventType: .pageView, data: .pageViewData(.init(url: uri, title: title)))
+                payload: getVisitorEventsPayload(eventType: .pageView, data: .pageViewData(PageViewData(url: uri, title: title)))
             )
         )
         
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func chatWindowOpen() throws {
         LogManager.trace("Reporting chat window open.")
 
@@ -63,6 +70,10 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func visit() throws {
         LogManager.trace("Reporting app visit.")
         
@@ -81,6 +92,9 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string, shouldCheck: false)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func conversion(type: String, value: Double) throws {
         LogManager.trace("Reporting conversion occurred.")
 
@@ -92,7 +106,7 @@ class AnalyticsService: AnalyticsProvider {
                 eventId: UUID(),
                 payload: getVisitorEventsPayload(
                     eventType: .conversion,
-                    data: .conversionData(.init(type: type, value: value, timeWithMilliseconds: Date().iso8601withFractionalSeconds))
+                    data: .conversionData(ConversionData(type: type, value: value, timeWithMilliseconds: Date().iso8601withFractionalSeconds))
                 )
             )
         )
@@ -100,6 +114,9 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func customVisitorEvent(data: VisitorEventDataType) throws {
         LogManager.trace("Reporting custom visitor event occurred.")
 
@@ -116,6 +133,9 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func proactiveActionDisplay(data: ProactiveActionDetails) throws {
         LogManager.trace("Reporting proactive action was displayed to the visitor.")
 
@@ -132,6 +152,9 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func proactiveActionClick(data: ProactiveActionDetails) throws {
         LogManager.trace("Reporting proactive action was clicked or acted upon the visitor.")
 
@@ -148,6 +171,9 @@ class AnalyticsService: AnalyticsProvider {
         socketService.send(message: data.utf8string)
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) throws {
         LogManager.trace("Reporting proactive actions was successful and lead to a conversion.")
 
@@ -170,27 +196,29 @@ class AnalyticsService: AnalyticsProvider {
     
     // MARK: - Internal methods
     
+    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func setVisitor() throws {
         LogManager.trace("Setting visitor.")
         
         guard let visitorId = visitorId else {
-            throw CXoneChatError.unsupportedChannelConfig
+            throw CXoneChatError.customerVisitorAssociationFailure
         }
         
         let payload = StoreVisitorEventsPayloadDTO(
             eventType: .storeVisitor,
-            brand: .init(id: connectionContext.brandId),
+            brand: BrandDTO(id: connectionContext.brandId),
             visitorId: LowerCaseUUID(uuid: visitorId),
             id: LowerCaseUUID(uuid: connectionContext.destinationId),
             data: .storeVisitorPayload(
-                .init(
+                VisitorDTO(
                     customerIdentity: connectionContext.customer,
-                    browserFingerprint: .init(deviceToken: connectionContext.deviceToken),
+                    browserFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
                     journey: nil,
                     customVariables: nil
                 )
             ),
-            channel: .init(id: connectionContext.channelId)
+            channel: ChannelIdentifierDTO(id: connectionContext.channelId)
         )
         
         let data = try jsonEncoder.encode(StoreVisitorEventsDTO( action: .chatWindowEvent, eventId: UUID(), payload: payload))
@@ -204,20 +232,21 @@ class AnalyticsService: AnalyticsProvider {
 
 private extension AnalyticsService {
 
-    func getVisitorEventsPayload(eventType: VisitorEventType, data: VisitorEventDataType?) throws -> StoreVisitorEventsPayloadDTO {
+    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
+    func getVisitorEventsPayload(eventType: EventType, data: VisitorEventDataType?) throws -> StoreVisitorEventsPayloadDTO {
         guard let visitorId = visitorId else {
-            throw CXoneChatError.missingParameter("visitorId")
+            throw CXoneChatError.customerVisitorAssociationFailure
         }
         
-        return .init(
+        return StoreVisitorEventsPayloadDTO(
             eventType: .storeVisitorEvents,
-            brand: .init(id: connectionContext.brandId),
+            brand: BrandDTO(id: connectionContext.brandId),
             visitorId: LowerCaseUUID(uuid: visitorId),
             id: LowerCaseUUID(uuid: connectionContext.destinationId),
             data: .visitorEvent(
-                .init(
+                VisitorsEventsDTO(
                     visitorEvents: [
-                        .init(
+                        VisitorEventDTO(
                             id: LowerCaseUUID(uuid: UUID()),
                             type: eventType,
                             createdAtWithMilliseconds: Date().iso8601withFractionalSeconds,
@@ -226,7 +255,7 @@ private extension AnalyticsService {
                     ]
                 )
             ),
-            channel: .init(id: connectionContext.channelId)
+            channel: ChannelIdentifierDTO(id: connectionContext.channelId)
         )
     }
 }

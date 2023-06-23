@@ -1,0 +1,31 @@
+name: Tests
+
+on: 
+  pull_request: # on any pull request
+  workflow_dispatch: # show a button to manually trigger this workflow
+
+jobs:
+  run_tests:
+    runs-on: macos-12
+    env:
+       DESTINATION: "platform=iOS Simulator,OS=latest,name=iPhone 11"
+       SCHEME: "CXoneChatSDK"
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+      with:
+           submodules: "recursive"
+           fetch-depth: 0
+
+    - name: Build
+      run: xcodebuild build-for-testing -scheme $SCHEME -destination "$DESTINATION"
+
+    - name: Test
+      run: xcodebuild test-without-building -scheme $SCHEME -destination "$DESTINATION" -enableCodeCoverage YES -resultBundlePath "code-coverage.xcresult"
+
+    - uses: kishikawakatsumi/xcresulttool@v1.7.1
+      with:
+        path: code-coverage.xcresult
+        show-passed-tests: false
+      if: success() || failure()

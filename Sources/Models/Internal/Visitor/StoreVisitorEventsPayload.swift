@@ -1,10 +1,8 @@
 import Foundation
 
 
-struct StoreVisitorEventsPayloadDTO: Encodable {
-    
-    // MARK: - Properties
-    
+struct StoreVisitorEventsPayloadDTO {
+
     let eventType: EventType
 
     let brand: BrandDTO
@@ -13,12 +11,15 @@ struct StoreVisitorEventsPayloadDTO: Encodable {
 
     let id: LowerCaseUUID
 
-    let data: StoreVisitorEventDataType
+    let data: EventDataType
 
     let channel: ChannelIdentifierDTO
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Encodable
+
+extension StoreVisitorEventsPayloadDTO: Encodable {
     
     enum CodingKeys: CodingKey {
         case eventType

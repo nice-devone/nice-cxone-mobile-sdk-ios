@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents info about data of a proactive action.
-struct ProactiveActionDataDTO: Codable {
+struct ProactiveActionDataDTO {
     
     // MARK: - Properties
     
@@ -41,9 +41,12 @@ struct ProactiveActionDataDTO: Codable {
         self.position = position
         self.customJs = customJs
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension ProactiveActionDataDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case content

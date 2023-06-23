@@ -16,7 +16,7 @@ extension Data {
     /// Decodes the data to be used.
     ///
     /// - Returns: The decoded data.
-    func decode<T>() throws -> T where T: Codable {
+    func decode<T>() throws -> T where T: Decodable {
         let decoder = JSONDecoder()
         
         do {

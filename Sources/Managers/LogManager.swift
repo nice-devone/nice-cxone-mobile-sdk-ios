@@ -78,11 +78,11 @@ public class LogManager {
         self.verbository = verbosity
     }
     
-    class func error(_ error: Error, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func error(_ error: Error, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         self.error(error.localizedDescription, fun: fun, file: file, line: line)
     }
     
-    class func error(_ message: String, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func error(_ message: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         guard isEnabled else {
             return
         }
@@ -90,11 +90,11 @@ public class LogManager {
         delegate?.logError(log(message, emoji: "❌", fun: fun, file: file, line: line))
     }
     
-    class func warning(_ error: Error, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func warning(_ error: Error, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         warning(error.localizedDescription, fun: fun, file: file, line: line)
     }
     
-    class func warning(_ message: String, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func warning(_ message: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         guard isEnabled, level.rawValue <= Level.warning.rawValue else {
             return
         }
@@ -102,7 +102,7 @@ public class LogManager {
         delegate?.logWarning(log(message, emoji: "⚠️", fun: fun, file: file, line: line))
     }
     
-    class func info(_ message: String, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func info(_ message: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         guard isEnabled, level.rawValue <= Level.info.rawValue else {
             return
         }
@@ -110,7 +110,7 @@ public class LogManager {
         delegate?.logInfo(log(message, emoji: "ℹ️", fun: fun, file: file, line: line))
     }
     
-    class func trace(_ message: String, fun: String = #function, file: String = #file, line: Int = #line) {
+    class func trace(_ message: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         guard isEnabled, level == .trace else {
             return
         }
@@ -124,20 +124,20 @@ public class LogManager {
 
 private extension LogManager {
 
-    class func log(_ message: String, emoji: String, fun: String = #function, file: String = #file, line: Int = #line) -> String {
+    class func log(_ message: String, emoji: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) -> String {
         switch verbository {
         case .simple:
             return "\(dateTime) \(emoji): \(message)"
         case .medium:
-            return "\(dateTime) \(emoji) \(fun.withoutParameters): \(message)"
+            return "\(dateTime) \(emoji) \(fun.description.withoutParameters): \(message)"
         case .full:
-            return "\(dateTime) [\(file.lastPathComponent):\(line)]: \(emoji) \(fun.withoutParameters): \(message)"
+            return "\(dateTime) [\(file.description.lastPathComponent):\(line)]: \(emoji) \(fun.description.withoutParameters): \(message)"
         }
     }
 }
 
 
-// MARK: - String helpers
+// MARK: - StaticString helpers
 
 private extension String {
     

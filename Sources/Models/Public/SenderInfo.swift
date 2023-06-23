@@ -33,7 +33,6 @@ public struct SenderInfo {
             self.id = String(message.authorEndUserIdentity?.id ?? UUID().uuidString)
             self.firstName = message.authorEndUserIdentity?.firstName ?? "Unknown"
             self.lastName = message.authorEndUserIdentity?.lastName ?? "Customer"
-            
         }
     }
 }

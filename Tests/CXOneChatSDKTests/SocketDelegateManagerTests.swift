@@ -10,16 +10,16 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
     
     private lazy var brand = BrandDTO(id: brandId)
     private lazy var channel = ChannelIdentifierDTO(id: channelId)
-    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date(), customFields: [])
-    private lazy var thread = ThreadDTO(id: nil, idOnExternalPlatform: UUID(), threadName: nil)
-    private let message = MessageDTO(
+    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: dateProvider.now, customFields: [])
+    private lazy var thread = ThreadDTO(idOnExternalPlatform: UUID(), threadName: nil)
+    private lazy var message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        contentType: .text(""),
-        createdAt: Date(),
+        contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+        createdAt: dateProvider.now,
         attachments: [],
         direction: .inbound,
-        userStatistics: .init(seenAt: nil, readAt: nil),
+        userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
         authorUser: nil,
         authorEndUserIdentity: nil
     )
@@ -56,7 +56,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
     
     // MARK: - Properties
     
-    func testDidReceiveRecoveringThreadFailedError() {
+    func testDidReceiveRecoveringThreadFailedError() async {
         currentExpectation = XCTestExpectation(description: "testDidReceiveRecoveringThreadFailedError")
         
         let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "")
@@ -66,7 +66,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidReceiveCustomerReconnectFailedErrorThrows() {
+    func testDidReceiveCustomerReconnectFailedErrorThrows() async {
         currentExpectation = XCTestExpectation(description: "testDidReceiveCustomerReconnectFailedErrorThrows")
         
         let error = OperationError(errorCode: .customerReconnectFailed, transactionId: LowerCaseUUID(), errorMessage: "")
@@ -76,7 +76,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidReceiveCustomerReconnectFailedErrorNoThrow() {
+    func testDidReceiveCustomerReconnectFailedErrorNoThrow() async {
         currentExpectation = XCTestExpectation(description: "testDidReceiveCustomerReconnectFailedErrorNoThrow")
         
         socketService.accessToken = accessToken
@@ -88,7 +88,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidReceiveTokenRefreshFailedError() {
+    func testDidReceiveTokenRefreshFailedError() async {
         currentExpectation = XCTestExpectation(description: "testDidReceiveTokenRefreshFailedError")
         
         let error = OperationError(errorCode: .tokenRefreshFailed, transactionId: LowerCaseUUID(), errorMessage: "")
@@ -98,7 +98,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidCloseConnection() {
+    func testDidCloseConnection() async {
         currentExpectation = XCTestExpectation(description: "testDidCloseConnection")
         
         CXoneChat.socketDelegateManager.didCloseConnection()
@@ -106,7 +106,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessMoreMessagesEventMissingContent() {
+    func testProcessMoreMessagesEventMissingContent() async {
         currentExpectation = XCTestExpectation(description: "testProcessMoreMessagesEventMissingContent")
         
         CXoneChat.socketDelegateManager.processMoreMessagesEvent(nil)
@@ -141,8 +141,8 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .messageCreated,
-            createdAt: Date(),
-            data: .init(brand: brand, channel: channel, case: contact, thread: thread, message: message)
+            createdAt: dateProvider.now,
+            data: MessageCreatedEventDataDTO(brand: brand, channel: channel, case: contact, thread: thread, message: message)
         )
         
         try CXoneChat.socketDelegateManager.processMessageCreatedEvent(encoder.encode(data))
@@ -150,15 +150,15 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessMessageReadChangeEventThrowsMissingTread() {
+    func testProcessMessageReadChangeEventThrowsMissingTread() async {
         currentExpectation = XCTestExpectation(description: "testProcessMessageReadChangeEventThrowsMissingTread")
         
         let data = MessageReadByAgentEventDTO(
             eventId: UUID(),
             eventObject: .thread,
             eventType: .messageReadChanged,
-            createdAt: Date(),
-            data: .init(brand: brand, message: message)
+            createdAt: dateProvider.now,
+            data: MessageReadByAgentEventDataDTO(brand: brand, message: message)
         )
         
         CXoneChat.socketDelegateManager.processMessageReadChangeEvent(data)
@@ -166,18 +166,18 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessMessageReadChangeEventThrowsMissingMessage() {
+    func testProcessMessageReadChangeEventThrowsMissingMessage() async {
         currentExpectation = XCTestExpectation(description: "testProcessMessageReadChangeEventNoThrow")
         
         var chatThread = ChatThread(id: thread.idOnExternalPlatform)
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: chatThread.id,
-            contentType: .text(""),
-            createdAt: Date(),
+            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+            createdAt: dateProvider.now,
             attachments: [],
             direction: .inbound,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
@@ -188,8 +188,8 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .messageReadChanged,
-            createdAt: Date(),
-            data: .init(brand: brand, message: message)
+            createdAt: dateProvider.now,
+            data: MessageReadByAgentEventDataDTO(brand: brand, message: message)
         )
         
         CXoneChat.socketDelegateManager.processMessageReadChangeEvent(data)
@@ -197,7 +197,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessProactiveActionThrowsMissingAction() {
+    func testProcessProactiveActionThrowsMissingAction() async {
         currentExpectation = XCTestExpectation(description: "testProcessProactiveActionThrowsMissingAction")
         
         CXoneChat.socketDelegateManager.processProactiveAction(decode: nil, data: Data())
@@ -228,7 +228,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidOpenConnectionThrowsNoConnected() {
+    func testDidOpenConnectionThrowsNoConnected() async {
         currentExpectation = XCTestExpectation(description: "testDidOpenConnectionThrowsNoConnected")
         
         CXoneChat.socketDelegateManager.didOpenConnection()
@@ -236,7 +236,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidOpenConnectionThrowsMissingVisitorId() {
+    func testDidOpenConnectionThrowsMissingVisitorId() async {
         currentExpectation = XCTestExpectation(description: "testDidOpenConnectionThrows")
         
         CXoneChat.socketDelegateManager.didOpenConnection()
@@ -257,7 +257,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testAssigneeDidChange() {
+    func testAssigneeDidChange() async {
         currentExpectation = XCTestExpectation(description: "testAssigneeDidChange")
         
         let thread = ChatThread(id: UUID())
@@ -268,7 +268,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testAddMessageThrowsMissingFirstMessage() {
+    func testAddMessageThrowsMissingFirstMessage() async {
         currentExpectation = XCTestExpectation(description: "testAddMessageThrows")
         
         CXoneChat.socketDelegateManager.addMessages(messages: [], scrollToken: "")
@@ -276,7 +276,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testAddMessageWithMessages() {
+    func testAddMessageWithMessages() async {
         currentExpectation = XCTestExpectation(description: "testAddMessageThrows")
         
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(
@@ -288,7 +288,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testDidUploadAttachmentsNoThrow() {
+    func testDidUploadAttachmentsNoThrow() async {
         currentExpectation = XCTestExpectation(description: "testDidUploadAttachmentsNoThrow")
         currentExpectation.isInverted = true
         
@@ -299,27 +299,24 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testThreadRecoverWithEmptyMessages() {
+    func testThreadRecoverWithEmptyMessages() async {
         currentExpectation = XCTestExpectation(description: "testThreadRecoverWithEmptyMessages")
         
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID())
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         
         let data = ThreadRecoveredEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: ThreadRecoveredEventPostbackDTO(
                 eventType: .threadRecovered,
-                data: .init(
+                data: ThreadRecoveredEventPostbackDataDTO(
                     consumerContact: contact,
                     messages: [],
                     inboxAssignee: nil,
-                    thread: .init(
-                        id: thread._id ?? "",
+                    thread: ReceivedThreadDataDTO(
                         idOnExternalPlatform: thread.id,
                         channelId: channelId,
                         threadName: thread.name ?? "",
-                        createdAt: Date(),
-                        updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
                     messagesScrollToken: "scroll_token",
@@ -333,27 +330,24 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testThreadRecoverWithNewMessages() {
+    func testThreadRecoverWithNewMessages() async {
         currentExpectation = XCTestExpectation(description: "testThreadRecoverWithDifferentMessages")
         
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID())
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         
         let data = ThreadRecoveredEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: ThreadRecoveredEventPostbackDTO(
                 eventType: .threadRecovered,
-                data: .init(
+                data: ThreadRecoveredEventPostbackDataDTO(
                     consumerContact: contact,
                     messages: [message],
                     inboxAssignee: nil,
-                    thread: .init(
-                        id: thread._id ?? "",
+                    thread: ReceivedThreadDataDTO(
                         idOnExternalPlatform: thread.id,
                         channelId: channelId,
                         threadName: thread.name ?? "",
-                        createdAt: Date(),
-                        updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
                     messagesScrollToken: "scroll_token",
@@ -367,39 +361,36 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testThreadRecoverWitOldMessages() {
+    func testThreadRecoverWitOldMessages() async {
         currentExpectation = XCTestExpectation(description: "testThreadRecoverWitOldMessages")
         
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: thread.idOnExternalPlatform,
-            contentType: .text(""),
-            createdAt: Date(),
+            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+            createdAt: dateProvider.now,
             attachments: [],
             direction: .inbound,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID(), messages: [MessageMapper.map(message)])
+        let thread = ChatThread(id: UUID(), messages: [MessageMapper.map(message)])
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         
         let data = ThreadRecoveredEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: ThreadRecoveredEventPostbackDTO(
                 eventType: .threadRecovered,
-                data: .init(
+                data: ThreadRecoveredEventPostbackDataDTO(
                     consumerContact: contact,
                     messages: [message],
                     inboxAssignee: nil,
-                    thread: .init(
-                        id: thread._id ?? "",
+                    thread: ReceivedThreadDataDTO(
                         idOnExternalPlatform: thread.id,
                         channelId: channelId,
                         threadName: thread.name ?? "",
-                        createdAt: Date(),
-                        updatedAt: Date(),
                         canAddMoreMessages: thread.canAddMoreMessages
                     ),
                     messagesScrollToken: "scroll_token",
@@ -413,7 +404,7 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testLoadThreadDataThrows() {
+    func testLoadThreadDataThrows() async {
         currentExpectation = XCTestExpectation(description: "testLoadThreadDataThrows")
         
         CXoneChat.socketDelegateManager.loadThreadData()
@@ -438,9 +429,12 @@ class SocketDelegateManagerTests: CXoneXCTestCase {
         
         try await super.setUpConnection()
         
-        socketService.connectionContext.channelConfig = .init(
-            settings: .init(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: false
+        socketService.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         
         CXoneChat.socketDelegateManager.loadThreadData()

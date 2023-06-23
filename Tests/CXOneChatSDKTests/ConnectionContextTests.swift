@@ -9,7 +9,7 @@ class ConnectionContextTests: XCTestCase {
     var sut = ConnectionContextImpl(keychainSwift: KeychainSwiftMock(), session: .shared)
     
     
-    // MARK: - tests
+    // MARK: - Tests
     
     func testNotConnected() throws {
         XCTAssertFalse(sut.isConnected)
@@ -23,7 +23,7 @@ class ConnectionContextTests: XCTestCase {
         sut.visitorId = UUID()
         XCTAssertFalse(sut.isConnected)
         
-        sut.customer = .init(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        sut.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         XCTAssertTrue(sut.isConnected)
     }
     
@@ -35,15 +35,47 @@ class ConnectionContextTests: XCTestCase {
     
     func testCustomerSetProperly() {
         XCTAssertNil(sut.customer)
-        sut.customer = .init(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        sut.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         XCTAssertNotNil(sut.customer)
     }
     
     func testAccessTokenSetProperly() {
         XCTAssertNil(sut.accessToken)
         
-        XCTAssertNoThrow(try sut.setAccessToken(.init(token: "data", expiresIn: .max)))
+        XCTAssertNoThrow(try sut.setAccessToken(AccessTokenDTO(token: "data", expiresIn: .max)))
         XCTAssertNotNil(sut.accessToken)
     }
     
+    func testPrechatSurveyMapCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let configuration = try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
+        
+        XCTAssertEqual(configuration.prechatSurvey?.customFields.count, 4)
+        XCTAssertEqual(configuration.prechatSurvey?.name, "Precontact Survey form")
+        
+        configuration.prechatSurvey?.customFields.forEach { customField in
+            switch customField.type {
+            case .textField(let entity):
+                if entity.isEmail {
+                    XCTAssertEqual(entity.ident, "email")
+                    XCTAssertEqual(entity.label, "E-mail")
+                    XCTAssertTrue(customField.isRequired)
+                } else {
+                    XCTAssertEqual(entity.ident, "age")
+                    XCTAssertEqual(entity.label, "Age")
+                    XCTAssertFalse(customField.isRequired)
+                }
+            case .selector(let entity):
+                XCTAssertFalse(customField.isRequired)
+                XCTAssertEqual(entity.ident, "gender")
+                XCTAssertEqual(entity.label, "Gender")
+                XCTAssertEqual(entity.options.count, 3)
+            case .hierarchical(let entity):
+                XCTAssertTrue(customField.isRequired)
+                XCTAssertEqual(entity.ident, "broken_device")
+                XCTAssertEqual(entity.label, "Broken Device")
+                XCTAssertEqual(entity.nodes.count, 2)
+            }
+        }
+    }
 }

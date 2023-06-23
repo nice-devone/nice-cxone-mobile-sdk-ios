@@ -5,11 +5,11 @@ import Foundation
 public struct ConversionData {
     
     /// The type of conversion.
-    let type: String
+    public let type: String
     
     /// The value for the conversion.
-    let value: Double
+    public let value: Double
     
     /// The timestamp for the conversion.
-    let timeWithMilliseconds: String
+    public let timeWithMilliseconds: String
 }

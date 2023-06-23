@@ -2,18 +2,19 @@ import Foundation
 
 
 /// Data payload for the load more messages event.
-struct LoadMoreMessagesEventDataDTO: Encodable {
-    
-    // MARK: - Properties
+struct LoadMoreMessagesEventDataDTO {
     
     let scrollToken: String
-
+    
     let thread: ThreadDTO
-
+    
     let oldestMessageDatetime: Date
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Encodable
+
+extension LoadMoreMessagesEventDataDTO: Encodable {
     
     enum CodingKeys: CodingKey {
         case scrollToken

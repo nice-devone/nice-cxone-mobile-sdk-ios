@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents data of a thread recovered event.
-struct ThreadRecoveredEventDTO: Codable {
+struct ThreadRecoveredEventDTO: Decodable {
     
     /// The unique identifier of the event.
 	let eventId: UUID

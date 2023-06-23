@@ -4,9 +4,9 @@ import Foundation
 /// The different types of error that can be received from the WebSocket.
 enum ErrorCode: String, Codable {
     
-    case customerAuthorizationFailed = "ConsumerAuthorizationFailed"
+    case customerAuthorizationFailed = "CustomerAuthorizationFailed"
     
-    case customerReconnectFailed = "ConsumerReconnectionFailed"
+    case customerReconnectFailed = "CustomerReconnectionFailed"
     
     case tokenRefreshFailed = "TokenRefreshingFailed"
     

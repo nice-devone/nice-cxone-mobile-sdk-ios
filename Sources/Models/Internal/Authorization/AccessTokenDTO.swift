@@ -2,7 +2,7 @@ import Foundation
 
 
 /// An access token used by the customer for sending messages if OAuth authorization is on for the channel.
-struct AccessTokenDTO: Codable {
+struct AccessTokenDTO {
 
     // MARK: - Properties
 
@@ -14,15 +14,8 @@ struct AccessTokenDTO: Codable {
 
     /// The date at which this access token was created.
     let currentDate: Date
-
-    /// Whether the token has expired or not.
-    var isExpired: Bool {
-        let date = Calendar.current.dateComponents([.second], from: currentDate, to: Date())
-
-        return date.second ?? 0 > (expiresIn - 180)
-    }
-
-
+    
+    
     // MARK: - Init
 
     init(token: String, expiresIn: Int = 180) {
@@ -30,10 +23,22 @@ struct AccessTokenDTO: Codable {
         self.expiresIn = expiresIn
         self.currentDate = Date()
     }
+    
+    
+    // MARK: - Methods
+    
+    func isExpired(currentDate: Date) -> Bool {
+        let date = Calendar.current.dateComponents([.second], from: currentDate, to: currentDate)
+        
+        return date.second ?? 0 > (expiresIn - 180)
+    }
+}
 
 
-    // MARK: - Decoder
+// MARK: - Codable
 
+extension AccessTokenDTO: Codable {
+    
     enum CodingKeys: String, CodingKey {
         case token
         case currentDate

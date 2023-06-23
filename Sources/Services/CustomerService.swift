@@ -61,7 +61,7 @@ class CustomerService: CustomerProvider {
             connectionContext.customer?.firstName = firstName
             connectionContext.customer?.lastName = lastName
         } else {
-            connectionContext.customer = .init(idOnExternalPlatform: UUID().uuidString, firstName: firstName, lastName: lastName)
+            connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: firstName, lastName: lastName)
         }
     }   
 }

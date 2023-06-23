@@ -42,11 +42,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
     // MARK: - Tests
 
     func testCreateThreadThrowsError() {
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(.init(id: .init()))
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID()))
         
-        socketService.connectionContext.channelConfig = .init(
-            settings: .init(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false
+        socketService.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         
         XCTAssertThrowsError(try CXoneChat.threads.create())
@@ -59,15 +62,18 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testCreateThreadNotThrowError() {
-        XCTAssertNoThrow(try CXoneChat.threads.create())
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["lastname": "Doe"]))
     }
 
     func testLoadThreadsDoesNotThrows() {
         let expectation = XCTestExpectation(description: "closure Called")
 
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
         socketService.messageSent = { message in
@@ -83,12 +89,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testLoadThreadThrowErrorWithSingleThreadConfig() {
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(.init(id: UUID()))
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID()))
 
         XCTAssertThrowsError(try CXoneChat.threads.load(), "Error catched") { error in
             XCTAssertEqual(error.localizedDescription, CXoneChatError.unsupportedChannelConfig.localizedDescription)
@@ -119,7 +128,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         let expectation = XCTestExpectation(description: "closure Called")
 
         let uuid = UUID()
-        let thread = ChatThread(_id: UUID().uuidString, id: uuid)
+        let thread = ChatThread(id: uuid)
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
 
         socketService.messageSend = 0
@@ -138,7 +147,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testLoadThreadInfo() {
         let expectation = XCTestExpectation(description: "closure Called")
         
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID())
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         
         socketService.messageSend = 0
@@ -155,21 +164,27 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testArchiveThreadThrowsUnsupportedChannelConfigError() {
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         
-        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThread(_id: "", id: UUID())))
+        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThread(id: UUID())))
     }
 
     func testArchiveThreadThrowsThreadIndexError() {
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
-        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThread(_id: "", id: UUID())), "invalid thread") { error in
+        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThread(id: UUID())), "invalid thread") { error in
             XCTAssertEqual(error as? CXoneChatError, .invalidThread)
         }
     }
@@ -177,12 +192,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testArchiveThreadRemoveFromList() {
         let expectation = XCTestExpectation(description: "archivedThread")
 
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
-        var thread = ChatThread(_id: UUID().uuidString, id: UUID())
-        thread._id = UUID().uuidString
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         var check = false
 
@@ -201,12 +218,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testArchiveThreadSendToServerMessage() throws {
         let expectation = XCTestExpectation(description: "closure Called")
 
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         var thread = ChatThreadDTO(
-            id: UUID().uuidString,
             idOnExternalPlatform: UUID(),
             threadName: nil,
             messages: [],
@@ -219,11 +238,11 @@ class ThreadsProviderTests: CXoneXCTestCase {
             MessageDTO(
                 idOnExternalPlatform: UUID(),
                 threadIdOnExternalPlatform: thread.idOnExternalPlatform,
-                contentType: .text(""),
+                contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
                 createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
                 attachments: [],
                 direction: .inbound,
-                userStatistics: .init(seenAt: nil, readAt: nil),
+                userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
                 authorUser: nil,
                 authorEndUserIdentity: nil
             )
@@ -246,7 +265,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testThreadRecover() throws {
         currentExpectation = XCTestExpectation(description: "loadthread exp")
 
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID())
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
 
         let event = ThreadRecoveredEventDTO(
@@ -265,27 +284,27 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
                             threadIdOnExternalPlatform: thread.id,
-                            contentType: .text(""),
+                            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
                             attachments: [],
                             direction: .inbound,
-                            userStatistics: .init(seenAt: nil, readAt: nil),
+                            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
                             authorUser: nil,
                             authorEndUserIdentity: nil
                         ),
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
                             threadIdOnExternalPlatform: thread.id,
-                            contentType: .text(""),
+                            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
                             attachments: [],
                             direction: .inbound,
-                            userStatistics: .init(seenAt: nil, readAt: nil),
+                            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
                             authorUser: nil,
                             authorEndUserIdentity: nil
                         )
                     ],
-                    inboxAssignee: .init(
+                    inboxAssignee: AgentDTO(
                         id: 0,
                         inContactId: UUID().uuidString,
                         emailAddress: nil,
@@ -297,15 +316,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         isSurveyUser: false,
                         imageUrl: ""
                     ),
-                    thread: ReceivedThreadDataDTO(
-                        id: UUID().uuidString,
-                        idOnExternalPlatform: thread.id,
-                        channelId: "channel_1",
-                        threadName: "name",
-                        createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
-                        updatedAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
-                        canAddMoreMessages: true
-                    ),
+                    thread: ReceivedThreadDataDTO(idOnExternalPlatform: thread.id, channelId: "channel_1", threadName: "name", canAddMoreMessages: true),
                     messagesScrollToken: "token",
                     customerContactFields: []
                 )
@@ -330,7 +341,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testMarkThreadAsReadSuccess() {
         let expectation = XCTestExpectation(description: "closure Called")
 
-        let thread = ChatThread(_id: UUID().uuidString, id: UUID())
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
 
         socketService.messageSend = 0
@@ -347,9 +358,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testSetThreadAgentThrowsInvalidThreadError() throws {
-        var thread = ChatThread(_id: UUID().uuidString, id: UUID())
-        thread._id = UUID().uuidString
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID()))
 
         XCTAssertEqual(CXoneChat.threads.get().count, 1)
 
@@ -357,8 +366,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testSetThreadAgent() throws {
-        var thread = ChatThread(_id: UUID().uuidString, id: UUID())
-        thread._id = UUID().uuidString
+        let thread = ChatThread(id: UUID())
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
 
         XCTAssertEqual(CXoneChat.threads.get().count, 1)
@@ -369,7 +377,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertEqual(CXoneChat.threads.get().first?.assignedAgent?.fullName, agent.fullName)
     }
 
-    func testNotifyArchiveThreadEvent() {
+    func testNotifyArchiveThreadEvent() async {
         currentExpectation = XCTestExpectation(description: "Thread Archive Event")
 
         CXoneChat.socketDelegateManager.notifyThreadArchivedEvent()
@@ -381,31 +389,23 @@ class ThreadsProviderTests: CXoneXCTestCase {
         currentExpectation = XCTestExpectation(description: "On Thread Load from Process")
 
         CXoneChat.socketDelegateManager.processThreadRecoverEvent(
-            .init(
+            ThreadRecoveredEventDTO(
                 eventId: UUID(),
-                postback: .init(
+                postback: ThreadRecoveredEventPostbackDTO(
                     eventType: .recoverThread,
-                    data: .init(
-                        consumerContact: .init(
+                    data: ThreadRecoveredEventPostbackDataDTO(
+                        consumerContact: ContactDTO(
                             id: UUID().uuidString,
                             threadIdOnExternalPlatform: UUID(),
                             status: .open,
-                            createdAt: Date(),
-                            customFields: [.init(ident: "contact.customFields.location", value: "EU", updatedAt: Date())]
+                            createdAt: dateProvider.now,
+                            customFields: [CustomFieldDTO(ident: "contact.customFields.location", value: "EU", updatedAt: dateProvider.now)]
                         ),
                         messages: [],
                         inboxAssignee: nil,
-                        thread: .init(
-                            id: "asd",
-                            idOnExternalPlatform: UUID(),
-                            channelId: "",
-                            threadName: "",
-                            createdAt: Date(),
-                            updatedAt: Date(),
-                            canAddMoreMessages: true
-                        ),
+                        thread: ReceivedThreadDataDTO(idOnExternalPlatform: UUID(), channelId: "", threadName: "", canAddMoreMessages: true),
                         messagesScrollToken: "asdasda",
-                        customerContactFields: [.init(ident: "customer.customFields.age", value: "EU", updatedAt: Date())]
+                        customerContactFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: dateProvider.now)]
                     )
                 )
             )
@@ -415,18 +415,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testProcessThreadLastMessage() throws {
-        currentExpectation = XCTestExpectation(description: "On ThreadInfo load ")
+        currentExpectation = XCTestExpectation(description: "On ThreadInfo load")
 
         guard let uuid = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7") else {
             throw CXoneChatError.invalidData
         }
 
-        var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
-
         let data = try loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
         let event = try JSONDecoder().decode(ThreadMetadataLoadedEventDTO.self, from: data)
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: uuid))
         CXoneChat.socketDelegateManager.processThreadLastMessage(event.postback.data.lastMessage)
 
         wait(for: [currentExpectation], timeout: 1.0)
@@ -447,12 +444,9 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
 
-        var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
-
         let data = try loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
         let event = try JSONDecoder().decode(ThreadMetadataLoadedEventDTO.self, from: data)
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: uuid))
 
         guard let ownerAssignee = event.postback.data.ownerAssignee else {
             throw CXoneChatError.invalidData
@@ -468,15 +462,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
 
-        var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
-
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: uuid))
 
         XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: UUID()))
     }
@@ -485,15 +479,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
 
-        var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
-
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: uuid))
 
         XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: UUID()))
     }
@@ -506,22 +500,24 @@ class ThreadsProviderTests: CXoneXCTestCase {
         }
 
         var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
         var check = false
 
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         thread.messages.append(
-            .init(
+            Message(
                 id: UUID(),
                 threadId: UUID(),
-                contentType: .text(""),
-                createdAt: Date(),
+                contentType: .text(MessagePayload(text: "", postback: nil)),
+                createdAt: dateProvider.now,
                 attachments: [],
                 direction: .toAgent,
-                userStatistics: .init(seenAt: nil, readAt: nil),
+                userStatistics: UserStatistics(seenAt: nil, readAt: nil),
                 authorUser: nil,
                 authorEndUserIdentity: nil
             )
@@ -560,12 +556,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
 
-        var thread = ChatThread(id: uuid)
-        thread._id = UUID().uuidString
+        let thread = ChatThread(id: uuid)
 
-        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = .init(
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
 
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
@@ -581,11 +579,11 @@ class ThreadsProviderTests: CXoneXCTestCase {
         let message = MessageDTO(
             idOnExternalPlatform: UUID(),
             threadIdOnExternalPlatform: UUID(),
-            contentType: .text(""),
-            createdAt: Date(),
+            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+            createdAt: dateProvider.now,
             attachments: [],
             direction: .inbound,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
@@ -593,20 +591,20 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertThrowsError(try (CXoneChat.threads as? ChatThreadsService)?.appendMessageToThread(message))
     }
     
-    func testAppendMessageToThreadNoThrows() {
+    func testAppendMessageToThreadNoThrow() {
         let uuid = UUID()
         
         let thread = ChatThread(id: uuid)
         (CXoneChat.threads as? ChatThreadsService)?.threads.append(thread)
         
         let message = MessageDTO(
-            idOnExternalPlatform: uuid,
-            threadIdOnExternalPlatform: UUID(),
-            contentType: .text(""),
-            createdAt: Date(),
+            idOnExternalPlatform: UUID(),
+            threadIdOnExternalPlatform: uuid,
+            contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+            createdAt: dateProvider.now,
             attachments: [],
             direction: .inbound,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
@@ -617,23 +615,23 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testWelcomeMessageHandlerNoThrow() throws {
         UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
         
-        XCTAssertNoThrow(try CXoneChat.threads.create())
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["lastname": "Doe"]))
     }
     
-    func testWelcomeMessagePostHandlerThrowsMissingMessage() {
+    func testWelcomeMessagePostHandlerThrowsMissingMessage() async {
         currentExpectation = XCTestExpectation(description: "Welcome message post handler")
         
-        XCTAssertNoThrow(try CXoneChat.threads.create())
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["lastname": "Doe"]))
         
         (CXoneChat.threads as? ChatThreadsService)?.onWelcomeMessageReceived()
         
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testWelcomeMessagePostHandlerThrowsMissingCustomer() {
+    func testWelcomeMessagePostHandlerThrowsMissingCustomer() async {
         currentExpectation = XCTestExpectation(description: "Welcome message post handler")
         
-        XCTAssertNoThrow(try CXoneChat.threads.create())
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["lastname": "Doe"]))
         
         UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
         socketService.connectionContext.customer = nil
@@ -644,10 +642,341 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
     
     func testWelcomeMessagePostHandler() {
-        XCTAssertNoThrow(try CXoneChat.threads.create())
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["lastname": "Doe"]))
         
         UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
         (CXoneChat.threads as? ChatThreadsService)?.onWelcomeMessageReceived()
+    }
+    
+    func testGetPrechatSurveyEmpty() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "fistName", label: "First Name", value: nil, updatedAt: .distantPast, isEmail: false))
+                ),
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+                )
+            ]),
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
+        )
+        
+        XCTAssertNil(CXoneChat.threads.preChatSurvey)
+    }
+    
+    func testGetPrechatSurveyNoEmpty() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "fistName", label: "First Name", value: nil, updatedAt: .distantPast, isEmail: false))
+                ),
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+                ),
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .selector(
+                        CustomFieldSelectorDTO(
+                            ident: "gender",
+                            label: "Gender",
+                            value: nil,
+                            updatedAt: .distantPast,
+                            options: ["gender-male": "Male", "gender-female": "Female"])
+                    )
+                ),
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .hierarchical(
+                        CustomFieldHierarchicalDTO(
+                            ident: "options",
+                            label: "Options",
+                            value: nil,
+                            updatedAt: .distantPast,
+                            nodes: [
+                                CustomFieldHierarchicalNodeDTO(value: "option-a", label: "Option A", children: [
+                                    CustomFieldHierarchicalNodeDTO(value: "option-a-1", label: "Option A1")
+                                ]),
+                                CustomFieldHierarchicalNodeDTO(value: "option-b", label: "Option B", children: [
+                                    CustomFieldHierarchicalNodeDTO(value: "option-b-1", label: "Option B1")]
+                                )
+                            ]
+                        )
+                    )
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "firstName", label: "First Name", value: nil, updatedAt: .distantPast, isEmail: false)),
+                .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true)),
+                .selector(CustomFieldSelectorDTO(ident: "gender", label: "Gender", value: nil, updatedAt: .distantPast, options: [
+                    "gender-male": "Male",
+                    "gender-female": "Female"
+                ])),
+                .hierarchical(CustomFieldHierarchicalDTO(ident: "options", label: "Options", value: nil, updatedAt: .distantPast, nodes: [
+                    CustomFieldHierarchicalNodeDTO(value: "option-a", label: "Option A", children: [
+                        CustomFieldHierarchicalNodeDTO(value: "option-a-1", label: "Option A1")
+                    ]),
+                    CustomFieldHierarchicalNodeDTO(value: "option-b", label: "Option B", children: [
+                        CustomFieldHierarchicalNodeDTO(value: "option-b-1", label: "Option B1")]
+                                                  )
+                ]))
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        XCTAssertNotNil(CXoneChat.threads.preChatSurvey)
+    }
+    
+    func testGetPrechatSurveyWithFilteredCustomFields() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "fistName", label: "First Name", value: nil, updatedAt: .distantPast, isEmail: false))
+                ),
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        XCTAssertNotNil(CXoneChat.threads.preChatSurvey)
+        XCTAssertEqual(CXoneChat.threads.preChatSurvey?.customFields.count, 1)
+    }
+    
+    func testCreateWithoutCustomFieldsDefinitionThrows() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))],
+            customerCustomFieldDefinitions: []
+        )
+        
+        XCTAssertThrowsError(try CXoneChat.threads.create())
+    }
+    
+    func testCreateWithCustomFieldsDefinitionNoThrow() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["location": "EU"]))
+    }
+    
+    func testCreateWithTextCustomFieldNoThrow() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "location", label: "Location", value: nil, updatedAt: .distantPast, isEmail: false))],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            _ = try CXoneChat.threads.create(with: ["location": "EU"])
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
+    }
+    
+    func testCreateWithEmailCustomFieldNoThrow() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "Email", value: nil, updatedAt: .distantPast, isEmail: true))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "email", label: "Email", value: nil, updatedAt: .distantPast, isEmail: true))],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            _ = try CXoneChat.threads.create(with: ["email": "john.doe@email.com"])
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
+    }
+    
+    func testCreateWithSelectorCustomFieldNoThrow() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .selector(
+                        CustomFieldSelectorDTO(
+                            ident: "gender",
+                            label: "Gender",
+                            value: nil,
+                            updatedAt: .distantPast,
+                            options: ["gender-male": "Male", "gender-female": "Female"]
+                        )
+                    )
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .selector(
+                    CustomFieldSelectorDTO(
+                        ident: "gender",
+                        label: "Gender",
+                        value: nil,
+                        updatedAt: .distantPast,
+                        options: ["gender-male": "Male", "gender-female": "Female"]
+                    )
+                )
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            _ = try CXoneChat.threads.create(with: ["gender": "gender-male"])
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
+    }
+    
+    func testCreateWithHierarchicalCustomFieldNoThrow() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .hierarchical(
+                        CustomFieldHierarchicalDTO(
+                            ident: "options",
+                            label: "Options",
+                            value: nil,
+                            updatedAt: .distantPast,
+                            nodes: [
+                                CustomFieldHierarchicalNodeDTO(value: "option-a", label: "Option A", children: [.init(value: "option-a-1", label: "Option A1")]),
+                                CustomFieldHierarchicalNodeDTO(value: "option-b", label: "Option B", children: [.init(value: "option-b-1", label: "Option B1")]),
+                            ]
+                        )
+                    )
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .hierarchical(
+                    CustomFieldHierarchicalDTO(
+                        ident: "options",
+                        label: "Options",
+                        value: nil,
+                        updatedAt: .distantPast,
+                        nodes: [
+                            CustomFieldHierarchicalNodeDTO(value: "option-a", label: "Option A", children: [.init(value: "option-a-1", label: "Option A1")]),
+                            CustomFieldHierarchicalNodeDTO(value: "option-b", label: "Option B", children: [.init(value: "option-b-1", label: "Option B1")]),
+                        ]
+                    )
+                )
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            _ = try CXoneChat.threads.create(with: ["options": "option-b-1"])
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
+    }
+    
+    func testCustomFieldsAreSetAfterCreate() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            let threadId = try CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
+            
+            XCTAssertFalse((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).isEmpty)
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
+    }
+    
+    func testCustomFieldsNotOverrideStoredOnes() {
+        (CXoneChat.connection as? ConnectionService)?.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: PreChatSurveyDTO(name: "", customFields: [
+                PreChatSurveyCustomFieldDTO(
+                    isRequired: true,
+                    type: .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true))
+                )
+            ]),
+            contactCustomFieldDefinitions: [
+                .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantPast, isEmail: true)),
+                .textField(CustomFieldTextFieldDTO(ident: "firstName", label: "First Name", value: nil, updatedAt: .distantPast, isEmail: false)),
+                .textField(CustomFieldTextFieldDTO(ident: "lastName", label: "Last Name", value: nil, updatedAt: .distantPast, isEmail: false))
+            ],
+            customerCustomFieldDefinitions: []
+        )
+        
+        do {
+            let threadId = try CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
+            
+            try CXoneChat.threads.customFields.set(["firstName": "John", "lastName": "Doe"], for: threadId)
+            
+            XCTAssertFalse((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).isEmpty)
+            XCTAssertEqual((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).count, 3)
+        } catch {
+            XCTFail("Method should not thrown an error")
+        }
     }
 }
 
@@ -657,6 +986,13 @@ class ThreadsProviderTests: CXoneXCTestCase {
 extension ThreadsProviderTests: CXoneChatDelegate {
     
     func onThreadsLoad(_ threads: [ChatThread]) {
+        if !didCheckDelegate {
+            currentExpectation.fulfill()
+            didCheckDelegate = true
+        }
+    }
+    
+    func onThreadInfoLoad(_ thread: ChatThread) {
         if !didCheckDelegate {
             currentExpectation.fulfill()
             didCheckDelegate = true

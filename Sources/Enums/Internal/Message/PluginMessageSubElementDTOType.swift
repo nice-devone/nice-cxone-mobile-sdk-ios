@@ -1,9 +1,7 @@
 import Foundation
 
 
-enum PluginMessageSubElementDTOType: Codable {
-    
-    // MARK: - Cases
+enum PluginMessageSubElementDTOType {
     
     case text(PluginMessageTextDTO)
     
@@ -12,9 +10,12 @@ enum PluginMessageSubElementDTOType: Codable {
     case file(PluginMessageFileDTO)
     
     case title(PluginMessageTitleDTO)
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageSubElementDTOType: Codable {
     
     enum CodingKeys: CodingKey {
         case type
@@ -34,7 +35,10 @@ enum PluginMessageSubElementDTOType: Codable {
         case .title:
             self = .title(try singleContainer.decode(PluginMessageTitleDTO.self))
         default:
-            throw CXoneChatError.invalidData
+            throw DecodingError.valueNotFound(
+                PluginMessageSubElementDTOType.self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "type")
+            )
         }
     }
     

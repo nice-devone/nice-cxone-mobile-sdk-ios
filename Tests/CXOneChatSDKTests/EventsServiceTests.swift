@@ -25,7 +25,7 @@ class EventsServiceTests: CXoneXCTestCase {
     }
     
     func testCreateSuccecsful() {
-        eventsService.connectionContext.customer = .init(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        eventsService.connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         eventsService.connectionContext.visitorId = UUID()
         
         do {

@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageButtonDTO: Codable {
+struct PluginMessageButtonDTO {
     
     // MARK: - Properties
     
@@ -25,9 +25,12 @@ struct PluginMessageButtonDTO: Codable {
         self.url = url
         self.displayInApp = displayInApp
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageButtonDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id
@@ -45,22 +48,25 @@ struct PluginMessageButtonDTO: Codable {
         self.postback = try container.decodeIfPresent(String.self, forKey: .postback)
         self.displayInApp = try container.decode(ElementType.self, forKey: .type) == .iFrameButton
         
-        if let postback = postback?.lowercased() , postback.contains("deeplink") {
+        if let postback = postback?.lowercased(), postback.contains("deeplink") {
             let dictionary = try postback
                 .replacingOccurrences(of: "'", with: "\"")
                 .toDictionary()
             
             guard let deeplink = dictionary["deeplink"] as? String else {
-                throw DecodingError.valueNotFound(String.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO"))
+                throw DecodingError.valueNotFound(
+                    String.self,
+                    DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO")
+                )
             }
             guard let url = URL(string: deeplink) else {
-                throw DecodingError.typeMismatch(URL.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO"))
+                throw DecodingError.typeMismatch(URL.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO"))
             }
             
             self.url = url
         } else if let urlString = try? container.decodeIfPresent(String.self, forKey: .url), !urlString.isEmpty {
             guard let url = URL(string: urlString) else {
-                throw DecodingError.typeMismatch(URL.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO"))
+                throw DecodingError.typeMismatch(URL.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageButtonDTO"))
             }
             
             self.url = url

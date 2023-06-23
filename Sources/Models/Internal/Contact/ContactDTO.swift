@@ -4,7 +4,7 @@ import Foundation
 // ContactView
 
 /// Represents all info about a contact (case).
-struct ContactDTO: Codable {
+struct ContactDTO {
 
     // MARK: - Properties
 
@@ -32,9 +32,12 @@ struct ContactDTO: Codable {
         self.createdAt = createdAt
         self.customFields = customFields
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension ContactDTO: Codable {
     
     /// The Contact coding keys.
     enum CodingKeys: CodingKey {

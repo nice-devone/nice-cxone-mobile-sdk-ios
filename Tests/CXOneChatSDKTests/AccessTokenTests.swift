@@ -6,7 +6,9 @@ class AccessTokenTests: XCTestCase {
     
     // MARK: - Properties
     
-    var sut: AccessTokenDTO!
+    let dateProvider = DateProviderMock()
+    
+    var sut: AccessTokenDTO?
     
     
     // MARK: - Lifecycle
@@ -23,18 +25,13 @@ class AccessTokenTests: XCTestCase {
     // MARK: - Tests
     
     func testAccessTokenIsnotExpired() {
-        XCTAssertFalse(sut.isExpired)
+        XCTAssertFalse(sut?.isExpired(currentDate: dateProvider.now) ?? true)
     }
 
-    func testAccessTokenIsExpired() {
+    func testAccessTokenIsExpired() throws {
         sut = AccessTokenDTO(token: "token", expiresIn: 1)
         
-        if #available(iOS 15, *) {
-            RunLoop.main.run(until: Date.now + 3)
-            XCTAssertTrue(self.sut.isExpired)
-        } else {
-            XCTFail("\(#function) failed")
-        }
+        RunLoop.main.run(until: Date() + 3)
+        XCTAssertTrue(sut?.isExpired(currentDate: dateProvider.now) ?? false)
     }
-
 }

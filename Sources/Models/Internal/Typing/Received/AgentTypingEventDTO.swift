@@ -4,23 +4,23 @@ import Foundation
 // SenderTypingStarted
 
 /// Event received when the agent begins typing or stops typing.
-struct AgentTypingEventDTO: ReceivedEvent, Codable {
-    
-    // MARK: - Properties
-    
-	var eventId: UUID
+struct AgentTypingEventDTO: ReceivedEvent {
 
-	var eventObject: EventObjectType
+    // MARK: - Properties
+
+    var eventId: UUID
+
+    var eventObject: EventObjectType
 
     let eventType: EventType
 
-	var createdAt: Date
+    var createdAt: Date
 
-	var data: AgentTypingEventDataDTO
+    var data: AgentTypingEventDataDTO
 
 
     // MARK: - Init
-    
+
     init(eventId: UUID, eventObject: EventObjectType, eventType: EventType, createdAt: Date, data: AgentTypingEventDataDTO) {
         self.eventId = eventId
         self.eventObject = eventObject
@@ -28,10 +28,12 @@ struct AgentTypingEventDTO: ReceivedEvent, Codable {
         self.createdAt = createdAt
         self.data = data
     }
-    
-    
-    // MARK: - Codable
-    
+}
+
+// MARK: - Codable
+
+extension AgentTypingEventDTO: Codable {
+
     enum CodingKeys: CodingKey {
         case eventId
         case eventObject
@@ -39,7 +41,7 @@ struct AgentTypingEventDTO: ReceivedEvent, Codable {
         case createdAt
         case data
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -49,7 +51,7 @@ struct AgentTypingEventDTO: ReceivedEvent, Codable {
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.data = try container.decode(AgentTypingEventDataDTO.self, forKey: .data)
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

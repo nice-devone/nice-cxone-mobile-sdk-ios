@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct MoreMessagesLoadedEventPostbackDataDTO: Codable {
+struct MoreMessagesLoadedEventPostbackDataDTO: Decodable {
     
     let messages: [MessageDTO]
 

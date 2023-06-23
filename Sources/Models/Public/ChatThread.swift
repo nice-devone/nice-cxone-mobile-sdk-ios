@@ -4,12 +4,7 @@ import Foundation
 /// All information about a chat thread as well as the messages for the thread.
 public struct ChatThread {
     
-    /// The internal id of the thread.
-    ///
-    /// It combines an unique identifier of the channel and `UUID`.
-    var _id: String?
-    
-    /// The unique id of the thread.
+    /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
     public let id: UUID
     
     /// The name given to the thread (for multi-thread channels only).

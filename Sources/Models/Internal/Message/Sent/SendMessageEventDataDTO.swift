@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct SendMessageEventDataDTO: Codable {
+struct SendMessageEventDataDTO {
     
     // MARK: - Properties
     
@@ -19,7 +19,7 @@ struct SendMessageEventDataDTO: Codable {
 
     let attachments: [AttachmentDTO]
 
-    let browserFingerprint: BrowserFingerprintDTO
+    let deviceFingerprint: DeviceFingerprintDTO
 
     let token: String?
     
@@ -33,7 +33,7 @@ struct SendMessageEventDataDTO: Codable {
         customer: CustomerCustomFieldsDataDTO,
         contact: ContactCustomFieldsDataDTO,
         attachments: [AttachmentDTO],
-        browserFingerprint: BrowserFingerprintDTO,
+        deviceFingerprint: DeviceFingerprintDTO,
         token: String?
     ) {
         self.thread = thread
@@ -42,12 +42,15 @@ struct SendMessageEventDataDTO: Codable {
         self.customer = customer
         self.contact = contact
         self.attachments = attachments
-        self.browserFingerprint = browserFingerprint
+        self.deviceFingerprint = deviceFingerprint
         self.token = token
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension SendMessageEventDataDTO: Codable {
 
     enum CodingKeys: CodingKey {
         case thread
@@ -56,7 +59,7 @@ struct SendMessageEventDataDTO: Codable {
         case customer
         case contact
         case attachments
-        case browserFingerprint
+        case deviceFingerprint
         case accessToken
     }
     
@@ -74,7 +77,7 @@ struct SendMessageEventDataDTO: Codable {
         self.customer = try container.decode(CustomerCustomFieldsDataDTO.self, forKey: .customer)
         self.contact = try container.decode(ContactCustomFieldsDataDTO.self, forKey: .contact)
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)
-        self.browserFingerprint = try container.decode(BrowserFingerprintDTO.self, forKey: .browserFingerprint)
+        self.deviceFingerprint = try container.decode(DeviceFingerprintDTO.self, forKey: .deviceFingerprint)
         self.token = try accessTokenContainer?.decodeIfPresent(String.self, forKey: .token)
     }
     
@@ -87,7 +90,7 @@ struct SendMessageEventDataDTO: Codable {
         try container.encode(customer, forKey: .customer)
         try container.encode(contact, forKey: .contact)
         try container.encode(attachments, forKey: .attachments)
-        try container.encode(browserFingerprint, forKey: .browserFingerprint)
+        try container.encode(deviceFingerprint, forKey: .deviceFingerprint)
         
         if let token = token, !token.isEmpty {
             var accessTokenContainer = container.nestedContainer(keyedBy: AccessTokenCodingKey.self, forKey: .accessToken)

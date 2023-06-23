@@ -10,16 +10,16 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     
     private lazy var brand = BrandDTO(id: brandId)
     private lazy var channel = ChannelIdentifierDTO(id: channelId)
-    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: Date(), customFields: [])
-    private lazy var thread = ThreadDTO(id: nil, idOnExternalPlatform: UUID(), threadName: nil)
-    private let message = MessageDTO(
+    private lazy var contact = ContactDTO(id: "", threadIdOnExternalPlatform: UUID(), status: .new, createdAt: dateProvider.now, customFields: [])
+    private lazy var thread = ThreadDTO(idOnExternalPlatform: UUID(), threadName: nil)
+    private lazy var message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        contentType: .text(""),
-        createdAt: Date(),
+        contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+        createdAt: dateProvider.now,
         attachments: [],
         direction: .inbound,
-        userStatistics: .init(seenAt: nil, readAt: nil),
+        userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
         authorUser: nil,
         authorEndUserIdentity: nil
     )
@@ -67,7 +67,7 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         wait(for: [currentExpectation], timeout: 1.0)
     }
     
-    func testHandleMessageThrowsMissingEventDTO() {
+    func testHandleMessageThrowsMissingEventDTO() async {
         currentExpectation = XCTestExpectation(description: "Handle message decode error.")
         
         CXoneChat.socketDelegateManager.handleMessage(message: "message")
@@ -79,27 +79,15 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         currentExpectation = XCTestExpectation(description: "Handle message decode error.")
         
         let error = GenericEventDTO(
-            eventType: .archiveThread, postback: nil,
-            error: .init(errorCode: .inconsistentData, transactionId: LowerCaseUUID(), errorMessage: ""),
+            eventType: .archiveThread,
+            postback: nil,
+            error: OperationError(errorCode: .inconsistentData, transactionId: LowerCaseUUID(), errorMessage: ""),
             internalServerError: nil
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(error).utf8string)
         
         wait(for: [currentExpectation], timeout: 1.0)
-    }
-    
-    func testNotifyAgentTypingStartedEventWithPostbackEventType() throws {
-        currentExpectation = XCTestExpectation(description: "testNotifyAgentTypingStartedEventWithPostbackEventType")
-        
-        let event = GenericEventDTO(
-            eventType: nil,
-            postback: .init(eventType: .senderTypingStarted, threads: nil),
-            error: nil,
-            internalServerError: nil
-        )
-        
-        CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
     }
     
     func testNotifyAgentTypingStartedEventDTO() throws {
@@ -109,8 +97,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .senderTypingStarted,
-            createdAt: Date(),
-            data: .init(brand: brand, channel: channel, thread: thread, user: agent)
+            createdAt: dateProvider.now,
+            data: AgentTypingEventDataDTO(brand: brand, channel: channel, thread: thread, user: agent)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -125,8 +113,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .senderTypingEnded,
-            createdAt: Date(),
-            data: .init(brand: brand, channel: channel, thread: thread, user: agent)
+            createdAt: dateProvider.now,
+            data: AgentTypingEventDataDTO(brand: brand, channel: channel, thread: thread, user: agent)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -137,13 +125,13 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessMessageCreatedEventThrows() throws {
         currentExpectation = XCTestExpectation(description: "testProcessMessageCreatedEventThrows")
         
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(.init(id: message.threadIdOnExternalPlatform))
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: message.threadIdOnExternalPlatform))
         
         let event = MessageCreatedEventDTO(
             eventId: UUID(),
             eventObject: .message,
             eventType: .messageCreated,
-            createdAt: Date(),
+            createdAt: dateProvider.now,
             data: MessageCreatedEventDataDTO(brand: brand, channel: channel, case: contact, thread: thread, message: message)
         )
         
@@ -155,13 +143,13 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessMessageCreatedEventNoThrow() throws {
         currentExpectation = XCTestExpectation(description: "testProcessMessageCreatedEventNoThrow")
         
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(.init(id: UUID()))
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID()))
         
         let event = MessageCreatedEventDTO(
             eventId: UUID(),
             eventObject: .message,
             eventType: .messageCreated,
-            createdAt: Date(),
+            createdAt: dateProvider.now,
             data: MessageCreatedEventDataDTO(brand: brand, channel: channel, case: contact, thread: thread, message: message)
         )
         
@@ -177,8 +165,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .threadRecovered,
-            createdAt: Date(),
-            data: .init(brand: brand, channel: channel, thread: thread, user: agent)
+            createdAt: dateProvider.now,
+            data: AgentTypingEventDataDTO(brand: brand, channel: channel, thread: thread, user: agent)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -203,8 +191,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .messageReadChanged,
-            createdAt: Date(),
-            data: .init(brand: brand, message: message)
+            createdAt: dateProvider.now,
+            data: MessageReadByAgentEventDataDTO(brand: brand, message: message)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -229,8 +217,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .thread,
             eventType: .contactInboxAssigneeChanged,
-            createdAt: Date(),
-            data: .init(brand: brand, channel: channel, case: contact, inboxAssignee: agent, previousInboxAssignee: nil)
+            createdAt: dateProvider.now,
+            data: ContactInboxAssigneeChangedDataDTO(brand: brand, channel: channel, case: contact, inboxAssignee: agent, previousInboxAssignee: nil)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -241,19 +229,14 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessThreadListFetchedEventDTO() throws {
         currentExpectation = XCTestExpectation(description: "testProcessThreadListFetchedEvent")
         
-        let postbackData = ReceivedThreadDataDTO(
-            id: "",
-            idOnExternalPlatform: UUID(),
-            channelId: "",
-            threadName: "",
-            createdAt: Date(),
-            updatedAt: Date(),
-            canAddMoreMessages: true
-        )
-        
         let event = GenericEventDTO(
             eventType: nil,
-            postback: .init(eventType: .threadListFetched, threads: [postbackData]),
+            postback: GenericEventPostbackDTO(
+                eventType: .threadListFetched,
+                threads: [
+                    ReceivedThreadDataDTO(idOnExternalPlatform: UUID(), channelId: "", threadName: "", canAddMoreMessages: true)
+                ]
+            ),
             error: nil,
             internalServerError: nil
         )
@@ -266,13 +249,19 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessCustomerAuthorizedEventThrowMissingAccessToken() throws {
         currentExpectation = XCTestExpectation(description: "testProcessCustomerAuthorizedEventThrowMissingAccessToken")
         
-        socketService.connectionContext.channelConfig = .init(
-            settings: .init(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: true
+        socketService.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         let event = CustomerAuthorizedEventDTO(
             eventId: UUID(),
-            postback: .init(eventType: .customerAuthorized, data: .init(consumerIdentity: identity, accessToken: nil))
+            postback: CustomerAuthorizedEventPostbackDTO(
+                eventType: .customerAuthorized,
+                data: CustomerAuthorizedEventPostbackDataDTO(consumerIdentity: identity, accessToken: nil)
+            )
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -283,13 +272,19 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessCustomerAuthorizedEventNoThrow() throws {
         currentExpectation = XCTestExpectation(description: "testProcessCustomerAuthorizedEventNoThrow")
         
-        socketService.connectionContext.channelConfig = .init(
-            settings: .init(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true
+        socketService.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: true, isProactiveChatEnabled: true),
+            isAuthorizationEnabled: true,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
         let event = CustomerAuthorizedEventDTO(
             eventId: UUID(),
-            postback: .init(eventType: .customerAuthorized, data: .init(consumerIdentity: identity, accessToken: accessToken))
+            postback: CustomerAuthorizedEventPostbackDTO(
+                eventType: .customerAuthorized,
+                data: CustomerAuthorizedEventPostbackDataDTO(consumerIdentity: identity, accessToken: accessToken)
+            )
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -317,9 +312,9 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         
         let event = MoreMessagesLoadedEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: MoreMessagesLoadedEventPostbackDTO(
                 eventType: .moreMessagesLoaded,
-                data: .init(messages: [], scrollToken: "scroll_token"))
+                data: MoreMessagesLoadedEventPostbackDataDTO(messages: [], scrollToken: "scroll_token"))
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -332,9 +327,9 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         
         let event = MoreMessagesLoadedEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: MoreMessagesLoadedEventPostbackDTO(
                 eventType: .moreMessagesLoaded,
-                data: .init(messages: [message], scrollToken: "scroll_token"))
+                data: MoreMessagesLoadedEventPostbackDataDTO(messages: [message], scrollToken: "scroll_token"))
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -355,7 +350,7 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testTokenRefreshedEventDTO() throws {
         let event = TokenRefreshedEventDTO(
             eventId: UUID(),
-            postback: .init(eventType: .tokenRefreshed, accessToken: accessToken)
+            postback: TokenRefreshedEventPostbackDTO(eventType: .tokenRefreshed, accessToken: accessToken)
         )
         
         CXoneChat.socketDelegateManager.handleMessage(message: try encoder.encode(event).utf8string)
@@ -368,9 +363,9 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         
         let event = ThreadMetadataLoadedEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: ThreadMetadataLoadedEventPostbackDTO(
                 eventType: .threadMetadataLoaded,
-                data: .init(ownerAssignee: nil, lastMessage: message)
+                data: ThreadMetadataLoadedEventPostbackDataDTO(ownerAssignee: nil, lastMessage: message)
             )
         )
         
@@ -384,9 +379,9 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         
         let event = ThreadMetadataLoadedEventDTO(
             eventId: UUID(),
-            postback: .init(
+            postback: ThreadMetadataLoadedEventPostbackDTO(
                 eventType: .threadMetadataLoaded,
-                data: .init(ownerAssignee: agent, lastMessage: message)
+                data: ThreadMetadataLoadedEventPostbackDataDTO(ownerAssignee: agent, lastMessage: message)
             )
         )
         
@@ -412,8 +407,8 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             eventId: UUID(),
             eventObject: .message,
             eventType: .fireProactiveAction,
-            createdAt: Date(),
-            data: .init(
+            createdAt: dateProvider.now,
+            data: ProactiveActionEventDataDTO(
                 eventId: LowerCaseUUID(),
                 actionId: LowerCaseUUID(),
                 actionName: "actionName",

@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Settings on a channel.
-struct ChannelSettingsDTO: Codable {
+struct ChannelSettingsDTO: Decodable {
     
     /// Whether the channel supports multiple threads for the same user.
     let hasMultipleThreadsPerEndUser: Bool

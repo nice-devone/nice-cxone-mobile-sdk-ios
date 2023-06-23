@@ -4,8 +4,7 @@ import Foundation
 enum ChatThreadMapper {
     
     static func map(_ entity: ChatThread) throws -> ChatThreadDTO {
-        .init(
-            id: entity._id,
+        ChatThreadDTO(
             idOnExternalPlatform: entity.id,
             threadName: entity.name,
             messages: try entity.messages.map(MessageMapper.map),
@@ -17,8 +16,7 @@ enum ChatThreadMapper {
     }
     
     static func map(_ entity: ChatThreadDTO) -> ChatThread {
-        .init(
-            _id: entity.id,
+        ChatThread(
             id: entity.idOnExternalPlatform,
             name: entity.threadName,
             messages: entity.messages.map(MessageMapper.map),

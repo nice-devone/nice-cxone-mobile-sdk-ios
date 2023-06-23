@@ -34,33 +34,7 @@ let package = Package(
             dependencies: ["CXoneChatSDK"],
             path: "Tests",
             resources: [
-                .copy("CXoneChatSDKTests/Resources/CaseInboxAssigneeChanged.json"),
-                .copy("CXoneChatSDKTests/Resources/ChannelConfiguration.json"),
-                .copy("CXoneChatSDKTests/Resources/CustomerAuthorizedEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/MessageCreatedEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/MessagePostSuccess.json"),
-                .copy("CXoneChatSDKTests/Resources/MessageReadEventByAgent.json"),
-                .copy("CXoneChatSDKTests/Resources/ThreadListFetchedEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/ThreadMetadataLoadedEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/ThreadRecoveredEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/AttachmentUpload.json"),
-                .copy("CXoneChatSDKTests/Resources/ConsumerAuthorizedWithAccessToken.json"),
-                .copy("CXoneChatSDKTests/Resources/AccessToken.json"),
-                .copy("CXoneChatSDKTests/Resources/CustomMessageCreatedEvent.json"),
-                .copy("CXoneChatSDKTests/Resources/ServerError.json"),
-                .copy("CXoneChatSDKTests/Resources/InternalServerError.json"),
-                .copy("CXoneChatSDKTests/Resources/WelcomeMessage.json"),
-                .copy("CXoneChatSDKTests/Resources/CustomPopup.json"),
-                .copy("CXoneChatSDKTests/Resources/ProActiveActionCustomPopupWithEmtyVariables.json"),
-                .copy("CXoneChatSDKTests/Resources/StoreVisitorEventsPayloadDTO.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypeText.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginDeeplink.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginTextAndButtons.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginQuickReplies.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginMenu.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginCustom.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginSatisfactionSurvey.json"),
-                .copy("CXoneChatSDKTests/Resources/PluginMessages/MessageTypePluginGallery.json")
+                .copy("CXoneChatSDKTests/Examples")
             ]
         )
     ]

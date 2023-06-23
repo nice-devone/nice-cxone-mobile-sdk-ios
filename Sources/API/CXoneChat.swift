@@ -1,6 +1,5 @@
 import Foundation
 import KeychainSwift
-import UIKit
 
 
 /// The implementation of the interface for interacting with chat features of the CXone platform.
@@ -9,10 +8,12 @@ public class CXoneChat: ChatProvider {
     // MARK: - Static properties
     
     /// The version of the CXone chat SDK.
-    public static var version: String = "1.0.0"
+    public static var version: String = "1.1.0"
     
     /// The singleton instance of the CXone chat SDK.
-    public static var shared: ChatProvider = CXoneChat(socketService: .init(keychainSwift: .init(), session: .shared))
+    public static var shared: ChatProvider = CXoneChat(
+        socketService: SocketService(keychainSwift: KeychainSwift(), session: .shared, dateProvider: DateProviderImpl())
+    )
     
     
     // MARK: - Public properties
@@ -42,7 +43,7 @@ public class CXoneChat: ChatProvider {
     public var customer: CustomerProvider {
         resolver.resolve()
     }
-    /// The provider for customet chat fields related properties and methods.
+    /// The provider for customer chat fields related properties and methods.
     public var customerCustomFields: CustomerCustomFieldsProvider {
         resolver.resolve()
     }
@@ -78,13 +79,11 @@ public class CXoneChat: ChatProvider {
     
     /// Signs the customer out and disconnects from the CXone service.
     public static func signOut() {
-        LogManager.trace("Signing out a user.")
-        
-        shared.connection.disconnect()
+        (shared.connection as? ConnectionService)?.signOut()
         
         UserDefaults.standard.removeObject(forKey: "welcomeMessage")
         
-        shared = CXoneChat(socketService: .init(keychainSwift: .init(), session: .shared))
+        shared = CXoneChat(socketService: SocketService(keychainSwift: KeychainSwift(), session: .shared, dateProvider: DateProviderImpl()))
     }
     
     /// Configures internal logger to be able to detect errors, warnings or even trace chat flow.

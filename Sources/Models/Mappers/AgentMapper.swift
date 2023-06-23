@@ -4,7 +4,7 @@ import Foundation
 enum AgentMapper {
     
     static func map(_ entity: Agent) -> AgentDTO {
-        .init(
+        AgentDTO(
             id: entity.id,
             inContactId: entity.inContactId,
             emailAddress: entity.emailAddress,
@@ -19,7 +19,7 @@ enum AgentMapper {
     }
     
     static func map(_ entity: AgentDTO) -> Agent {
-        .init(
+        Agent(
             id: entity.id,
             inContactId: entity.inContactId,
             emailAddress: entity.emailAddress,

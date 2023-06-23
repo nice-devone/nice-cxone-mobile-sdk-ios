@@ -2,7 +2,7 @@ import Foundation
 
 
 /// The list of all statuses on a contact.
-enum ContactStatus: String, Codable {
+enum ContactStatus: String {
     
     /// The contact is newly opened.
     case new
@@ -24,11 +24,13 @@ enum ContactStatus: String, Codable {
     
     /// The contact contains some unknown status string.
     case unknown
+}
+
+
+// MARK: - Codable
+
+extension ContactStatus: Codable {
     
-    
-    // MARK: - Init
-    
-    /// Allows for decoding with an unknown string.
     init(from decoder: Decoder) throws {
         self = try ContactStatus(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
     }

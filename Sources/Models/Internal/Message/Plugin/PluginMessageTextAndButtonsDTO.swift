@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageTextAndButtonsDTO: Codable {
+struct PluginMessageTextAndButtonsDTO {
     
     // MARK: - Properties
     
@@ -16,9 +16,12 @@ struct PluginMessageTextAndButtonsDTO: Codable {
         self.id = id
         self.elements = elements
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageTextAndButtonsDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id
@@ -30,7 +33,10 @@ struct PluginMessageTextAndButtonsDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard try container.decode(ElementType.self, forKey: .type) == .textAndButtons else {
-            throw DecodingError.typeMismatch(ElementType.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageTextAndButtonsElement"))
+            throw DecodingError.typeMismatch(
+                ElementType.self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageTextAndButtonsElement")
+            )
         }
         
         self.id = try container.decode(String.self, forKey: .id)

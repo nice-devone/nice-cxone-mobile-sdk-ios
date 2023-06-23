@@ -12,7 +12,7 @@ extension KeyedDecodingContainer {
         let stringValue = try decode(String.self, forKey: key)
         
         guard let date = formatter.date(from: stringValue) else {
-            throw DecodingError.valueNotFound(Date.self, .init(codingPath: codingPath, debugDescription: key.stringValue))
+            throw DecodingError.valueNotFound(Date.self, DecodingError.Context(codingPath: codingPath, debugDescription: key.stringValue))
         }
         
         return date
@@ -26,7 +26,7 @@ extension KeyedDecodingContainer {
             return nil
         }
         guard let date = formatter.date(from: stringValue) else {
-            throw DecodingError.valueNotFound(Date.self, .init(codingPath: codingPath, debugDescription: key.stringValue))
+            throw DecodingError.valueNotFound(Date.self, DecodingError.Context(codingPath: codingPath, debugDescription: key.stringValue))
         }
         
         return date

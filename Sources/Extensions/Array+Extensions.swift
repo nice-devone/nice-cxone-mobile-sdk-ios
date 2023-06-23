@@ -12,9 +12,23 @@ extension Array {
 }
 
 
+// MARK: - Array + Equatable
+
+extension Array where Element: Equatable {
+    
+    mutating func remove(_ element: Element) {
+        guard let index = firstIndex(where: { $0 == element }) else {
+            return
+        }
+        
+        remove(at: index)
+    }
+}
+
+
 // MARK: - Array + ChatThread
 
-extension Array where Element == ChatThread {
+extension [ChatThread] {
     
     /// Returns `ChatThread` based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
@@ -25,9 +39,9 @@ extension Array where Element == ChatThread {
     
     /// Returns `UUID` based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
-    /// - Returns: `UUID` of founded thread, if it exists.
-    func getId(of threadId: UUID) -> String? {
-        guard let id = self.first(where: { $0.id == threadId })?._id, !id.isEmpty else {
+    /// - Returns: `UUID` of found thread, if it exists.
+    func getId(of threadId: UUID) -> UUID? {
+        guard let id = self.first(where: { $0.id == threadId })?.id else {
             return nil
         }
         
@@ -36,24 +50,54 @@ extension Array where Element == ChatThread {
     
     /// Returns Index of thread based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
-    /// - Returns: Index of founded thread.
+    /// - Returns: Index of found thread.
     func index(of threadId: UUID) -> Int? {
         self.firstIndex { $0.id == threadId }
     }
 }
 
 
-// MARK: - Array + CustomFieldDTO
+// MARK: - Array + CustomFieldDTOType
 
-extension Array where Element == CustomFieldDTO {
+extension [CustomFieldDTOType] {
     
-    mutating func update(with customFields: [CustomFieldDTO]) {
-        self = customFields.map { newEntry in
+    mutating func merge(with array: Array) {
+        var result = self
+        
+        for newEntry in array {
             if let oldEntry = self.first(where: { $0.ident == newEntry.ident }) {
-                return newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry
+                result.remove(oldEntry)
+                result.append(newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry)
             } else {
-                return newEntry
+                result.append(newEntry)
             }
         }
+        
+        self = result
+    }
+    
+    func toDictionary() -> [String: String] {
+        Dictionary(uniqueKeysWithValues: self.map { ($0.ident, $0.value ?? "") })
+    }
+}
+
+
+// MARK: - Array + CustomFieldDTO
+
+extension [CustomFieldDTO] {
+    
+    mutating func merge(with array: Array) {
+        var result = self
+        
+        for newEntry in array {
+            if let oldEntry = self.first(where: { $0.ident == newEntry.ident }) {
+                result.remove(oldEntry)
+                result.append(newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry)
+            } else {
+                result.append(newEntry)
+            }
+        }
+        
+        self = result
     }
 }

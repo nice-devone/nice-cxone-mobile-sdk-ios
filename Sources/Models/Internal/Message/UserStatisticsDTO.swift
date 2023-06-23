@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents statistics about the user.
-struct UserStatisticsDTO: Codable {
+struct UserStatisticsDTO {
     
     // MARK: - Properties
     
@@ -19,9 +19,12 @@ struct UserStatisticsDTO: Codable {
         self.seenAt = seenAt
         self.readAt = readAt
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension UserStatisticsDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case seenAt
