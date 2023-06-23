@@ -1,9 +1,7 @@
 import Foundation
 
 
-enum PluginMessageDTOType: Codable {
-    
-    // MARK: - Cases
+enum PluginMessageDTOType {
     
     case gallery([PluginMessageDTOType])
     
@@ -18,9 +16,12 @@ enum PluginMessageDTOType: Codable {
     case custom(PluginMessageCustomDTO)
     
     case subElements([PluginMessageSubElementDTOType])
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageDTOType: Codable {
     
     init(from decoder: Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
@@ -38,7 +39,7 @@ enum PluginMessageDTOType: Codable {
         } else if let objects = try? singleValueContainer.decode([PluginMessageSubElementDTOType].self) {
             self = .subElements(objects)
         } else {
-            throw DecodingError.dataCorrupted(.init(codingPath: singleValueContainer.codingPath, debugDescription: "PluginMessageType"))
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: singleValueContainer.codingPath, debugDescription: "PluginMessageType"))
         }
     }
     

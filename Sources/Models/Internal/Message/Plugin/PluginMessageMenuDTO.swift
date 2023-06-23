@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageMenuDTO: Codable {
+struct PluginMessageMenuDTO {
     
     // MARK: - Properties
     
@@ -16,9 +16,12 @@ struct PluginMessageMenuDTO: Codable {
         self.id = id
         self.elements = elements
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageMenuDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id
@@ -30,7 +33,10 @@ struct PluginMessageMenuDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard try container.decode(ElementType.self, forKey: .type) == .menu else {
-            throw DecodingError.typeMismatch(ElementType.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageMenuElement"))
+            throw DecodingError.typeMismatch(
+                ElementType.self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageMenuElement")
+            )
         }
         
         self.id = try container.decode(String.self, forKey: .id)

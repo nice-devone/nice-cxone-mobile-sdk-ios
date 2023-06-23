@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageSatisfactionSurveyDTO: Codable {
+struct PluginMessageSatisfactionSurveyDTO {
     
     // MARK: - Properties
     
@@ -16,9 +16,12 @@ struct PluginMessageSatisfactionSurveyDTO: Codable {
         self.id = id
         self.elements = elements
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageSatisfactionSurveyDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id
@@ -30,7 +33,10 @@ struct PluginMessageSatisfactionSurveyDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard try container.decode(ElementType.self, forKey: .type) == .satisfactionSurvey else {
-            throw DecodingError.typeMismatch(ElementType.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageSatisfactionSurveyDTO"))
+            throw DecodingError.typeMismatch(
+                ElementType.self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageSatisfactionSurveyDTO")
+            )
         }
         
         self.id = try container.decode(String.self, forKey: .id)

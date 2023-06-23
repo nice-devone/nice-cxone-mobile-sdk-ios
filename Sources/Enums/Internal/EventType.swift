@@ -2,7 +2,7 @@ import Foundation
 
 
 /// The different types of WebSocket events.
-enum EventType: Codable, Comparable {
+enum EventType: Comparable {
     
     /// An event sent to authorize a customer.
     case authorizeCustomer
@@ -92,7 +92,7 @@ enum EventType: Codable, Comparable {
     // MARK: Custom fields
     
     /// An event to send to set custom field values for a contact (thread).
-    case setCustomerContactCustomFields
+    case setContactCustomFields
     
     /// An event to send to set custom field values for a customer.
     case setCustomerCustomFields
@@ -124,19 +124,52 @@ enum EventType: Codable, Comparable {
     /// An event received when a proactive action has been fired.
     case fireProactiveAction
     
-    /// An event to send message from sdk to consumer as sent from and agent.
+    /// An event to send message from sdk to customer as sent from and agent.
     case sendOutbound
+    
+    /// Event for the visitor starting a new page visit.
+    case visitorVisit
+    
+    /// Event for the visitor viewing a page.
+    case pageView
+    
+    /// Event that the chat window was opened by the visitor.
+    case chatWindowOpened
+    
+    /// Event that the visitor has followed a proactive action to start a chat.
+    case conversion
+    
+    /// Event that the proactive action was successfully displayed to the visitor.
+    case proactiveActionDisplayed
+    
+    /// Event that the proactive action was clicked by the visitor.
+    case proactiveActionClicked
+    
+    /// Event that the proactive action has successfully led to a conversion.
+    case proactiveActionSuccess
+    
+    /// Event that the proactive action has not led to a conversion within a certain time span.
+    case proactiveActionFailed
+    
+    /// A custom visitor event to send any additional data.
+    case custom
+    
+    
+    // MARK: - Default
     
     /// An unknown and unsupported event.
     case unknown(String)
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension EventType: Codable {
     
     enum CodingKeys: String, CodingKey {
-        case authorizeCustomer = "AuthorizeConsumer"
+        case authorizeCustomer = "AuthorizeCustomer"
         case customerAuthorized = "ConsumerAuthorized"
-        case reconnectCustomer = "ReconnectConsumer"
+        case reconnectCustomer = "ReconnectCustomer"
         case customerReconnected = "ConsumerReconnected"
         case refreshToken = "RefreshToken"
         case tokenRefreshed = "TokenRefreshed"
@@ -145,7 +178,7 @@ enum EventType: Codable, Comparable {
         case messageCreated = "MessageCreated"
         case loadMoreMessages = "LoadMoreMessages"
         case moreMessagesLoaded = "MoreMessagesLoaded"
-        case messageSeenByCustomer = "MessageSeenByConsumer"
+        case messageSeenByCustomer = "MessageSeenByCustomer"
         case messageSeenByAgent = "MessageSeenByUser"
         case messageReadChanged = "MessageReadChanged"
         case recoverThread = "RecoverThread"
@@ -159,8 +192,8 @@ enum EventType: Codable, Comparable {
         case updateThread = "UpdateThread"
         case threadUpdated = "ThreadUpdated"
         case contactInboxAssigneeChanged = "CaseInboxAssigneeChanged"
-        case setCustomerContactCustomFields = "SetConsumerContactCustomFields"
-        case setCustomerCustomFields = "SetConsumerCustomFields"
+        case setContactCustomFields = "SetContactCustomFields"
+        case setCustomerCustomFields = "SetCustomerCustomFields"
         case senderTypingStarted = "SenderTypingStarted"
         case senderTypingEnded = "SenderTypingEnded"
         case executeTrigger = "ExecuteTrigger"
@@ -168,6 +201,15 @@ enum EventType: Codable, Comparable {
         case storeVisitorEvents = "StoreVisitorEvents"
         case fireProactiveAction = "FireProactiveAction"
         case sendOutbound = "SendOutbound"
+        case visitorVisit = "VisitorVisit"
+        case pageView = "PageView"
+        case chatWindowOpened = "ChatWindowOpened"
+        case conversion = "Conversion"
+        case proactiveActionDisplayed = "ProactiveActionDisplayed"
+        case proactiveActionClicked = "ProactiveActionClicked"
+        case proactiveActionSuccess = "ProactiveActionSuccess"
+        case proactiveActionFailed = "ProactiveActionFailed"
+        case custom = "Custom"
     }
     
     init(from decoder: Decoder) throws {
@@ -175,41 +217,50 @@ enum EventType: Codable, Comparable {
         let key = try container.decode(String.self)
         
         switch key {
-        case CodingKeys.authorizeCustomer.rawValue: self = .authorizeCustomer
-        case CodingKeys.customerAuthorized.rawValue: self = .customerAuthorized
-        case CodingKeys.reconnectCustomer.rawValue: self = .reconnectCustomer
-        case CodingKeys.customerReconnected.rawValue: self = .customerReconnected
-        case CodingKeys.refreshToken.rawValue: self = .refreshToken
-        case CodingKeys.tokenRefreshed.rawValue: self = .tokenRefreshed
-        case CodingKeys.caseCreated.rawValue: self = .caseCreated
-        case CodingKeys.sendMessage.rawValue: self = .sendMessage
-        case CodingKeys.messageCreated.rawValue: self = .messageCreated
-        case CodingKeys.loadMoreMessages.rawValue: self = .loadMoreMessages
-        case CodingKeys.moreMessagesLoaded.rawValue: self = .moreMessagesLoaded
-        case CodingKeys.messageSeenByCustomer.rawValue: self = .messageSeenByCustomer
-        case CodingKeys.messageSeenByAgent.rawValue: self = .messageSeenByAgent
-        case CodingKeys.messageReadChanged.rawValue: self = .messageReadChanged
-        case CodingKeys.recoverThread.rawValue: self = .recoverThread
-        case CodingKeys.threadRecovered.rawValue: self = .threadRecovered
-        case CodingKeys.fetchThreadList.rawValue: self = .fetchThreadList
-        case CodingKeys.threadListFetched.rawValue: self = .threadListFetched
-        case CodingKeys.archiveThread.rawValue: self = .archiveThread
-        case CodingKeys.threadArchived.rawValue: self = .threadArchived
-        case CodingKeys.loadThreadMetadata.rawValue: self = .loadThreadMetadata
-        case CodingKeys.threadMetadataLoaded.rawValue: self = .threadMetadataLoaded
-        case CodingKeys.updateThread.rawValue: self = .updateThread
-        case CodingKeys.threadUpdated.rawValue: self = .threadUpdated
-        case CodingKeys.contactInboxAssigneeChanged.rawValue: self = .contactInboxAssigneeChanged
-        case CodingKeys.setCustomerContactCustomFields.rawValue: self = .setCustomerContactCustomFields
-        case CodingKeys.setCustomerCustomFields.rawValue: self = .setCustomerCustomFields
-        case CodingKeys.senderTypingStarted.rawValue: self = .senderTypingStarted
-        case CodingKeys.senderTypingEnded.rawValue: self = .senderTypingEnded
-        case CodingKeys.executeTrigger.rawValue: self = .executeTrigger
-        case CodingKeys.storeVisitor.rawValue: self = .storeVisitor
-        case CodingKeys.storeVisitorEvents.rawValue: self = .storeVisitorEvents
-        case CodingKeys.fireProactiveAction.rawValue: self = .fireProactiveAction
-        case CodingKeys.sendOutbound.rawValue: self = .sendOutbound
-        default: self = .unknown(key)
+        case CodingKeys.authorizeCustomer.rawValue:             self = .authorizeCustomer
+        case CodingKeys.customerAuthorized.rawValue:            self = .customerAuthorized
+        case CodingKeys.reconnectCustomer.rawValue:             self = .reconnectCustomer
+        case CodingKeys.customerReconnected.rawValue:           self = .customerReconnected
+        case CodingKeys.refreshToken.rawValue:                  self = .refreshToken
+        case CodingKeys.tokenRefreshed.rawValue:                self = .tokenRefreshed
+        case CodingKeys.caseCreated.rawValue:                   self = .caseCreated
+        case CodingKeys.sendMessage.rawValue:                   self = .sendMessage
+        case CodingKeys.messageCreated.rawValue:                self = .messageCreated
+        case CodingKeys.loadMoreMessages.rawValue:              self = .loadMoreMessages
+        case CodingKeys.moreMessagesLoaded.rawValue:            self = .moreMessagesLoaded
+        case CodingKeys.messageSeenByCustomer.rawValue:         self = .messageSeenByCustomer
+        case CodingKeys.messageSeenByAgent.rawValue:            self = .messageSeenByAgent
+        case CodingKeys.messageReadChanged.rawValue:            self = .messageReadChanged
+        case CodingKeys.recoverThread.rawValue:                 self = .recoverThread
+        case CodingKeys.threadRecovered.rawValue:               self = .threadRecovered
+        case CodingKeys.fetchThreadList.rawValue:               self = .fetchThreadList
+        case CodingKeys.threadListFetched.rawValue:             self = .threadListFetched
+        case CodingKeys.archiveThread.rawValue:                 self = .archiveThread
+        case CodingKeys.threadArchived.rawValue:                self = .threadArchived
+        case CodingKeys.loadThreadMetadata.rawValue:            self = .loadThreadMetadata
+        case CodingKeys.threadMetadataLoaded.rawValue:          self = .threadMetadataLoaded
+        case CodingKeys.updateThread.rawValue:                  self = .updateThread
+        case CodingKeys.threadUpdated.rawValue:                 self = .threadUpdated
+        case CodingKeys.contactInboxAssigneeChanged.rawValue:   self = .contactInboxAssigneeChanged
+        case CodingKeys.setContactCustomFields.rawValue:        self = .setContactCustomFields
+        case CodingKeys.setCustomerCustomFields.rawValue:       self = .setCustomerCustomFields
+        case CodingKeys.senderTypingStarted.rawValue:           self = .senderTypingStarted
+        case CodingKeys.senderTypingEnded.rawValue:             self = .senderTypingEnded
+        case CodingKeys.executeTrigger.rawValue:                self = .executeTrigger
+        case CodingKeys.storeVisitor.rawValue:                  self = .storeVisitor
+        case CodingKeys.storeVisitorEvents.rawValue:            self = .storeVisitorEvents
+        case CodingKeys.fireProactiveAction.rawValue:           self = .fireProactiveAction
+        case CodingKeys.sendOutbound.rawValue:                  self = .sendOutbound
+        case CodingKeys.visitorVisit.rawValue:                  self = .visitorVisit
+        case CodingKeys.pageView.rawValue:                      self = .pageView
+        case CodingKeys.chatWindowOpened.rawValue:              self = .chatWindowOpened
+        case CodingKeys.conversion.rawValue:                    self = .conversion
+        case CodingKeys.proactiveActionDisplayed.rawValue:      self = .proactiveActionDisplayed
+        case CodingKeys.proactiveActionClicked.rawValue:        self = .proactiveActionClicked
+        case CodingKeys.proactiveActionSuccess.rawValue:        self = .proactiveActionSuccess
+        case CodingKeys.proactiveActionFailed.rawValue:         self = .proactiveActionFailed
+        case CodingKeys.custom.rawValue:                        self = .custom
+        default:                                                self = .unknown(key)
         }
     }
     
@@ -217,41 +268,51 @@ enum EventType: Codable, Comparable {
         var container = encoder.singleValueContainer()
         
         switch self {
-        case .authorizeCustomer: try container.encode(CodingKeys.authorizeCustomer.rawValue)
-        case .customerAuthorized: try container.encode(CodingKeys.customerAuthorized.rawValue)
-        case .reconnectCustomer: try container.encode(CodingKeys.reconnectCustomer.rawValue)
-        case .customerReconnected: try container.encode(CodingKeys.customerReconnected.rawValue)
-        case .refreshToken: try container.encode(CodingKeys.refreshToken.rawValue)
-        case .tokenRefreshed: try container.encode(CodingKeys.tokenRefreshed.rawValue)
-        case .caseCreated: try container.encode(CodingKeys.caseCreated.rawValue)
-        case .sendMessage: try container.encode(CodingKeys.sendMessage.rawValue)
-        case .messageCreated: try container.encode(CodingKeys.messageCreated.rawValue)
-        case .loadMoreMessages: try container.encode(CodingKeys.loadMoreMessages.rawValue)
-        case .moreMessagesLoaded: try container.encode(CodingKeys.moreMessagesLoaded.rawValue)
-        case .messageSeenByCustomer: try container.encode(CodingKeys.messageSeenByCustomer.rawValue)
-        case .messageSeenByAgent: try container.encode(CodingKeys.messageSeenByAgent.rawValue)
-        case .messageReadChanged: try container.encode(CodingKeys.messageReadChanged.rawValue)
-        case .recoverThread: try container.encode(CodingKeys.recoverThread.rawValue)
-        case .threadRecovered: try container.encode(CodingKeys.threadRecovered.rawValue)
-        case .fetchThreadList: try container.encode(CodingKeys.fetchThreadList.rawValue)
-        case .threadListFetched: try container.encode(CodingKeys.threadListFetched.rawValue)
-        case .archiveThread: try container.encode(CodingKeys.archiveThread.rawValue)
-        case .threadArchived: try container.encode(CodingKeys.threadArchived.rawValue)
-        case .loadThreadMetadata: try container.encode(CodingKeys.loadThreadMetadata.rawValue)
-        case .threadMetadataLoaded: try container.encode(CodingKeys.threadMetadataLoaded.rawValue)
-        case .updateThread: try container.encode(CodingKeys.updateThread.rawValue)
-        case .threadUpdated: try container.encode(CodingKeys.threadUpdated.rawValue)
-        case .contactInboxAssigneeChanged: try container.encode(CodingKeys.contactInboxAssigneeChanged.rawValue)
-        case .setCustomerContactCustomFields: try container.encode(CodingKeys.setCustomerContactCustomFields.rawValue)
-        case .setCustomerCustomFields: try container.encode(CodingKeys.setCustomerCustomFields.rawValue)
-        case .senderTypingStarted: try container.encode(CodingKeys.senderTypingStarted.rawValue)
-        case .senderTypingEnded: try container.encode(CodingKeys.senderTypingEnded.rawValue)
-        case .executeTrigger: try container.encode(CodingKeys.executeTrigger.rawValue)
-        case .storeVisitor: try container.encode(CodingKeys.storeVisitor.rawValue)
-        case .storeVisitorEvents: try container.encode(CodingKeys.storeVisitorEvents.rawValue)
-        case .fireProactiveAction: try container.encode(CodingKeys.fireProactiveAction.rawValue)
-        case .sendOutbound: try container.encode(CodingKeys.sendOutbound.rawValue)
-        case .unknown: return
+        case .authorizeCustomer:            try container.encode(CodingKeys.authorizeCustomer.rawValue)
+        case .customerAuthorized:           try container.encode(CodingKeys.customerAuthorized.rawValue)
+        case .reconnectCustomer:            try container.encode(CodingKeys.reconnectCustomer.rawValue)
+        case .customerReconnected:          try container.encode(CodingKeys.customerReconnected.rawValue)
+        case .refreshToken:                 try container.encode(CodingKeys.refreshToken.rawValue)
+        case .tokenRefreshed:               try container.encode(CodingKeys.tokenRefreshed.rawValue)
+        case .caseCreated:                  try container.encode(CodingKeys.caseCreated.rawValue)
+        case .sendMessage:                  try container.encode(CodingKeys.sendMessage.rawValue)
+        case .messageCreated:               try container.encode(CodingKeys.messageCreated.rawValue)
+        case .loadMoreMessages:             try container.encode(CodingKeys.loadMoreMessages.rawValue)
+        case .moreMessagesLoaded:           try container.encode(CodingKeys.moreMessagesLoaded.rawValue)
+        case .messageSeenByCustomer:        try container.encode(CodingKeys.messageSeenByCustomer.rawValue)
+        case .messageSeenByAgent:           try container.encode(CodingKeys.messageSeenByAgent.rawValue)
+        case .messageReadChanged:           try container.encode(CodingKeys.messageReadChanged.rawValue)
+        case .recoverThread:                try container.encode(CodingKeys.recoverThread.rawValue)
+        case .threadRecovered:              try container.encode(CodingKeys.threadRecovered.rawValue)
+        case .fetchThreadList:              try container.encode(CodingKeys.fetchThreadList.rawValue)
+        case .threadListFetched:            try container.encode(CodingKeys.threadListFetched.rawValue)
+        case .archiveThread:                try container.encode(CodingKeys.archiveThread.rawValue)
+        case .threadArchived:               try container.encode(CodingKeys.threadArchived.rawValue)
+        case .loadThreadMetadata:           try container.encode(CodingKeys.loadThreadMetadata.rawValue)
+        case .threadMetadataLoaded:         try container.encode(CodingKeys.threadMetadataLoaded.rawValue)
+        case .updateThread:                 try container.encode(CodingKeys.updateThread.rawValue)
+        case .threadUpdated:                try container.encode(CodingKeys.threadUpdated.rawValue)
+        case .contactInboxAssigneeChanged:  try container.encode(CodingKeys.contactInboxAssigneeChanged.rawValue)
+        case .setContactCustomFields:       try container.encode(CodingKeys.setContactCustomFields.rawValue)
+        case .setCustomerCustomFields:      try container.encode(CodingKeys.setCustomerCustomFields.rawValue)
+        case .senderTypingStarted:          try container.encode(CodingKeys.senderTypingStarted.rawValue)
+        case .senderTypingEnded:            try container.encode(CodingKeys.senderTypingEnded.rawValue)
+        case .executeTrigger:               try container.encode(CodingKeys.executeTrigger.rawValue)
+        case .storeVisitor:                 try container.encode(CodingKeys.storeVisitor.rawValue)
+        case .storeVisitorEvents:           try container.encode(CodingKeys.storeVisitorEvents.rawValue)
+        case .fireProactiveAction:          try container.encode(CodingKeys.fireProactiveAction.rawValue)
+        case .sendOutbound:                 try container.encode(CodingKeys.sendOutbound.rawValue)
+        case .visitorVisit:                 try container.encode(CodingKeys.visitorVisit.rawValue)
+        case .pageView:                     try container.encode(CodingKeys.pageView.rawValue)
+        case .chatWindowOpened:             try container.encode(CodingKeys.chatWindowOpened.rawValue)
+        case .conversion:                   try container.encode(CodingKeys.conversion.rawValue)
+        case .proactiveActionDisplayed:     try container.encode(CodingKeys.proactiveActionDisplayed.rawValue)
+        case .proactiveActionClicked:       try container.encode(CodingKeys.proactiveActionClicked.rawValue)
+        case .proactiveActionSuccess:       try container.encode(CodingKeys.proactiveActionSuccess.rawValue)
+        case .proactiveActionFailed:        try container.encode(CodingKeys.proactiveActionFailed.rawValue)
+        case .custom:                       try container.encode(CodingKeys.custom.rawValue)
+        case .unknown:
+            return
         }
     }
 }

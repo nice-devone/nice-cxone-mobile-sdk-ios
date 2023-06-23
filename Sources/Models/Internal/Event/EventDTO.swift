@@ -19,7 +19,7 @@ struct EventDTO: Encodable {
     // MARK: - Init
     
     init(brandId: Int, channelId: String, customerIdentity: CustomerIdentityDTO, eventType: EventType, data: EventDataType?) {
-        payload = .init(brandId: brandId, channelId: channelId, customerIdentity: customerIdentity, eventType: eventType, data: data)
+        payload = EventPayloadDTO(brandId: brandId, channelId: channelId, customerIdentity: customerIdentity, eventType: eventType, data: data)
         action = (eventType == .authorizeCustomer || eventType == .refreshToken) ? .register : .chatWindowEvent
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageQuickRepliesDTO: Codable {
+struct PluginMessageQuickRepliesDTO {
     
     // MARK: - Properties
     
@@ -16,9 +16,12 @@ struct PluginMessageQuickRepliesDTO: Codable {
         self.id = id
         self.elements = elements
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageQuickRepliesDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id
@@ -30,7 +33,10 @@ struct PluginMessageQuickRepliesDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard try container.decode(ElementType.self, forKey: .type) == .quickReplies else {
-            throw DecodingError.typeMismatch(ElementType.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageQuickRepliesElement"))
+            throw DecodingError.typeMismatch(
+                ElementType.self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageQuickRepliesElement")
+            )
         }
         
         self.id = try container.decode(String.self, forKey: .id)

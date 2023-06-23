@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageTextDTO: Codable {
+struct PluginMessageTextDTO {
     
     // MARK: - Properties
     
@@ -19,9 +19,12 @@ struct PluginMessageTextDTO: Codable {
         self.text = text
         self.mimeType = mimeType
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageTextDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id

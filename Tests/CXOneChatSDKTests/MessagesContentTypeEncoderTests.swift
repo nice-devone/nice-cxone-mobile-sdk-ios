@@ -24,28 +24,193 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         let message = Message(
             id: id,
             threadId: threadId,
-            contentType: .text("Hello world"),
+            contentType: .text(MessagePayload(text: "Hello world", postback: "/hello_world")),
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypeText", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypeText", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
         XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
         
-        guard case .text(let decodedText) = decodedMessage.contentType, case .text(let expectationText) = expectationMessage.contentType else {
+        guard case .text(let decodedEntity) = decodedMessage.contentType, case .text(let expectationEntity) = expectationMessage.contentType else {
             throw CXoneChatError.invalidData
         }
         
-        XCTAssertEqual(decodedText, expectationText)
+        XCTAssertEqual(decodedEntity, expectationEntity)
+    }
+    
+    
+    // MARK: - Content Type Rich Link
+    
+    func testContentTypeRichLinkEncodeCorrectly() throws {
+        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
+              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
+              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000"),
+              let url = URL(string: "https://www.google.com"),
+              let fileUrl = URL(string: "https://placekitten.com/200/300")
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        let message = Message(
+            id: id,
+            threadId: threadId,
+            contentType: .richLink(
+                MessageRichLink(
+                    title: "Check our new gadget!",
+                    url: url,
+                    fileName: "place-kitten.jpg",
+                    fileUrl: fileUrl,
+                    mimeType: "image/jpeg"
+                )
+            ),
+            createdAt: createdAt,
+            attachments: [],
+            direction: .toAgent,
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
+            authorUser: nil,
+            authorEndUserIdentity: nil
+        )
+        
+        let encodedData = try encoder.encode(MessageMapper.map(message))
+        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeRichLink", extension: "json")
+        
+        let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
+        let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
+        
+        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        
+        guard case .richLink(let decodedRichLink) = decodedMessage.contentType,
+              case .richLink(let expectationRichLink) = expectationMessage.contentType
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(decodedRichLink, expectationRichLink)
+    }
+    
+    
+    // MARK: - Content Type Quick Replies
+    
+    func testContentTypeQuickRepliesEncodeCorrectly() throws {
+        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
+              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
+              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000")
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        let message = Message(
+            id: id,
+            threadId: threadId,
+            contentType: .quickReplies(
+                MessageQuickReplies(
+                    title: "Hello, we will deliver the package between 12:00 and 16:00. Please specify which day.",
+                    buttons: [
+                        MessageReplyButton(text: "Today", postback: #"{"id":"1"}"#, description: nil, iconName: nil, iconUrl: nil, iconMimeType: nil),
+                        MessageReplyButton(text: "Tomorrow", postback: #"{"id":"2"}"#, description: nil, iconName: nil, iconUrl: nil, iconMimeType: nil)
+                    ]
+                )
+            ),
+            createdAt: createdAt,
+            attachments: [],
+            direction: .toAgent,
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
+            authorUser: nil,
+            authorEndUserIdentity: nil
+        )
+        
+        let encodedData = try encoder.encode(MessageMapper.map(message))
+        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeQuickReplies", extension: "json")
+        
+        let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
+        let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
+        
+        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        
+        guard case .quickReplies(let decodedQuickReplies) = decodedMessage.contentType,
+              case .quickReplies(let expectationQuickReplies) = expectationMessage.contentType
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(decodedQuickReplies, expectationQuickReplies)
+    }
+    
+    
+    // MARK: - Content Type List Picker
+    
+    func testContentTypeListPickerEncodeCorrectly() throws {
+        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
+              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
+              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000")
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        let message = Message(
+            id: id,
+            threadId: threadId,
+            contentType: .listPicker(
+                MessageListPicker(
+                    title: "Choose a color!",
+                    text: "What is your favourite color?",
+                    elements: [
+                        .replyButton(
+                            MessageReplyButton(
+                                text: "red",
+                                postback: "/red",
+                                description: "Like a tomato",
+                                iconName: "place-kitten.jpg",
+                                iconUrl: URL(string: "https://placekitten.com/200/300"),
+                                iconMimeType: "image/jpeg"
+                            )
+                        ),
+                        .replyButton(
+                            MessageReplyButton(
+                                text: "green",
+                                postback: "/green",
+                                description: "Like an apple",
+                                iconName: "place-kitten.jpg",
+                                iconUrl: URL(string: "https://placekitten.com/200/300"),
+                                iconMimeType: "image/jpeg"
+                            )
+                        )
+                    ]
+                )
+            ),
+            createdAt: createdAt,
+            attachments: [],
+            direction: .toAgent,
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
+            authorUser: nil,
+            authorEndUserIdentity: nil
+        )
+        
+        let encodedData = try encoder.encode(MessageMapper.map(message))
+        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeListPicker", extension: "json")
+        
+        let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
+        let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
+        
+        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        
+        guard case .listPicker(let decodedListPicker) = decodedMessage.contentType,
+              case .listPicker(let expectationListPicker) = expectationMessage.contentType
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(decodedListPicker, expectationListPicker)
     }
     
     
@@ -63,24 +228,32 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .subElements([
-                        .button(.init(id: "Nkm0hRAiE", text: "See this page", postback: nil, url: URL(string: "fb://profile/33138223345"), displayInApp: false))
+                        .button(
+                            PluginMessageButton(
+                                id: "Nkm0hRAiE",
+                                text: "See this page",
+                                postback: nil,
+                                url: URL(string: "fb://profile/33138223345"),
+                                displayInApp: false
+                            )
+                        )
                     ])
                 )
             ),
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginDeeplink", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginDeeplink", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -117,17 +290,35 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .textAndButtons(
-                        .init(
+                        PluginMessageTextAndButtons(
                             id: "Ek4tPy1h4",
                             elements: [
-                                .text(.init(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil)),
-                                .button(.init(id: "Nkm0hRAiE", text: "Click me!", postback: "click-on-button-1", url: nil, displayInApp: false)),
-                                .button(.init(id: "NkGJ6CAiN", text: "No click me!", postback: "click-on-button-2", url: nil, displayInApp: false)),
-                                .button(.init(id: "EyCyTRCi4", text: "Aww don`t click on me", postback: "click-on-button-2", url: nil, displayInApp: false))
+                                .text(PluginMessageText(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil)),
+                                .button(PluginMessageButton(
+                                    id: "Nkm0hRAiE",
+                                    text: "Click me!",
+                                    postback: "click-on-button-1",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "NkGJ6CAiN",
+                                    text: "No click me!",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "EyCyTRCi4",
+                                    text: "Aww don`t click on me",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                )
                             ]
                         )
                     )
@@ -136,13 +327,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginTextAndButtons", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginTextAndButtons", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -186,17 +377,35 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .quickReplies(
-                        .init(
+                        PluginMessageQuickReplies(
                             id: "Ek4tPy1h4",
                             elements: [
-                                .text(.init(id: "Akm0hRAiX", text: "This is some text", mimeType: nil)),
-                                .button(.init(id: "Nkm0hRAiE", text: "Button 1", postback: "click-on-button-1", url: nil, displayInApp: false)),
-                                .button(.init(id: "TkGJ6CAiN", text: "Button 2", postback: "click-on-button-2", url: nil, displayInApp: false)),
-                                .button(.init(id: "EyCyTRCi4", text: "Button 3", postback: "click-on-button-2", url: nil, displayInApp: false))
+                                .text(PluginMessageText(id: "Akm0hRAiX", text: "This is some text", mimeType: nil)),
+                                .button(PluginMessageButton(
+                                    id: "Nkm0hRAiE",
+                                    text: "Button 1",
+                                    postback: "click-on-button-1",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "TkGJ6CAiN",
+                                    text: "Button 2",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "EyCyTRCi4",
+                                    text: "Button 3",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                )
                             ]
                         )
                     )
@@ -205,13 +414,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginQuickReplies", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginQuickReplies", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -256,19 +465,37 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .menu(
-                        .init(
+                        PluginMessageMenu(
                             id: "Ek4tPy1h4",
                             elements: [
-                                .file(.init(id: "Uk4tPy1h2", fileName: "photo.jpg", url: fileURL, mimeType: "image/jpeg")),
-                                .title(.init(id: "Ck4tPy1h3", text: "Hello!")),
-                                .text(.init(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil)),
-                                .button(.init(id: "Nkm0hRAiE", text: "Click me!", postback: "click-on-button-1", url: nil, displayInApp: false)),
-                                .button(.init(id: "NkGJ6CAiN", text: "No click me!", postback: "click-on-button-2", url: nil, displayInApp: false)),
-                                .button(.init(id: "EyCyTRCi4", text: "Aww don`t click on me", postback: "click-on-button-2", url: nil, displayInApp: false))
+                                .file(PluginMessageFile(id: "Uk4tPy1h2", fileName: "photo.jpg", url: fileURL, mimeType: "image/jpeg")),
+                                .title(PluginMessageTitle(id: "Ck4tPy1h3", text: "Hello!")),
+                                .text(PluginMessageText(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil)),
+                                .button(PluginMessageButton(
+                                    id: "Nkm0hRAiE",
+                                    text: "Click me!",
+                                    postback: "click-on-button-1",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "NkGJ6CAiN",
+                                    text: "No click me!",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                ),
+                                .button(PluginMessageButton(
+                                    id: "EyCyTRCi4",
+                                    text: "Aww don`t click on me",
+                                    postback: "click-on-button-2",
+                                    url: nil,
+                                    displayInApp: false)
+                                )
                             ]
                         )
                     )
@@ -277,13 +504,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginMenu", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginMenu", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -327,11 +554,11 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .custom(
-                        .init(
+                        PluginMessageCustom(
                             id: "Ek4tPy1h4",
                             text: "See this page",
                             variables: [
@@ -358,13 +585,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginCustom", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginCustom", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -401,16 +628,22 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .satisfactionSurvey(
-                        .init(
+                        PluginMessageSatisfactionSurvey(
                             id: "7a0c5bbe-af0c-47aa-986d-499eb6064811",
                             elements: [
-                                .text(.init(id: "7a0c5bbe-af0c-47aa-986d-499eb6064811", text: "Please rate us", mimeType: "text/plain")),
+                                .text(PluginMessageText(id: "7a0c5bbe-af0c-47aa-986d-499eb6064811", text: "Please rate us", mimeType: "text/plain")),
                                 .button(
-                                    .init(id: "52c804ec-6287-48d9-bc14-55bc531105f9", text: "Open survey", postback: nil, url: surveyURL , displayInApp: false)
+                                    PluginMessageButton(
+                                        id: "52c804ec-6287-48d9-bc14-55bc531105f9",
+                                        text: "Open survey",
+                                        postback: nil,
+                                        url: surveyURL ,
+                                        displayInApp: false
+                                    )
                                 )
                             ]
                         )
@@ -420,13 +653,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginSatisfactionSurvey", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginSatisfactionSurvey", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
@@ -471,27 +704,45 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             id: id,
             threadId: threadId,
             contentType: .plugin(
-                .init(
+                MessagePlugin(
                     text: nil,
                     postback: "",
                     element: .gallery([
                         .menu(
-                            .init(
+                            PluginMessageMenu(
                                 id: "Ek4tPy1h4",
                                 elements: [
-                                    .file(.init(id: "Uk4tPy1h2", fileName: "photo.jpg", url: fileURL, mimeType: "image/jpeg")),
-                                    .title(.init(id: "Ck4tPy1h3", text: "Hello!")),
-                                    .text(.init(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil))
+                                    .file(PluginMessageFile(id: "Uk4tPy1h2", fileName: "photo.jpg", url: fileURL, mimeType: "image/jpeg")),
+                                    .title(PluginMessageTitle(id: "Ck4tPy1h3", text: "Hello!")),
+                                    .text(PluginMessageText(id: "Ek4tPy1h1", text: "Lorem Impsum...", mimeType: nil))
                                 ]
                             )
                         ),
                         .menu(
-                            .init(
+                            PluginMessageMenu(
                                 id: "SwQ1xGSnX",
                                 elements: [
-                                    .button(.init(id: "Nkm0hRAiE", text: "Click me!", postback: "click-on-button-1", url: nil, displayInApp: false)),
-                                    .button(.init(id: "NkGJ6CAiN", text: "No click me!", postback: "click-on-button-2", url: nil, displayInApp: false)),
-                                    .button(.init(id: "EyCyTRCi4", text: "Aww don`t click on me", postback: "click-on-button-2", url: nil, displayInApp: false))
+                                    .button(PluginMessageButton(
+                                        id: "Nkm0hRAiE",
+                                        text: "Click me!",
+                                        postback: "click-on-button-1",
+                                        url: nil,
+                                        displayInApp: false)
+                                    ),
+                                    .button(PluginMessageButton(
+                                        id: "NkGJ6CAiN",
+                                        text: "No click me!",
+                                        postback: "click-on-button-2",
+                                        url: nil,
+                                        displayInApp: false)
+                                    ),
+                                    .button(PluginMessageButton(
+                                        id: "EyCyTRCi4",
+                                        text: "Aww don`t click on me",
+                                        postback: "click-on-button-2",
+                                        url: nil,
+                                        displayInApp: false)
+                                    )
                                 ]
                             )
                         )
@@ -501,13 +752,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             createdAt: createdAt,
             attachments: [],
             direction: .toAgent,
-            userStatistics: .init(seenAt: nil, readAt: nil),
+            userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
             authorEndUserIdentity: nil
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginGallery", extension: "json")
+        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypePluginGallery", extension: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)

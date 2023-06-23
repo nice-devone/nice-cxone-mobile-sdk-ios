@@ -56,7 +56,7 @@ class DependencyManager {
             return provider
         }
         
-        let provider = CustomerCustomFieldsService(socketService: socketService, eventsService: eventsService)
+        let provider = CustomerCustomFieldsService(socketService: socketService, eventsService: eventsService, dateProvider: socketService.dateProvider)
         self.customerFields = provider
         
         return provider
@@ -67,7 +67,7 @@ class DependencyManager {
             return provider
         }
         
-        let provider = ContactCustomFieldsService(socketService: socketService, eventsService: eventsService)
+        let provider = ContactCustomFieldsService(socketService: socketService, eventsService: eventsService, dateProvider: socketService.dateProvider)
         self.contactFields = provider
         
         return provider
@@ -112,7 +112,7 @@ class DependencyManager {
             return provider
         }
         
-        let provider = AnalyticsService(socketService: socketService, eventsService: eventsService)
+        let provider = AnalyticsService(socketService: socketService)
         self.analytics = provider
         
         return provider

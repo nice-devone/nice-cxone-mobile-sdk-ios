@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents info about data of a customer authorized postback event.
-struct CustomerAuthorizedEventPostbackDataDTO: Codable {
+struct CustomerAuthorizedEventPostbackDataDTO: Decodable {
     
     /// The identity of the ustomer.
     let consumerIdentity: CustomerIdentityDTO

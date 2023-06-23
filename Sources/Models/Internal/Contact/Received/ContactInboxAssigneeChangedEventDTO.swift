@@ -4,20 +4,20 @@ import Foundation
 // CaseInboxAssigneeChanged
 
 /// Event response that the assigned agent for the contact has changed.
-struct ContactInboxAssigneeChangedEventDTO: ReceivedEvent, Codable {
+struct ContactInboxAssigneeChangedEventDTO: ReceivedEvent {
     
     // MARK: - Properties
-
-	let eventId: UUID
-
-	let eventObject: EventObjectType
-
+    
+    let eventId: UUID
+    
+    let eventObject: EventObjectType
+    
     let eventType: EventType
-
-	let createdAt: Date
-
+    
+    let createdAt: Date
+    
     /// The data about the changed assignee.
-	let data: ContactInboxAssigneeChangedDataDTO
+    let data: ContactInboxAssigneeChangedDataDTO
     
     
     // MARK: - Init
@@ -29,9 +29,12 @@ struct ContactInboxAssigneeChangedEventDTO: ReceivedEvent, Codable {
         self.createdAt = createdAt
         self.data = data
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Decodable
+
+extension ContactInboxAssigneeChangedEventDTO: Decodable {
     
     enum CodingKeys: CodingKey {
         case eventId
@@ -49,15 +52,5 @@ struct ContactInboxAssigneeChangedEventDTO: ReceivedEvent, Codable {
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.data = try container.decode(ContactInboxAssigneeChangedDataDTO.self, forKey: .data)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(eventId, forKey: .eventId)
-        try container.encode(eventObject, forKey: .eventObject)
-        try container.encode(eventType, forKey: .eventType)
-        try container.encodeISODate(createdAt, forKey: .createdAt)
-        try container.encode(data, forKey: .data)
     }
 }

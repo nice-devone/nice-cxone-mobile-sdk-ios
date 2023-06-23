@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Event received when thread metadata has been loaded.
-struct ThreadMetadataLoadedEventDTO: Codable {
+struct ThreadMetadataLoadedEventDTO: Decodable {
     
     let eventId: UUID
 

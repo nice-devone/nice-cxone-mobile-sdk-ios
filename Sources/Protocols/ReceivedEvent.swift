@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Generic structure that applies to all received events.
-protocol ReceivedEvent: Codable {
+protocol ReceivedEvent: Decodable {
     
     /// The unique id of the event.
     var eventId: UUID { get }

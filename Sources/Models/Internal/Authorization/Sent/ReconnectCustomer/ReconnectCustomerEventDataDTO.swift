@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents info data of a recconect customer event.
-struct ReconnectCustomerEventDataDTO: Codable {
+struct ReconnectCustomerEventDataDTO {
     
     // MARK: - Properties
     
@@ -15,9 +15,12 @@ struct ReconnectCustomerEventDataDTO: Codable {
     init(token: String) {
         self.token = token
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension ReconnectCustomerEventDataDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case accessToken

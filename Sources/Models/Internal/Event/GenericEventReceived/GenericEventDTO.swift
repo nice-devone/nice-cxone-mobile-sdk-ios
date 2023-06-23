@@ -2,7 +2,7 @@ import Foundation
 
 
 /// The initial decoding of a message from the WebSocket.
-struct GenericEventDTO: Codable {
+struct GenericEventDTO: Decodable {
     
     /// The type of the event.
 	let eventType: EventType?

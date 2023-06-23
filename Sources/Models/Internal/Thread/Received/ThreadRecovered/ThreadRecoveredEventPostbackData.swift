@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents data about a thread recovered event postback.
-struct ThreadRecoveredEventPostbackDataDTO: Codable {
+struct ThreadRecoveredEventPostbackDataDTO {
     
     // MARK: - Properties
     
@@ -41,9 +41,12 @@ struct ThreadRecoveredEventPostbackDataDTO: Codable {
         self.messagesScrollToken = messagesScrollToken
         self.customerContactFields = customerContactFields
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Decodable
+
+extension ThreadRecoveredEventPostbackDataDTO: Decodable {
     
     enum CodingKeys: CodingKey {
         case consumerContact
@@ -68,18 +71,5 @@ struct ThreadRecoveredEventPostbackDataDTO: Codable {
         self.thread = try container.decode(ReceivedThreadDataDTO.self, forKey: .thread)
         self.messagesScrollToken = try container.decode(String.self, forKey: .messagesScrollToken)
         self.customerContactFields = try customerContainer.decode([CustomFieldDTO].self, forKey: .customFields)
-        
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        var customerContainer = container.nestedContainer(keyedBy: CustomerKeys.self, forKey: .customer)
-        
-        try container.encode(consumerContact, forKey: .consumerContact)
-        try container.encode(messages, forKey: .messages)
-        try container.encodeIfPresent(inboxAssignee, forKey: .inboxAssignee)
-        try container.encode(thread, forKey: .thread)
-        try container.encode(messagesScrollToken, forKey: .messagesScrollToken)
-        try customerContainer.encode(customerContactFields, forKey: .customFields)
     }
 }

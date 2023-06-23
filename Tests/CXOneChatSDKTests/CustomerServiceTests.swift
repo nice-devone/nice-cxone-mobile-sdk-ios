@@ -11,14 +11,19 @@ class CustomerProviderTests: CXoneXCTestCase {
     private lazy var customerProvider = CXoneChat.customer as! CustomerService
     
     
-    // MARK: - Tests
+    // MARK: - Lifecycle
     
-    func testNilUser() {
-        XCTAssertNil(CXoneChat.customer.get())
+    override func setUp() async throws {
+        try await super.setUp()
+        
+        try await setUpConnection()
     }
     
+    
+    // MARK: - Tests
+    
     func testSetUser() {
-        CXoneChat.customer.set(.init(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+        CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
         
         XCTAssertNotNil(CXoneChat.customer.get())
     }
@@ -72,12 +77,27 @@ class CustomerProviderTests: CXoneXCTestCase {
     }
     
     func testUpdateCustomerName() {
-        CXoneChat.customer.set(.init(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+        CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
         
         CXoneChat.customer.setName(firstName: "Peter", lastName: "Parker")
         
         XCTAssertNotNil(CXoneChat.customer.get())
         XCTAssertEqual(CXoneChat.customer.get()?.firstName, "Peter")
         XCTAssertEqual(CXoneChat.customer.get()?.lastName, "Parker")
+    }
+    
+    func testCustomerCustomFieldsDontOverride() throws {
+        guard let service = CXoneChat.customerCustomFields as? CustomerCustomFieldsService else {
+            throw CXoneChatError.missingParameter("service")
+        }
+        
+        service.customerFields = [
+            .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantFuture, isEmail: true)),
+            .textField(CustomFieldTextFieldDTO(ident: "age", label: "Age", value: "34", updatedAt: dateProvider.now, isEmail: false))
+        ]
+        
+        try CXoneChat.customerCustomFields.set(["email": "john.doe@gmail.com"])
+        
+        XCTAssertEqual((CXoneChat.customerCustomFields.get() as [CustomFieldType]).count, 2)
     }
 }

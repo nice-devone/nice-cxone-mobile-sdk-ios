@@ -18,7 +18,7 @@ public protocol CXoneChatDelegate: AnyObject {
     func onThreadArchive()
     
     /// Callback to be called when all of the threads for the customer have loaded.
-    /// - Parameter thread: The thread to load.
+    /// - Parameter threads: The thread to load.
     func onThreadsLoad(_ threads: [ChatThread])
     
     /// Callback to be called when thread info has loaded.
@@ -95,7 +95,7 @@ public extension CXoneChatDelegate {
     func onCustomPluginMessage(_ messageData: [Any]) { }
     func onAgentChange(_ agent: Agent, for threadId: UUID) { }
     func onAgentReadMessage(threadId: UUID) { }
-    func onAgentTyping(_ didEnd: Bool, threadId: UUID) { }
+    func onAgentTyping(_ isTyping: Bool, threadId: UUID) { }
     func onContactCustomFieldsSet() { }
     func onCustomerCustomFieldsSet() { }
     func onError(_ error: Error) { }

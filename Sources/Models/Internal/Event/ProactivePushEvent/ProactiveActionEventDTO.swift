@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct ProactiveActionEventDTO: ReceivedEvent, Codable {
+struct ProactiveActionEventDTO: ReceivedEvent {
     
     // MARK: - Properties
     
@@ -24,9 +24,12 @@ struct ProactiveActionEventDTO: ReceivedEvent, Codable {
         self.createdAt = createdAt
         self.data = data
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension ProactiveActionEventDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case eventId

@@ -35,7 +35,7 @@ class SocketServiceMock: SocketService {
     // MARK: - Init
     
     init(session: URLSession = .shared) {
-        super.init(keychainSwift: KeychainSwiftMock(), session: session)
+        super.init(keychainSwift: KeychainSwiftMock(), session: session, dateProvider: DateProviderMock())
         
         self.connectionContext = ConnectionCotextMock()
     }

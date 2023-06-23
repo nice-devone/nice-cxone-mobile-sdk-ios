@@ -2,24 +2,24 @@ import Foundation
 
 
 /// Event received when an agent has read a message.
-struct MessageReadByAgentEventDTO: Codable {
+struct MessageReadByAgentEventDTO {
     
     // MARK: - Properties
     
     /// The unique identifier of the event.
-	let eventId: UUID
-
+    let eventId: UUID
+    
     /// The objects for which an event is applicable.
-	let eventObject: EventObjectType
-
+    let eventObject: EventObjectType
+    
     /// The type of the event.
-	let eventType: EventType
-
+    let eventType: EventType
+    
     /// The timestamp of when the message was created.
-	let createdAt: Date
-
+    let createdAt: Date
+    
     /// The data of the message read by agent event.
-	let data: MessageReadByAgentEventDataDTO
+    let data: MessageReadByAgentEventDataDTO
     
     
     // MARK: - Init
@@ -31,9 +31,12 @@ struct MessageReadByAgentEventDTO: Codable {
         self.createdAt = createdAt
         self.data = data
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Decodable
+
+extension MessageReadByAgentEventDTO: Decodable {
     
     enum CodingKeys: CodingKey {
         case eventId
@@ -51,15 +54,5 @@ struct MessageReadByAgentEventDTO: Codable {
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.data = try container.decode(MessageReadByAgentEventDataDTO.self, forKey: .data)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(eventId, forKey: .eventId)
-        try container.encode(eventObject, forKey: .eventObject)
-        try container.encode(eventType, forKey: .eventType)
-        try container.encodeISODate(createdAt, forKey: .createdAt)
-        try container.encode(data, forKey: .data)
     }
 }

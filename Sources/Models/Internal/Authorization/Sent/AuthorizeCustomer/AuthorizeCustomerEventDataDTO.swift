@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents info about data of the authorize customer event.
-struct AuthorizeCustomerEventDataDTO: Codable {
+struct AuthorizeCustomerEventDataDTO {
     
     /// The auth code for OAuth.
     let authorizationCode: String?
@@ -19,10 +19,13 @@ struct AuthorizeCustomerEventDataDTO: Codable {
         self.authorizationCode = authorizationCode
         self.codeVerifier = codeVerifier
     }
-    
-    
-    // MARK: - Codable
-    
+}
+
+
+// MARK: - Codable
+
+extension AuthorizeCustomerEventDataDTO: Codable {
+
     enum CodingKeys: CodingKey {
         case authorization
     }

@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct ThreadMetadataLoadedEventPostbackDTO: Codable {
+struct ThreadMetadataLoadedEventPostbackDTO: Decodable {
     
     let eventType: EventType
 

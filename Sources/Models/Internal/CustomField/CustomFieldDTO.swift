@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents all data about a single custom field.
-struct CustomFieldDTO: Codable {
+struct CustomFieldDTO: Equatable {
 
     // MARK: - Properties
 
@@ -25,8 +25,19 @@ struct CustomFieldDTO: Codable {
         self.updatedAt = updatedAt
     }
     
-    
-    // MARK: - Codable
+    init?(from type: CustomFieldDTOType) {
+        guard let value = type.value, !value.isEmpty else {
+            return nil
+        }
+        
+        self = CustomFieldDTO(ident: type.ident, value: value, updatedAt: type.updatedAt)
+    }
+}
+
+
+// MARK: - Codable
+
+extension CustomFieldDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case ident

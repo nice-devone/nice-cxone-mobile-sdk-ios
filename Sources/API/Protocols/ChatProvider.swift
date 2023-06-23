@@ -22,7 +22,7 @@ public protocol ChatProvider {
     /// The provider for customer related properties and methods.
     var customer: CustomerProvider { get }
     
-    /// The provider for customet chat fields related properties and methods.
+    /// The provider for customer chat fields related properties and methods.
     var customerCustomFields: CustomerCustomFieldsProvider { get }
     
     /// The provider for thread related properties and methods.
@@ -30,12 +30,12 @@ public protocol ChatProvider {
     
     /// The provider for report related properties and methods.
     var analytics: AnalyticsProvider { get }
-
+    
     /// Configures internal logger to be able to detect errors, warnings or even trace chat flow.
     ///
     /// - Parameters:
-    ///    - level: Specifies level of records to be presented in the console. Lower levels are ignored.
-    ///    - verbository: Specifies verbosity of information in the log record.
+    ///   - level: Specifies level of records to be presented in the console. Lower levels are ignored.
+    ///   - verbository: Specifies verbosity of information in the log record.
     static func configureLogger(level: LogManager.Level, verbosity: LogManager.Verbosity)
     
     /// Signs the customer out and disconnects from the CXone service.

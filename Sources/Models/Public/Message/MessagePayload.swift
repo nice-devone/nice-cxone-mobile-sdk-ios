@@ -5,11 +5,8 @@ import Foundation
 public struct MessagePayload {
 
     /// The content of the payload.
-    public let text: String?
+    public let text: String
     
-    /// The postaback of the payload.
+    /// The postback  of the payload.
     public let postback: String?
-
-    /// The type of message payload content
-    public let element: PluginMessageType
 }

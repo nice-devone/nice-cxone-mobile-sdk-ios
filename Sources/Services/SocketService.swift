@@ -7,6 +7,9 @@ class SocketService: NSObject {
     
     // MARK: - Properties
     
+    let dateProvider: DateProvider
+    var connectionContext: ConnectionContext
+    
     var delegate: SocketDelegate?
     
     /// Whether the socket is currently connected.
@@ -39,18 +42,19 @@ class SocketService: NSObject {
         }
     }
     
-    var connectionContext: ConnectionContext
-    
     
     // MARK: - Init
     
-    init(keychainSwift: KeychainSwift, session: URLSession) {
+    init(keychainSwift: KeychainSwift, session: URLSession, dateProvider: DateProvider) {
         self.connectionContext = ConnectionContextImpl(keychainSwift: keychainSwift, session: session)
+        self.dateProvider = dateProvider
     }
     
     
     // MARK: - Methods
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
     func checkForConnection() throws {
         if !isConnected {
             disconnect()
@@ -86,8 +90,6 @@ class SocketService: NSObject {
     func disconnect() {
         LogManager.trace("Closing the current websocket session.")
         
-        connectionContext.keychainSwift.clear()
-        
         socket?.cancel(with: .goingAway, reason: nil)
         socket = nil
 
@@ -101,7 +103,7 @@ class SocketService: NSObject {
     func send(message: String, shouldCheck: Bool = true) {
         LogManager.trace("Sending a message: \(message.formattedJSON ?? message).")
         
-        if shouldCheck, accessToken?.isExpired ?? false {
+        if shouldCheck, accessToken?.isExpired(currentDate: dateProvider.now) ?? false {
             do {
                 try delegate?.refreshToken()
                 semaphore.wait()
@@ -203,7 +205,12 @@ private extension SocketService {
                 self?.addListener()
             case .failure(let error):
                 error.logError()
-                self?.delegate?.didReceiveError(error)
+                
+                if let error = error as? POSIXError, error.code == .ENOTCONN {
+                    self?.delegate?.didCloseConnection()
+                } else {
+                    self?.delegate?.didReceiveError(error)
+                }
             }
         }
     }

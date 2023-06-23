@@ -63,7 +63,7 @@ extension String {
             throw CXoneChatError.invalidData
         }
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: AnyObject] else {
-            throw CXoneChatError.invalidData
+            throw CXoneChatError.missingParameter("dictionary")
         }
         
         return dictionary

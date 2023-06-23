@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageFileDTO: Codable {
+struct PluginMessageFileDTO {
     
     // MARK: - Properties
     
@@ -22,8 +22,12 @@ struct PluginMessageFileDTO: Codable {
         self.url = url
         self.mimeType = mimeType
     }
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageFileDTO: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -43,7 +47,7 @@ struct PluginMessageFileDTO: Codable {
         let urlString = try container.decode(String.self, forKey: .url)
         
         guard let url = URL(string: urlString) else {
-            throw DecodingError.typeMismatch(URL.self, .init(codingPath: container.codingPath, debugDescription: "PluginMessageFileSubElement"))
+            throw DecodingError.typeMismatch(URL.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "PluginMessageFileSubElement"))
         }
         
         self.url = url

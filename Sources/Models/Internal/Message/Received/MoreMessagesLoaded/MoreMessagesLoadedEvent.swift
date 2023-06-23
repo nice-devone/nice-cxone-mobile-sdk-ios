@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Event received when more messages are loaded.
-struct MoreMessagesLoadedEventDTO: Codable {
+struct MoreMessagesLoadedEventDTO: Decodable {
     
     /// The unique identifier of the event.
     let eventId: UUID

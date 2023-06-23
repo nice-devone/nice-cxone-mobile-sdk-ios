@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Represents info about a postback for a customer authorized event.
-struct CustomerAuthorizedEventPostbackDTO: Codable {
+struct CustomerAuthorizedEventPostbackDTO: Decodable {
     
     /// The type of the event.
     let eventType: EventType

@@ -2,19 +2,20 @@ import Foundation
 
 
 /// The types of data that can be sent on an event.
-enum EventDataType: Encodable {
+enum EventDataType {
+    
+    // MARK: - Thread/Case
     
     case archiveThreadData(ThreadEventDataDTO)
     
     case loadThreadData(ThreadEventDataDTO)
     
-    case sendMessageData(SendMessageEventDataDTO)
-    
-    case sendOutboundMessageData(SendOutboundMessageEventDataDTO)
-    
-    case loadMoreMessageData(LoadMoreMessagesEventDataDTO)
+    case updateThreadData(ThreadEventDataDTO)
     
     case setContactCustomFieldsData(SetContactCustomFieldsEventDataDTO)
+    
+    
+    // MARK: - Customer
     
     case setCustomerCustomFieldData(CustomerCustomFieldsDataDTO)
     
@@ -24,15 +25,35 @@ enum EventDataType: Encodable {
     
     case reconnectCustomerData(ReconnectCustomerEventDataDTO)
     
-    case updateThreadData(ThreadEventDataDTO)
-    
     case refreshTokenPayload(RefreshTokenPayloadDataDTO)
     
     
-    // MARK: - Encoder
+    // MARK: - Message
+    
+    case sendMessageData(SendMessageEventDataDTO)
+    
+    case messageSeenByCustomer(ThreadEventDataDTO)
+    
+    case loadMoreMessageData(LoadMoreMessagesEventDataDTO)
+    
+    case sendOutboundMessageData(SendOutboundMessageEventDataDTO)
+    
+
+    // MARK: - Visitor
+    
+    case visitorEvent(VisitorsEventsDTO)
+    
+    case storeVisitorPayload(VisitorDTO)
+}
+
+
+// MARK: - Encodable
+
+extension EventDataType: Encodable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
+        
         switch self {
         case .sendMessageData(let message):
             try container.encode(message)
@@ -57,6 +78,12 @@ enum EventDataType: Encodable {
         case .refreshTokenPayload(let data):
             try container.encode(data)
         case .sendOutboundMessageData(let data):
+            try container.encode(data)
+        case .messageSeenByCustomer(let data):
+            try container.encode(data)
+        case .visitorEvent(let data):
+            try container.encode(data)
+        case .storeVisitorPayload(let data):
             try container.encode(data)
         }
     }

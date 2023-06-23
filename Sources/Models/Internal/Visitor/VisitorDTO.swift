@@ -8,7 +8,7 @@ struct VisitorDTO: Encodable {
     
     let customerIdentity: CustomerIdentityDTO?
 
-    let browserFingerprint: BrowserFingerprintDTO
+    let browserFingerprint: DeviceFingerprintDTO
 
     let journey: JourneyDTO?
 

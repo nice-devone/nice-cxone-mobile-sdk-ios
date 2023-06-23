@@ -10,7 +10,7 @@ struct VisitorEventDTO: Encodable {
     let id: LowerCaseUUID
     
     /// The type of visitor event.
-    let type: VisitorEventType
+    let type: EventType
 
     /// The timestamp of when the visitor event was created (with additional milliseconds).
     let createdAtWithMilliseconds: String

@@ -24,7 +24,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         }
     }
     
-    func testGetEnvironmentChannelConfigurationNoThrows() async throws {
+    func testGetEnvironmentChannelConfigurationNoThrow() async throws {
         _ = try await self.CXoneChat.connection.getChannelConfiguration(environment: .NA1, brandId: brandId, channelId: channelId)
     }
     
@@ -37,7 +37,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         }
     }
     
-    func testGetChannelConfigurationThrows() async {
+    func testGetChannelConfigurationThrow() async {
         do {
             _ = try await self.CXoneChat.connection.getChannelConfiguration(chatURL: chatURL, brandId: 0, channelId: "")
             XCTFail("Should throw an error.")
@@ -46,7 +46,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         }
     }
     
-    func testGetChannelConfigurationNoThrows() async throws {
+    func testGetChannelConfigurationNoThrow() async throws {
         _ = try await self.CXoneChat.connection.getChannelConfiguration(chatURL: chatURL, brandId: brandId, channelId: channelId)
     }
     
@@ -59,7 +59,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         }
     }
     
-    func testEnvironmentConnectionNoThrows() async throws {
+    func testEnvironmentConnectionNoThrow() async throws {
         try await CXoneChat.connection.connect(environment: .NA1, brandId: brandId, channelId: channelId)
     }
     
@@ -72,7 +72,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         }
     }
     
-    func testConnectionNoThrows() async throws {
+    func testConnectionNoThrow() async throws {
         try await CXoneChat.connection.connect(chatURL: chatURL, socketURL: socketURL, brandId: brandId, channelId: channelId)
     }
     
@@ -96,13 +96,13 @@ class ConnectionProviderTests: CXoneXCTestCase {
         XCTAssertThrowsError(try CXoneChat.connection.executeTrigger(UUID()))
     }
     
-    func testExecuteTriggerNoThrows() async throws {
+    func testExecuteTriggerNoThrow() async throws {
         try await CXoneChat.connection.connect(chatURL: chatURL, socketURL: socketURL, brandId: brandId, channelId: channelId)
         
         XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(UUID()))
     }
     
-    func testChannleConfiguration() async throws {
+    func testChannelConfiguration() async throws {
         try await CXoneChat.connection.connect(chatURL: chatURL, socketURL: socketURL, brandId: brandId, channelId: channelId)
         
         XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(UUID()))

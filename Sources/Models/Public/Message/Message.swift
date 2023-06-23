@@ -25,7 +25,7 @@ public struct Message {
     public let direction: MessageDirection
     
     /// Statistic information about the message (read status, viewed status, etc.).
-    public let userStatistics: UserStatistics
+    public let userStatistics: UserStatistics?
     
     /// The agent that sent the message. Only present if the direction is to client (outbound).
     public let authorUser: Agent?
@@ -58,7 +58,7 @@ public struct Message {
         createdAt: Date,
         attachments: [Attachment],
         direction: MessageDirection,
-        userStatistics: UserStatistics,
+        userStatistics: UserStatistics?,
         authorUser: Agent?,
         authorEndUserIdentity: CustomerIdentity?
     ) {

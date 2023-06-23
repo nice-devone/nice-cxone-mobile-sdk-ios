@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Event received when a customer is successfully authorized.
-struct CustomerAuthorizedEventDTO: Codable {
+struct CustomerAuthorizedEventDTO: Decodable {
     
     /// The unique identifier of the event.
     let eventId: UUID

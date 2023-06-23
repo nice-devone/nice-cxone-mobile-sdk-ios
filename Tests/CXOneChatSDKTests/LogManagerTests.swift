@@ -7,7 +7,7 @@ class LogManagerTests: XCTestCase {
     // MARK: - Properties
     
     private let traceEmoji = "❇️"
-    private let currentDate = Date()
+    private let dateProvider = DateProviderMock()
     
     private var levelTestCases = [(LogManager.Level, String)]()
     private var verbosityTestCases = [(LogManager.Verbosity, String)]()
@@ -90,7 +90,7 @@ class LogManagerTests: XCTestCase {
         wait(for: expectations, timeout: 1.0)
     }
     
-    func testVerbosity() {
+    func testVerbosity()  {
         var expectations = [XCTestExpectation]()
         
         verbosityTestCases.forEach { verbosity, message in
@@ -102,7 +102,7 @@ class LogManagerTests: XCTestCase {
             testClass.fireDelegate(type: .trace)
             XCTAssertTrue(testClass.message.contains(message))
             
-            let date = formatter.string(from: currentDate)
+            let date = formatter.string(from: dateProvider.now)
             XCTAssertTrue(testClass.message.contains(date), "Mesage does not contain datetime. Message: \(testClass.message)")
             XCTAssertTrue(testClass.message.contains(traceEmoji), "Mesage does not contain emoji. Message: \(testClass.message)")
             

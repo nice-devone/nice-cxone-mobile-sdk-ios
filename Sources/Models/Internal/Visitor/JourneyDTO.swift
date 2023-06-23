@@ -1,16 +1,17 @@
 import Foundation
 
 
-struct JourneyDTO: Encodable {
-    
-    // MARK: - Properties
+struct JourneyDTO {
     
     let url: String
-
+    
     let utm: UTMDTO
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Encodable
+
+extension JourneyDTO: Encodable {
     
     enum CodingKeys: CodingKey {
         case referrer

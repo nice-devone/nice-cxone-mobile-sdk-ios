@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Data for the ContactInboxAssigneeChanged event.
-struct ContactInboxAssigneeChangedDataDTO: Codable {
+struct ContactInboxAssigneeChangedDataDTO: Decodable {
     
     /// The brand for which this change applies.
     let brand: BrandDTO

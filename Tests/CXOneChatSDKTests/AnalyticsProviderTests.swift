@@ -92,13 +92,13 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         XCTAssertThrowsError(
-            try CXoneChat.analytics.proactiveActionDisplay(data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionDisplay(data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
     func testProactiveActionDisplayNoThrow() {
         XCTAssertNoThrow(
-            try CXoneChat.analytics.proactiveActionDisplay(data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionDisplay(data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
@@ -106,13 +106,13 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         XCTAssertThrowsError(
-            try CXoneChat.analytics.proactiveActionClick(data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionClick(data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
     func testProactiveActionClickNoThrow() {
         XCTAssertNoThrow(
-            try CXoneChat.analytics.proactiveActionClick(data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil)
+            try CXoneChat.analytics.proactiveActionClick(data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil)
             )
         )
     }
@@ -121,13 +121,13 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         XCTAssertThrowsError(
-            try CXoneChat.analytics.proactiveActionSuccess(true, data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionSuccess(true, data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
     func testProactiveActionSuccessNoThrow() {
         XCTAssertNoThrow(
-            try CXoneChat.analytics.proactiveActionSuccess(true, data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionSuccess(true, data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
@@ -135,13 +135,13 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         XCTAssertThrowsError(
-            try CXoneChat.analytics.proactiveActionSuccess(false, data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionSuccess(false, data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
     func testProactiveActionFailureNoThrow() {
         XCTAssertNoThrow(
-            try CXoneChat.analytics.proactiveActionSuccess(false, data: .init(id: UUID(), name: "", type: .welcomeMessage, content: nil))
+            try CXoneChat.analytics.proactiveActionSuccess(false, data: ProactiveActionDetails(id: UUID(), name: "", type: .welcomeMessage, content: nil))
         )
     }
     
@@ -175,7 +175,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     
     func testCustomVisitorEventEntityMapperMapsCorretly() {
         let data = ProactiveActionDetailsMapper.map(
-            .init(id: UUID(), name: "actionName", type: .welcomeMessage, content: .init(bodyText: "bodyText"))
+            ProactiveActionDetails(id: UUID(), name: "actionName", type: .welcomeMessage, content: ProactiveActionDataMessageContent(bodyText: "bodyText"))
         )
         
         XCTAssertTrue(data.actionName == "actionName")

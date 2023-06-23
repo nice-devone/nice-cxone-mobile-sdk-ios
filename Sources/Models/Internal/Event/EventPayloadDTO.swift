@@ -2,7 +2,7 @@ import Foundation
 
 
 /// The details about the event to be sent.
-struct EventPayloadDTO: Encodable {
+struct EventPayloadDTO {
     
     // MARK: - Properties
     
@@ -13,7 +13,7 @@ struct EventPayloadDTO: Encodable {
     let channel: ChannelIdentifierDTO
     
     /// The identity of the customer that is sending the event.
-    let consumerIdentity: CustomerIdentityDTO
+    let customerIdentity: CustomerIdentityDTO
     
     /// The type of event to be sent.
     let eventType: EventType
@@ -28,20 +28,24 @@ struct EventPayloadDTO: Encodable {
     // MARK: - Init
     
     init(brandId: Int, channelId: String, customerIdentity: CustomerIdentityDTO, eventType: EventType, data: EventDataType?) {
-        self.brand = .init(id: brandId)
-        self.channel = .init(id: channelId)
-        self.consumerIdentity = customerIdentity
+        self.brand = BrandDTO(id: brandId)
+        self.channel = ChannelIdentifierDTO(id: channelId)
+        self.customerIdentity = customerIdentity
         self.eventType = eventType
         self.data = data
     }
+}
+
+
+// MARK: - Encodable
+
+extension EventPayloadDTO: Encodable {
     
-    
-    // MARK: - Codable
-    
-    enum CodingKeys: CodingKey {
+    enum CodingKeys: String, CodingKey {
         case brand
         case channel
         case consumerIdentity
+        case customerIdentity
         case eventType
         case visitor
         case data
@@ -56,7 +60,7 @@ struct EventPayloadDTO: Encodable {
         
         try container.encode(brand, forKey: .brand)
         try container.encode(channel, forKey: .channel)
-        try container.encode(consumerIdentity, forKey: .consumerIdentity)
+        try container.encode(customerIdentity, forKey: codingKey(for: eventType))
         try container.encode(eventType, forKey: .eventType)
         try container.encodeIfPresent(data, forKey: .data)
         
@@ -64,6 +68,27 @@ struct EventPayloadDTO: Encodable {
             var visitorContainer = container.nestedContainer(keyedBy: VisitorKeys.self, forKey: .visitor)
             
             try visitorContainer.encodeIfPresent(visitorId, forKey: .id)
+        }
+    }
+    
+    private func codingKey(for eventType: EventType) -> CodingKeys {
+        switch eventType {
+        case .sendMessage,
+                .recoverThread,
+                .loadMoreMessages,
+                .setContactCustomFields,
+                .setCustomerCustomFields,
+                .senderTypingEnded,
+                .senderTypingStarted,
+                .messageSeenByCustomer,
+                .authorizeCustomer,
+                .fetchThreadList,
+                .loadThreadMetadata,
+                .updateThread,
+                .archiveThread:
+            return .customerIdentity
+        default:
+            return .consumerIdentity
         }
     }
 }

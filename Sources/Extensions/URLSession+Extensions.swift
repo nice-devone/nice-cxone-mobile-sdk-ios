@@ -3,10 +3,15 @@ import Foundation
 
 extension URLSession {
     
-    @available(iOS, deprecated: 15.0, message: "This extension is no longer necessary. Use API built into SDK")
-    func data(from url: URL) async throws -> (Data, URLResponse) {
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    func data(from url: URL, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
         try await withCheckedThrowingContinuation { continuation in
             let task = self.dataTask(with: url) { data, response, error in
+                if let response = response as? HTTPURLResponse {
+                    response.log(data: data, error: error, fun: fun, file: file, line: line)
+                }
+                
                 guard let data = data, let response = response else {
                     let error = error ?? URLError(.badServerResponse)
                     
@@ -20,10 +25,15 @@ extension URLSession {
         }
     }
     
-    @available(iOS, deprecated: 15.0, message: "This extension is no longer necessary. Use API built into SDK")
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    func data(for request: URLRequest, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
         try await withCheckedThrowingContinuation { continuation in
             let task = self.dataTask(with: request) { data, response, error in
+                if let response = response as? HTTPURLResponse {
+                    response.log(data: data, error: error, fun: fun, file: file, line: line)
+                }
+                
                 guard let data = data, let response = response else {
                     let error = error ?? URLError(.badServerResponse)
                     

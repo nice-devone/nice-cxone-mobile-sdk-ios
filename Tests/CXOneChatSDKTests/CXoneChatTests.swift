@@ -23,7 +23,7 @@ class CXoneChatTests: XCTestCase {
     }
     
     func testSignOutResetProperly() {
-        (CXoneChat.shared.threads as? ChatThreadsService)?.threads.append(.init(id: UUID()))
+        (CXoneChat.shared.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID()))
         XCTAssertFalse(CXoneChat.shared.threads.get().isEmpty)
         
         CXoneChat.signOut()
@@ -50,7 +50,7 @@ class CXoneChatTests: XCTestCase {
         LogManager.trace("")
         
         
-        wait(for: [currentExpectation], timeout: 1.0)
+         wait(for: [currentExpectation], timeout: 1.0)
     }
 }
 

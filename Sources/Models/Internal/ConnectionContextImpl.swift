@@ -22,8 +22,11 @@ struct ConnectionContextImpl: ConnectionContext {
     
     /// The current channel configuration for currently connected CXone session.
     var channelConfig = ChannelConfigurationDTO(
-        settings: .init(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-        isAuthorizationEnabled: false
+        settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
+        isAuthorizationEnabled: false,
+        prechatSurvey: nil,
+        contactCustomFieldDefinitions: [],
+        customerCustomFieldDefinitions: []
     )
     
     /// The id of the brand for the chat.

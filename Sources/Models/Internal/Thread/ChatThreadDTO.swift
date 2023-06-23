@@ -4,13 +4,8 @@ import Foundation
 /// All information about a chat thread as well as the messages for the thread.
 struct ChatThreadDTO {
     
-    /// The internal id of the thread.
-    ///
-    /// It combines an unique identifier of the channel and `UUID`.
-    let id: String?
-    
     /// The unique id of the thread.
-	let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: UUID
     
     /// The name given to the thread (for multi-thread channels only).
     let threadName: String?
@@ -19,7 +14,7 @@ struct ChatThreadDTO {
     var messages: [MessageDTO]
     
     /// The agent assigned in the thread.
-	let threadAgent: AgentDTO?
+    let threadAgent: AgentDTO?
     
     /// Whether more messages can be added to the thread (not archived) or otherwise (archived).
     let canAddMoreMessages: Bool

@@ -6,11 +6,6 @@ class ConnectionService: ConnectionProvider {
     
     // MARK: - Properties
     
-    var channelConfiguration: ChannelConfiguration {
-        get { ChannelConfigurationMapper.map(connectionContext.channelConfig) }
-        set { connectionContext.channelConfig = ChannelConfigurationMapper.map(newValue) }
-    }
-    
     var socketService: SocketService
     var eventsService: EventsService
     
@@ -23,21 +18,37 @@ class ConnectionService: ConnectionProvider {
     }
     
     
+    // MARK: - Protocol Properties
+    
+    var channelConfiguration: ChannelConfiguration {
+        get { ChannelConfigurationMapper.map(connectionContext.channelConfig) }
+        set { connectionContext.channelConfig = ChannelConfigurationMapper.map(newValue) }
+    }
+    
+    
     // MARK: - Init
     
     init(socketService: SocketService, eventsService: EventsService) {
         self.socketService = socketService
         self.eventsService = eventsService
         
-        self.connectionContext.channelConfig = .init(
-            settings: .init(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
-            isAuthorizationEnabled: false
+        self.connectionContext.channelConfig = ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
+            isAuthorizationEnabled: false,
+            prechatSurvey: nil,
+            contactCustomFieldDefinitions: [],
+            customerCustomFieldDefinitions: []
         )
     }
     
     
     // MARK: - Implementation
     
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
     func getChannelConfiguration(environment: Environment, brandId: Int, channelId: String) async throws -> ChannelConfiguration {
         LogManager.trace("Getting channel configuration.")
 
@@ -48,6 +59,11 @@ class ConnectionService: ConnectionProvider {
         return ChannelConfigurationMapper.map(try await getChannelConfiguration(url: url))
     }
     
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.``
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
     func getChannelConfiguration(chatURL: String, brandId: Int, channelId: String) async throws -> ChannelConfiguration {
         LogManager.trace("Getting channel configuration.")
 
@@ -58,6 +74,15 @@ class ConnectionService: ConnectionProvider {
         return ChannelConfigurationMapper.map(try await getChannelConfiguration(url: url))
     }
     
+    /// - Throws: ``CXoneChatError/webSocketConnectionFailure`` if the WebSocket refused to connect.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.``
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
     func connect(environment: Environment, brandId: Int, channelId: String) async throws {
         LogManager.trace("connecting to the CXone service.")
 
@@ -68,6 +93,15 @@ class ConnectionService: ConnectionProvider {
         try checkForAuthorization()
     }
     
+    /// - Throws: ``CXoneChatError/webSocketConnectionFailure`` if the WebSocket refused to connect.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.``
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
     func connect(chatURL: String, socketURL: String, brandId: Int, channelId: String) async throws {
         LogManager.trace("connecting to the CXone service.")
 
@@ -90,23 +124,28 @@ class ConnectionService: ConnectionProvider {
         socketService.ping()
     }
     
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func executeTrigger(_ triggerId: UUID) throws {
         LogManager.trace("Executing trigger.")
 
         try socketService.checkForConnection()
 
         guard let visitorId = connectionContext.visitorId else {
-            throw CXoneChatError.missingParameter("visitorId")
+            throw CXoneChatError.customerVisitorAssociationFailure
         }
         guard let customer = connectionContext.customer else {
-            throw CXoneChatError.missingParameter("customer")
+            throw CXoneChatError.customerAssociationFailure
         }
 
         let payload = ExecuteTriggerEventPayloadDTO(
             eventType: .executeTrigger,
-            brand: .init(id: connectionContext.brandId),
-            channel: .init(id: connectionContext.channelId),
-            consumerIdentity: customer,
+            brand: BrandDTO(id: connectionContext.brandId),
+            channel: ChannelIdentifierDTO(id: connectionContext.channelId),
+            customerIdentity: customer,
             eventId: LowerCaseUUID(uuid: connectionContext.destinationId),
             visitorId: LowerCaseUUID(uuid: visitorId),
             triggerId: LowerCaseUUID(uuid: triggerId)
@@ -116,6 +155,17 @@ class ConnectionService: ConnectionProvider {
 
         socketService.send(message: data.utf8string)
     }
+    
+    
+    // MARK: - Internal Methods
+    
+    func signOut() {
+        LogManager.trace("Signing out an user.")
+        
+        socketService.disconnect()
+        
+        connectionContext.keychainSwift.clear()
+    }
 }
 
 
@@ -123,12 +173,22 @@ class ConnectionService: ConnectionProvider {
 
 private extension ConnectionService {
     
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.``
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
     func getChannelConfiguration(url: URL) async throws -> ChannelConfigurationDTO {
         let (data, _) = try await connectionContext.session.data(from: url)
         
         return try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
     }
     
+    /// - Throws: ``CXoneChatError/webSocketConnectionFailure`` if the WebSocket refused to connect.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     func connect(brandId: Int, channelId: String) async throws {
         LogManager.trace("Connecting to the brand: \(brandId) and channel: \(channelId).")
         
@@ -139,11 +199,13 @@ private extension ConnectionService {
         do {
             try connectToSocket()
         } catch {
+            error.logError()
+            
             throw CXoneChatError.webSocketConnectionFailure
         }
         
         guard let url = URL(string: "\(connectionContext.environment.chatURL)/1.0/brand/\(brandId)/channel/\(channelId)") else {
-            throw CXoneChatError.channelConfigFailure
+            throw CXoneChatError.missingParameter("url")
         }
         
         connectionContext.channelConfig = try await getChannelConfiguration(url: url)
@@ -157,17 +219,18 @@ private extension ConnectionService {
         }
     }
     
+    /// - Throws: ``CXoneChatError/invalidRequest`` if connection `url` is not set properly.
     func connectToSocket() throws {
         LogManager.trace("Connecting to the socket.")
         
         let socketEndpoint = SocketEndpointDTO(
             environment: connectionContext.environment,
             queryItems: [
-                .init(name: "brand", value: connectionContext.brandId.description),
-                .init(name: "channelId", value: connectionContext.channelId),
-                .init(name: "applicationType", value: "native"),
-                .init(name: "os", value: "iOS"),
-                .init(name: "clientVersion", value: CXoneChat.version)
+                URLQueryItem(name: "brand", value: connectionContext.brandId.description),
+                URLQueryItem(name: "channelId", value: connectionContext.channelId),
+                URLQueryItem(name: "applicationType", value: "native"),
+                URLQueryItem(name: "os", value: "iOS"),
+                URLQueryItem(name: "clientVersion", value: CXoneChat.version)
             ],
             method: .get
         )
@@ -175,11 +238,14 @@ private extension ConnectionService {
         socketService.connect(socketURL: try socketEndpoint.urlRequest())
     }
     
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func checkForAuthorization() throws {
         LogManager.trace("Checking authorization.")
         
         if connectionContext.customer == nil {
-            connectionContext.customer = .init(idOnExternalPlatform: UUID().uuidString, firstName: nil, lastName: nil)
+            connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: nil, lastName: nil)
             
             try authorizeCustomer()
         } else if connectionContext.channelConfig.isAuthorizationEnabled {
@@ -190,13 +256,15 @@ private extension ConnectionService {
     }
     
     /// Authorizes a new customer to communicate through the WebSocket.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func authorizeCustomer() throws {
         LogManager.trace("Authorizing customer.")
         
         let data = try eventsService.create(
             .authorizeCustomer,
             with: .authorizeCustomerData(
-                .init(
+                AuthorizeCustomerEventDataDTO(
                     authorizationCode: connectionContext.authorizationCode,
                     codeVerifier: connectionContext.codeVerifier
                 )
@@ -207,6 +275,9 @@ private extension ConnectionService {
     }
     
     /// Reconnects a returning customer to communicate through the WebSocket.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func reconnectCustomer() throws {
         LogManager.trace("Reconnecting customer.")
         
@@ -214,7 +285,7 @@ private extension ConnectionService {
             throw CXoneChatError.missingAccessToken
         }
         
-        let data = try eventsService.create(.reconnectCustomer, with: .reconnectCustomerData(.init(token: token)))
+        let data = try eventsService.create(.reconnectCustomer, with: .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: token)))
         
         socketService.send(message: data.utf8string)
     }

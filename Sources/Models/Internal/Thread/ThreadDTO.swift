@@ -5,11 +5,6 @@ import Foundation
 
 /// Represents info about a thread from the socket.
 struct ThreadDTO: Codable {
-
-    /// The thread id. May not be present.
-    ///
-    /// It combines an unique identifier of the channel and `UUID`.
-    let id: String?
     
     /// The unique id for the thread.
     let idOnExternalPlatform: UUID

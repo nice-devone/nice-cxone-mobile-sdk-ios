@@ -6,20 +6,25 @@ class MessagesProviderTests: CXoneXCTestCase {
     
     // MARK: - Properties
     
-    private let message = MessageDTO(
+    private lazy var message = MessageDTO(
         idOnExternalPlatform: UUID(),
         threadIdOnExternalPlatform: UUID(),
-        contentType: .text(""),
-        createdAt: Date(),
+        contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
+        createdAt: dateProvider.now,
         attachments: [],
         direction: .inbound,
-        userStatistics: .init(seenAt: nil, readAt: nil),
+        userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
         authorUser: nil,
         authorEndUserIdentity: nil
     )
     // swiftlint:disable:next force_unwrapping
-    private let attachment = AttachmentUploadDTO(attachmentData: "attachment".data(using: .utf8)!, mimeType: "image/jpg", fileName: "file")
-    
+    private let attachment = AttachmentUploadDTO(
+        attachmentData: "attachment".data(using: .utf8)!,
+        mimeType: "image/jpg",
+        fileName: "file",
+        friendlyName: "friendly"
+    )
+
     
     // MARK: - Lifecycle
     
@@ -43,7 +48,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         XCTAssertThrowsError(try CXoneChat.threads.messages.loadMore(for: thread))
     }
     
-    func testLoadMoreNoThrows() async throws {
+    func testLoadMoreNoThrow() throws {
         var thread = ChatThread(id: UUID(), scrollToken: "scroll_token")
         thread.messages.append(MessageMapper.map(message))
         
@@ -56,7 +61,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         let thread = ChatThread(id: UUID())
         
         do {
-            try await CXoneChat.threads.messages.send("message", for: thread)
+            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
             XCTFail("Should throw an error.")
         } catch {
             return
@@ -66,14 +71,14 @@ class MessagesProviderTests: CXoneXCTestCase {
     func testSendMessageNoThrow() async throws {
         let thread = ChatThread(id: UUID())
         
-        try await CXoneChat.threads.messages.send("message", for: thread)
+        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
     }
     
     func testSnedMessagesWithPropertiesNoThrow() async throws {
         socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
         let thread = ChatThread(id: UUID(), messages: [MessageMapper.map(message)])
         
-        try await CXoneChat.threads.messages.send("message", for: thread)
+        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
     }
     
     func testSendMessageWithAttachmentsThrowsNotConnected() async {
@@ -82,7 +87,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         let thread = ChatThread(id: UUID())
         
         do {
-            try await CXoneChat.threads.messages.send("message", with: [], for: thread)
+            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message", attachments: []), for: thread)
             XCTFail("Should throw an error.")
         } catch {
             return
@@ -95,7 +100,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         (CXoneChat.threads.messages as? MessagesService)?.socketService.connectionContext.channelId = "\""
         
         do {
-            try await CXoneChat.threads.messages.send("message", with: [], for: thread)
+            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
             XCTFail("Should throw an error.")
         } catch {
             return
@@ -105,7 +110,6 @@ class MessagesProviderTests: CXoneXCTestCase {
     func testSendMessageWithAttachmentsNoThrow() async throws {
         socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
         let thread = ChatThreadDTO(
-            id: nil,
             idOnExternalPlatform: UUID(),
             threadName: nil,
             messages: [],
@@ -116,8 +120,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         )
         
         try await CXoneChat.threads.messages.send(
-            "message",
-            with: [AttachmentUploadMapper.map(attachment)],
+            OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(attachment)]),
             for: ChatThreadMapper.map(thread)
         )
     }

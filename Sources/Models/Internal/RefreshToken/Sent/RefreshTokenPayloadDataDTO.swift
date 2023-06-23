@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct RefreshTokenPayloadDataDTO: Codable {
+struct RefreshTokenPayloadDataDTO {
     
     // MARK: - Properties
     
@@ -13,9 +13,12 @@ struct RefreshTokenPayloadDataDTO: Codable {
     init(token: String) {
         self.token = token
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension RefreshTokenPayloadDataDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case accessToken

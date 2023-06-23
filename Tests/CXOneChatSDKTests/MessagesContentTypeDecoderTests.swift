@@ -12,23 +12,96 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - ContentType Text
     
     func testContentTypeTextDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypeText", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypeText", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
         switch message.contentType {
-        case .text(let text):
-            XCTAssertEqual("Hello world", text)
+        case .text(let entity):
+            XCTAssertEqual("Hello world", entity.text)
         default:
-            XCTFail()
+            XCTFail("Invalid message content type")
         }
+    }
+    
+    
+    // MARK: - ContentType Rich Link
+    
+    func testContentTypeRichLinkDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeRichLink", extension: "json")
+        
+        let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
+        
+        guard case .richLink(let entity) = message.contentType else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(entity.fileName, "place-kitten.jpg")
+        XCTAssertEqual(entity.fileUrl, URL(string: "https://placekitten.com/200/300"))
+        XCTAssertEqual(entity.mimeType, "image/jpeg")
+        XCTAssertEqual(entity.title, "Check our new gadget!")
+        XCTAssertEqual(entity.url, URL(string: "https://www.google.com"))
+    }
+    
+    
+    // MARK: - ContentType Quick Replies
+    
+    func testContentTypeQuickRepliesDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeQuickReplies", extension: "json")
+        
+        let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
+        
+        guard case .quickReplies(let entity) = message.contentType else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(entity.title, "Hello, we will deliver the package between 12:00 and 16:00. Please specify which day.")
+        XCTAssertEqual(entity.buttons.count, 2)
+        XCTAssertEqual(entity.buttons[0].text, "Today")
+        XCTAssertEqual(entity.buttons[0].postback, #"{"id":"1"}"#)
+        XCTAssertEqual(entity.buttons[1].text, "Tomorrow")
+        XCTAssertEqual(entity.buttons[1].postback, #"{"id":"2"}"#)
+    }
+    
+    
+    // MARK: - ContentType List Picker
+    
+    func testContentTypeListPickerDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeListPicker", extension: "json")
+        
+        let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
+        
+        guard case .listPicker(let entity) = message.contentType,
+              case .replyButton(let firstButton) = entity.elements[safe: 0],
+              case .replyButton(let secondButton) = entity.elements[safe: 1]
+        else {
+            throw CXoneChatError.invalidData
+        }
+        
+        XCTAssertEqual(entity.title, "Choose a color!")
+        XCTAssertEqual(entity.text, "What is your favourite color?")
+        XCTAssertEqual(entity.elements.count, 2)
+        
+        XCTAssertEqual(firstButton.text, "red")
+        XCTAssertEqual(firstButton.description, "Like a tomato")
+        XCTAssertEqual(firstButton.postback, "/red")
+        XCTAssertEqual(firstButton.iconName, "place-kitten.jpg")
+        XCTAssertEqual(firstButton.iconUrl, URL(string: "https://placekitten.com/200/300"))
+        XCTAssertEqual(firstButton.iconMimeType, "image/jpeg")
+        
+        XCTAssertEqual(secondButton.text, "green")
+        XCTAssertEqual(secondButton.description, "Like an apple")
+        XCTAssertEqual(secondButton.postback, "/green")
+        XCTAssertEqual(secondButton.iconName, "place-kitten.jpg")
+        XCTAssertEqual(secondButton.iconUrl, URL(string: "https://placekitten.com/200/300"))
+        XCTAssertEqual(secondButton.iconMimeType, "image/jpeg")
     }
     
     
     // MARK: - Content Type Plugin: Deeplink
     
     func testContentTypePluginDeeplinkDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginDeeplink", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginDeeplink", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -48,7 +121,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Text And Buttons
     
     func testContentTypePluginTextAndButtonsDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginTextAndButtons", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginTextAndButtons", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -80,7 +153,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Quick Replies
     
     func testContentTypePluginQuickRepliesDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginQuickReplies", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginQuickReplies", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -112,7 +185,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Menu
     
     func testContentTypePluginMenuDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginMenu", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginMenu", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -144,7 +217,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Satisfaction Survey
     
     func testContentTypePluginSatisfactionSurveyDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginSatisfactionSurvey", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginSatisfactionSurvey", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -179,7 +252,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Custom
     
     func testContentTypePluginCustomDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginCustom", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginCustom", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
@@ -200,7 +273,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - Content Type Plugin: Gallery
     
     func testContentTypePluginGalleryDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "PluginMessages/MessageTypePluginGallery", extension: "json")
+        let data = try loadStubFromBundle(withName: "MessageType/MessageTypePluginGallery", extension: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         

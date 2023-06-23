@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct ProactiveActionEventDataDTO: Codable {
+struct ProactiveActionEventDataDTO {
     
     // MARK: - Properties
     
@@ -29,9 +29,12 @@ struct ProactiveActionEventDataDTO: Codable {
         self.actionType = actionType
         self.data = data
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension ProactiveActionEventDataDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case destination

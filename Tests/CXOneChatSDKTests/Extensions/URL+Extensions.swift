@@ -32,7 +32,7 @@ extension URL {
         let fileComponents = URL(fileURLWithPath: #file, isDirectory: false).pathComponents
         let rootComponents = root.pathComponents
         let trailingComponents = Array(fileComponents.dropFirst(rootComponents.count))
-        let resourceComponents = rootComponents + trailingComponents[0...1] + ["Resources"]
+        let resourceComponents = rootComponents + trailingComponents[0...1] + ["Examples"]
         
         return URL(fileURLWithPath: resourceComponents.joined(separator: "/"), isDirectory: true)
     }()

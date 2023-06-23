@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct PluginMessageCustomDTO: Codable {
+struct PluginMessageCustomDTO {
     
     // MARK: - Properties
     
@@ -19,9 +19,12 @@ struct PluginMessageCustomDTO: Codable {
         self.text = text
         self.variables = variables
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension PluginMessageCustomDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case id

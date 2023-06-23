@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct SetContactCustomFieldsEventDataDTO: Codable {
+struct SetContactCustomFieldsEventDataDTO {
     
     // MARK: - Properties
     
@@ -19,23 +19,26 @@ struct SetContactCustomFieldsEventDataDTO: Codable {
         self.customFields = customFields
         self.contactId = contactId
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Codable
+
+extension SetContactCustomFieldsEventDataDTO: Codable {
     
     enum CodingKeys: CodingKey {
         case thread
         case customFields
-        case consumerContact
+        case contact
     }
     
-    enum ConsumerContactKeys: CodingKey {
+    enum ContactKeys: CodingKey {
         case id
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let contactIdentifierContainer = try container.nestedContainer(keyedBy: ConsumerContactKeys.self, forKey: .consumerContact)
+        let contactIdentifierContainer = try container.nestedContainer(keyedBy: ContactKeys.self, forKey: .contact)
         
         self.thread = try container.decode(ThreadDTO.self, forKey: .thread)
         self.customFields = try container.decode([CustomFieldDTO].self, forKey: .customFields)
@@ -44,7 +47,7 @@ struct SetContactCustomFieldsEventDataDTO: Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        var contactIdentifierContainer = container.nestedContainer(keyedBy: ConsumerContactKeys.self, forKey: .consumerContact)
+        var contactIdentifierContainer = container.nestedContainer(keyedBy: ContactKeys.self, forKey: .contact)
         
         try container.encode(thread, forKey: .thread)
         try container.encode(customFields, forKey: .customFields)

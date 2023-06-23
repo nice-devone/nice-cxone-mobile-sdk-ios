@@ -4,7 +4,7 @@ import Foundation
 // MessageCreated
 
 /// Event Received when a message has been successfully sent/created.
-struct MessageCreatedEventDTO: ReceivedEvent, Codable {
+struct MessageCreatedEventDTO: ReceivedEvent {
     
     // MARK: - Properties
 
@@ -33,9 +33,12 @@ struct MessageCreatedEventDTO: ReceivedEvent, Codable {
         self.createdAt = createdAt
         self.data = data
     }
-    
-    
-    // MARK: - Codable
+}
+
+
+// MARK: - Decodable
+
+extension MessageCreatedEventDTO: Decodable {
 
     enum CodingKeys: CodingKey {
         case eventId
@@ -53,15 +56,5 @@ struct MessageCreatedEventDTO: ReceivedEvent, Codable {
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.data = try container.decode(MessageCreatedEventDataDTO.self, forKey: .data)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(eventId, forKey: .eventId)
-        try container.encode(eventObject, forKey: .eventObject)
-        try container.encode(eventType, forKey: .eventType)
-        try container.encodeISODate(createdAt, forKey: .createdAt)
-        try container.encode(data, forKey: .data)
     }
 }

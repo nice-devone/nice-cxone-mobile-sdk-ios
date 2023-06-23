@@ -1,21 +1,34 @@
 import Foundation
 
 
-// MARK: - InternalServerError
-
-struct InternalServerError: LocalizedError, Codable {
+struct InternalServerError: LocalizedError {
     
     let eventId: UUID
 
     let error: OperationError
 
-    let inputData: InternalServerErrorInputDataDTO
+    let thread: ThreadDTO?
 }
 
 
-// MARK: - InternalServerErrorInputData
-
-struct InternalServerErrorInputDataDTO: Codable {
+extension InternalServerError: Decodable {
     
-    let thread: ThreadDTO?
+    enum CodingKeys: CodingKey {
+        case eventId
+        case error
+        case inputData
+    }
+    
+    enum InputDataCodingKeys: CodingKey {
+        case thread
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let inputDataContainer = try container.nestedContainer(keyedBy: InputDataCodingKeys.self, forKey: .inputData)
+        
+        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.error = try container.decode(OperationError.self, forKey: .error)
+        self.thread = try inputDataContainer.decodeIfPresent(ThreadDTO.self, forKey: .thread)
+    }
 }

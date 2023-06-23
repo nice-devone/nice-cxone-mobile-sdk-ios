@@ -6,6 +6,11 @@ import XCTest
 
 class ModelDecoderEncoderTests: XCTestCase {
     
+    // MARK: - Properties
+    
+    let dateProvider = DateProviderMock()
+    
+    
     // MARK: - ContactStatus
     
     func testContactStatusDecodeCorrectly() throws {
@@ -17,7 +22,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         
         try testCases.forEach { element in
             guard let data = element.json.data(using: .utf8) else {
-                throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: element.json))
+                throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: element.json))
             }
             
             let dictionary = try JSONDecoder().decode([String: ContactStatus].self, from: data)
@@ -32,9 +37,9 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testMessageEventTypeDecodeCorrectly() throws {
         let testCases: [(json: String, type: EventType)] = [
             ("{\"type\": \"EventTriggered\"}", .unknown("EventTriggered")),
-            ("{\"type\": \"AuthorizeConsumer\"}", .authorizeCustomer),
+            ("{\"type\": \"AuthorizeCustomer\"}", .authorizeCustomer),
             ("{\"type\": \"ConsumerAuthorized\"}", .customerAuthorized),
-            ("{\"type\": \"ReconnectConsumer\"}", .reconnectCustomer),
+            ("{\"type\": \"ReconnectCustomer\"}", .reconnectCustomer),
             ("{\"type\": \"ConsumerReconnected\"}", .customerReconnected),
             ("{\"type\": \"RefreshToken\"}", .refreshToken),
             ("{\"type\": \"TokenRefreshed\"}", .tokenRefreshed),
@@ -43,7 +48,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             ("{\"type\": \"MessageCreated\"}", .messageCreated),
             ("{\"type\": \"LoadMoreMessages\"}", .loadMoreMessages),
             ("{\"type\": \"MoreMessagesLoaded\"}", .moreMessagesLoaded),
-            ("{\"type\": \"MessageSeenByConsumer\"}", .messageSeenByCustomer),
+            ("{\"type\": \"MessageSeenByCustomer\"}", .messageSeenByCustomer),
             ("{\"type\": \"MessageSeenByUser\"}", .messageSeenByAgent),
             ("{\"type\": \"MessageReadChanged\"}", .messageReadChanged),
             ("{\"type\": \"RecoverThread\"}", .recoverThread),
@@ -57,8 +62,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             ("{\"type\": \"UpdateThread\"}", .updateThread),
             ("{\"type\": \"ThreadUpdated\"}", .threadUpdated),
             ("{\"type\": \"CaseInboxAssigneeChanged\"}", .contactInboxAssigneeChanged),
-            ("{\"type\": \"SetConsumerContactCustomFields\"}", .setCustomerContactCustomFields),
-            ("{\"type\": \"SetConsumerCustomFields\"}", .setCustomerCustomFields),
+            ("{\"type\": \"SetContactCustomFields\"}", .setContactCustomFields),
+            ("{\"type\": \"SetCustomerCustomFields\"}", .setCustomerCustomFields),
             ("{\"type\": \"SenderTypingStarted\"}", .senderTypingStarted),
             ("{\"type\": \"SenderTypingEnded\"}", .senderTypingEnded),
             ("{\"type\": \"ExecuteTrigger\"}", .executeTrigger),
@@ -70,7 +75,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         
         try testCases.forEach { element in
             guard let data = element.json.data(using: .utf8) else {
-                throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: element.json))
+                throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: element.json))
             }
             
             let dictionary = try JSONDecoder().decode([String: EventType].self, from: data)
@@ -85,7 +90,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             .tokenRefreshed, .caseCreated, .sendMessage, .messageCreated, .loadMoreMessages, .moreMessagesLoaded,
             .messageSeenByCustomer, .messageSeenByAgent, .messageReadChanged, .recoverThread, .threadRecovered,
             .fetchThreadList, .threadListFetched, .archiveThread, .threadArchived, .loadThreadMetadata, .threadMetadataLoaded,
-            .updateThread, .threadUpdated, .contactInboxAssigneeChanged, .setCustomerContactCustomFields,
+            .updateThread, .threadUpdated, .contactInboxAssigneeChanged, .setContactCustomFields,
             .setCustomerCustomFields, .senderTypingStarted, .senderTypingEnded, .executeTrigger,
             .storeVisitor, .storeVisitorEvents, .fireProactiveAction, .sendOutbound
         ]
@@ -111,7 +116,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         """
         
         guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: json))
+            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
         let entity = try JSONDecoder().decode(AuthorizeCustomerEventDataDTO.self, from: data)
@@ -143,7 +148,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         """
         
         guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: json))
+            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
         let entity = try JSONDecoder().decode(ReconnectCustomerEventDataDTO.self, from: data)
@@ -172,7 +177,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         """
         
         guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: json))
+            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
         let entity = try JSONDecoder().decode(AccessTokenDTO.self, from: data)
@@ -197,14 +202,14 @@ class ModelDecoderEncoderTests: XCTestCase {
                     "updatedAt": "2022-06-07T21:10:49+01:00"
                 }
             ],
-            "consumerContact": {
+            "contact": {
                 "id": "id"
             }
         }
         """
         
         guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: json))
+            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
         let entity = try JSONDecoder().decode(SetContactCustomFieldsEventDataDTO.self, from: data)
@@ -220,15 +225,15 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testProactiveActionDataDTOEncodeCorrectly() throws {
         var entity = ProactiveActionDataDTO(
-            content: .init(bodyText: "bodyText", headlineText: "headlineText", headlineSecondaryText: nil, image: "image"),
-            customFields: [.init(ident: "key", value: "value", updatedAt: Date())],
+            content: ProactiveActionDataMessageContentDTO(bodyText: "bodyText", headlineText: "headlineText", headlineSecondaryText: nil, image: "image"),
+            customFields: [CustomFieldDTO(ident: "key", value: "value", updatedAt: dateProvider.now)],
             templateType: .fullImage,
-            call2action: .init(isVisible: false, text: "text"),
-            design: .init(
-                background: .init(color: "color", image: "image"),
-                designBorder: .init(size: 0, color: "color", radius: 0),
-                designColor: .init(headlineColor: "color", headlineSecondaryColor: "color", bodyTextColor: "color"),
-                designCall2Action: .init(textColor: "color", backgroundColor: "color")
+            call2action: CallToActionDTO(isVisible: false, text: "text"),
+            design: DesignDTO(
+                background: DesignBackgroundDTO(color: "color", image: "image"),
+                designBorder: DesignBorderDTO(size: 0, color: "color", radius: 0),
+                designColor: DesignColorDTO(headlineColor: "color", headlineSecondaryColor: "color", bodyTextColor: "color"),
+                designCall2Action: DesignCall2ActionDTO(textColor: "color", backgroundColor: "color")
             ),
             position: .bottomLeft,
             customJs: nil
@@ -250,55 +255,55 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - SendMessageEventDataDTO
     
     func testSendMessageEventDataDTODecodeCorrectly() throws {
-        var entity = SendMessageEventDataDTO(
-            thread: .init(id: UUID().uuidString, idOnExternalPlatform: UUID(), threadName: "name"),
-            contentType: .text("text"),
+        var eventEntity = SendMessageEventDataDTO(
+            thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+            contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
             idOnExternalPlatform: UUID(),
-            customer: .init(customFields: []),
-            contact: .init(customFields: []),
+            customer: CustomerCustomFieldsDataDTO(customFields: []),
+            contact: ContactCustomFieldsDataDTO(customFields: []),
             attachments: [],
-            browserFingerprint: .init(),
+            deviceFingerprint: DeviceFingerprintDTO(),
             token: "token"
         )
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(SendMessageEventDataDTO.self, from: data)
+        let data = try JSONEncoder().encode(eventEntity)
+        eventEntity = try JSONDecoder().decode(SendMessageEventDataDTO.self, from: data)
         
-        XCTAssertEqual(entity.thread.threadName, "name")
-        
-        guard case .text(let text) = entity.contentType else {
+        guard case .text(let entity) = eventEntity.contentType else {
             throw CXoneChatError.invalidData
         }
         
-        XCTAssertEqual(text, "text")
-        XCTAssertEqual(entity.token, "token")
+        XCTAssertEqual(entity.text, "text")
+        
+        XCTAssertEqual(eventEntity.thread.threadName, "name")
+        XCTAssertEqual(eventEntity.token, "token")
     }
     
     
     // MARK: - SendOutboundMessageEventDataDTO
     
     func testSendOutboundMessageEventDataDTODecodeCorrectly() throws {
-        var entity = SendOutboundMessageEventDataDTO(
-            thread: .init(id: UUID().uuidString, idOnExternalPlatform: UUID(), threadName: "name"),
-            contentType: .text("text"),
+        var eventEntity = SendOutboundMessageEventDataDTO(
+            thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+            contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
             idOnExternalPlatform: UUID(),
-            consumerContact: .init(customFields: []),
+            contactCustomFields: [],
             attachments: [],
-            browserFingerprint: .init(),
+            deviceFingerprint: DeviceFingerprintDTO(),
             token: "token"
         )
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(SendOutboundMessageEventDataDTO.self, from: data)
+        let data = try JSONEncoder().encode(eventEntity)
+        eventEntity = try JSONDecoder().decode(SendOutboundMessageEventDataDTO.self, from: data)
         
-        guard case .text(let text) = entity.contentType else {
+        guard case .text(let entity) = eventEntity.contentType else {
             throw CXoneChatError.invalidData
         }
         
-        XCTAssertEqual(text, "text")
+        XCTAssertEqual(entity.text, "text")
         
-        XCTAssertEqual(entity.thread.threadName, "name")
-        XCTAssertEqual(entity.token, "token")
+        XCTAssertEqual(eventEntity.thread.threadName, "name")
+        XCTAssertEqual(eventEntity.token, "token")
     }
     
     
@@ -314,7 +319,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         """
         
         guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, .init(codingPath: .init(), debugDescription: json))
+            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
         let entity = try JSONDecoder().decode(RefreshTokenPayloadDataDTO.self, from: data)
@@ -326,16 +331,16 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - ExecuteTriggerEventPayloadDTO
     
     func testExecuteTriggerEventPayloadDTODecodeCorrectly() throws {
-        let consumerIdentity = UUID().uuidString
+        let customerIdentity = UUID().uuidString
         let eventId = LowerCaseUUID()
         let visitorId = LowerCaseUUID()
         let triggerId = LowerCaseUUID()
         
         var entity = ExecuteTriggerEventPayloadDTO(
             eventType: .executeTrigger,
-            brand: .init(id: 0),
-            channel: .init(id: "channelId"),
-            consumerIdentity: .init(idOnExternalPlatform: consumerIdentity),
+            brand: BrandDTO(id: 0),
+            channel: ChannelIdentifierDTO(id: "channelId"),
+            customerIdentity: CustomerIdentityDTO(idOnExternalPlatform: customerIdentity),
             eventId: eventId,
             visitorId: visitorId,
             triggerId: triggerId
@@ -347,7 +352,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertEqual(entity.eventType, .executeTrigger)
         XCTAssertEqual(entity.brand.id, 0)
         XCTAssertEqual(entity.channel.id, "channelId")
-        XCTAssertEqual(entity.consumerIdentity.idOnExternalPlatform, consumerIdentity)
+        XCTAssertEqual(entity.customerIdentity.idOnExternalPlatform, customerIdentity)
         XCTAssertEqual(entity.eventId.uuid, eventId.uuid)
         XCTAssertEqual(entity.visitorId.uuid, visitorId.uuid)
         XCTAssertEqual(entity.triggerId.uuid, triggerId.uuid)
@@ -358,47 +363,49 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testEventDataTypeEncodeNoThrow() throws {
         let testCases: [EventDataType] = [
-            .archiveThreadData(.init(thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"))),
-            .loadThreadData(.init(thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"))),
+            .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .loadThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
             .sendMessageData(
-                .init(
-                    thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"),
-                    contentType: .text("text"),
+                SendMessageEventDataDTO(
+                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
                     idOnExternalPlatform: UUID(),
-                    customer: .init(customFields: []),
-                    contact: .init(customFields: []),
+                    customer: CustomerCustomFieldsDataDTO(customFields: []),
+                    contact: ContactCustomFieldsDataDTO(customFields: []),
                     attachments: [],
-                    browserFingerprint: .init(),
+                    deviceFingerprint: DeviceFingerprintDTO(),
                     token: "token"
                 )
             ),
             .sendOutboundMessageData(
-                .init(
-                    thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"),
-                    contentType: .text("text"),
+                SendOutboundMessageEventDataDTO(
+                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
                     idOnExternalPlatform: UUID(),
-                    consumerContact: .init(customFields: []),
+                    contactCustomFields: [],
                     attachments: [],
-                    browserFingerprint: .init(),
+                    deviceFingerprint: DeviceFingerprintDTO(),
                     token: "token"
                 )
             ),
             .loadMoreMessageData(
-                .init(
+                LoadMoreMessagesEventDataDTO(
                     scrollToken: "scrollToken",
-                    thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"),
-                    oldestMessageDatetime: Date()
+                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    oldestMessageDatetime: dateProvider.now
                 )
             ),
             .setContactCustomFieldsData(
-                .init(thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"), customFields: [], contactId: "contactId")
+                SetContactCustomFieldsEventDataDTO(
+                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"), customFields: [], contactId: "contactId"
+                )
             ),
-            .setCustomerCustomFieldData(.init(customFields: [])),
-            .customerTypingData(.init(thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"))),
-            .authorizeCustomerData(.init(authorizationCode: "authCode", codeVerifier: "codeVerifier")),
-            .reconnectCustomerData(.init(token: "token")),
-            .updateThreadData(.init(thread: .init(id: "id", idOnExternalPlatform: UUID(), threadName: "name"))),
-            .refreshTokenPayload(.init(token: "token"))
+            .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: [])),
+            .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .authorizeCustomerData(AuthorizeCustomerEventDataDTO(authorizationCode: "authCode", codeVerifier: "codeVerifier")),
+            .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: "token")),
+            .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: "token"))
         ]
         
         try testCases.forEach { element in
@@ -410,22 +417,24 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - StoreVisitorEventDataType
     
     func testStoreVisitorEventDataTypeEncodeNoThrow() throws {
-        let testCases: [StoreVisitorEventDataType] = [
+        let testCases: [EventDataType] = [
             .storeVisitorPayload(
-                .init(
+                VisitorDTO(
                     customerIdentity: nil,
-                    browserFingerprint: .init(),
-                    journey: .init(
-                        url: "url",
-                        utm: .init(source: "source", medium: "medium", campaign: "campaign", term: "term", content: "content")
-                    ),
+                    browserFingerprint: DeviceFingerprintDTO(),
+                    journey: JourneyDTO(url: "url", utm: UTMDTO(source: "source", medium: "medium", campaign: "campaign", term: "term", content: "content")),
                     customVariables: nil
                 )
             ),
             .visitorEvent(
-                .init(
+                VisitorsEventsDTO(
                     visitorEvents: [
-                        .init(id: .init(), type: .pageView, createdAtWithMilliseconds: Date().iso8601withFractionalSeconds, data: nil)
+                        VisitorEventDTO(
+                            id: LowerCaseUUID(),
+                            type: .pageView,
+                            createdAtWithMilliseconds: dateProvider.now.iso8601withFractionalSeconds,
+                            data: nil
+                        )
                     ]
                 )
             )
@@ -441,10 +450,10 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testVisitorEventDataTypeEncodeNoThrow() throws {
         let testCases: [VisitorEventDataType] = [
-            .conversionData(.init(type: "", value: 0.0, timeWithMilliseconds: Date().iso8601withFractionalSeconds)),
+            .conversionData(ConversionData(type: "", value: 0.0, timeWithMilliseconds: dateProvider.now.iso8601withFractionalSeconds)),
             .custom("custom"),
-            .pageViewData(.init(url: "", title: "")),
-            .proactiveActionData(.init(id: UUID(), name: "name", type: .welcomeMessage, content: nil))
+            .pageViewData(PageViewData(url: "", title: "")),
+            .proactiveActionData(ProactiveActionDetails(id: UUID(), name: "name", type: .welcomeMessage, content: nil))
         ]
         
         try testCases.forEach { element in
@@ -467,19 +476,19 @@ class ModelDecoderEncoderTests: XCTestCase {
         
         let entity = StoreVisitorEventsPayloadDTO(
             eventType: .storeVisitorEvents,
-            brand: .init(id: 0),
-            visitorId: .init(uuid: visitorId),
-            id: .init(uuid: eventId),
-            data: .storeVisitorPayload(.init(customerIdentity: nil, browserFingerprint: .init(), journey: nil, customVariables: nil)),
-            channel: .init(id: "channelId")
+            brand: BrandDTO(id: 0),
+            visitorId: LowerCaseUUID(uuid: visitorId),
+            id: LowerCaseUUID(uuid: eventId),
+            data: .storeVisitorPayload(VisitorDTO(customerIdentity: nil, browserFingerprint: DeviceFingerprintDTO(), journey: nil, customVariables: nil)),
+            channel: ChannelIdentifierDTO(id: "channelId")
         )
         
         guard let expectation = String(data: data, encoding: .utf8),
               let encoded = String(data: try JSONEncoder().encode(entity), encoding: .utf8)
         else {
-            XCTFail("Could not get Strings from Data entities.")
-            return
+            throw XCTError("Could not get Strings from Data entities.")
         }
+        
         XCTAssertTrue(expectation.contains("destination"))
         XCTAssertTrue(expectation.contains("5812e395-89d0-4680-a142-3f3d32b65bf0"))
         XCTAssertTrue(encoded.contains("destination"))
