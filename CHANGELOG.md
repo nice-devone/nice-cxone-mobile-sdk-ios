@@ -1,4 +1,10 @@
 
+<a name="1.1.1"></a>
+## [1.1.1] - 2023-07-10
+
+### Features
+- Update decoding of ThreadRecoveredEvent
+
 <a name="1.1.0"></a>
 ## [1.1.0] - 2023-06-23
 
@@ -97,5 +103,6 @@
   - typing start/end
 
 [Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...HEAD
+[1.1.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.0...1.0.1

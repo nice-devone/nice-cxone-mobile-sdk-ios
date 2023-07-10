@@ -50,6 +50,7 @@ extension ThreadRecoveredEventPostbackDataDTO: Decodable {
     
     enum CodingKeys: CodingKey {
         case consumerContact
+        case contact
         case messages
         case inboxAssignee
         case thread
@@ -65,7 +66,12 @@ extension ThreadRecoveredEventPostbackDataDTO: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let customerContainer = try container.nestedContainer(keyedBy: CustomerKeys.self, forKey: .customer)
         
-        self.consumerContact = try container.decode(ContactDTO.self, forKey: .consumerContact)
+        if let contact = try container.decodeIfPresent(ContactDTO.self, forKey: .contact) {
+            self.consumerContact = contact
+        } else {
+            self.consumerContact = try container.decode(ContactDTO.self, forKey: .consumerContact)
+        }
+
         self.messages = try container.decode([MessageDTO].self, forKey: .messages)
         self.inboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .inboxAssignee)
         self.thread = try container.decode(ReceivedThreadDataDTO.self, forKey: .thread)

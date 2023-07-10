@@ -3,7 +3,7 @@
   "postback": {
     "eventType": "ThreadRecovered",
     "data": {
-      "contact": {
+      "consumerContact": {
         "id": "6098076",
         "status": "resolved",
         "createdAt": "2022-12-12T15:41:18+0100",

@@ -518,4 +518,18 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.value, "Sales")
     }
+    
+    func testThreadRecoveredEventFallbackDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent_fallback", extension: "json")
+        
+        let threadRecover = try JSONDecoder().decode(ThreadRecoveredEventDTO.self, from: data)
+        
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
+        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.value, "24")
+        
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.count, 2)
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")
+        XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.value, "Sales")
+    }
 }
