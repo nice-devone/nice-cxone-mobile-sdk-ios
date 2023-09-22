@@ -1,0 +1,34 @@
+
+packages:
+  ActivityIndicator:
+    url: https://github.com/kjoe07/ActivityIndicator
+    from: 1.1.0
+  ALProgressView:
+    url: https://github.com/alxrguz/ALProgressView
+    from: 2.0.0
+  IQKeyboardManagerSwift:
+    url: https://github.com/hackiftekhar/IQKeyboardManager
+    from: 6.5.0
+  Kingfisher:
+    url: https://github.com/onevcat/Kingfisher.git
+    branch: version6-xcode13
+  MessageKit:
+    url: https://github.com/MessageKit/MessageKit
+    from: 4.0.0
+  SnapKit:
+    url: https://github.com/SnapKit/SnapKit.git
+    from: 5.0.0
+  PKCE:
+    url: https://github.com/hendrickson-tyler/swift-pkce
+    from: 1.0.0
+  Swinject:
+    url: https://github.com/Swinject/Swinject.git
+    from: 2.0.0
+  SwinjectAutoregistration:
+    url: https://github.com/Swinject/SwinjectAutoregistration
+    from: 2.0.0
+  Toast:
+    url: https://github.com/scalessec/Toast-Swift
+    from: 5.0.0
+  CXoneChatSDK:
+    path: ..

@@ -16,7 +16,7 @@ The following are optional:
     > Important: NICE CXone doesn't own MessageKit or any other UI development package. Problems with using it are outside of NICE CXone control and support.
 
 ## SDK Integration
-The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios).
+The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/cxone-mobile-sdk-ios/tree/main/sample).
 
 > Important: Complete each of these tasks in given order.
 
@@ -74,7 +74,7 @@ You need to connect your app to **CXone** to begin communication with the **CXon
 
 > Important: The *Web Socket* should only run when necessary. Take care to call `connect()` only for active chat conversations and analytics purposes.
 
-1.  Add [connect(environment:brandId:channelId:)](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/iossdklibrary.htm?tocpath=MobileSDK%7CCXone%20Mobile%20SDK%7CGet%20Started%20with%20CXone%20Mobile%20SDK%20for%20iOS%7C_____3) to your app code as early on as possible to fully track user activity. If you've configured OAuth for your app, `connect()` should immediately follow the OAuth code. It uses prepared [`Environment`](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/enumerations/environment.htm) with list of regions.
+1.  Add [connect(environment:brandId:channelId:)](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/protocols/connectionprovider.htm) to your app code as early on as possible to fully track user activity. If you've configured OAuth for your app, `connect()` should immediately follow the OAuth code. It uses prepared [`Environment`](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/enumerations/environment.htm) with list of regions.
     ```swift
     try await CXoneChat.shared.connection.connect(
         chatURL: configuration.chatUrl,
@@ -149,7 +149,7 @@ In this moment, you should be already connected to the Web Socket with SDK metho
 #### Multi-thread - Set Up the Thread List
 Handling the CXone Mobile SDK thread list is up to you, based on used design pattern. In the examples shown here, sample application uses MVP pattern which means handling is part of the **Thread List Presenter** as an extension. After you set up the extension, you don't need to inherit whole CXoneChat delegate - it has its default implementation so you can inherit just those methods you need in the current application context.
 
-1. Build the thread table view. For inspiration you can check [implementation for the sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Presentation/Views/ThreadList/ThreadListViewController.swift).
+1. Build the thread table view. For inspiration you can check [implementation for the sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/Presentation/Views/ThreadList/ThreadListViewController.swift).
 2. Load existing chat threads with threads provider method `load()`. This operation should be called only for multi-thread configuration or when there are no existing threads; otherwise, it throws `unsupportedChannelConfig` error.
     ```swift
     do {
@@ -194,7 +194,8 @@ Before starting a thread you need to check if you need to complete a pre-chat po
         ...
     }
     ```
-2. Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by the [FormViewController](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/UI/Controllers/Form/FormViewController.swift).
+
+2. Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by the [FormViewController](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/UI/Controllers/Form/FormViewController.swift).
     ```swift
         let controller = FormViewController(
             entity: FormVO(title: preChatSurvey.name, entities: preChatSurvey.customFields.map { FormCustomFieldType(from: $0) })

@@ -8,4 +8,5 @@
 
 ## 📋 Checklist
 
+- [ ] Title format - Keep the PR title in format `DE-1234 [chore] description`
 - [ ] Checks - Merge only when all tests passed and there are not SwiftLint warnings.

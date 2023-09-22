@@ -25,16 +25,16 @@ let package = Package(
             dependencies: [
                 .product(name: "KeychainSwift", package: "keychain-swift")
             ],
-            path: "Sources",
+            path: "cxone-chat-sdk/Sources",
             resources: [],
             plugins: []
         ),
         .testTarget(
             name: "CXoneChatSDKTests",
             dependencies: ["CXoneChatSDK"],
-            path: "Tests",
+            path: "cxone-chat-sdk/Tests",
             resources: [
-                .copy("CXoneChatSDKTests/Examples")
+                .copy("Examples")
             ]
         )
     ]

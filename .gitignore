@@ -1,5 +1,6 @@
 .DS_Store
 /.build
+/.idea
 /Packages
 /*.xcodeproj
 xcuserdata/
@@ -28,5 +29,5 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
-/* Generated documentation
-docs/
+/* Generated Jazzy documentation
+jazzy_docs/

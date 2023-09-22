@@ -1,0 +1,31 @@
+targetTemplates:
+  Info:
+    info:
+      path: "generated/${target_name}_info.plist"
+      properties:
+        CFBundleDisplayName: "$(PRODUCT_NAME)"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        ITSAppUsesNonExemptEncryption: false
+        LSRequiresIPhoneOS: true
+        NSCameraUsageDescription: "Allow access to camera to take pictures for sending as attachment."
+        NSMicrophoneUsageDescription: "Allow access to microphone to be able to record a voice message."
+        UIApplicationSupportsIndirectInputEvents: true
+        UIBackgroundModes:
+          - remote-notification
+        UIRequiredDeviceCapabilities:
+          - armv7
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        WKAppBoundDomains: []
+        CFBundleURLTypes:
+          - CFBundleURLName: "$(PRODUCT_BUNDLE_IDENTIFIER)"
+            CFBundleURLSchemes:
+              - "$(PRODUCT_BUNDLE_IDENTIFIER)"
