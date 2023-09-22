@@ -16,7 +16,7 @@ The following are optional:
     > Important: NICE CXone doesn't own MessageKit or any other UI development package. Problems with using it are outside of NICE CXone control and support.
 
 ## SDK Integration
-The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/cxone-mobile-sdk-ios/tree/main/sample).
+The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/sample).
 
 > Important: Complete each of these tasks in given order.
 
