@@ -16,7 +16,7 @@ The following are optional:
     > Important: NICE CXone doesn't own MessageKit or any other UI development package. Problems with using it are outside of NICE CXone control and support.
 
 ## SDK Integration
-The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios-sample).
+The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/cxone-mobile-sdk-ios/tree/main/sample).
 
 > Important: Complete each of these tasks in given order.
 
@@ -25,7 +25,7 @@ The sample codes come from a sample app that you can get from [CXone Mobile SDK 
 1.  Open Xcode.
 2.  Create a new project.
 3.  Goto **File** and click **Add Packages**.
-4.  Enter the SDK repository URL, *https://github.com/BrandEmbassy/cxone-mobile-sdk-ios*, in the search bar.
+4.  Enter the SDK repository URL, *https://github.com/nice-devone/nice-cxone-mobile-sdk-ios*, in the search bar.
 5.  Select a **Dependency Rule** and specify where you want to save the project. Select your new Xcode project in  **Add to Project**.
 6.  Finish package import process with click on **Add Package**.
 
@@ -48,7 +48,7 @@ CXone Mobile SDK  supports OAuth 2.0. You can access OAuth 2.0 APIs using a bear
     request.grantType = .code
     ```
 
-3. If your OAuth service requires a code verifier and code challenge, have your app generate those and pass the code verifier to the SDK with the [setCodeVerifier(_:)](https://cautious-sniffle-1d4a9c48.pages.github.io/Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP15setCodeVerifieryySSF) method.
+3. If your OAuth service requires a code verifier and code challenge, have your app generate those and pass the code verifier to the SDK with the [setCodeVerifier(_:)](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/protocols/customerprovider.htm#CustomerProvider) method.
     ```swift
     do {
         let codeVerifier = try generateCodeVerifier()
@@ -59,7 +59,7 @@ CXone Mobile SDK  supports OAuth 2.0. You can access OAuth 2.0 APIs using a bear
         ...
     }
     ```
-4. Configure your app to receive the authorization code when the user signs in and pass it to the SDK using the [setAuthorizationCode(_:)](https://cautious-sniffle-1d4a9c48.pages.github.io/Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP20setAuthorizationCodeyySSF) method.
+4. Configure your app to receive the authorization code when the user signs in and pass it to the SDK using the [setAuthorizationCode(_:)](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/protocols/customerprovider.htm#CustomerProvider) method.
     ```swift
     AMZNAuthorizationManager.shared().authorize(request) { [weak self] result, _, error in
         ...
@@ -74,7 +74,7 @@ You need to connect your app to **CXone** to begin communication with the **CXon
 
 > Important: The *Web Socket* should only run when necessary. Take care to call `connect()` only for active chat conversations and analytics purposes.
 
-1.  Add [connect(environment:brandId:channelId:)](https://cautious-sniffle-1d4a9c48.pages.github.io/Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP23getChannelConfiguration11environment7brandId07channelK0AA0gH0VAA11EnvironmentO_SiSStYaKF) to your app code as early on as possible to fully track user activity. If you've configured OAuth for your app, `connect()` should immediately follow the OAuth code. It uses prepared [`Environment`](https://cautious-sniffle-1d4a9c48.pages.github.io/Enums/Environment.html) with list of regions.
+1.  Add [connect(environment:brandId:channelId:)](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/protocols/connectionprovider.htm) to your app code as early on as possible to fully track user activity. If you've configured OAuth for your app, `connect()` should immediately follow the OAuth code. It uses prepared [`Environment`](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/enumerations/environment.htm) with list of regions.
     ```swift
     try await CXoneChat.shared.connection.connect(
         chatURL: configuration.chatUrl,
@@ -90,7 +90,7 @@ You will handle the CXone Mobile SDK for iOS as an extension of a manager. You c
 
 Set up your app to handle single-thread handling, multi-thread handling, or both. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time.
 
-Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/index.html) as you work.
+Use the [iOS SDK library](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/iossdklibrary.htm?tocpath=MobileSDK%7CCXone%20Mobile%20SDK%7CGet%20Started%20with%20CXone%20Mobile%20SDK%20for%20iOS%7C_____3) as you work.
 
 1. Choose the manager where you want to add the SDK. Open the file.
 2. Import the SDKs into the controller you chose.
@@ -144,12 +144,12 @@ In this moment, you should be already connected to the Web Socket with SDK metho
     }
     ```
 
-> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: Single Thread](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/blob/master/docs/cs-single-thread.md).
+> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: Single Thread](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/casestudies/singlethreadchat.htm?tocpath=MobileSDK%7CCXone%20Mobile%20SDK%7CGet%20Started%20with%20CXone%20Mobile%20SDK%20for%20iOS%7CiOS%20Case%20Studies%7C_____1).
 
 #### Multi-thread - Set Up the Thread List
 Handling the CXone Mobile SDK thread list is up to you, based on used design pattern. In the examples shown here, sample application uses MVP pattern which means handling is part of the **Thread List Presenter** as an extension. After you set up the extension, you don't need to inherit whole CXoneChat delegate - it has its default implementation so you can inherit just those methods you need in the current application context.
 
-1. Build the thread table view. For inspiration you can check [implementation for the sample application](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios-sample/blob/master/iOSSDKExample/Sources/Presentation/Views/ThreadList/ThreadListViewController.swift).
+1. Build the thread table view. For inspiration you can check [implementation for the sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/Presentation/Views/ThreadList/ThreadListViewController.swift).
 2. Load existing chat threads with threads provider method `load()`. This operation should be called only for multi-thread configuration or when there are no existing threads; otherwise, it throws `unsupportedChannelConfig` error.
     ```swift
     do {
@@ -184,17 +184,18 @@ Handling the CXone Mobile SDK thread list is up to you, based on used design pat
     }
     ```
 
-> Note: For detailed information on how to handle multi-thread channel configuration, see [Case Study: Multi Thread](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/blob/master/docs/cs-multi-thread.md).
+> Note: For detailed information on how to handle multi-thread channel configuration, see [Case Study: Multi Thread](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/casestudies/multithreadchat.htm?tocpath=MobileSDK%7CCXone%20Mobile%20SDK%7CGet%20Started%20with%20CXone%20Mobile%20SDK%20for%20iOS%7CiOS%20Case%20Studies%7C_____2).
 
 #### Pre-Chat Survey
-Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from [prechatSurvey](https://cautious-sniffle-1d4a9c48.pages.github.io/Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP03preB6SurveyAA03PrebG0VSgvp) in the `ChatThreadsProvider`. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:
+Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from [prechatSurvey](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/sdklibrary/protocols/chatthreadsprovider.htm) in the `ChatThreadsProvider`. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:
 1. Check that a pre-chat has been defined for the channel.
     ```swift
     if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
         ...
     }
     ```
-2. Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by the [FormViewController](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios-sample/blob/master/iOSSDKExample/Sources/UI/Controllers/Form/FormViewController.swift).
+
+2. Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by the [FormViewController](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/UI/Controllers/Form/FormViewController.swift).
     ```swift
         let controller = FormViewController(
             entity: FormVO(title: preChatSurvey.name, entities: preChatSurvey.customFields.map { FormCustomFieldType(from: $0) })
@@ -209,4 +210,4 @@ Before starting a thread you need to check if you need to complete a pre-chat po
 
 ## Configure Chat Functions
 
-How you configure your application to send, receive and display chat messages is unique to your situation. The [iOS Samples](https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/wiki/ios-samples) section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.
+How you configure your application to send, receive and display chat messages is unique to your situation. The [iOS Sample Code](https://help.nice-incontact.com/content/acd/digital/mobilesdk/ios/iossamplecode.htm?tocpath=MobileSDK%7CCXone%20Mobile%20SDK%7CGet%20Started%20with%20CXone%20Mobile%20SDK%20for%20iOS%7CiOS%20Sample%20Code%7C_____0) section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.
