@@ -1,0 +1,8 @@
+targetTemplates:
+  Entitled:
+    entitlements:
+      path: generated/${target_name}.entitlements
+      properties:
+        aps-environment: development
+        com.apple.developer.applesignin:
+          - Default

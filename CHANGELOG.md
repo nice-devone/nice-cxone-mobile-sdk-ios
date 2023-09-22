@@ -1,3 +1,36 @@
+<a name="1.2.0"></a>
+## [1.2.0] - 2023-09-22
+
+### Bug Fixes
+- working Login preview
+- Remove reporting viewPage for chat related
+- duplicate SFSymbol image to SwiftUI + remove conversion from UIImage to Image
+- Bottom offset for older devices
+- Working Remote Notifications
+- Correct API call in onAppear + adjust logging
+- Analytics Provider Error Handling + Connect in Login
+- Cart and ProductDetail summary backgroundColor
+- Replaced usage of keychain with UserDefaults
+- Setting image as brand logo not working as expected
+- Fixed issue where SettingsView was crashing
+- Correct title when enter thread detail
+- Fixed problem in hexString where wrong color was being created.
+### Features
+- change open Chat button background color
+- Login with Amazon SDK update + fixed Launch screen storyboard
+- Update version to 1.2.0
+- remove deprecated API + rename uri to url in the rest of the project
+- Event Type Unification
+- Add basic validation for brandId and channelId
+- Connect Chat flow from Store
+- Use web-analytics for analytics events
+- Add case studies + change jazzy output file
+- Remote Push Notifications Manager
+- Implement E-shop
+- Create or Update Visitor via REST API
+- Update decoding of ThreadRecoveredEvent
+- Implement pageViewEnded
+- Analytics Usage in E-shop
 
 <a name="1.1.1"></a>
 ## [1.1.1] - 2023-07-10
@@ -102,7 +135,8 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.0...1.0.1
