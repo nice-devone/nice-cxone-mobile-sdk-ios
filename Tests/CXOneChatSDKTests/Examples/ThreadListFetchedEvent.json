@@ -1,0 +1,66 @@
+{
+    "eventId": "0695C6B2-1720-44CB-8262-558750A308CB",
+    "postback": {
+        "eventType": "ThreadListFetched",
+        "data": {
+            "threads": [
+                {
+                    "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+                    "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                    "idOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+                    "ticketNumber": "",
+                    "content": "",
+                    "title": "",
+                    "threadName": "",
+                    "url": "",
+                    "isOwn": false,
+                    "createdAt": "2022-02-28T17:26:07+00:00",
+                    "updatedAt": "2022-03-15T20:16:28+00:00",
+                    "author": {
+                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                        "name": "Yoel valle",
+                        "nickname": ""
+                    },
+                    "image": "",
+                    "tagIds": [],
+                    "likes": 0,
+                    "attachments": [],
+                    "recipients": [],
+                    "canAddMoreMessages": true,
+                    "deletedOnExternalPlatform": false,
+                    "unseenMessagesCount": 7,
+                    "unseenByUserMessagesCount": 7,
+                    "unseenByEndUserMessagesCount": 0
+                },
+                {
+                    "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_43C193A3-0F80-4DEE-A19C-80FA0E5D0E35",
+                    "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
+                    "idOnExternalPlatform": "43C193A3-0F80-4DEE-A19C-80FA0E5D0E35",
+                    "ticketNumber": "",
+                    "content": "",
+                    "title": "",
+                    "threadName": "",
+                    "url": "",
+                    "isOwn": false,
+                    "createdAt": "2022-02-24T21:49:08+00:00",
+                    "updatedAt": "2022-03-15T19:28:10+00:00",
+                    "author": {
+                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                        "name": "Yoel Jimenez del valle",
+                        "nickname": ""
+                    },
+                    "image": "",
+                    "tagIds": [],
+                    "likes": 0,
+                    "attachments": [],
+                    "recipients": [],
+                    "canAddMoreMessages": true,
+                    "deletedOnExternalPlatform": false,
+                    "unseenMessagesCount": 16,
+                    "unseenByUserMessagesCount": 16,
+                    "unseenByEndUserMessagesCount": 9
+                }
+            ]
+        }
+    }
+}

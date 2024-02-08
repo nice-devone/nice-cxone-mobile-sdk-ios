@@ -1,0 +1,564 @@
+{
+  "isLiveChat" : false,
+  "widget" : {
+    "appearance" : "bar",
+    "position" : "right"
+  },
+  "endUserCustomFields" : [
+    {
+      "values" : [
+        {
+          "name" : "single",
+          "value" : "Single"
+        },
+        {
+          "name" : "married",
+          "value" : "Married"
+        },
+        {
+          "name" : "widow",
+          "value" : "Widow/Widower"
+        }
+      ],
+      "isEditable" : false,
+      "ident" : "marital_status",
+      "liveChatVisibility" : "hidden",
+      "label" : "Marital Status",
+      "type" : "list",
+      "required" : false,
+      "postDetailVisibility" : "visible"
+    }
+  ],
+  "caseCustomFields" : [
+    {
+      "values" : [
+
+      ],
+      "isEditable" : false,
+      "ident" : "email",
+      "liveChatVisibility" : "hidden",
+      "label" : "E-mail",
+      "type" : "email",
+      "required" : false,
+      "postDetailVisibility" : "visible"
+    },
+    {
+      "values" : [
+
+      ],
+      "isEditable" : false,
+      "ident" : "age",
+      "liveChatVisibility" : "hidden",
+      "label" : "Age",
+      "type" : "text",
+      "required" : false,
+      "postDetailVisibility" : "visible"
+    },
+    {
+      "values" : [
+        {
+          "name" : "gender-male",
+          "value" : "Male"
+        },
+        {
+          "name" : "gender-female",
+          "value" : "Female"
+        },
+        {
+          "name" : "gender-other",
+          "value" : "Other"
+        }
+      ],
+      "isEditable" : false,
+      "ident" : "gender",
+      "liveChatVisibility" : "hidden",
+      "label" : "Gender",
+      "type" : "list",
+      "required" : false,
+      "postDetailVisibility" : "visible"
+    },
+    {
+      "values" : [
+        {
+          "name" : "828bfaeb-1761-4449-a0b0-f378ffd8542a",
+          "value" : "Android",
+          "parentId" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f"
+        },
+        {
+          "name" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c",
+          "value" : "Android",
+          "parentId" : "033e0737-7c26-4a85-8748-bde3ea61108d"
+        },
+        {
+          "name" : "d85f1976-0391-4f1e-8253-8f690980aa03",
+          "value" : "Huawei",
+          "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+        },
+        {
+          "name" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e",
+          "value" : "iOS",
+          "parentId" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f"
+        },
+        {
+          "name" : "584abbd6-4091-4fdc-b687-5933e028bc27",
+          "value" : "iPad",
+          "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+        },
+        {
+          "name" : "afda8ae6-7c87-40a7-974f-cd6461dd80ad",
+          "value" : "iPad Air",
+          "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+        },
+        {
+          "name" : "28c17844-5b2c-447a-9866-751de5a11d38",
+          "value" : "iPad mini",
+          "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+        },
+        {
+          "name" : "7f31899c-193d-485d-8841-85380ba212c5",
+          "value" : "iPad Pro",
+          "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+        },
+        {
+          "name" : "721f8dbb-be04-4ec7-afcf-638158a080e3",
+          "value" : "iPadOS",
+          "parentId" : "033e0737-7c26-4a85-8748-bde3ea61108d"
+        },
+        {
+          "name" : "3c08cfef-e858-4e95-aad4-c59c40499b48",
+          "value" : "iPhone 11",
+          "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+        },
+        {
+          "name" : "bcd7bbe0-2420-46a1-83ff-595d92c40055",
+          "value" : "iPhone 8",
+          "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+        },
+        {
+          "name" : "140232dc-8168-4f5c-9f5e-b709adbf8ab1",
+          "value" : "iPhone X",
+          "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+        },
+        {
+          "name" : "61f4d78a-f950-40eb-a02c-958ecc5e9b63",
+          "value" : "Lenovo",
+          "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+        },
+        {
+          "name" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f",
+          "value" : "Mobile"
+        },
+        {
+          "name" : "fa0e5d54-19ee-46b8-9c06-dd16ed6ebe9b",
+          "value" : "Samsung",
+          "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+        },
+        {
+          "name" : "1023ac50-fa39-449b-a53f-26f5c278152f",
+          "value" : "Samsung",
+          "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+        },
+        {
+          "name" : "033e0737-7c26-4a85-8748-bde3ea61108d",
+          "value" : "Tablet"
+        },
+        {
+          "name" : "a04bbe17-0f92-4a0f-9ae5-3a3817aad9cc",
+          "value" : "Xiaomi",
+          "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+        },
+        {
+          "name" : "0bb013d2-ba39-4a6b-9346-be93ecb6780a",
+          "value" : "Xiaomi",
+          "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+        }
+      ],
+      "isEditable" : false,
+      "ident" : "broken_device",
+      "liveChatVisibility" : "hidden",
+      "label" : "Broken Device",
+      "type" : "tree",
+      "required" : false,
+      "postDetailVisibility" : "visible"
+    }
+  ],
+  "customCss" : "",
+  "settings" : {
+    "isEngagementMapperEnabled" : false,
+    "isProactiveChatEnabled" : true,
+    "useWebSdkInChatWindow" : false,
+    "liveChatOfflineForm" : {
+      "isCustom" : false,
+      "html" : "",
+      "isEnabled" : false
+    },
+    "isGroupChatAllowed" : false,
+    "areMembersNotificationsEnabled" : true,
+    "liveChatHiddenOnOffline" : false,
+    "liveChatTransferUrl" : "",
+    "liveChatLogoHidden" : false,
+    "canCustomerInviteToGroupChat" : false,
+    "platformChannelIdToSendInvitationCode" : "",
+    "isCoBrowsingEnabled" : true,
+    "pushNotifications" : {
+      "body" : "",
+      "pinpointProjectId" : "",
+      "title" : "",
+      "isActive" : false,
+      "deeplink" : ""
+    },
+    "isFeatureGroupChatEnabled" : false,
+    "enableChatTypingPreview" : false,
+    "useWebSdkCustomer" : false,
+    "liveChatShowOfflineForm" : false,
+    "isFeatureImproveVisitorInactivityTrackingEnabled" : false,
+    "sendLargeEventsThroughS3" : false,
+    "hasPageViews" : true,
+    "useWebSdkSession" : false,
+    "displayChatWindowInCoBrowsing" : false,
+    "isFeatureAgentAvatarChangesEnabled" : true,
+    "canAgentInviteToGroupChat" : false,
+    "features" : {
+      "isProactiveChatEnabled" : true,
+      "areMembersNotificationsEnabled" : true,
+      "useWebSdkSession" : false,
+      "isCreditCardMaskingEnabled" : false,
+      "isFeatureGroupChatEnabled" : false,
+      "isFeatureImproveVisitorInactivityTrackingEnabled" : false,
+      "isCoBrowsingEnabled" : true,
+      "isFeatureDefaultTranslationsEnabled" : true,
+      "displayChatWindowInCoBrowsing" : false,
+      "isFeatureAgentAvatarChangesEnabled" : true,
+      "useWebSdkInChatWindow" : false,
+      "sendLargeEventsThroughS3" : false,
+      "useWebSdkMessage" : false,
+      "liveChatLogoHidden" : false,
+      "useWebSdkCustomer" : false,
+      "isEngagementMapperEnabled" : false
+    },
+    "liveChatAllowTranscript" : false,
+    "liveChatAllowAudioNotification" : false,
+    "isCreditCardMaskingEnabled" : false,
+    "isFeatureDefaultTranslationsEnabled" : true,
+    "emailInvitationContent" : "",
+    "hasMultipleThreadsPerEndUser" : true,
+    "liveChatTranscriptChannelId" : "",
+    "emailInvitationLink" : "",
+    "useWebSdkMessage" : false
+  },
+  "colors" : {
+    "widgetBgColor" : "#faac4b",
+    "headerBgColor" : "#faac4b",
+    "widgetFontColor" : "#000000",
+    "themeColor" : "#faac4b",
+    "headerFontColor" : "#000000",
+    "textColor" : "#000000",
+    "buttonColor" : "#faac4b"
+  },
+  "channelIdOnExternalPlatform" : "ea02df1d-2f67-44b4-bd44-eb7808df1fdc",
+  "availability" : {
+    "status" : "online"
+  },
+  "translations" : {
+    "archiveMsg" : "This conversation was archived",
+    "joinGroupChatNote" : "Note: You will lose current chat details after joining the other conversation",
+    "onlineFormText" : "Welcome to our support chat! Tell us, how we should call you and let’s start solving your issues!",
+    "pleaseSelect" : "Please select...",
+    "loading" : "Loading ...",
+    "endGame" : "End game",
+    "noRunningConversations" : "No running conversations",
+    "customerLeftTheSession" : "You left the chat session",
+    "joinGroupChat" : "Join group chat",
+    "poweredBy" : "Powered by",
+    "fileAttachment" : "File attachment",
+    "caseNumber" : "Case #{caseNumber}",
+    "agentHasJoinedTheChat" : "{agentName} has joined the chat.",
+    "ending" : "Ending ...",
+    "inviteCodeErrorMessage" : "Invite code failed",
+    "chatEndedDueToInactivity" : "Chat has ended due to inactivity",
+    "sendMessageButton" : "Send Message",
+    "turnOnAudioNotification" : "Audio notification on",
+    "sendNewEmail" : "Send new email",
+    "validationInvalidEmail" : "E-mail address is not valid",
+    "replyBoxPlaceholder" : "Write here, press<enter> to send",
+    "leaveChat" : "Leave chat",
+    "send" : "Send",
+    "inviteToGroupChat" : "Invite to group chat",
+    "agentHasLeftTheChat" : "{agentName} has left the chat.",
+    "sessionRefresh" : "Session refreshed",
+    "moreLabel" : "More",
+    "startChatInPopup" : "Start chat",
+    "validationMandatory" : "This field is mandatory",
+    "retry" : "Retry",
+    "pluginMessage" : "Plugin",
+    "topic" : "Topic",
+    "statusReconnecting" : "Trying to connect…",
+    "chatSessionExpiredDueToInactivity" : "Chat session expired due to inactivity",
+    "youAreBeingTransferred" : "You are being transferred. Please stand by.",
+    "sendTranscript" : "Send transcript",
+    "offlineFormDesc" : "We are not available at the moment, but you can leave us a message. We will respond as soon as possible.",
+    "openSurvey" : "Take satisfaction survey",
+    "invite" : "Invite",
+    "groupChatInviteSuccessfullySent" : "Group chat invite successfully sent!",
+    "sessionWillExpireLabel" : "Session will Expire",
+    "loadPreviousButton" : "Load previous conversations",
+    "weAreOffline" : "We're offline",
+    "conversationLabelPlaceholder" : "Conversation name",
+    "yourNameLabel" : "Your name",
+    "viaEmail" : "Via email",
+    "uploadAttachment" : "Upload attachment",
+    "joiningGroupChatFailed" : "Invalid join code",
+    "weAreOnline" : "We're online",
+    "startNewChat" : "Start a new chat",
+    "customerClosedTheSession" : "You closed the chat session",
+    "groupChatSendInviteFailed" : "Group chat invitation failed",
+    "backToConversations" : "Back to the conversation",
+    "EmailLabel" : "E-mail",
+    "networkErrorText" : "There was a network error. Please try again.",
+    "ipAddressBlocked" : "IP address is blocked",
+    "chattedWithAgent" : "You chatted with",
+    "dragAndDropDropzone" : "Drag & drop files here, to send them",
+    "online" : "Online",
+    "snakeWaiting" : "You are {queue} in queue.",
+    "leaveConversation" : "Leave conversation",
+    "validationShortMessage" : "Your message is too short",
+    "newCase" : "New case",
+    "download" : "Download",
+    "change" : "Change",
+    "unexpectedError" : "Unexpected error.",
+    "leaveChatTitle" : "Are you sure you want to leave this conversation?",
+    "shareCode" : "Share a code",
+    "endChat" : "End chat",
+    "done" : "Done",
+    "active" : "Active",
+    "tryAgainButton" : "Try Again",
+    "turnOffAudioNotification" : "Audio notification off",
+    "submit" : "Submit",
+    "offlineFormSuccessMsgSub" : "We'll get back to you soon.",
+    "enlarge" : "Enlarge",
+    "copyCode" : "Copy code",
+    "validationShorterName" : "Please use shorter name",
+    "uploadFailed" : "Upload failed",
+    "cancel" : "Cancel",
+    "sessionExpiredCaseClosed" : "Session expired. Case closed",
+    "messageLabel" : "Message",
+    "allAgentsForQueueAreBusy" : "All our agents dedicated to your queue are currently busy. There {queue, plural,one {is} other {are}} <strong>{queue, number}</strong> {queue, plural, one {person} other {people} ahead of you in the queue.",
+    "yourCaseHasBeenReassignedTo" : "Your case has been reassigned to {agentName}.",
+    "sendFileTextSize" : "Please upload files smaller than {filesize} MB and of following file types:",
+    "offlineFormSuccessMsgHead" : "Your email has been successfully sent!",
+    "weAreConnectingYouWithAnAgent" : "Please wait, we are connecting you with an agent.",
+    "pasteCode" : "Paste a code",
+    "messageSendingFailed" : "Message sending failed",
+    "getTranscriptDescription" : "Send transcript of this conversation to the following email address:",
+    "waitingDescription" : "One of our agents will talk to you shortly.",
+    "participants" : "Participants",
+    "minimizeLabel" : "Minimize",
+    "close" : "Close",
+    "lastMessage" : "Last message...",
+    "sendInvitation" : "Send invitation",
+    "fileSendingFailed" : "File sending failed",
+    "agent" : "Agent",
+    "endChatTitle" : "Are you sure you want to end this conversation?",
+    "uploadMessage" : "Your file is either too large or has incompatible file type. For further information, please contact our agent.",
+    "textIsTranslated" : "Text is translated",
+    "archive" : "Archive",
+    "join" : "Join",
+    "beginButton" : "Begin Conversation",
+    "noAgentOnlineForQueue" : "No agent is available for your queue at the moment.",
+    "groupChatLabel" : "Group Chat",
+    "authorizationFailedPleaseRefreshTheWebpage" : "Authorization failed. Please refresh the webpage.",
+    "chattedWith" : "You chatted with {name}",
+    "transcriptSuccessfullySent" : "Transcript successfully sent!",
+    "preparingSession" : "Preparing session...",
+    "transcriptSentFailed" : "Send failed."
+  },
+  "popups" : [
+
+  ],
+  "isAuthorizationEnabled" : false,
+  "customJs" : "",
+  "customJsFiles" : "",
+  "preContactForm" : {
+    "id" : "99f15c9d-ab6d-4f6f-aabe-a5b36a13ef1c",
+    "channels" : [
+      {
+        "id" : "chat_ea02df1d-2f67-44b4-bd44-eb7808df1fdc"
+      }
+    ],
+    "name" : "Precontact Survey form",
+    "customFields" : [
+      {
+        "isRequired" : true,
+        "definition" : {
+          "values" : [
+
+          ],
+          "visibleInPostDetail" : true,
+          "isEditable" : false,
+          "ident" : "email",
+          "liveChatVisibility" : "hidden",
+          "label" : "E-mail",
+          "type" : "email",
+          "required" : false,
+          "visibleInLiveChat" : false,
+          "postDetailVisibility" : "visible"
+        }
+      },
+      {
+        "isRequired" : false,
+        "definition" : {
+          "values" : [
+
+          ],
+          "visibleInPostDetail" : true,
+          "isEditable" : false,
+          "ident" : "age",
+          "liveChatVisibility" : "hidden",
+          "label" : "Age",
+          "type" : "text",
+          "required" : false,
+          "visibleInLiveChat" : false,
+          "postDetailVisibility" : "visible"
+        }
+      },
+      {
+        "isRequired" : false,
+        "definition" : {
+          "values" : [
+            {
+              "name" : "gender-male",
+              "value" : "Male"
+            },
+            {
+              "name" : "gender-female",
+              "value" : "Female"
+            },
+            {
+              "name" : "gender-other",
+              "value" : "Other"
+            }
+          ],
+          "visibleInPostDetail" : true,
+          "isEditable" : false,
+          "ident" : "gender",
+          "liveChatVisibility" : "hidden",
+          "label" : "Gender",
+          "type" : "list",
+          "required" : false,
+          "visibleInLiveChat" : false,
+          "postDetailVisibility" : "visible"
+        }
+      },
+      {
+        "isRequired" : true,
+        "definition" : {
+          "values" : [
+            {
+              "name" : "828bfaeb-1761-4449-a0b0-f378ffd8542a",
+              "value" : "Android",
+              "parentId" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f"
+            },
+            {
+              "name" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c",
+              "value" : "Android",
+              "parentId" : "033e0737-7c26-4a85-8748-bde3ea61108d"
+            },
+            {
+              "name" : "d85f1976-0391-4f1e-8253-8f690980aa03",
+              "value" : "Huawei",
+              "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+            },
+            {
+              "name" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e",
+              "value" : "iOS",
+              "parentId" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f"
+            },
+            {
+              "name" : "584abbd6-4091-4fdc-b687-5933e028bc27",
+              "value" : "iPad",
+              "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+            },
+            {
+              "name" : "afda8ae6-7c87-40a7-974f-cd6461dd80ad",
+              "value" : "iPad Air",
+              "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+            },
+            {
+              "name" : "28c17844-5b2c-447a-9866-751de5a11d38",
+              "value" : "iPad mini",
+              "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+            },
+            {
+              "name" : "7f31899c-193d-485d-8841-85380ba212c5",
+              "value" : "iPad Pro",
+              "parentId" : "721f8dbb-be04-4ec7-afcf-638158a080e3"
+            },
+            {
+              "name" : "721f8dbb-be04-4ec7-afcf-638158a080e3",
+              "value" : "iPadOS",
+              "parentId" : "033e0737-7c26-4a85-8748-bde3ea61108d"
+            },
+            {
+              "name" : "3c08cfef-e858-4e95-aad4-c59c40499b48",
+              "value" : "iPhone 11",
+              "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+            },
+            {
+              "name" : "bcd7bbe0-2420-46a1-83ff-595d92c40055",
+              "value" : "iPhone 8",
+              "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+            },
+            {
+              "name" : "140232dc-8168-4f5c-9f5e-b709adbf8ab1",
+              "value" : "iPhone X",
+              "parentId" : "62fd6125-c5dd-43a7-bbb7-72268d8d936e"
+            },
+            {
+              "name" : "61f4d78a-f950-40eb-a02c-958ecc5e9b63",
+              "value" : "Lenovo",
+              "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+            },
+            {
+              "name" : "7a93fcbd-5431-4986-8cb5-400127a6fc4f",
+              "value" : "Mobile"
+            },
+            {
+              "name" : "fa0e5d54-19ee-46b8-9c06-dd16ed6ebe9b",
+              "value" : "Samsung",
+              "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+            },
+            {
+              "name" : "1023ac50-fa39-449b-a53f-26f5c278152f",
+              "value" : "Samsung",
+              "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+            },
+            {
+              "name" : "033e0737-7c26-4a85-8748-bde3ea61108d",
+              "value" : "Tablet"
+            },
+            {
+              "name" : "a04bbe17-0f92-4a0f-9ae5-3a3817aad9cc",
+              "value" : "Xiaomi",
+              "parentId" : "987921ab-1519-4ba8-90f4-f03caa0a2c1c"
+            },
+            {
+              "name" : "0bb013d2-ba39-4a6b-9346-be93ecb6780a",
+              "value" : "Xiaomi",
+              "parentId" : "828bfaeb-1761-4449-a0b0-f378ffd8542a"
+            }
+          ],
+          "visibleInPostDetail" : true,
+          "isEditable" : false,
+          "ident" : "broken_device",
+          "liveChatVisibility" : "hidden",
+          "label" : "Broken Device",
+          "type" : "tree",
+          "required" : false,
+          "visibleInLiveChat" : false,
+          "postDetailVisibility" : "visible"
+        }
+      }
+    ]
+  },
+  "name" : "iOS channel"
+}

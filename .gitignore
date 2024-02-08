@@ -1,11 +1,16 @@
 .DS_Store
-/.build
+.build
 /.idea
 /Packages
 /*.xcodeproj
 xcuserdata/
 DerivedData/
-.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.swiftpm
+local.yml
+
+# emacs temp files
+*~
+\#*\#
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
