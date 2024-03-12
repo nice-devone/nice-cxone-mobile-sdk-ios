@@ -2,38 +2,33 @@
 ## [1.3.1] - 2024-03-12
 
 ### Features
-- Add Privacy Manifest
+- Privacy Manifest
 
-<a name="1.3.0-rc1"></a>
-## [1.3.0-rc1] - 2024-03-04
-
-### Bug Fixes
-- Handle different thread correctly
-
-<a name="1.3.0-rc0"></a>
-## [1.3.0-rc0] - 2024-02-27
+<a name="1.3.0"></a>
+## [1.3.0] - 2024-03-12
 
 ### Bug Fixes
-- Correct path for publishing build to TestFlight
-- Resolve issue with submodules for GitHub Actions
-- Correct API call in onAppear + adjust logging
-- Remove reporting viewPage for chat related
-- Working Remote Notifications
-- Don't create customer with setting name
-- Handle RecoverThreadFailedEvent internally + prevent from archiving not yet existing thread
 - Fixed deeplink format
-- checkout submodules for Deploy to TestFlight GH action
-- working Login preview
-- Bottom offset for older devices
-- duplicate SFSymbol image to SwiftUI + remove conversion from UIImage to Image
 - Correct CreateOrUpdateVisitor URL
+- Resolve issue with submodules for GitHub Actions
+- working Login preview
+- checkout submodules for Deploy to TestFlight GH action
+- Bottom offset for older devices
+- Don't create customer with setting name
+- duplicate SFSymbol image to SwiftUI + remove conversion from UIImage to Image
+- Fix installation of SwiftGen with homebrew disabling swiftgen
+- Correct API call in onAppear + adjust logging
+- Handle RecoverThreadFailedEvent internally + prevent from archiving not yet existing thread
+- Correct path for publishing build to TestFlight
+- Working Remote Notifications
+- Remove reporting viewPage for chat related
 - Archive sample app for TestFlight GH Action
 - edit configuration for archiving app
-- Fix installation of SwiftGen with homebrew disabling swiftgen
 - Correct title when enter thread detail
 - Fixed problem in hexString where wrong color was being created.
 - fix UI issues related to iOS14
 - Fix Deploy to TestFlight action
+- Handle different thread correctly
 - Fix issue when multiple messages with matching ids are received
 ### Features
 - add login error state in case of unreachable API
@@ -189,10 +184,10 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0-rc1...HEAD
-[1.3.0-rc1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0-rc0...1.3.0-rc1
-[1.3.0-rc0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.2.0...1.3.0-rc0
-[1.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
-[1.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
-[1.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.0...1.0.1
+[Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.1...HEAD
+[1.3.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
+[1.1.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
+[1.1.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
+[1.0.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.0...1.0.1
