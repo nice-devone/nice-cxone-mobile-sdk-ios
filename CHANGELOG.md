@@ -1,9 +1,14 @@
-<a name="unreleased"></a>
-## [Unreleased]
+<a name="1.3.1"></a>
+## [1.3.1] - 2024-03-12
+
+### Features
+- Add Privacy Manifest
+
+<a name="1.3.0-rc1"></a>
+## [1.3.0-rc1] - 2024-03-04
 
 ### Bug Fixes
 - Handle different thread correctly
-
 
 <a name="1.3.0-rc0"></a>
 ## [1.3.0-rc0] - 2024-02-27
@@ -184,7 +189,8 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0-rc0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0-rc1...HEAD
+[1.3.0-rc1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0-rc0...1.3.0-rc1
 [1.3.0-rc0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.2.0...1.3.0-rc0
 [1.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
