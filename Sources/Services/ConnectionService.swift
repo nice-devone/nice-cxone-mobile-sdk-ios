@@ -14,7 +14,6 @@
 //
 
 import Foundation
-import KeychainSwift
 
 class ConnectionService: ConnectionProvider {
     
@@ -307,7 +306,7 @@ extension ConnectionService {
                 customerFieldsService?.updateFields(fields)
             }
             
-            UserDefaults.standard.set(messageData, forKey: "welcomeMessage")
+            UserDefaultsService.shared.set(messageData, for: .welcomeMessage)
             
             delegate?.onWelcomeMessageReceived()
         case .customPopupBox:

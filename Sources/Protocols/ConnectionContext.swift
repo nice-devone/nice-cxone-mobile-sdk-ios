@@ -14,11 +14,10 @@
 //
 
 import Foundation
-import KeychainSwift
 
 protocol ConnectionContext {
     
-    var keychainSwift: KeychainSwift { get set }
+    var keychainService: KeychainService { get set }
     
     /// The token of the device for push notifications.
     var deviceToken: String { get set }

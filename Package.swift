@@ -40,7 +40,9 @@ let package = Package(
                 .product(name: "KeychainSwift", package: "keychain-swift")
             ],
             path: "Sources",
-            resources: [],
+            resources: [
+                .copy("../PrivacyInfo.xcprivacy")
+            ],
             plugins: []
         ),
         .testTarget(

@@ -75,7 +75,7 @@ open class CXoneXCTestCase: XCTestCase {
         continueAfterFailure = false
         try await super.setUp()
         
-        UserDefaults.standard.removeObject(forKey: "cachedThreadIdOnExternalPlatform")
+        UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
         
         CXoneChat.delegate = self
         didCheckDelegate = false

@@ -15,7 +15,6 @@
 
 import Foundation
 @testable import CXoneChatSDK
-import KeychainSwift
 
 class SocketServiceMock: SocketService {
     

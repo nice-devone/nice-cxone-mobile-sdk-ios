@@ -112,7 +112,7 @@ class ChatThreadsService: ChatThreadsProvider {
             throw CXoneChatError.missingPreChatCustomFields
         }
         
-        if let welcomeMessage = UserDefaults.standard.string(forKey: "welcomeMessage"), let service = messages as? MessagesService {
+        if let welcomeMessage = UserDefaultsService.shared.get(String.self, for: .welcomeMessage), let service = messages as? MessagesService {
             try thread.insert(message: service.getParsedWelcomeMessage(welcomeMessage, for: thread))
         }
         
@@ -120,7 +120,7 @@ class ChatThreadsService: ChatThreadsProvider {
 
         // Thread has been successfully created, store its ID for faster recovering
         if connectionContext.chatMode != .multithread {
-            UserDefaults.standard.set(thread.id.uuidString, forKey: "cachedThreadIdOnExternalPlatform")
+            UserDefaultsService.shared.set(thread.id, for: .cachedThreadIdOnExternalPlatform)
         }
 
         delegate?.onThreadUpdate()
@@ -279,7 +279,7 @@ extension ChatThreadsService {
     func handleForCurrentChatMode(_ mode: ChatMode) throws {
         switch mode {
         case .singlethread:
-            let cachedThreadId = UserDefaults.standard.string(forKey: "cachedThreadIdOnExternalPlatform").map(UUID.init) ?? nil
+            let cachedThreadId: UUID? = UserDefaultsService.shared.get(UUID.self, for: .cachedThreadIdOnExternalPlatform)
             
             try recoverThread(threadId: cachedThreadId)
         case .multithread:
