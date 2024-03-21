@@ -14,7 +14,6 @@
 //
 
 import Foundation
-import KeychainSwift
 
 /// Class for interacting with the WebSocket.
 class SocketService: NSObject {

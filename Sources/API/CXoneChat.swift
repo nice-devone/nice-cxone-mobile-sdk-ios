@@ -14,7 +14,6 @@
 //
 
 import Foundation
-import KeychainSwift
 
 /// The implementation of the interface for interacting with chat features of the CXone platform.
 public class CXoneChat: ChatProvider {
@@ -22,12 +21,12 @@ public class CXoneChat: ChatProvider {
     // MARK: - Static properties
     
     /// The version of the CXone chat SDK.
-    public static var version: String = "1.3.1"
+    public static var version: String = "1.3.2"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
         socketService: SocketService(
-            connectionContext: ConnectionContextImpl(keychainSwift: KeychainSwift(), session: .shared),
+            connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared),
             dateProvider: DateProviderImpl()
         )
     )
@@ -105,12 +104,9 @@ public class CXoneChat: ChatProvider {
         
         (shared.connection as? ConnectionService)?.signOut()
         
-        UserDefaults.standard.removeObject(forKey: "welcomeMessage")
-        UserDefaults.standard.removeObject(forKey: "cachedThreadIdOnExternalPlatform")
-        
         shared = CXoneChat(
             socketService: SocketService(
-                connectionContext: ConnectionContextImpl(keychainSwift: KeychainSwift(), session: .shared),
+                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared),
                 dateProvider: DateProviderImpl()
             )
         )

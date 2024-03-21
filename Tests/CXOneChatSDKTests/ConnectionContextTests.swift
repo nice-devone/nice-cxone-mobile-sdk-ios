@@ -20,19 +20,19 @@ class ConnectionContextTests: XCTestCase {
 
     // MARK: - Properties
     
-    var sut = ConnectionContextImpl(keychainSwift: KeychainSwiftMock(), session: .shared)
+    var sut = ConnectionContextImpl(keychainService: KeychainServiceMock(), session: .shared)
     
     // MARK: - Tests
     
     override func setUp() {
-        UserDefaults.standard.removeObject(forKey: "visitorId")
-        UserDefaults.standard.removeObject(forKey: "visitDetails")
-        UserDefaults.standard.removeObject(forKey: "customer")
+        sut.clear()
     }
     
     func testVisitorDetailsSetProperly() {
         XCTAssertNil(sut.visitDetails)
+        
         sut.visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date())
+        
         XCTAssertNotNil(sut.visitDetails)
     }
     

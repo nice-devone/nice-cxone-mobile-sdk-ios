@@ -14,13 +14,12 @@
 //
 
 import Foundation
-import KeychainSwift
 
 class ConnectionContextImpl: ConnectionContext {
 
     // MARK: - Properties
     
-    var keychainSwift: KeychainSwift
+    var keychainService: KeychainService
     
     /// The token of the device for push notifications.
     var deviceToken: String
@@ -61,31 +60,15 @@ class ConnectionContextImpl: ConnectionContext {
     var activeThread: ChatThread?
     
     var visitorId: UUID? {
-        get {
-            guard let visitorId = UserDefaults.standard.object(forKey: "visitorId") as? Data else {
-                return nil
-            }
-                
-            return try? JSONDecoder().decode(UUID.self, from: visitorId)
-        }
-        set {
-            guard let encodedVisitorId = try? JSONEncoder().encode(newValue) else {
-                LogManager.error(CXoneChatError.missingParameter("visitorId"))
-                return
-            }
-            UserDefaults.standard.set(encodedVisitorId, forKey: "visitorId")
-        }
+        get { UserDefaultsService.shared.get(UUID.self, for: .visitorId) }
+        set { UserDefaultsService.shared.set(newValue, for: .visitorId) }
     }
 
     var visitDetailsStore: CurrentVisitDetails?
     var visitDetails: CurrentVisitDetails? {
         get {
             if visitDetailsStore == nil {
-                guard let data = UserDefaults.standard.object(forKey: "visitDetails") as? Data else {
-                    return nil
-                }
-
-                visitDetailsStore = try? JSONDecoder().decode(CurrentVisitDetails.self, from: data)
+                visitDetailsStore = UserDefaultsService.shared.get(CurrentVisitDetails.self, for: .visitDetails)
             }
 
             return visitDetailsStore
@@ -94,56 +77,26 @@ class ConnectionContextImpl: ConnectionContext {
             if visitDetailsStore != newValue {
                 visitDetailsStore = newValue
                 
-                if let data = try? JSONEncoder().encode(newValue) {
-                    UserDefaults.standard.set(data, forKey: "visitDetails")
-                } else {
-                    UserDefaults.standard.removeObject(forKey: "visitDetails")
-                }
+                UserDefaultsService.shared.set(newValue, for: .visitDetails)
             }
         }
     }
 
     var customer: CustomerIdentityDTO? {
-        get {
-            guard let customerData = UserDefaults.standard.object(forKey: "customer") as? Data else {
-                return nil
-            }
-            
-            return try? JSONDecoder().decode(CustomerIdentityDTO.self, from: customerData)
-        }
-        set {
-            guard let encodedCustomer = try? JSONEncoder().encode(newValue) else {
-                LogManager.error(CXoneChatError.invalidData)
-                return
-            }
-            
-            UserDefaults.standard.set(encodedCustomer, forKey: "customer")
-        }
+        get { keychainService.get(CustomerIdentityDTO.self, for: .customer) }
+        set { keychainService.set(newValue, for: .customer) }
     }
     
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
     var accessToken: AccessTokenDTO? {
-        get {
-            guard let accessTokenData = keychainSwift.getData("accessToken") else {
-                return nil
-            }
-            
-            return try? JSONDecoder().decode(AccessTokenDTO.self, from: accessTokenData)
-        }
-        set {
-            guard let encodedToken = try? JSONEncoder().encode(newValue) else {
-                LogManager.error(CXoneChatError.invalidData)
-                return
-            }
-            
-            keychainSwift.set(encodedToken, forKey: "accessToken")
-        }
+        get { keychainService.get(AccessTokenDTO.self, for: .accessToken) }
+        set { keychainService.set(newValue, for: .accessToken) }
     }
 
     // MARK: - Init
     
     init(
-        keychainSwift: KeychainSwift,
+        keychainService: KeychainService,
         session: URLSession,
         environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: ""),
         brandId: Int = .min,
@@ -165,7 +118,7 @@ class ConnectionContextImpl: ConnectionContext {
         destinationId: UUID = UUID(),
         visitDetailsStore: CurrentVisitDetails? = nil
     ) {
-        self.keychainSwift = keychainSwift
+        self.keychainService = keychainService
         self.deviceToken = deviceToken
         self.authorizationCode = authorizationCode
         self.codeVerifier = codeVerifier
@@ -182,10 +135,8 @@ class ConnectionContextImpl: ConnectionContext {
     // MARK: - Methods
     
     func clear() {
-        keychainSwift.clear()
+        keychainService.purge()
         
-        UserDefaults.standard.removeObject(forKey: "visitorId")
-        UserDefaults.standard.removeObject(forKey: "visitDetails")
-        UserDefaults.standard.removeObject(forKey: "customer")
+        UserDefaultsService.purge()
     }
 }

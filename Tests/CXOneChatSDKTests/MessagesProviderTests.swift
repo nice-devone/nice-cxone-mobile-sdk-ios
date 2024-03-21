@@ -125,7 +125,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testWelcomeMessageThrowsNoConnection() async {
-        UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
+        UserDefaultsService.shared.set("Hello {{customer.firstName|stranger}}!", for: .welcomeMessage)
         
         CXoneChat.connection.disconnect()
         
@@ -138,7 +138,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testWelcomeMessageAppendsToNewThread() async throws {
-        UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
+        UserDefaultsService.shared.set("Hello {{customer.firstName|stranger}}!", for: .welcomeMessage)
         
         let threadId = try CXoneChat.threads.create(with: defaultAnswers)
         let thread = try getThread(by: threadId)
@@ -152,7 +152,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testSendMessageWithExistingWelcomeMessageNoThrow() async throws {
-        UserDefaults.standard.set("Hello {{customer.firstName|stranger}}!", forKey: "welcomeMessage")
+        UserDefaultsService.shared.set("Hello {{customer.firstName|stranger}}!", for: .welcomeMessage)
         
         let threadId = try CXoneChat.threads.create(with: defaultAnswers)
         var thread = try getThread(by: threadId)

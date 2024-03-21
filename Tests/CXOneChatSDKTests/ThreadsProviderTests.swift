@@ -16,7 +16,6 @@
 // swiftlint:disable type_body_length function_body_length file_length
 
 @testable import CXoneChatSDK
-import KeychainSwift
 import XCTest
 
 class ThreadsProviderTests: CXoneXCTestCase {

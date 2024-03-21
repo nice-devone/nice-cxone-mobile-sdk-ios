@@ -13,7 +13,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import KeychainSwift
 import XCTest
 @testable import CXoneChatSDK
 

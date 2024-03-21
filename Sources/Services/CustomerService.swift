@@ -14,7 +14,6 @@
 //
 
 import Foundation
-import KeychainSwift
 
 class CustomerService: CustomerProvider {
     

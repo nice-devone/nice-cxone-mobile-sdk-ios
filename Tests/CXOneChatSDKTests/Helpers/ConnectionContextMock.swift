@@ -15,11 +15,10 @@
 
 import Foundation
 @testable import CXoneChatSDK
-import KeychainSwift
 
 class ConnectionContextMock: ConnectionContext {
     
-    var keychainSwift: KeychainSwift = KeychainSwiftMock()
+    var keychainService: KeychainService = KeychainServiceMock()
     
     /// The token of the device for push notifications.
     var deviceToken = ""
@@ -67,14 +66,7 @@ class ConnectionContextMock: ConnectionContext {
     
     var _customer: CustomerIdentityDTO?
     var customer: CustomerIdentityDTO? {
-        get {
-            guard UserDefaults.standard.bool(forKey: "cxOneHasRun") else {
-                UserDefaults.standard.set(true, forKey: "cxOneHasRun")
-                return nil
-            }
-            
-            return _customer
-        }
+        get { _customer }
         set { _customer = newValue }
     }
     
