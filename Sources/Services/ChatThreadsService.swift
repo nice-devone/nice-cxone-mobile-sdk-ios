@@ -453,10 +453,13 @@ extension ChatThreadsService {
             throw CXoneChatError.invalidThread
         }
         
-        let agent = AgentMapper.map(event.data.inboxAssignee)
+        let agent = event.data.inboxAssignee.map(AgentMapper.map) ?? nil
         threads[index].assignedAgent = agent
         
-        delegate?.onAgentChange(agent, for: event.data.case.threadIdOnExternalPlatform)
+        if let agent {
+            delegate?.onAgentChange(agent, for: event.data.case.threadIdOnExternalPlatform)
+        }
+        
         delegate?.onThreadUpdated(threads[index])
     }
     

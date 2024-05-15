@@ -28,7 +28,7 @@ struct ContactInboxAssigneeChangedDataDTO: Decodable {
     let `case`: ContactDTO
 
     /// The agent that is now assigned to this contact.
-    let inboxAssignee: AgentDTO
+    let inboxAssignee: AgentDTO?
 
     /// The agent that was previously assigned to the contact, if any.
     let previousInboxAssignee: AgentDTO?
