@@ -1,0 +1,281 @@
+{
+  "eventObject" : "Case",
+  "eventType" : "CaseInboxAssigneeChanged",
+  "data" : {
+    "preferredUserForNextAssign" : null,
+    "channel" : {
+      "canReplyToAnyMessage" : false,
+      "externalPlatformId" : "chat",
+      "isDeleted" : false,
+      "id" : "chat_47721fec-6af2-4b01-b8fe-fea0c720a4fb",
+      "replyPrefixMentionTemplate" : "",
+      "hasAbilityToHide" : false,
+      "studioScript" : null,
+      "hasAbilityToTag" : false,
+      "idOnExternalPlatform" : "47721fec-6af2-4b01-b8fe-fea0c720a4fb",
+      "realExternalPlatformId" : "chat",
+      "hasAbilityToForwardMessage" : false,
+      "channelIntegrationId" : "963b1313-8dcf-401a-ac8b-7b086096d69c",
+      "canSaveResponse" : false,
+      "isLiveChat" : false,
+      "isAutomaticSignatureAttached" : false,
+      "hasAbilityToChangeFrom" : false,
+      "externalPlatformIcon" : "live-chat",
+      "hasAbilityToQuoteMessage" : false,
+      "hasTreeStructure" : false,
+      "hasCustomerOnThirdParty" : false,
+      "isPrivate" : true,
+      "hasAbilityToChangeRecipient" : false,
+      "hasCcAndBcc" : false,
+      "hasVisibleTitle" : false,
+      "name" : "SDK Sample App",
+      "translationGroup" : "default",
+      "hasManualOutboundFlow" : false,
+      "isHidden" : false,
+      "hasMultipleRecipient" : false,
+      "hasEditableTitle" : false,
+      "hasAbilityToSendFiles" : true,
+      "hasVisibleRecipients" : false,
+      "isCaseBasedStorage" : false,
+      "hasPublishing" : false,
+      "canAgentInviteCustomersToContact" : false,
+      "integrationBoxIdentifier" : "chat",
+      "externalPlatformAvatar" : "https://channels-assets-de-na1.niceincontact.com/all/default/external-platform-avatar/chat.png",
+      "wysiwygEnabled" : false,
+      "nicknameOnExternalPlatform" : "",
+      "contentFormat" : "plain",
+      "hasAbilityToDelete" : false,
+      "hasAbilityToLike" : false,
+      "hasOutboundTemplates" : false,
+      "isPostWritable" : true,
+      "hasOutboundFlow" : false,
+      "ownerUserId" : 49707,
+      "hasAbilityToShare" : false,
+      "hasMultipleThreadsPerEndUser" : false,
+      "hasReply" : true,
+      "hasPostAsPlaceholder" : true,
+      "mediaType" : 3
+    },
+    "acceptRejectFlow" : {
+      "isTransfer" : false,
+      "refusalTimeoutSeconds" : null,
+      "isEnabled" : false
+    },
+    "routingQueue" : {
+      "id" : "0b1d1029-9018-4f4a-a32d-6eea97d3a229",
+      "focusMetric" : "per_contact",
+      "isSubqueue" : false,
+      "evaluationCriteria" : "off",
+      "acceleration" : 1,
+      "isAcceptRejectFlowEnabled" : false,
+      "initialPriority" : 0,
+      "isDeleted" : false,
+      "focusLock" : "always",
+      "skillId" : 20804630,
+      "focusFallbackTime" : 600,
+      "maxPriority" : 1000,
+      "name" : "iOS Queue"
+    },
+    "routingMode" : "resolver",
+    "brand" : {
+      "friendlyName" : "CUSTOMER DYNAMICS B32 DEMO",
+      "id" : 1390,
+      "timezone" : "America/Denver",
+      "brandHash" : "66ac1f820781485ff668",
+      "tenantId" : "11ebea42-49c6-d280-a46c-0242ac110002",
+      "businessUnitId" : 4602598
+    },
+    "case" : {
+      "contactId" : "c56f6663-85f6-4130-bb28-3ec6bab78c25",
+      "abandon" : null,
+      "id" : "507345195372",
+      "consumerContactStorageId" : "00898274-efbe-4300-ae63-d527c5bc5f72",
+      "routingQueueId" : "0b1d1029-9018-4f4a-a32d-6eea97d3a229",
+      "threadId" : "00898274-efbe-4300-ae63-d527c5bc5f72",
+      "direction" : "inbound",
+      "preview" : "Hello",
+      "endUserRecipients" : [
+        {
+          "isPrivate" : false,
+          "idOnExternalPlatform" : "91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+          "isPrimary" : true,
+          "name" : "New Test",
+          "anonymizedAt" : null,
+          "anonymizedReason" : null
+        },
+        {
+          "isPrivate" : false,
+          "idOnExternalPlatform" : "47721fec-6af2-4b01-b8fe-fea0c720a4fb",
+          "isPrimary" : true,
+          "name" : "SDK Sample App",
+          "anonymizedAt" : null,
+          "anonymizedReason" : null
+        }
+      ],
+      "recipients" : [
+        {
+          "isPrivate" : false,
+          "idOnExternalPlatform" : "91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+          "isPrimary" : true,
+          "name" : "New Test",
+          "anonymizedAt" : null,
+          "anonymizedReason" : null
+        },
+        {
+          "isPrivate" : false,
+          "idOnExternalPlatform" : "47721fec-6af2-4b01-b8fe-fea0c720a4fb",
+          "isPrimary" : true,
+          "name" : "SDK Sample App",
+          "anonymizedAt" : null,
+          "anonymizedReason" : null
+        }
+      ],
+      "customFields" : [
+        {
+          "ident" : "location",
+          "value" : "USA",
+          "updatedAt" : "2024-05-14T19:13:22+01:00"
+        }
+      ],
+      "ownerAssignee" : 49707,
+      "routingQueuePriority" : 0,
+      "routableType" : "NOT_ROUTABLE",
+      "statistics" : {
+        "inboxAssigneeResponseTime" : null
+      },
+      "threadIdOnExternalPlatform" : "7050F8A5-4D1B-4997-B6E0-C0278A347CE6",
+      "statusUpdatedAt" : "2024-05-14T18:14:22+00:00",
+      "proficiency" : {
+        "to" : 20,
+        "from" : 1
+      },
+      "userStatistics" : {
+        "unseenMessagesCount" : 2
+      },
+      "inboxPreAssigneeUser" : null,
+      "ownerAssigneeUser" : {
+        "id" : 49707,
+        "emailAddress" : "tyler.hendrickson@customerdynamics.com",
+        "loginUsername" : "tyler.hendrickson@cd.com",
+        "firstName" : "Tyler",
+        "agentId" : 39185896,
+        "surname" : "Hendrickson",
+        "imageUrl" : "https://assets-de-na1.niceincontact.com/platform/static/public/img/user/t.png",
+        "isSurveyUser" : false,
+        "incontactId" : "11ee110e-1cf0-9fd0-8321-0242ac110006",
+        "isBotUser" : false,
+        "publicImageUrl" : "https://assets-de-na1.niceincontact.com/platform/static/public/img/user/t.png",
+        "nickname" : ""
+      },
+      "createdAt" : "2024-05-14T18:13:06+00:00",
+      "sla" : {
+        "solutionTime" : {
+          "treshold" : 10000,
+          "isRunning" : false,
+          "raw" : 76,
+          "label" : "",
+          "exceeded" : 0,
+          "alreadyHasValue" : true,
+          "percent" : 1
+        },
+        "firstResponseTime" : {
+          "treshold" : 3600,
+          "isRunning" : false,
+          "raw" : 1,
+          "label" : "",
+          "exceeded" : 0,
+          "alreadyHasValue" : true,
+          "percent" : 0
+        }
+      },
+      "authorEndUserIdentity" : {
+        "idOnExternalPlatform" : "91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+        "firstName" : "New",
+        "nickname" : "New Test",
+        "externalPlatformId" : "chat",
+        "id" : "chat_91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+        "image" : "https://assets-de-na1.niceincontact.com/platform/static/public/img/user-default.png",
+        "fullName" : "New Test",
+        "lastName" : "Test"
+      },
+      "status" : "resolved",
+      "endUser" : {
+        "firstName" : "New",
+        "id" : "chat_91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+        "surname" : "Test",
+        "fullName" : "New Test",
+        "image" : "https://assets-de-na1.niceincontact.com/platform/static/public/img/user-default.png",
+        "customFields" : [
+
+        ],
+        "identities" : [
+          {
+            "idOnExternalPlatform" : "91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+            "firstName" : "New",
+            "nickname" : "New Test",
+            "externalPlatformId" : "chat",
+            "id" : "chat_91BE5847-419F-4C3F-8D3D-2FBAC6E985F1",
+            "image" : "https://assets-de-na1.niceincontact.com/platform/static/public/img/user-default.png",
+            "lastName" : "Test"
+          }
+        ],
+        "messageStatistics" : {
+          "inbound" : 2,
+          "outbound" : 2
+        },
+        "sentimentStatistics" : {
+          "neutral" : 2,
+          "negative" : 0,
+          "positive" : 0
+        }
+      },
+      "isOutboundAllowed" : true,
+      "inboxAssigneeUser" : null,
+      "detailUrl" : "https://app-de-na1.niceincontact.com/care?redirect=no#/care/tab/00898274-efbe-4300-ae63-d527c5bc5f72/case/507345195372",
+      "interactionId" : "3914aa71-1ffa-4a59-8d33-b02cfb09fabe",
+      "inboxAssignee" : null,
+      "customerContactId" : "14e7f14d-36d9-4194-9899-57fe1c849a1c",
+      "channelId" : "chat_47721fec-6af2-4b01-b8fe-fea0c720a4fb",
+      "customerStatistics" : {
+        "unseenMessagesCount" : 2
+      },
+      "inboxAssigneeLastAssignedAt" : "2024-05-14T18:14:04+00:00",
+      "inboxPreAssignee" : null,
+      "userFingerprint" : {
+        "location" : "",
+        "os" : "iOS",
+        "country" : "",
+        "osVersion" : "17.5",
+        "deviceType" : "mobile",
+        "browserVersion" : "",
+        "browser" : "",
+        "language" : "",
+        "applicationType" : "native",
+        "ip" : "",
+        "deviceToken" : ""
+      }
+    },
+    "previousInboxAssignee" : {
+      "id" : 49707,
+      "emailAddress" : "tyler.hendrickson@customerdynamics.com",
+      "loginUsername" : "tyler.hendrickson@cd.com",
+      "firstName" : "Tyler",
+      "agentId" : 39185896,
+      "surname" : "Hendrickson",
+      "imageUrl" : "https://app-de-na1.niceincontact.com/img/user/t.png",
+      "isSurveyUser" : false,
+      "incontactId" : "11ee110e-1cf0-9fd0-8321-0242ac110006",
+      "isBotUser" : false,
+      "publicImageUrl" : "https://app-de-na1.niceincontact.com/img/user/t.png",
+      "nickname" : ""
+    },
+    "inboxAssignee" : null
+  },
+  "context" : [
+
+  ],
+  "traceId" : "730c395e-7c7f-407f-91be-4cab10cacb3b",
+  "eventId" : "7685ea72-f57b-4b39-bd1c-e48bcd56d382",
+  "createdAt" : "2024-05-14T19:14:39+01:00",
+  "createdAtWithMilliseconds" : "2024-05-14T19:14:39.495+01:00"
+}

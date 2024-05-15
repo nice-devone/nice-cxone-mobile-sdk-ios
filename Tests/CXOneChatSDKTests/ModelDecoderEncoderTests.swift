@@ -523,4 +523,30 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.value, "Sales")
     }
+    
+    func testCaseInboxAssigneeChangedDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "CaseInboxAssigneeChanged", extension: "json")
+        
+        let inboxAssigneeChanged = try JSONDecoder().decode(ContactInboxAssigneeChangedEventDTO.self, from: data)
+        
+        XCTAssertEqual(inboxAssigneeChanged.data.brand.id, 1386)
+        XCTAssertEqual(inboxAssigneeChanged.data.channel.id, "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4")
+        XCTAssertEqual(inboxAssigneeChanged.data.case.threadIdOnExternalPlatform, UUID(uuidString: "7D17EA7C-412E-486B-AD42-58D85E83D4DE")!)
+        XCTAssertNil(inboxAssigneeChanged.data.previousInboxAssignee)
+        XCTAssertEqual(inboxAssigneeChanged.data.inboxAssignee?.id, 12328)
+        XCTAssertEqual(inboxAssigneeChanged.data.inboxAssignee?.imageUrl, "https://app-de-na1.niceincontact.com/img/user/t.png")
+    }
+    
+    func testCaseInboxAssigneeChangedNoAgentDecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "CaseInboxAssigneeChanged+NoAgent", extension: "json")
+        
+        let inboxAssigneeChanged = try JSONDecoder().decode(ContactInboxAssigneeChangedEventDTO.self, from: data)
+        
+        XCTAssertEqual(inboxAssigneeChanged.data.brand.id, 1390)
+        XCTAssertEqual(inboxAssigneeChanged.data.channel.id, "chat_47721fec-6af2-4b01-b8fe-fea0c720a4fb")
+        XCTAssertEqual(inboxAssigneeChanged.data.case.threadIdOnExternalPlatform, UUID(uuidString: "7050F8A5-4D1B-4997-B6E0-C0278A347CE6")!)
+        XCTAssertEqual(inboxAssigneeChanged.data.previousInboxAssignee?.id, 49707)
+        XCTAssertEqual(inboxAssigneeChanged.data.previousInboxAssignee?.imageUrl, "https://app-de-na1.niceincontact.com/img/user/t.png")
+        XCTAssertNil(inboxAssigneeChanged.data.inboxAssignee)
+    }
 }

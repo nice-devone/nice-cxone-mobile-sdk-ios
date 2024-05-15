@@ -1,3 +1,9 @@
+<a name="1.3.3"></a>
+## [1.3.3] - 2024-05-15
+
+### Bug Fixes
+- make assignedAgent optional for the event
+
 <a name="1.3.2"></a>
 ## [1.3.2] - 2024-03-21
 
@@ -190,11 +196,12 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.2...HEAD
-[1.3.2]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.1...1.3.2
-[1.3.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0...1.3.1
-[1.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.2.0...1.3.0
-[1.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
-[1.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
-[1.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.0...1.0.1
+[Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.3...HEAD
+[1.3.3]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.2...1.3.3
+[1.3.2]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
+[1.1.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
+[1.1.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
+[1.0.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.0...1.0.1

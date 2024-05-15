@@ -21,7 +21,7 @@ public class CXoneChat: ChatProvider {
     // MARK: - Static properties
     
     /// The version of the CXone chat SDK.
-    public static var version: String = "1.3.2"
+    public static var version: String = "1.3.3"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
