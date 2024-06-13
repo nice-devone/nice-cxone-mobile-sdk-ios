@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 import Foundation
 
-enum WelcomeMessageManager {
+class WelcomeMessageManager {
     
     // MARK: - Properties
     
@@ -23,6 +23,14 @@ enum WelcomeMessageManager {
     private static let openingParam = "{{"
     private static let closingParam = "}}"
     private static let fallbackMessageIndicator = "{{fallbackMessage|"
+    
+    private var dateProvider: DateProvider
+    
+    // MARK: - Init
+    
+    init(dateProvider: DateProvider) {
+        self.dateProvider = dateProvider
+    }
     
     // MARK: - Methods
     
@@ -32,18 +40,18 @@ enum WelcomeMessageManager {
     ///   - without parameters - plain text,
     ///     ```swift
     ///     // Without parameters
-    ///     let message = "Dear customer, we have a 5 % discout for you!"
+    ///     let message = "Dear customer, we have a 5% discout for you!"
     ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
-    ///     let parsedMessage = WelcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
+    ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
-    ///     parsedMessage // "Dear customer, we have a 5 % discout for you!"
+    ///     parsedMessage // "Dear customer, we have a 5% discout for you!"
     ///     ```
     ///   - parameterized without fallback - text contain parameters inside special characters, `"{{customer.fullName}}"`
     ///     ```swift
     ///     // Parameterized without fallback
     ///     let message = "Dear {{customer.fullName}}, we have a {{contact.customFields.discount}} discout for you!"
     ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
-    ///     let parsedMessage = WelcomeMessageManager.parse(
+    ///     let parsedMessage = welcomeMessageManager.parse(
     ///         message,
     ///         contactFields: ["contact.customFields.discount": "10 %"],
     ///         customerFields: [:],
@@ -57,9 +65,9 @@ enum WelcomeMessageManager {
     ///     // Parameterized with fallback
     ///     let message = "Dear {{customer.fullName|customer}}, we have a {{contact.customFields.discount|5%}} discout for you!"
     ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
-    ///     let parsedMessage = WelcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
+    ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
-    ///     parsedMessage // "Dear John Doe, we have a 5 % discout for you!"
+    ///     parsedMessage // "Dear John Doe, we have a 5% discout for you!"
     ///     ```
     ///   - fallback message - text contain fallback message in case any parameter was not be able to replaced with a value.
     ///   ```swift
@@ -67,7 +75,7 @@ enum WelcomeMessageManager {
     ///     let message = "Dear {{customer.fullName}}, we have a {{contact.customFields.discount}} discout for you!"
     ///         + "{{fallbackMessage|Dear customer, we have a special deal for you!}}"
     ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
-    ///     let parsedMessage = WelcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
+    ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
     ///     parsedMessage // "Dear customer, we have a special deal for you!"
     /// ```
@@ -80,38 +88,38 @@ enum WelcomeMessageManager {
     ///     via `contactFields`, `customerFields` or `customer` entity, is provided,
     ///     final message would contain non parsed parameter segment, e.g. `Welcome {{customer.fullName}}!`
     /// - Returns: The parsed welcome message.
-    static func parse(_ message: String, contactFields: [CustomFieldDTO], customerFields: [CustomFieldDTO], customer: CustomerIdentityDTO) -> String {
+    func parse(_ message: String, contactFields: [CustomFieldDTO], customerFields: [CustomFieldDTO], customer: CustomerIdentityDTO) -> String {
         guard message.contains(Self.openingParam), message.contains(Self.closingParam) else {
             return message
         }
         
-        let components = message.components(separatedBy: fallbackMessageIndicator)
+        let components = message.components(separatedBy: Self.fallbackMessageIndicator)
         let message = components[0]
-        let fallbackMessage = components[safe: 1]?.mapNonEmpty { $0.substring(to: closingParam) ?? $0 }
+        let fallbackMessage = components[safe: 1]?.mapNonEmpty { $0.substring(to: Self.closingParam) ?? $0 }
         
         var parameters = contactFields
         parameters.merge(with: customerFields)
-        parameters.merge(with: customer.credentialParameters)
+        parameters.merge(with: customer.credentialParameters(dateProvider: dateProvider))
         
         var result = message
         
         message
             .filterVariables()
             .forEach { element in
-                if element.contains(fallbackDelimiter) {
-                    if let field = parameters.getValidCustomField(for: element.substring(from: openingParam, to: fallbackDelimiter)) {
+                if element.contains(Self.fallbackDelimiter) {
+                    if let field = parameters.getValidCustomField(for: element.substring(from: Self.openingParam, to: Self.fallbackDelimiter)) {
                         result = result.replacingOccurrences(of: element, with: field.value)
-                    } else if let fallbackValue = element.substring(from: fallbackDelimiter, to: closingParam) {
+                    } else if let fallbackValue = element.substring(from: Self.fallbackDelimiter, to: Self.closingParam) {
                         result = result.replacingOccurrences(of: element, with: fallbackValue)
                     }
                 } else {
-                    if let field = parameters.getValidCustomField(for: element.substring(from: openingParam, to: closingParam)) {
+                    if let field = parameters.getValidCustomField(for: element.substring(from: Self.openingParam, to: Self.closingParam)) {
                         result = result.replacingOccurrences(of: element, with: field.value)
                     }
                 }
             }
         
-        if result.contains(openingParam), let fallbackMessage = fallbackMessage {
+        if result.contains(Self.openingParam), let fallbackMessage {
             return fallbackMessage
         } else {
             return result
@@ -154,14 +162,14 @@ private extension String {
 
 private extension CustomerIdentityDTO {
     
-    var credentialParameters: [CustomFieldDTO] {
+    func credentialParameters(dateProvider: DateProvider) -> [CustomFieldDTO] {
         let firstName = self.firstName ?? ""
         let lastName = self.lastName ?? ""
         
         return [
-            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: Date()),
-            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: Date()),
-            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: Date())
+            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: dateProvider.now),
+            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: dateProvider.now),
+            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: dateProvider.now)
         ]
     }
 }

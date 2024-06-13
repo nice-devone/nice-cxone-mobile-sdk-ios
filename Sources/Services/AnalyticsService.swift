@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func viewPage(title: String, url: String) async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
             throw CXoneChatError.illegalChatState
@@ -114,6 +115,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     func viewPageEnded(title: String, url: String) async throws {
         guard let lastPageViewed else {
             return
@@ -122,7 +124,7 @@ class AnalyticsService: AnalyticsProvider {
             throw CXoneChatError.illegalChatState
         }
         
-        let timeSpentInSeconds = Int(Date().timeIntervalSince(lastPageViewed.timestamp))
+        let timeSpentInSeconds = Int(dateProvider.now.timeIntervalSince(lastPageViewed.timestamp))
         LogManager.trace("Reporting page view ended - \(title) Time spent: \(timeSpentInSeconds).")
         
         if lastPageViewed.title == title, lastPageViewed.url == url {
@@ -148,6 +150,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func chatWindowOpen() async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
             throw CXoneChatError.illegalChatState
@@ -173,6 +176,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func conversion(type: String, value: Double) async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
             throw CXoneChatError.illegalChatState
@@ -202,12 +206,15 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func proactiveActionDisplay(data: ProactiveActionDetails) async throws {
         try await proactiveAction(.proactiveActionDisplayed, data: data, date: dateProvider.now)
     }
 
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
+    ///
     /// - Parameter data: The proactive action that was successful or fails.
+    ///
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -217,11 +224,13 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func proactiveActionClick(data: ProactiveActionDetails) async throws {
         try await proactiveAction(.proactiveActionClicked, data: data, date: dateProvider.now)
     }
     
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
+    ///
     /// - Parameter data: The proactive action that was successful or fails.
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
@@ -234,6 +243,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     public func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws {
         try await proactiveAction(
             isSuccess ? .proactiveActionSuccess : .proactiveActionFailed,
@@ -246,6 +256,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: An error if any value throws an error during encoding.
     public func customVisitorEvent(data: VisitorEventDataType) throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
@@ -312,6 +323,7 @@ private extension AnalyticsService {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     func proactiveAction(_ type: AnalyticsEventType, data: ProactiveActionDetails, date: Date) async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
             throw CXoneChatError.illegalChatState
@@ -340,6 +352,7 @@ private extension AnalyticsService {
     ///    - fun: function name for logging purpose
     ///    - file: file name for logging purpose
     ///    - line: line number for logging purpose
+    
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -349,6 +362,7 @@ private extension AnalyticsService {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     func trigger(
         _ type: AnalyticsEventType,
         date: Date,
@@ -380,11 +394,13 @@ private extension AnalyticsService {
     ///    - fun: function name for logging purpose
     ///    - file: file name for logging purpose
     ///    - line: line number for logging purpose
+    ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws:``NSError`` object that indicates why the request failed
+    /// - Throws: An error if any value throws an error during encoding.
     func post(
         event: AnalyticsEventDTO,
         brandId: Int,

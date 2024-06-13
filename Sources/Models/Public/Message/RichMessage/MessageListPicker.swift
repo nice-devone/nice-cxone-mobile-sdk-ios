@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,6 @@ public struct MessageListPicker {
     /// Additional text to be displayed after clicking on the picker list
     public let text: String
     
-    /// The sub elements of the list picker.
-    public let elements: [MessageSubElementType]
+    /// The list picker replies button options.
+    public let buttons: [MessageSubElementType]
 }

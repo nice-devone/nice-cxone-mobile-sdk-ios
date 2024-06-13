@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class CustomerProviderTests: CXoneXCTestCase {
     }
     
     func testEmptyDeviceToken() {
-        XCTAssertEqual(connectionContext.deviceToken, "")
+        XCTAssertNil(connectionContext.deviceToken)
     }
     
     func testSetStringDeviceToken() {
@@ -90,12 +90,12 @@ class CustomerProviderTests: CXoneXCTestCase {
     
     func testCustomerCustomFieldsDontOverride() throws {
         customerFieldsService.customerFields = [
-            .textField(CustomFieldTextFieldDTO(ident: "email", label: "E-mail", value: nil, updatedAt: .distantFuture, isEmail: true)),
-            .textField(CustomFieldTextFieldDTO(ident: "age", label: "Age", value: "34", updatedAt: dateProvider.now, isEmail: false))
+            CustomFieldDTO(ident: "email", value: "", updatedAt: .distantFuture),
+            CustomFieldDTO(ident: "age", value: "34", updatedAt: dateProvider.now)
         ]
         
         try CXoneChat.customerCustomFields.set(["email": "john.doe@gmail.com"])
         
-        XCTAssertEqual((CXoneChat.customerCustomFields.get() as [CustomFieldType]).count, 2)
+        XCTAssertEqual(CXoneChat.customerCustomFields.get().count, 2)
     }
 }

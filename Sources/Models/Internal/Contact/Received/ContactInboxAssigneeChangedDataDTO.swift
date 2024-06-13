@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,6 @@ import Foundation
 
 /// Data for the ContactInboxAssigneeChanged event.
 struct ContactInboxAssigneeChangedDataDTO: Decodable {
-    
-    /// The brand for which this change applies.
-    let brand: BrandDTO
-
-    /// The channel for which this change applies.
-    let channel: ChannelIdentifierDTO
 
     /// The contact for which this change applies.
     let `case`: ContactDTO

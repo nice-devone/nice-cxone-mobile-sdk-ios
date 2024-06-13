@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ public enum MessageContentType {
     
     /// A basic text message.
     case text(MessagePayload)
-    
-    /// A plugin message content type.
-    case plugin(MessagePlugin)
     
     /// It is a URL link with an image preview and a defined title.
     ///

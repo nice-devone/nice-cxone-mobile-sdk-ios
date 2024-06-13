@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import Foundation
 extension Array {
     
     /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript (safe index: Index) -> Element? {
+    subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
     }
 }
@@ -65,30 +65,6 @@ extension [ChatThread] {
     /// - Returns: Index of found thread.
     func index(of threadId: UUID) -> Int? {
         self.firstIndex { $0.id == threadId }
-    }
-}
-
-// MARK: - Array + CustomFieldDTOType
-
-extension [CustomFieldDTOType] {
-    
-    mutating func merge(with array: Array) {
-        var result = self
-        
-        for newEntry in array {
-            if let oldEntry = self.first(where: { $0.ident == newEntry.ident }) {
-                result.remove(oldEntry)
-                result.append(newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry)
-            } else {
-                result.append(newEntry)
-            }
-        }
-        
-        self = result
-    }
-    
-    func toDictionary() -> [String: String] {
-        Dictionary(uniqueKeysWithValues: self.map { ($0.ident, $0.value ?? "") })
     }
 }
 

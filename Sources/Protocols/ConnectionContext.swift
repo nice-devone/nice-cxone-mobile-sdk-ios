@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ protocol ConnectionContext {
     var keychainService: KeychainService { get set }
     
     /// The token of the device for push notifications.
-    var deviceToken: String { get set }
+    var deviceToken: String? { get set }
     
     /// The code used for login with OAuth.
     var authorizationCode: String { get set }
@@ -77,6 +77,12 @@ extension ConnectionContext {
     
     /// Enum representing different modes for chat functionality.
     var chatMode: ChatMode {
-        channelConfig.settings.hasMultipleThreadsPerEndUser ? .multithread : .singlethread
+        if channelConfig.liveChatAvailability.isChannelLiveChat {
+            return .liveChat
+        } else if channelConfig.settings.hasMultipleThreadsPerEndUser {
+            return .multithread
+        } else {
+            return .singlethread
+        }
     }
 }

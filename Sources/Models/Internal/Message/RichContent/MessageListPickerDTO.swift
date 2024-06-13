@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ struct MessageListPickerDTO: Equatable {
     
     let text: String
     
-    let elements: [MessageSubElementDTOType]
+    let buttons: [MessageSubElementDTOType]
 }
 
 // MARK: - Codable
@@ -49,7 +49,7 @@ extension MessageListPickerDTO: Codable {
         
         self.title = try titleContainer.decode(String.self, forKey: .content)
         self.text = try textContainer.decode(String.self, forKey: .content)
-        self.elements = try container.decode([MessageSubElementDTOType].self, forKey: .actions)
+        self.buttons = try container.decode([MessageSubElementDTOType].self, forKey: .actions)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -59,6 +59,6 @@ extension MessageListPickerDTO: Codable {
         
         try titleContainer.encode(title, forKey: .content)
         try textContainer.encode(text, forKey: .content)
-        try container.encode(elements, forKey: .actions)
+        try container.encode(buttons, forKey: .actions)
     }
 }

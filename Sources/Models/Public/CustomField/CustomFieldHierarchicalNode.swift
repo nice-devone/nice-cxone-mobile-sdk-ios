@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import Foundation
 
 /// A single element of the ``PreChatSurveyHierarchical/nodes`` represented as a tree data structure.
 public struct CustomFieldHierarchicalNode {
+    
     /// The value for the contact custom fields.
     ///
     /// Send in combination of ``PreChatSurveyHierarchical/ident`` via ``ContactCustomFieldsProvider/set(_:for:)`` method.

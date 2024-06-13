@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ public class CXoneChat: ChatProvider {
     // MARK: - Static properties
     
     /// The version of the CXone chat SDK.
-    public static var version: String = "1.3.3"
+    public static var version: String = "2.0.0"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
@@ -103,6 +103,9 @@ public class CXoneChat: ChatProvider {
         LogManager.trace("Signing out of the current brand and channel configuration and refreshing chat instance")
         
         (shared.connection as? ConnectionService)?.signOut()
+        
+        UserDefaultsService.shared.remove(.welcomeMessage)
+        UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
         
         shared = CXoneChat(
             socketService: SocketService(

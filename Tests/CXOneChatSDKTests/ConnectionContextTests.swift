@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import XCTest
 class ConnectionContextTests: XCTestCase {
 
     // MARK: - Properties
+    
+    private let dateProvider = DateProviderMock()
     
     var sut = ConnectionContextImpl(keychainService: KeychainServiceMock(), session: .shared)
     
@@ -51,7 +53,7 @@ class ConnectionContextTests: XCTestCase {
     func testAccessTokenSetProperly() {
         XCTAssertNil(sut.accessToken)
         
-        sut.accessToken = AccessTokenDTO(token: "data", expiresIn: .max)
+        sut.accessToken = AccessTokenDTO(token: "data", expiresIn: .max, currentDate: dateProvider.now)
         
         XCTAssertNotNil(sut.accessToken)
     }
@@ -87,5 +89,15 @@ class ConnectionContextTests: XCTestCase {
                 XCTAssertEqual(entity.nodes.count, 2)
             }
         }
+        
+        XCTAssertFalse(configuration.liveChatAvailability.isChannelLiveChat)
+    }
+    
+    func testLiveChatAvailabilityMapCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let configuration = try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
+        
+        XCTAssertFalse(configuration.liveChatAvailability.isChannelLiveChat)
+        XCTAssertFalse(configuration.liveChatAvailability.isOnline)
     }
 }

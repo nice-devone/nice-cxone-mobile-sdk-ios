@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ class ConnectionContextMock: ConnectionContext {
     var keychainService: KeychainService = KeychainServiceMock()
     
     /// The token of the device for push notifications.
-    var deviceToken = ""
-    
+    var deviceToken: String?
+
     /// The code used for login with OAuth.
     var authorizationCode = ""
     
@@ -34,11 +34,15 @@ class ConnectionContextMock: ConnectionContext {
     
     /// The current channel configuration for currently connected CXone session.
     var channelConfig = ChannelConfigurationDTO(
-        settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: false),
+        settings: ChannelSettingsDTO(
+            hasMultipleThreadsPerEndUser: false,
+            isProactiveChatEnabled: false,
+            fileRestrictions: FileRestrictionsDTO(allowedFileSize: 40, allowedFileTypes: [], isAttachmentsEnabled: false),
+            features: [:]
+        ),
         isAuthorizationEnabled: false,
         prechatSurvey: nil,
-        contactCustomFieldDefinitions: [],
-        customerCustomFieldDefinitions: []
+        liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
     )
     
     /// The id of the brand for the chat.

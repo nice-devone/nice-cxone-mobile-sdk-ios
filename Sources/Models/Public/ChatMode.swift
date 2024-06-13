@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import Foundation
 /// | ------------------------------ | -----------------------------------------------------
 /// | ``singlethread`` | Indicates a single-threaded chat mode.
 /// | ``multithread``   | Indicates a multi-threaded chat mode.
-/// | ``livechat``          | Indicates a live chat mode.
+/// | ``liveChat``          | Indicates a live chat mode.
 public enum ChatMode {
     
     /// Indicates a single-threaded chat mode.
@@ -33,5 +33,5 @@ public enum ChatMode {
     case multithread
 
     /// Indicates a live chat mode.
-    case livechat
+    case liveChat
 }

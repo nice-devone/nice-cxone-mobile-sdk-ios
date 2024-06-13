@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -28,11 +28,7 @@ extension String {
             let jsonArray = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
             let data = try JSONSerialization.data(withJSONObject: jsonArray, options: [.prettyPrinted])
             
-            guard let prettyPrintedString = String(data: data, encoding: .utf8) else {
-                return nil
-            }
-            
-            return prettyPrintedString
+            return String(decoding: data, as: UTF8.self)
         } catch {
             error.logError()
             return nil
@@ -69,17 +65,6 @@ extension String {
         }
         
         return String(subString[..<range.lowerBound])
-    }
-    
-    func toDictionary() throws -> [String: AnyObject] {
-        guard let data = self.data(using: .utf8) else {
-            throw CXoneChatError.invalidData
-        }
-        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: AnyObject] else {
-            throw CXoneChatError.missingParameter("dictionary")
-        }
-        
-        return dictionary
     }
     
     func mapNonEmpty(_ transform: (String) throws -> String) rethrows -> String? {

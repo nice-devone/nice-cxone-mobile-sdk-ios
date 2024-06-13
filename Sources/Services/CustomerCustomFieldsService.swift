@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     
     // MARK: - Protocol Properties
     
-    var customerFields = [CustomFieldDTOType]()
+    var customerFields = [CustomFieldDTO]()
     
     // MARK: - Init
     
@@ -41,8 +41,8 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     
     // MARK: - Implementation
     
-    func get() -> [CustomFieldType] {
-        customerFields.map(CustomFieldTypeMapper.map)
+    func get() -> [String: String] {
+        Dictionary(uniqueKeysWithValues: customerFields.lazy.map { ($0.ident, $0.value) })
     }
     
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
@@ -54,16 +54,11 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
         
         try socketService.checkForConnection()
         
-        let mappedCustomFields = customFields.mapDefinitions(
-            channelConfig.customerCustomFieldDefinitions,
-            currentDate: dateProvider.now,
-            error: .unknownCustomerCustomFields
-        )
-        customerFields.merge(with: mappedCustomFields)
+        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: dateProvider.now) })
         
         let data = try eventsService.create(
             .setCustomerCustomFields,
-            with: .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: mappedCustomFields.compactMap(CustomFieldDTO.init)))
+            with: .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: customerFields))
         )
         
         socketService.send(message: data.utf8string)
@@ -72,22 +67,12 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     // MARK: - Internal methods
     
     func updateFields(_ fields: [CustomFieldDTO]) {
-        let mappedFields = fields.compactMap { customField -> CustomFieldDTOType? in
-            guard var newField = channelConfig.customerCustomFieldDefinitions.first(where: { $0.ident == customField.ident }) else {
-                LogManager.warning("Unable to get definition for customer custom field. Custom field with ident: \(customField.ident) will be ignored.")
-                return nil
-            }
-            
-            newField.updateValue(customField.value)
-            newField.updateUpdatedAt(customField.updatedAt)
-            
-            return newField
-        }
+        let fields = fields.filter { !$0.value.isEmpty }
         
         if customerFields.isEmpty {
-            customerFields = mappedFields
+            customerFields = fields
         } else {
-            customerFields.merge(with: mappedFields)
+            customerFields.merge(with: fields)
         }
     }
 }

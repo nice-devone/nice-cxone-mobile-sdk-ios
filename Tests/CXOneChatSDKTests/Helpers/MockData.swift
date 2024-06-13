@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ enum MockData {
         value: nil,
         updatedAt: dateProvider.now,
         nodes: [
-            CustomFieldHierarchicalNodeDTO(value: "a", label: "A", children: [.init(value: "a-1", label: "A1")]),
-            CustomFieldHierarchicalNodeDTO(value: "b", label: "B", children: [.init(value: "b-1", label: "B1")])
+            CustomFieldHierarchicalNodeDTO(key: "a", value: "A", children: [.init(key: "a-1", value: "A1")]),
+            CustomFieldHierarchicalNodeDTO(key: "b", value: "B", children: [.init(key: "b-1", value: "B1")])
         ]
     )
     
@@ -81,17 +81,44 @@ enum MockData {
     
     // MARK: - Methods
     
+    static func getChannelConfiguration(
+        isMultithread: Bool = false,
+        prechatSurvey: PreChatSurveyDTO? = nil,
+        fileRestrictions: FileRestrictionsDTO = FileRestrictionsDTO(
+            allowedFileSize: 40,
+            allowedFileTypes: [AllowedFileTypeDTO(mimeType: "image/*", details: "images"), AllowedFileTypeDTO(mimeType: "video/*", details: "videos")],
+            isAttachmentsEnabled: true
+        ),
+        features: [String: Bool] = [:],
+        isOnline: Bool = false,
+        isLiveChat: Bool = false
+    ) -> ChannelConfigurationDTO {
+        ChannelConfigurationDTO(
+            settings: ChannelSettingsDTO(
+                hasMultipleThreadsPerEndUser: isMultithread,
+                isProactiveChatEnabled: false,
+                fileRestrictions: fileRestrictions,
+                features: features
+            ),
+            isAuthorizationEnabled: false,
+            prechatSurvey: prechatSurvey,
+            liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: isLiveChat, isOnline: isOnline, expires: .distantFuture)
+        )
+    }
+    
     static func getThread(
         threadId: UUID = UUID(),
         scrollToken: String = UUID().uuidString,
-        withMessages: Bool = true
+        withMessages: Bool = true,
+        contactId: String = UUID().uuidString
     ) -> ChatThreadDTO {
-        return ChatThreadDTO(
+        ChatThreadDTO(
             idOnExternalPlatform: threadId,
             threadName: MockData.agent.fullName,
             messages: withMessages ? [getMessage(threadId: threadId, isSenderAgent: false)] : [],
-            threadAgent: MockData.agent,
-            contactId: UUID().uuidString,
+            inboxAssignee: MockData.agent,
+            previousInboxAssignee: nil,
+            contactId: contactId,
             scrollToken: scrollToken,
             state: .ready
         )

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ extension Data {
     
     /// Converts to the String with UTF8 encoding.
     var utf8string: String {
-        String(data: self, encoding: .utf8) ?? ""
+        String(decoding: self, as: UTF8.self)
     }
     
     // MARK: - Methods

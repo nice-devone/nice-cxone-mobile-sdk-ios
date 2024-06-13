@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 
 import Foundation
 
-extension URL {
-    
+internal extension URL {
+
     // MARK: - Static Methods
     
     /// Return a new URL by safely appending a path fragment.
@@ -56,6 +56,31 @@ extension URL {
     /// - returns a new url with `rhs` appended as a query parameter or nil if an error arises.
     static func & (lhs: URL, rhs: (String, String?)) -> URL? {
         lhs & [rhs]
+    }
+
+    ///
+    /// Access a resource which *may* be securely scoped.  Since there is no apparent
+    /// way to determine whether a given URL is securely scoped or not, first try to
+    /// access the resource without a secure scope.  If that fails back attempt to
+    /// start a secure scope and attempt to retry the access.
+    ///
+    /// - parameters:
+    ///     - access: routine to attempt resource access.  The return value of
+    ///     this function will be further returned by `accessSecurelyScopedResource(access:)`.
+    func accessSecurelyScopedResource<T>(access: (URL) throws -> T) rethrows -> T {
+        do {
+            return try access(self)
+        } catch {
+            guard startAccessingSecurityScopedResource() else {
+                throw error
+            }
+
+            defer {
+                stopAccessingSecurityScopedResource()
+            }
+
+            return try access(self)
+        }
     }
 }
 

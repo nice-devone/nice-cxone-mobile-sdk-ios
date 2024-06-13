@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// The list of all statuses on a contact.
-enum ContactStatus: String {
+enum ContactStatus: String, CaseIterable {
     
     /// The contact is newly opened.
     case new
@@ -45,6 +45,15 @@ enum ContactStatus: String {
 extension ContactStatus: Codable {
     
     init(from decoder: Decoder) throws {
-        self = try ContactStatus(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        
+        if let eventType = ContactStatus(rawValue: rawValue) {
+            self = eventType
+        } else {
+            LogManager.warning("Unable to decode contact status `.\(rawValue)`")
+            
+            self = .unknown
+        }
     }
 }

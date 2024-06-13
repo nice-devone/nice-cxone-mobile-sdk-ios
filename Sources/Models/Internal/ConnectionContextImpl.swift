@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ class ConnectionContextImpl: ConnectionContext {
     var keychainService: KeychainService
     
     /// The token of the device for push notifications.
-    var deviceToken: String
-    
+    var deviceToken: String?
+
     /// The code used for login with OAuth.
     var authorizationCode: String
     
@@ -100,19 +100,24 @@ class ConnectionContextImpl: ConnectionContext {
         session: URLSession,
         environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: ""),
         brandId: Int = .min,
-        deviceToken: String = "",
+        deviceToken: String? = nil,
         authorizationCode: String = "",
         codeVerifier: String = "",
         contactId: String? = nil,
         channelConfig: ChannelConfigurationDTO = ChannelConfigurationDTO(
             settings: ChannelSettingsDTO(
                 hasMultipleThreadsPerEndUser: false,
-                isProactiveChatEnabled: false
+                isProactiveChatEnabled: false,
+                fileRestrictions: FileRestrictionsDTO(
+                    allowedFileSize: 40,
+                    allowedFileTypes: [],
+                    isAttachmentsEnabled: false
+                ),
+                features: [:]
             ),
             isAuthorizationEnabled: false,
             prechatSurvey: nil,
-            contactCustomFieldDefinitions: [],
-            customerCustomFieldDefinitions: []
+            liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
         ),
         channelId: String = "",
         destinationId: UUID = UUID(),

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -45,10 +45,7 @@ public protocol ChatThreadsProvider {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/missingPreChatCustomFields`` if the prechat survey has missing required fields.
-    ///
-    /// - Returns: Returns `id` of a new created thread.
-    @discardableResult
-    func create() throws -> UUID
+    func create() async throws
     
     /// Creates a new thread with custom fields by sending an initial message to the thread.
     ///
@@ -64,24 +61,7 @@ public protocol ChatThreadsProvider {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/missingPreChatCustomFields`` if the server requires to fill-up some contact custom fields before initializing chat thread.
-    ///
-    /// - Returns: Returns `id` of a new created thread.
-    @discardableResult
-    func create(with customFields: [String: String]) throws -> UUID
-    
-    /// Loads all of the threads for the current customer.
-    ///
-    /// Triggers fetch of all available threads. Not usable for a single-thread channel configuration.
-    ///
-    /// - Warning: Should only be used on a channel configured for multiple threads.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    @available(*, deprecated, message: "Recover of multiple threads has been automated as part of the connect method of the CustomerProvider in version 1.3.0")
-    func load() throws
+    func create(with customFields: [String: String]) async throws
     
     /// Loads the a thread for the customer and gets messages.
     ///
@@ -99,17 +79,6 @@ public protocol ChatThreadsProvider {
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func load(with id: UUID?) throws
     
-    /// Loads information about the thread. This will provide the most recent message for the thread.
-    ///
-    /// - Parameter thread: The  thread to load.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    @available(*, deprecated, message: "Loading metadata has been automated as part of the connect method of the CustomerProvider in version 1.3.0")
-    func loadInfo(for thread: ChatThread) throws
-    
     /// Updates the name for a thread.
     ///
     /// - Parameters:
@@ -123,6 +92,7 @@ public protocol ChatThreadsProvider {
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     func updateName(_ name: String, for id: UUID) throws
     
     /// Archives a thread from the list of all threads.
@@ -133,6 +103,7 @@ public protocol ChatThreadsProvider {
     ///
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
@@ -146,8 +117,23 @@ public protocol ChatThreadsProvider {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func markRead(_ thread: ChatThread) throws
+    
+    /// Invoke this when the customer wishes to end conversation.
+    ///
+    ///  - Parameter thread: The thread to be close.
+    ///
+    /// - Warning: Should only be used on a channel configured for live chat.
+    ///
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if the `contactId` has not been set properly or it was unable to unwrap it as a required type.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func endContact(_ thread: ChatThread) throws
     
     /// Reports that the customer has started or finished typing in the specified chat thread.
     ///
@@ -158,6 +144,7 @@ public protocol ChatThreadsProvider {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func reportTypingStart(_ didStart: Bool, in thread: ChatThread) throws
 }

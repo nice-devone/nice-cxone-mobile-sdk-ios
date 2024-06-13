@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// All information about a chat thread as well as the messages for the thread.
-public struct ChatThread {
+public struct ChatThread: Identifiable {
 
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
     public let id: UUID
@@ -29,6 +29,11 @@ public struct ChatThread {
 
     /// The agent assigned in the thread.
     public var assignedAgent: Agent?
+    
+    /// The last agent that has been assigned to the thread
+    ///
+    /// This attribute can be used to get the previously assigned agent back to the thread after unassignment.
+    public var lastAssignedAgent: Agent?
     
     /// Id of the contact in this thread
     var contactId: String?
@@ -43,15 +48,15 @@ public struct ChatThread {
     public var hasMoreMessagesToLoad: Bool {
         !scrollToken.isEmpty
     }
+
+    /// The position in the queue
+    public var positionInQueue: Int?
 }
 
-extension ChatThread {
-    private func index(of message: Message) -> Int? {
-        messages.firstIndex {
-            $0.id == message.id
-        }
-    }
+// MARK: - Helpers
 
+extension ChatThread {
+    
     mutating func merge(messages inserted: [Message]) {
         inserted.forEach { message in
             if let index = index(of: message) {
@@ -63,7 +68,73 @@ extension ChatThread {
         messages.sort { $0.createdAt < $1.createdAt }
     }
 
-    mutating func insert(message: Message) {
-        merge(messages: [message])
+    private func index(of message: Message) -> Int? {
+        messages.firstIndex {
+            $0.id == message.id
+        }
+    }
+    
+    func updated(from data: ThreadRecoveredEventPostbackDataDTO) -> ChatThread {
+        updated(
+            messages: data.messages,
+            inboxAssignee: data.inboxAssignee.map(AgentMapper.map),
+            previousInboxAssignee: nil,
+            name: data.thread.threadName,
+            contactId: data.consumerContact.id,
+            scrollToken: data.messagesScrollToken,
+            state: data.thread.canAddMoreMessages ? .ready : .closed
+        )
+    }
+    
+    func updated(from data: LiveChatRecoveredPostbackDataDTO) -> ChatThread {
+        let filteredMessages = data.messages.filter { message in
+            guard case .text(let payload) = message.contentType else {
+                return true
+            }
+            
+            // Do not append content of `beginLiveChatConversationMessage`
+            return payload.text != MessagesService.beginLiveChatConversationMessage
+        }
+        
+        return updated(
+            messages: filteredMessages,
+            inboxAssignee: data.inboxAssignee.map(AgentMapper.map),
+            previousInboxAssignee: data.previousInboxAssignee.map(AgentMapper.map),
+            name: data.thread.threadName,
+            contactId: data.contact.id,
+            scrollToken: data.messagesScrollToken,
+            state: data.thread.canAddMoreMessages
+                ? data.inboxAssignee == nil ? .loaded : .ready
+                : .closed
+        )
+    }
+    
+    private func updated(
+        messages: [MessageDTO]? = nil,
+        inboxAssignee: Agent? = nil,
+        previousInboxAssignee: Agent? = nil,
+        name: String? = nil,
+        contactId: String? = nil,
+        scrollToken: String? = nil,
+        state: ChatThreadState? = nil,
+        positionInQueue: Int? = nil
+    ) -> ChatThread {
+        var newThread = ChatThread(
+            id: self.id,
+            name: name ?? self.name,
+            messages: self.messages,
+            assignedAgent: inboxAssignee ?? self.assignedAgent,
+            lastAssignedAgent: previousInboxAssignee ?? self.lastAssignedAgent,
+            contactId: contactId ?? self.contactId,
+            scrollToken: scrollToken ?? self.scrollToken,
+            state: state ?? self.state,
+            positionInQueue: positionInQueue ?? self.positionInQueue
+        )
+        
+        if let messages {
+            newThread.merge(messages: messages.map(MessageMapper.map))
+        }
+        
+        return newThread
     }
 }

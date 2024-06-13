@@ -1,6 +1,6 @@
 # Case Study: Multi Thread
 
-The Mobile SDK has support for single-thread and multi-thread channel configuration. In case of multi-thread, there are no limitations of features.
+The Mobile SDK has support for asynchronous (single-thread, multi-thread) and live chat channel configuration. In case of multi-thread, there are no features limitations.
 
 The SDK is using state-based architecture and it tries to handle automatically as much stuff as possible. For example, it automatically tries to load threads after the connection was established. However, otherwise from the single-threaded channel configuration, there is no automatic thread creation to be able to present empty chat thread list. 
 

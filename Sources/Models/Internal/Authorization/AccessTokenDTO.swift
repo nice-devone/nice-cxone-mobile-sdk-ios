@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ struct AccessTokenDTO {
     
     // MARK: - Init
 
-    init(token: String, expiresIn: Int = 180) {
+    init(token: String, expiresIn: Int = 180, currentDate: Date) {
         self.token = token
         self.expiresIn = expiresIn
-        self.currentDate = Date()
+        self.currentDate = currentDate
     }
     
     // MARK: - Methods

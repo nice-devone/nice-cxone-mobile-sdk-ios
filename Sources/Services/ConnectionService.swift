@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ class ConnectionService: ConnectionProvider {
     var threadsService: ChatThreadsService?
     var customerFieldsService: CustomerCustomFieldsService?
     
+    var dateProvider: DateProvider {
+        socketService.dateProvider
+    }
     var connectionContext: ConnectionContext {
         didSet {
             socketService.connectionContext = connectionContext
@@ -109,7 +112,7 @@ class ConnectionService: ConnectionProvider {
         if connectionContext.chatState == .preparing {
             return
         }
-        guard connectionContext.chatState == .initial || connectionContext.chatState == .offline else {
+        guard connectionContext.chatState.isPrepareable else {
             throw CXoneChatError.illegalChatState
         }
         
@@ -160,16 +163,21 @@ class ConnectionService: ConnectionProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func connect() async throws {
-        if connectionContext.chatState == .connecting || connectionContext.chatState.isChatAvailable {
+        if connectionContext.chatState == .connecting {
             // Calling `connect` in mentioned states is ignored
             return
+        }
+        if connectionContext.chatState.isChatAvailable {
+            delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         }
         guard connectionContext.chatState == .prepared else {
             throw CXoneChatError.illegalChatState
         }
         
-        // TODO: - (Livechat) check availability of livechat from ChannelConfiguration
-        if connectionContext.chatState == .offline {
+        if connectionContext.chatMode == .liveChat, try await !isLiveChatAvailable() {
+            LogManager.trace("Chat mode is live chat but the chat is offline")
+            
+            connectionContext.chatState = .offline
             delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } else {
             LogManager.trace("Setting `state` to `connecting` and connecting to the CXone service")
@@ -181,11 +189,6 @@ class ConnectionService: ConnectionProvider {
                 try connectToSocket()
 
                 try await checkForAuthorization()
-                
-                connectionContext.chatState = .connected
-                delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
-                
-                try threadsService?.handleForCurrentChatMode(connectionContext.chatMode)
             } catch {
                 disconnect()
                 
@@ -199,6 +202,10 @@ class ConnectionService: ConnectionProvider {
             LogManager.trace("Chat state has been stucked in `preparing` state –> changing to `initial`")
             
             connectionContext.chatState = .initial
+        } else if connectionContext.chatState == .offline {
+            LogManager.trace("Transitioning from 'offline' state to 'prepared' due to explicit disconnect action")
+            
+            connectionContext.chatState = .prepared
         } else if connectionContext.chatState > .prepared {
             LogManager.trace("Disconnecting from the CXone service and changing to `prepared`")
 
@@ -206,6 +213,7 @@ class ConnectionService: ConnectionProvider {
         }
     }
     
+    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
     func ping() throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
@@ -222,6 +230,7 @@ class ConnectionService: ConnectionProvider {
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: An error if any value throws an error during encoding.
     func executeTrigger(_ triggerId: UUID) throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
@@ -271,6 +280,9 @@ extension ConnectionService {
 
 extension ConnectionService {
     
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func refreshToken() throws {
         LogManager.trace("Refreshing a token")
         
@@ -289,6 +301,7 @@ extension ConnectionService {
         socketService.accessToken = decode?.postback.accessToken
     }
     
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processProactiveAction(_ data: Data) throws {
         LogManager.trace("Processing proactive action")
         
@@ -306,9 +319,11 @@ extension ConnectionService {
                 customerFieldsService?.updateFields(fields)
             }
             
-            UserDefaultsService.shared.set(messageData, for: .welcomeMessage)
+            try threadsService?.handleWelcomeMessage(messageData)
             
-            delegate?.onWelcomeMessageReceived()
+            if let activeThread = connectionContext.activeThread {
+                delegate?.onThreadUpdated(activeThread)
+            }
         case .customPopupBox:
             LogManager.trace("Processing proactive action of type custom popup box")
             
@@ -380,7 +395,7 @@ private extension ConnectionService {
             connectionContext.brandId = brandId
             connectionContext.channelId = channelId
             
-            LogManager.trace("Did get channel configuration: \(connectionContext.channelConfig)")
+            LogManager.trace("Did get channel configuration")
             
             connectionContext.destinationId = UUID()
             
@@ -400,9 +415,11 @@ private extension ConnectionService {
             try await createOrUpdateVisitor(visitorId: visitorId, customerId: customerId)
             
             connectionContext.chatState = .prepared
+            
             delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } catch {
             connectionContext.chatState = .initial
+            
             throw error
         }
     }
@@ -482,6 +499,8 @@ private extension ConnectionService {
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
     func createOrUpdateVisitor(visitorId: UUID, customerId: String) async throws {
         LogManager.trace("Creating or updating visitor")
         
@@ -505,6 +524,37 @@ private extension ConnectionService {
             }
             .value
     }
+    
+    func isLiveChatAvailable() async throws -> Bool {
+        guard connectionContext.channelConfig.liveChatAvailability.expires <= socketService.dateProvider.now else {
+            return connectionContext.channelConfig.liveChatAvailability.isOnline
+        }
+        guard let url = connectionContext.environment.chatServerUrl?.liveChatAvailabilityUrl(
+            brandId: connectionContext.brandId,
+            channelId: connectionContext.channelId
+        ) else {
+            throw CXoneChatError.channelConfigFailure
+        }
+        
+        let isOnline = try await Task
+            .retrying {
+                let (data, _) = try await self.connectionContext.session.data(from: url)
+                let response = try JSONDecoder().decode(LiveChatAvailabilityDTO.self, from: data)
+                
+                return response.isOnline
+            }
+            .value
+        
+        connectionContext.channelConfig = connectionContext.channelConfig.copy(
+            liveChatAvailability: CurrentLiveChatAvailability(
+                isChannelLiveChat: connectionContext.chatMode == .liveChat,
+                isOnline: isOnline,
+                expires: dateProvider.now.addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
+            )
+        )
+        
+        return connectionContext.channelConfig.liveChatAvailability.isOnline
+    }
 }
 
 // MARK: - Helpers
@@ -513,5 +563,9 @@ private extension URL {
     
     func channelUrl(brandId: Int, channelId: String) -> URL? {
         self / "1.0" / "brand" / brandId / "channel" / channelId
+    }
+    
+    func liveChatAvailabilityUrl(brandId: Int, channelId: String) -> URL? {
+        channelUrl(brandId: brandId, channelId: channelId) / "availability"
     }
 }

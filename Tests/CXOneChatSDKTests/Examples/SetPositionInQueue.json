@@ -1,0 +1,14 @@
+{
+    "eventType": "SetPositionInQueue",
+    "eventId": "713af94a-be01-4a79-bff4-f8c06dc06be9",
+    "data": {
+        "consumerContact": {
+            "id": "12345"
+        },
+        "routingQueue": {
+            "id": "a-b-c-d"
+        },
+        "positionInQueue": 10,
+        "isAnyAgentOnlineForQueue": true
+    }
+}

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -27,9 +27,17 @@ public struct ChannelConfiguration {
     /// Whether OAuth authorization is enabled for the channel.
     public let isAuthorizationEnabled: Bool
     
-    /// Case custom fields definitions.
-    public let contactCustomFieldDefinitions: [CustomFieldType]
-    
-    /// Customer custom fields definitions.
-    public let customerCustomFieldDefinitions: [CustomFieldType]
+    /// Details of attachment uploads allowed.
+    public let fileRestrictions: FileRestrictions
+
+    /// Currently handled features.
+    ///
+    /// If the feature is no longer listed, it is by default **on**.
+    public let features: [String: Bool]
+
+    /// Whether the service is available.
+    public let isOnline: Bool
+
+    /// Whether the channel is liveChat vs messaging
+    public let isLiveChat: Bool
 }

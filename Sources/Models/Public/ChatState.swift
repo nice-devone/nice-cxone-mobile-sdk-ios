@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import Foundation
 /// | ``initial``         | Initial state of the SDK
 /// | ``preparing``     | The SDK is preparing for usage
 /// | ``prepared``       | The SDK has been prepared for basic usage = unable to use chat features!.
-/// | ``offline``         | Channel currently unavailable (only for livechat channel configuration).
+/// | ``offline``         | Channel currently unavailable (only for live chat channel configuration).
 /// | ``connecting``  | Socket connection is establishing for chat usage
 /// | ``connected``    | Socket connection has been established
 /// | ``ready``             | Chat is ready to use based on it's configuration status
@@ -54,7 +54,7 @@ public enum ChatState: Comparable {
     /// Each live chat channel has a defined availability when it is possible to connect to an agent.
     /// This state defines a situation where the channel is currently unavailable and will need to be connected later.
     ///
-    /// - Precondition: ``CXoneChat.status == .livechat``
+    /// - Precondition: ``CXoneChat.status == .liveChat``
     case offline
     
     /// Socket connection is establishing for chat usage
@@ -73,7 +73,7 @@ public enum ChatState: Comparable {
     /// After establishing a connection, the SDK automatically fetches the thread list and loads metadata for each thread.
     /// If there are no threads, the state is set to `.ready` and empty chat list screen should be presented.
     ///
-    /// ## Livechat
+    /// ## LiveChat
     /// Not yet implemented. Available from version 1.4.0
     case ready
     
@@ -82,7 +82,7 @@ public enum ChatState: Comparable {
     /// Whenever a thread is closed, the application should disable the sending of further messages
     /// and display the End Contact Experience screen.
     ///
-    /// - Precondition: ``CXoneChat.status == .livechat``
+    /// - Precondition: ``CXoneChat.status == .liveChat``
     case closed
     
     // MARK: - Properties

@@ -1,3 +1,23 @@
+<a name="2.0.0"></a>
+# [2.0.0] - 2024-06-13
+
+### Features
+- Add Live chat mode
+- Remove custom field definitions validation
+- Minimum iOS deployment target set to iOS 14.0
+- implement file restrictions parsing and publication
+- update DeviceFingerprint with new expectations from web team
+- Deprecate legacy plugins
+- Handle sent message via `onThreadUpdated(_:)`
+- Privacy Manifest
+- Implement Feature Toggles
+- Create SDK's UserDefaults + Better Keychain handling
+- Process large events from S3
+
+### Bug Fixes
+- correct check for locally created thread
+- "properly" handle start/stopSecurelyScopedResource
+
 <a name="1.3.3"></a>
 ## [1.3.3] - 2024-05-15
 
@@ -42,6 +62,7 @@
 - Fix Deploy to TestFlight action
 - Handle different thread correctly
 - Fix issue when multiple messages with matching ids are received
+
 ### Features
 - add login error state in case of unreachable API
 - Add basic validation for brandId and channelId
@@ -76,6 +97,7 @@
 - Fixed issue where SettingsView was crashing
 - Correct title when enter thread detail
 - Fixed problem in hexString where wrong color was being created.
+
 ### Features
 - change open Chat button background color
 - Login with Amazon SDK update + fixed Launch screen storyboard
@@ -196,12 +218,13 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.3...HEAD
-[1.3.3]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.2...1.3.3
-[1.3.2]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.1...1.3.2
-[1.3.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.3.0...1.3.1
-[1.3.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.2.0...1.3.0
-[1.2.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
-[1.1.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
-[1.0.1]: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/compare/1.0.0...1.0.1
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.3...2.0.0
+[1.3.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.2...1.3.3
+[1.3.2]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.1...1.2.0
+[1.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.1.0...1.1.1
+[1.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.1...1.1.0
+[1.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.0.0...1.0.1

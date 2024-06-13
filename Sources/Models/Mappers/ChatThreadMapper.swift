@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ enum ChatThreadMapper {
             idOnExternalPlatform: entity.id,
             threadName: entity.name,
             messages: try entity.messages.map(MessageMapper.map),
-            threadAgent: entity.assignedAgent.map(AgentMapper.map),
+            inboxAssignee: entity.assignedAgent.map(AgentMapper.map),
+            previousInboxAssignee: entity.lastAssignedAgent.map(AgentMapper.map),
             contactId: entity.contactId,
             scrollToken: entity.scrollToken, 
             state: entity.state
@@ -34,7 +35,8 @@ enum ChatThreadMapper {
             id: entity.idOnExternalPlatform,
             name: entity.threadName,
             messages: entity.messages.map(MessageMapper.map),
-            assignedAgent: entity.threadAgent.map(AgentMapper.map),
+            assignedAgent: entity.inboxAssignee.map(AgentMapper.map),
+            lastAssignedAgent: entity.previousInboxAssignee.map(AgentMapper.map),
             contactId: entity.contactId,
             scrollToken: entity.scrollToken,
             state: entity.state

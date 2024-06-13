@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -87,9 +87,9 @@ private extension CustomFieldHierarchicalDTO {
                     continue
                 }
                 
-                result.add(child: CustomFieldHierarchicalNodeDTO(value: node.value, label: node.label), to: parentId)
+                result.add(child: CustomFieldHierarchicalNodeDTO(key: node.name, value: node.value), to: parentId)
             } else {
-                result.append(CustomFieldHierarchicalNodeDTO(value: node.value, label: node.label))
+                result.append(CustomFieldHierarchicalNodeDTO(key: node.name, value: node.value))
             }
         }
         
@@ -108,13 +108,13 @@ private extension Array<CustomFieldHierarchicalNodeDTO> {
 
 private extension CustomFieldHierarchicalNodeDTO {
     
-    func find(by value: String) -> CustomFieldHierarchicalNodeDTO? {
-        if self.value == value {
+    func find(by key: String) -> CustomFieldHierarchicalNodeDTO? {
+        if self.key == key {
             return self
         }
 
         for child in children {
-            if let match = child.find(by: value) {
+            if let match = child.find(by: key) {
                 return match
             }
         }
@@ -129,17 +129,17 @@ private struct NodeDTO: Decodable {
     
     // MARK: - Properties
     
-    let value: String
+    let name: String
     
-    let label: String
+    let value: String
     
     let parentId: String?
     
     // MARK: - Decodable
     
     enum CodingKeys: String, CodingKey {
-        case value = "name"
-        case label = "value"
+        case name
+        case value
         case parentId
     }
 }

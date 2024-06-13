@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -93,6 +93,34 @@ enum CustomFieldDTOType: Equatable {
             self = .hierarchical(
                 CustomFieldHierarchicalDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: updatedAt, nodes: entity.nodes)
             )
+        }
+    }
+    
+    /// Returns identifier for the value
+    ///
+    /// For custom field `"gender-male": "Male"` returns `gender-male`
+    func getValueIdentifier(for value: String) -> String? {
+        switch self {
+        case .textField:
+            return nil
+        case .selector(let entity):
+            return entity.options.first { $0.value == value }?.key
+        case .hierarchical(let entity):
+            return entity.nodes.first { $0.value == value }?.key
+        }
+    }
+    
+    /// Returns value
+    ///
+    /// For custom field `"gender-male": "Male"` returns `Male`
+    func getOptionValue(for value: String) -> String? {
+        switch self {
+        case .textField:
+            return nil
+        case .selector(let entity):
+            return entity.options.first { $0.value == value }?.value
+        case .hierarchical(let entity):
+            return entity.nodes.first { $0.value == value }?.value
         }
     }
 }

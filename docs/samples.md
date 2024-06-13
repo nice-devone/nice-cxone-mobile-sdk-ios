@@ -172,7 +172,7 @@ CXoneChat.shared.customer.set(nil)
 ```
 
 ### Set Device Token
-It is necessary to register the device to be able to use push notifications. For this case the SDK provides two methods `CustomerProvider.setDeviceToken(_:)` - the first one uses a *String* representation of the token, the second one uses the `Data` datatype.
+It is necessary to register the device to be able to use push notifications. For this case the SDK provides two methods `CustomerProvider.setDeviceToken(_:)` - the first one uses a `String` representation of the token, the second one uses the `Data` datatype.
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     CXoneChat.shared.customer.setDeviceToken(deviceToken)
@@ -293,7 +293,7 @@ chatThreads = CXoneChat.shared.threads
 ```
 
 ### Create New Thread
-For creating a new thread, the SDK provides `ChatThreadsProvider.create()` method. You must establish connection to the CXone service via `connect()` before calling this method. If your channel does not support multi-channel configuration, you should not call this method if you already have a thread. If you call this method without first calling `connect()` or if multichannel configurations are not supported, the SDK throws  `unsupportedChannelConfig` error. This method returns the unique identifier of the newly created thread.
+For creating a new thread, the SDK provides `ChatThreadsProvider.create()` and `ChatThreadsProvider.create(with:)` methods. The second one is for creation with custom fields from pre-chat survey. You must establish connection to the CXone service via `connect()` before calling this method. If your channel does not support multi-channel configuration, you should not call this method if you already have a thread. If you call this method without first calling `connect()` or if multichannel configurations are not supported, the SDK throws  `unsupportedChannelConfig` error. This method returns the unique identifier of the newly created thread.
 
 ```swift
 let threadId = try CXoneChat.shared.threads.create()
@@ -307,7 +307,7 @@ guard let thread = CXoneChat.shared.threads.get().thread(by: threadId) else {
 ### Load Thread(s)
 The SDK automatically loads thread(s) when establishing connection to the CXone services and it is not necessary to handle it manually. However, it is necessary to manually load thread for multi-threaded channel configuration because thread list does not contain all previously sent/received messages. When any thread from thread list is selected, host application should use `ChatThreadsProvider.load(with:)` method to recover thread data. The SDK will then notify the application with `onThreadUpdated(_:)` delegate method about recovered thread with all possible data and thread is ready for usage.
 
-> Important: `load()` and `load(with:)` should no longer be used for loading thread after connection.
+> Important: `load(with:)` should no longer be used for loading thread after connection.
 
 ```swift
 func onAppear() {
@@ -368,6 +368,29 @@ func onAppear() {
 }
 ```
 
+### End Contact
+To be able to end live chat conversation from a customer's perspective, the SDK provides `endContact_:)` method.
+
+> Important: As mentioned above, this method is only available for live chat channel configuration. Otherwise, the SDK will throw an `CXoneChatError.illegalChatState` error.
+
+```swift
+func onEndConversation() {
+    guard thread.state != .closed else {
+        ...
+        return
+    }
+        
+    ...
+        
+    do {
+        try CXoneChat.shared.threads.endContact(thread)
+        ...
+    } catch {
+        ...
+    }
+}
+```
+
 ### Report Typing Start/End
 `ChatThreadsProvider.reportTypingStart(_: in:)` reports the customer has started or finished typing in the specified chat thread. It is necessary to have established connection; otherwise, it throws an error.
 
@@ -414,8 +437,6 @@ func onPullToRefresh(refreshControl: UIRefreshControl) {
 ### Send a Message
 Sends the contact's message string, via `MessagesProvider.send(_:for:)` method, through the WebSocket to the thread it belongs to. It is necessary to have established connection; otherwise, it throws an error.
 
-Also, this method returns a `Message` object to be able to append it to the chat history before the BE emits the relevant event and the SDK informs about it with the `onNewMessage(_:)` delegate method.
-
 ```swift
 @MainActor
 func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem], postback: String? = nil) {
@@ -423,7 +444,8 @@ func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem]
         
     Task { @MainActor in
         do {
-            let newMessage = try await CXoneChat.shared.threads.messages.send(message, for: thread)
+            ...
+            try await CXoneChat.shared.threads.messages.send(message, for: thread)
             ...
         } catch {
             ...
@@ -668,11 +690,11 @@ func onThreadsUpdated(_ chatThreads: [ChatThread]) {
 }
 ```
 
-### On Custom Plugin Message
-Callback to be called when a custom plugin message is received. However, known custom plugin message should be handled directly with rest of the message types (text message, satisfaction survey, quick replies etc.)
+### On Custom Message
+Callback to be called when a custom message is received.
 
 ```swift
-func onCustomPluginMessage(_ messageData: [Any]) {
+func onCustomEventMessage(_ messageData: Data) {
     ...
 }
 ```
