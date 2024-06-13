@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ open class CXoneXCTestCase: XCTestCase {
     let brandId = 1386
     /// ""wss://chat-gateway-de-na1.niceincontact.com""
     let socketURL = "wss://chat-gateway-de-na1.niceincontact.com"
+    let decoder = JSONDecoder()
+    let encoder = JSONEncoder()
     
     lazy var eventsService: EventsService = connectionService.eventsService
     lazy var socketService = SocketServiceMock(session: urlSession)
@@ -84,11 +86,24 @@ open class CXoneXCTestCase: XCTestCase {
     // MARK: - Methods
     
     func setUpConnection(
-        isMultithread: Bool = false,
-        prechatSurvey: PreChatSurveyDTO? = nil,
-        contactCustomFields: [CustomFieldDTOType] = [],
-        customerCustomFields: [CustomFieldDTOType] = []
+        channelConfiguration: ChannelConfigurationDTO = MockData.getChannelConfiguration(),
+        isEventMessageHandlerActive: Bool = true
     ) async throws {
+        if isEventMessageHandlerActive {
+            // Simulate a customer reconnect event
+            socketService.messageSent = { [weak self] message in
+                guard message.contains("AuthorizeCustomer") else {
+                    return
+                }
+                
+                do {
+                    try self?.customerService.processCustomerReconnectEvent()
+                } catch {
+                    XCTFail(error.localizedDescription)
+                }
+            }
+        }
+        
         try await URLProtocolMock.with(handlers: configRequestHandler) {
             CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
 
@@ -96,14 +111,8 @@ open class CXoneXCTestCase: XCTestCase {
 
             try await CXoneChat.connection.prepare(environment: .NA1, brandId: brandId, channelId: channelId)
             
-            connectionService.connectionContext.channelConfig = ChannelConfigurationDTO(
-                settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: isMultithread, isProactiveChatEnabled: false),
-                isAuthorizationEnabled: false,
-                prechatSurvey: prechatSurvey,
-                contactCustomFieldDefinitions: contactCustomFields,
-                customerCustomFieldDefinitions: customerCustomFields
-            )
-            
+            connectionService.connectionContext.channelConfig = channelConfiguration
+
             try await CXoneChat.connection.connect()
         }
     }
@@ -114,10 +123,6 @@ open class CXoneXCTestCase: XCTestCase {
 
 extension CXoneXCTestCase: CXoneChatDelegate {
     
-    public func onConnect() {
-        fulfillExpectationIfNeeded()
-    }
-    
     public func onUnexpectedDisconnect() {
         fulfillExpectationIfNeeded()
     }
@@ -126,51 +131,15 @@ extension CXoneXCTestCase: CXoneChatDelegate {
         fulfillExpectationIfNeeded()
     }
     
-    public func onThreadsUpdated(_ chatThreads: [ChatThread]) {
-        fulfillExpectationIfNeeded()
-    }
-    
     public func onThreadUpdated(_ chatThread: ChatThread) {
         fulfillExpectationIfNeeded()
     }
     
-    public func onThreadLoad(_ thread: ChatThread) {
+    public func onThreadsUpdated(_ chatThreads: [ChatThread]) {
         fulfillExpectationIfNeeded()
     }
     
-    public func onThreadArchive() {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onThreadsLoad(_ threads: [ChatThread]) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onThreadInfoLoad(_ thread: ChatThread) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onThreadUpdate() {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onLoadMoreMessages(_ messages: [Message]) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onNewMessage(_ message: Message) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onCustomPluginMessage(_ messageData: [Any]) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onAgentChange(_ agent: Agent, for threadId: UUID) {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onAgentReadMessage(threadId: UUID) {
+    public func onCustomEventMessage(_ messageData: Data) {
         fulfillExpectationIfNeeded()
     }
     
@@ -191,10 +160,6 @@ extension CXoneXCTestCase: CXoneChatDelegate {
     }
     
     public func onTokenRefreshFailed() {
-        fulfillExpectationIfNeeded()
-    }
-    
-    public func onWelcomeMessageReceived() {
         fulfillExpectationIfNeeded()
     }
     

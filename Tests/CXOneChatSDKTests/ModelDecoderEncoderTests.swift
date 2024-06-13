@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -24,92 +24,60 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     let dateProvider = DateProviderMock()
     
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+    
     // MARK: - ContactStatus
     
     func testContactStatusDecodeCorrectly() throws {
-        let testCases: [(json: String, type: ContactStatus)] = [
-            ("{\"status\": \"none\"}", .unknown),
-            ("{\"status\": \"new\"}", .new),
-            ("{\"status\": \"unknown\"}", .unknown)
-        ]
+        var testCases: [(json: String, status: ContactStatus)] = ContactStatus.allCases.map { status in
+            (getSimpleJson(key: "status", value: status.rawValue), status)
+        }
+        // Append manually some unknown status
+        testCases.append((getSimpleJson(key: "status", value: "none"), .unknown))
         
         try testCases.forEach { element in
             guard let data = element.json.data(using: .utf8) else {
                 throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: element.json))
             }
             
-            let dictionary = try JSONDecoder().decode([String: ContactStatus].self, from: data)
+            let dictionary = try decoder.decode([String: ContactStatus].self, from: data)
             
-            XCTAssertEqual(dictionary["status"], element.type)
+            XCTAssertEqual(dictionary["status"], element.status)
+        }
+    }
+    
+    func testContactStatusEncodeCorrectly() throws {
+        try ContactStatus.allCases.forEach { element in
+            let decoded = try decoder.decode(ContactStatus.self, from: try encoder.encode(element))
+            
+            XCTAssertEqual(decoded, element)
         }
     }
     
     // MARK: - EventType
     
     func testMessageEventTypeDecodeCorrectly() throws {
-        let testCases: [(json: String, type: EventType)] = [
-            ("{\"type\": \"EventTriggered\"}", .unknown("EventTriggered")),
-            ("{\"type\": \"AuthorizeCustomer\"}", .authorizeCustomer),
-            ("{\"type\": \"ConsumerAuthorized\"}", .customerAuthorized),
-            ("{\"type\": \"ReconnectCustomer\"}", .reconnectCustomer),
-            ("{\"type\": \"ConsumerReconnected\"}", .customerReconnected),
-            ("{\"type\": \"RefreshToken\"}", .refreshToken),
-            ("{\"type\": \"TokenRefreshed\"}", .tokenRefreshed),
-            ("{\"type\": \"CaseCreated\"}", .caseCreated),
-            ("{\"type\": \"SendMessage\"}", .sendMessage),
-            ("{\"type\": \"MessageCreated\"}", .messageCreated),
-            ("{\"type\": \"LoadMoreMessages\"}", .loadMoreMessages),
-            ("{\"type\": \"MoreMessagesLoaded\"}", .moreMessagesLoaded),
-            ("{\"type\": \"MessageSeenByCustomer\"}", .messageSeenByCustomer),
-            ("{\"type\": \"MessageSeenByUser\"}", .messageSeenByAgent),
-            ("{\"type\": \"MessageReadChanged\"}", .messageReadChanged),
-            ("{\"type\": \"RecoverThread\"}", .recoverThread),
-            ("{\"type\": \"ThreadRecovered\"}", .threadRecovered),
-            ("{\"type\": \"FetchThreadList\"}", .fetchThreadList),
-            ("{\"type\": \"ThreadListFetched\"}", .threadListFetched),
-            ("{\"type\": \"ArchiveThread\"}", .archiveThread),
-            ("{\"type\": \"ThreadArchived\"}", .threadArchived),
-            ("{\"type\": \"LoadThreadMetadata\"}", .loadThreadMetadata),
-            ("{\"type\": \"ThreadMetadataLoaded\"}", .threadMetadataLoaded),
-            ("{\"type\": \"UpdateThread\"}", .updateThread),
-            ("{\"type\": \"ThreadUpdated\"}", .threadUpdated),
-            ("{\"type\": \"CaseInboxAssigneeChanged\"}", .contactInboxAssigneeChanged),
-            ("{\"type\": \"CaseStatusChanged\"}", .caseStatusChanged),
-            ("{\"type\": \"SetContactCustomFields\"}", .setContactCustomFields),
-            ("{\"type\": \"SetCustomerCustomFields\"}", .setCustomerCustomFields),
-            ("{\"type\": \"SenderTypingStarted\"}", .senderTypingStarted),
-            ("{\"type\": \"SenderTypingEnded\"}", .senderTypingEnded),
-            ("{\"type\": \"ExecuteTrigger\"}", .executeTrigger),
-            ("{\"type\": \"StoreVisitor\"}", .storeVisitor),
-            ("{\"type\": \"StoreVisitorEvents\"}", .storeVisitorEvents),
-            ("{\"type\": \"FireProactiveAction\"}", .fireProactiveAction),
-            ("{\"type\": \"SendOutbound\"}", .sendOutbound)
-        ]
+        var testCases: [(json: String, type: EventType)] = EventType.allCases.map { eventType in
+            (getSimpleJson(key: "type", value: eventType.rawValue), eventType)
+        }
+        // Append manually some unknown event
+        testCases.append((getSimpleJson(key: "type", value: "MessageDeleted"), .unknown))
         
         try testCases.forEach { element in
             guard let data = element.json.data(using: .utf8) else {
                 throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: element.json))
             }
             
-            let dictionary = try JSONDecoder().decode([String: EventType].self, from: data)
+            let dictionary = try decoder.decode([String: EventType].self, from: data)
             
             XCTAssertEqual(dictionary["type"], element.type)
         }
     }
     
     func testMessageEventTypeEncodeCorrectly() throws {
-        let testCases: [EventType] = [
-            .authorizeCustomer, .customerAuthorized, .reconnectCustomer, .customerReconnected, .refreshToken,
-            .tokenRefreshed, .caseCreated, .sendMessage, .messageCreated, .loadMoreMessages, .moreMessagesLoaded,
-            .messageSeenByCustomer, .messageSeenByAgent, .messageReadChanged, .recoverThread, .threadRecovered,
-            .fetchThreadList, .threadListFetched, .archiveThread, .threadArchived, .loadThreadMetadata, .threadMetadataLoaded,
-            .updateThread, .threadUpdated, .contactInboxAssigneeChanged, .setContactCustomFields,
-            .setCustomerCustomFields, .senderTypingStarted, .senderTypingEnded, .executeTrigger,
-            .storeVisitor, .storeVisitorEvents, .fireProactiveAction, .sendOutbound, .caseStatusChanged
-        ]
-        
-        try testCases.forEach { element in
-            let decoded = try JSONDecoder().decode(EventType.self, from: try JSONEncoder().encode(element))
+        try EventType.allCases.forEach { element in
+            let decoded = try decoder.decode(EventType.self, from: try encoder.encode(element))
             
             XCTAssertEqual(decoded, element)
         }
@@ -131,7 +99,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
-        let entity = try JSONDecoder().decode(AuthorizeCustomerEventDataDTO.self, from: data)
+        let entity = try decoder.decode(AuthorizeCustomerEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.authorizationCode, "authCode")
         XCTAssertEqual(entity.codeVerifier, "verifier")
@@ -140,8 +108,8 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testAuthorizeCustomerEventDataDTOEncodeCorrectly() throws {
         var entity = AuthorizeCustomerEventDataDTO(authorizationCode: "authCode", codeVerifier: "verifier")
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(AuthorizeCustomerEventDataDTO.self, from: data)
+        let data = try encoder.encode(entity)
+        entity = try decoder.decode(AuthorizeCustomerEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.authorizationCode, "authCode")
         XCTAssertEqual(entity.codeVerifier, "verifier")
@@ -162,7 +130,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
-        let entity = try JSONDecoder().decode(ReconnectCustomerEventDataDTO.self, from: data)
+        let entity = try decoder.decode(ReconnectCustomerEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.token, "token")
     }
@@ -170,8 +138,8 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testReconnectCustomerEventDataDTOEncodeCorrectly() throws {
         var entity = ReconnectCustomerEventDataDTO(token: "token")
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(ReconnectCustomerEventDataDTO.self, from: data)
+        let data = try encoder.encode(entity)
+        entity = try decoder.decode(ReconnectCustomerEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.token, "token")
     }
@@ -190,7 +158,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
-        let entity = try JSONDecoder().decode(AccessTokenDTO.self, from: data)
+        let entity = try decoder.decode(AccessTokenDTO.self, from: data)
         
         XCTAssertEqual(entity.token, "token")
     }
@@ -221,7 +189,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
-        let entity = try JSONDecoder().decode(SetContactCustomFieldsEventDataDTO.self, from: data)
+        let entity = try decoder.decode(SetContactCustomFieldsEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.thread.idOnExternalPlatform, uuid)
         XCTAssertFalse(entity.customFields.isEmpty)
@@ -247,8 +215,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             customJs: nil
         )
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(ProactiveActionDataDTO.self, from: data)
+        let data = try encoder.encode(entity)
+        entity = try decoder.decode(ProactiveActionDataDTO.self, from: data)
         
         XCTAssertEqual(entity.content.headlineText, "headlineText")
         XCTAssertEqual(entity.customFields.first?.value, "value")
@@ -273,8 +241,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             token: "token"
         )
         
-        let data = try JSONEncoder().encode(eventEntity)
-        eventEntity = try JSONDecoder().decode(SendMessageEventDataDTO.self, from: data)
+        let data = try encoder.encode(eventEntity)
+        eventEntity = try decoder.decode(SendMessageEventDataDTO.self, from: data)
         
         guard case .text(let entity) = eventEntity.contentType else {
             throw CXoneChatError.invalidData
@@ -299,8 +267,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             token: "token"
         )
         
-        let data = try JSONEncoder().encode(eventEntity)
-        eventEntity = try JSONDecoder().decode(SendOutboundMessageEventDataDTO.self, from: data)
+        let data = try encoder.encode(eventEntity)
+        eventEntity = try decoder.decode(SendOutboundMessageEventDataDTO.self, from: data)
         
         guard case .text(let entity) = eventEntity.contentType else {
             throw CXoneChatError.invalidData
@@ -327,7 +295,7 @@ class ModelDecoderEncoderTests: XCTestCase {
             throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
         }
         
-        let entity = try JSONDecoder().decode(RefreshTokenPayloadDataDTO.self, from: data)
+        let entity = try decoder.decode(RefreshTokenPayloadDataDTO.self, from: data)
         
         XCTAssertEqual(entity.token, "token")
     }
@@ -350,8 +318,8 @@ class ModelDecoderEncoderTests: XCTestCase {
             triggerId: triggerId
         )
         
-        let data = try JSONEncoder().encode(entity)
-        entity = try JSONDecoder().decode(ExecuteTriggerEventPayloadDTO.self, from: data)
+        let data = try encoder.encode(entity)
+        entity = try decoder.decode(ExecuteTriggerEventPayloadDTO.self, from: data)
         
         XCTAssertEqual(entity.eventType, .executeTrigger)
         XCTAssertEqual(entity.brand.id, 0)
@@ -412,7 +380,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         ]
         
         try testCases.forEach { element in
-            XCTAssertNoThrow(try JSONEncoder().encode(element))
+            XCTAssertNoThrow(try encoder.encode(element))
         }
     }
     
@@ -443,7 +411,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         ]
         
         try testCases.forEach { element in
-            XCTAssertNoThrow(try JSONEncoder().encode(element))
+            XCTAssertNoThrow(try encoder.encode(element))
         }
     }
     
@@ -453,7 +421,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         let testCases: [VisitorEventDataType] = [.custom("custom")]
         
         try testCases.forEach { element in
-            XCTAssertNoThrow(try JSONEncoder().encode(element))
+            XCTAssertNoThrow(try encoder.encode(element))
         }
     }
     
@@ -475,7 +443,7 @@ class ModelDecoderEncoderTests: XCTestCase {
         )
         
         guard let expectation = String(data: data, encoding: .utf8),
-              let encoded = String(data: try JSONEncoder().encode(entity), encoding: .utf8)
+              let encoded = String(data: try encoder.encode(entity), encoding: .utf8)
         else {
             throw XCTError("Could not get Strings from Data entities.")
         }
@@ -499,7 +467,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testThreadRecoveredEventDecodeCorrectly() throws {
         let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent", extension: "json")
         
-        let threadRecover = try JSONDecoder().decode(ThreadRecoveredEventDTO.self, from: data)
+        let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
@@ -513,7 +481,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     func testThreadRecoveredEventFallbackDecodeCorrectly() throws {
         let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent_fallback", extension: "json")
         
-        let threadRecover = try JSONDecoder().decode(ThreadRecoveredEventDTO.self, from: data)
+        let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
@@ -524,29 +492,27 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.value, "Sales")
     }
     
-    func testCaseInboxAssigneeChangedDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "CaseInboxAssigneeChanged", extension: "json")
-        
-        let inboxAssigneeChanged = try JSONDecoder().decode(ContactInboxAssigneeChangedEventDTO.self, from: data)
-        
-        XCTAssertEqual(inboxAssigneeChanged.data.brand.id, 1386)
-        XCTAssertEqual(inboxAssigneeChanged.data.channel.id, "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4")
-        XCTAssertEqual(inboxAssigneeChanged.data.case.threadIdOnExternalPlatform, UUID(uuidString: "7D17EA7C-412E-486B-AD42-58D85E83D4DE")!)
-        XCTAssertNil(inboxAssigneeChanged.data.previousInboxAssignee)
-        XCTAssertEqual(inboxAssigneeChanged.data.inboxAssignee?.id, 12328)
-        XCTAssertEqual(inboxAssigneeChanged.data.inboxAssignee?.imageUrl, "https://app-de-na1.niceincontact.com/img/user/t.png")
-    }
+    // MARK: - EventInS3
     
-    func testCaseInboxAssigneeChangedNoAgentDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "CaseInboxAssigneeChanged+NoAgent", extension: "json")
+    func testEventInS3DecodeCorrectly() throws {
+        let data = try loadStubFromBundle(withName: "EventInS3+ThreadRecovered", extension: "json")
+        let genericEvent = try decoder.decode(GenericEventDTO.self, from: data)
         
-        let inboxAssigneeChanged = try JSONDecoder().decode(ContactInboxAssigneeChangedEventDTO.self, from: data)
+        XCTAssertEqual(genericEvent.eventType, .eventInS3)
         
-        XCTAssertEqual(inboxAssigneeChanged.data.brand.id, 1390)
-        XCTAssertEqual(inboxAssigneeChanged.data.channel.id, "chat_47721fec-6af2-4b01-b8fe-fea0c720a4fb")
-        XCTAssertEqual(inboxAssigneeChanged.data.case.threadIdOnExternalPlatform, UUID(uuidString: "7050F8A5-4D1B-4997-B6E0-C0278A347CE6")!)
-        XCTAssertEqual(inboxAssigneeChanged.data.previousInboxAssignee?.id, 49707)
-        XCTAssertEqual(inboxAssigneeChanged.data.previousInboxAssignee?.imageUrl, "https://app-de-na1.niceincontact.com/img/user/t.png")
-        XCTAssertNil(inboxAssigneeChanged.data.inboxAssignee)
+        let event = try decoder.decode(EventInS3DTO.self, from: data)
+        
+        XCTAssertEqual(event.originEventType, .threadRecovered)
+    }
+}
+
+// MARK: - Helpers
+
+private extension ModelDecoderEncoderTests {
+
+    func getSimpleJson(key: String, value: String) -> String {
+        """
+        {"\(key)": "\(value)"}
+        """
     }
 }

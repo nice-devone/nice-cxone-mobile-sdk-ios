@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -25,63 +25,43 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread()))
         
-        XCTAssertThrowsError(try CXoneChat.threads.create())
+        await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create())
     }
     
-    func testCreateThreadThrowsWithoutConnected() {
-        XCTAssertThrowsError(try CXoneChat.threads.create())
+    func testCreateThreadThrowsWithoutConnected() async {
+        await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create())
     }
     
-    func testCreateThreadNotThrowError() async throws {
+    func testCreateThreadNoThrow() async throws {
         try await setUpConnection()
         
-        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["email": "john@doe.com"]))
+        try await CXoneChat.threads.create(with: ["email": "john@doe.com"])
     }
     
     func testLoadThreadsDoesNotThrows() async throws {
         currentExpectation = XCTestExpectation(description: "Load Threads Called")
         
         socketService.messageSent = { [weak self] message in
-            XCTAssertTrue(!message.isEmpty)
-            
-            self?.currentExpectation.fulfill()
+            if message.contains("AuthorizeCustomer") {
+                do {
+                    try self?.customerService.processCustomerReconnectEvent()
+                } catch {
+                    XCTFail(error.localizedDescription)
+                }
+            } else {
+                XCTAssertTrue(!message.isEmpty)
+                
+                self?.currentExpectation.fulfill()
+            }
         }
         
-        try await setUpConnection()
+        try await setUpConnection(isEventMessageHandlerActive: false)
         
         XCTAssertEqual(socketService.messageSend, 2, "2 event should be called - Authorize, Load")
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
-    
-    func testLoadThreadThrowErrorWithSingleThreadConfig() async throws {
-        try await setUpConnection()
-        
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread()))
-        
-        XCTAssertThrowsError(try CXoneChat.threads.load(), "Error catched") { error in
-            XCTAssertEqual(error.localizedDescription, CXoneChatError.unsupportedChannelConfig.localizedDescription)
-        }
-    }
-    
-    func testLoadThread() async throws {
-        currentExpectation = XCTestExpectation(description: "closure Called")
-        
-        try await setUpConnection()
-        
-        socketService.messageSend = 0
-        socketService.messageSent = { [weak self] message in
-            XCTAssertTrue(!message.isEmpty)
-            
-            self?.currentExpectation.fulfill()
-        }
-        
-        XCTAssertNoThrow(try CXoneChat.threads.load())
-        XCTAssertEqual(socketService.messageSend, 1)
-        
-        wait(for: [currentExpectation], timeout: 1.0)
-    }
-    
+
     func testLoadThreadThrowsWithGivenId() {
         XCTAssertThrowsError(try CXoneChat.threads.load(with: UUID()))
     }
@@ -104,53 +84,29 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.threads.load(with: thread.id))
         XCTAssertEqual(socketService.messageSend, 1)
         
-        wait(for: [currentExpectation], timeout: 1.0)
-    }
-    
-    func testLoadThreadInfo() async throws {
-        currentExpectation = XCTestExpectation(description: "closure Called")
-        
-        try await setUpConnection()
-        
-        let thread = ChatThreadMapper.map(MockData.getThread())
-        threadsService.threads.append(thread)
-        
-        socketService.messageSend = 0
-        socketService.messageSent = { [weak self] message in
-            XCTAssertTrue(!message.isEmpty)
-            
-            self?.currentExpectation.fulfill()
-        }
-        
-        XCTAssertNoThrow(try CXoneChat.threads.loadInfo(for: thread))
-        XCTAssertEqual(socketService.messageSend, 1)
-        
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testArchiveThreadThrowsUnsupportedChannelConfigError() {
-        connectionService.connectionContext.channelConfig = ChannelConfigurationDTO(
-            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: true,
-            prechatSurvey: nil,
-            contactCustomFieldDefinitions: [],
-            customerCustomFieldDefinitions: []
-        )
+        connectionService.connectionContext.channelConfig = MockData.getChannelConfiguration()
         
         XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())))
     }
     
     func testArchiveThreadThrowsThreadIndexError() async throws {
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID(), state: .pending))
+
         XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())), "invalid thread") { error in
             XCTAssertEqual(error as? CXoneChatError, .invalidThread)
         }
     }
+
     func testArchiveThreadRemoveFromList() async throws {
         currentExpectation = XCTestExpectation(description: "archivedThread")
         
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         let thread = ChatThreadMapper.map(MockData.getThread())
         threadsService.threads.append(thread)
@@ -165,13 +121,13 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         XCTAssertNoThrow(try CXoneChat.threads.archive(thread))
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testArchiveThreadSendToServerMessage() async throws {
         currentExpectation = XCTestExpectation(description: "closure Called")
         
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         let thread = ChatThreadMapper.map(MockData.getThread())
         threadsService.threads.append(thread)
@@ -186,10 +142,10 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.threads.archive(thread))
         XCTAssertEqual(socketService.messageSend, 1)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testThreadRecover() throws {
+    func testThreadRecover() async throws {
         currentExpectation = XCTestExpectation(description: "loadthread exp")
         
         let thread = ChatThreadMapper.map(MockData.getThread())
@@ -239,11 +195,11 @@ class ThreadsProviderTests: CXoneXCTestCase {
             )
         )
         
-        let data = try JSONEncoder().encode(event)
+        let data = try encoder.encode(event)
         
         try threadsService.processThreadRecoveredEvent(try data.decode() as ThreadRecoveredEventDTO)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testFetchThreadList() async throws {
@@ -251,18 +207,16 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection()
         
-        socketService.messageSent = { sendMessage in
-            guard sendMessage.contains("LoadThreadMetadata") else {
+        socketService.messageSent = { [weak self] sendMessage in
+            guard let self, sendMessage.contains("LoadThreadMetadata") else {
                 return
             }
             
-            // Skip and simulate loading metadata since this is not an integration test
             self.CXoneChat.delegate = self
-            self.threadsService.threads.removeAll(where: { $0.id.uuidString != "3118D0DF-99AA-49E9-A115-C5B98736DEE7" })
             
             do {
                 let data = try self.loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
-                let event = try JSONDecoder().decode(ThreadMetadataLoadedEventDTO.self, from: data)
+                let event = try self.decoder.decode(ThreadMetadataLoadedEventDTO.self, from: data)
                 
                 try self.threadsService.processThreadMetadataLoadedEvent(event)
             } catch {
@@ -271,11 +225,11 @@ class ThreadsProviderTests: CXoneXCTestCase {
         }
         
         let data = try loadStubFromBundle(withName: "ThreadListFetchedEvent", extension: "json")
-        let event = try JSONDecoder().decode(GenericEventDTO.self, from: data)
+        let event = try decoder.decode(GenericEventDTO.self, from: data)
         
         try threadsService.processThreadListFetchedEvent(event)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testMarkThreadAsReadSuccess() async throws {
@@ -296,18 +250,19 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.threads.markRead(thread))
         XCTAssertEqual(socketService.messageSend, 1)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testNotifyArchiveThreadEvent() async {
         currentExpectation = XCTestExpectation(description: "Thread Archive Event")
         
+        connectionContext.activeThread = ChatThreadMapper.map(MockData.getThread())
         threadsService.processThreadArchivedEvent()
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessThreadLoad() throws {
+    func testProcessThreadLoad() async throws {
         currentExpectation = XCTestExpectation(description: "On Thread Load from Process")
         
         let eventData = ThreadRecoveredEventDTO(
@@ -331,24 +286,24 @@ class ThreadsProviderTests: CXoneXCTestCase {
             )
         )
         
-        let data = try JSONEncoder().encode(eventData)
+        let data = try encoder.encode(eventData)
         
         try threadsService.processThreadRecoveredEvent(try data.decode() as ThreadRecoveredEventDTO)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testProcessThreadLastMessage() throws {
+    func testProcessThreadLastMessage() async throws {
         currentExpectation = XCTestExpectation(description: "On ThreadInfo load")
         
         let data = try loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
-        let event = try JSONDecoder().decode(ThreadMetadataLoadedEventDTO.self, from: data)
+        let event = try decoder.decode(ThreadMetadataLoadedEventDTO.self, from: data)
         
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7")!)))
         
         try threadsService.processThreadMetadataLoadedEvent(event)
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testProcessThreadLastMessageThrowsInvalidThread() throws {
@@ -364,13 +319,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
         
-        connectionService.connectionContext.channelConfig = ChannelConfigurationDTO(
-            settings: ChannelSettingsDTO(hasMultipleThreadsPerEndUser: false, isProactiveChatEnabled: true),
-            isAuthorizationEnabled: false,
-            prechatSurvey: nil,
-            contactCustomFieldDefinitions: [],
-            customerCustomFieldDefinitions: []
-        )
+        connectionService.connectionContext.channelConfig = MockData.getChannelConfiguration()
         
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: uuid)))
         
@@ -382,7 +331,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw CXoneChatError.invalidData
         }
         
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: uuid)))
         
@@ -394,13 +343,13 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testUpdateThreadNameNoEmptyMessageArray() async throws {
         currentExpectation = XCTestExpectation(description: "On update threadName ")
         
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         guard let uuid = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7") else {
             throw CXoneChatError.invalidData
         }
         
-        var thread = ChatThreadMapper.map(MockData.getThread(threadId: uuid))
+        let thread = ChatThreadMapper.map(MockData.getThread(threadId: uuid))
         var check = false
         
         socketService.messageSend = 0
@@ -424,174 +373,191 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         XCTAssertNoThrow(try CXoneChat.threads.updateName("Thread Name", for: thread.id))
         
-        wait(for: [currentExpectation], timeout: 1.0)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testUpdateThreadNameWithEmptyMessageArray() async throws {
         currentExpectation = XCTestExpectation(description: "On update threadName ")
         
         socketService.messageSent = { [weak self] sendMessage in
-            self?.currentExpectation.fulfill()
+            if sendMessage.contains("AuthorizeCustomer") {
+                do {
+                    try self?.customerService.processCustomerReconnectEvent()
+                } catch {
+                    XCTFail(error.localizedDescription)
+                }
+            } else {
+                self?.currentExpectation.fulfill()
+            }
         }
         
-        try await setUpConnection(isMultithread: true)
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true), isEventMessageHandlerActive: false)
         
         let threadId = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7")!
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: threadId)))
         
         XCTAssertNoThrow(try CXoneChat.threads.updateName("Thread Name", for: threadId))
         
-        wait(for: [currentExpectation], timeout: 1.0)
-    }
-    
-    func testGetPrechatSurveyEmpty() async throws {
-        try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))]
-            )
-        )
-        
-        XCTAssertNil(CXoneChat.threads.preChatSurvey)
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testGetPrechatSurveyNoEmpty() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField)),
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField)),
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .selector(MockData.genderSelectorCustomField)),
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .hierarchical(MockData.optionsHierarchicalCustomField))
-                ]
-            ),
-            contactCustomFields: [
-                .textField(MockData.nameTextCustomField),
-                .textField(MockData.emailTextCustomField),
-                .selector(MockData.genderSelectorCustomField),
-                .hierarchical(MockData.optionsHierarchicalCustomField)
-            ]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [
+                        PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField)),
+                        PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField)),
+                        PreChatSurveyCustomFieldDTO(isRequired: true, type: .selector(MockData.genderSelectorCustomField)),
+                        PreChatSurveyCustomFieldDTO(isRequired: true, type: .hierarchical(MockData.optionsHierarchicalCustomField))
+                    ]
+                )
+            )
         )
         
         XCTAssertNotNil(CXoneChat.threads.preChatSurvey)
-    }
-    
-    func testGetPrechatSurveyWithFilteredCustomFields() async throws {
-        try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField)),
-                    PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))
-                ]),
-            contactCustomFields: [.textField(MockData.emailTextCustomField)]
-        )
-        
-        XCTAssertNotNil(CXoneChat.threads.preChatSurvey)
-        XCTAssertEqual(CXoneChat.threads.preChatSurvey?.customFields.count, 1)
     }
     
     func testCreateWithoutCustomFieldsDefinitionThrows() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))]),
-            contactCustomFields: [.textField(MockData.nameTextCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))])
+            )
         )
         
-        XCTAssertThrowsError(try CXoneChat.threads.create())
+        await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create())
     }
     
     func testCreateWithCustomFieldsDefinitionNoThrow() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))]),
-            contactCustomFields: [.textField(MockData.nameTextCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))])
+            )
         )
         
-        XCTAssertNoThrow(try CXoneChat.threads.create(with: ["firstName": "Peter"]))
+        try await CXoneChat.threads.create(with: ["firstName": "Peter"])
     }
     
     func testCreateWithTextCustomFieldNoThrow() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))]),
-            contactCustomFields: [.textField(MockData.nameTextCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.nameTextCustomField))])
+            )
         )
         
-        _ = try CXoneChat.threads.create(with: ["firstName": "Peter"])
+        _ = try await CXoneChat.threads.create(with: ["firstName": "Peter"])
     }
     
     func testCreateWithEmailCustomFieldNoThrow() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]),
-            contactCustomFields: [.textField(MockData.emailTextCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))])
+            )
         )
         
-        _ = try CXoneChat.threads.create(with: ["email": "john.doe@email.com"])
+        _ = try await CXoneChat.threads.create(with: ["email": "john.doe@email.com"])
     }
     
     func testCreateWithSelectorCustomFieldNoThrow() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .selector(MockData.genderSelectorCustomField))]
-            ),
-            contactCustomFields: [.selector(MockData.genderSelectorCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .selector(MockData.genderSelectorCustomField))]
+                )
+            )
         )
         
-        _ = try CXoneChat.threads.create(with: ["gender": "gender-male"])
+        _ = try await CXoneChat.threads.create(with: ["gender": "gender-male"])
     }
     
     func testCreateWithHierarchicalCustomFieldNoThrow() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .hierarchical(MockData.optionsHierarchicalCustomField))]
-            ),
-            contactCustomFields: [.hierarchical(MockData.optionsHierarchicalCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .hierarchical(MockData.optionsHierarchicalCustomField))]
+                )
+            )
         )
         
-        _ = try CXoneChat.threads.create(with: ["options": "option-b-1"])
+        _ = try await CXoneChat.threads.create(with: ["options": "option-b-1"])
     }
     
     func testCustomFieldsAreSetAfterCreate() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
-            ),
-            contactCustomFields: [.textField(MockData.emailTextCustomField)]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
+                )
+            )
         )
         
-        let threadId = try CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
+        try await CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
         
-        XCTAssertFalse((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).isEmpty)
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
+        
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
     }
     
     func testCustomFieldsNotOverrideStoredOnes() async throws {
         try await setUpConnection(
-            prechatSurvey: PreChatSurveyDTO(
-                name: "Prechat Survey",
-                customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
-            ),
-            contactCustomFields: [
-                .textField(MockData.nameTextCustomField),
-                .textField(MockData.emailTextCustomField),
-                .selector(MockData.genderSelectorCustomField)
-            ]
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
+                )
+            )
         )
         
-        let threadId = try CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
+        try await CXoneChat.threads.create(with: ["email": "john.doe@mail.com"])
         
-        try CXoneChat.threads.customFields.set(["firstName": "John", "gender": "Male"], for: threadId)
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
         
-        XCTAssertFalse((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).isEmpty)
-        XCTAssertEqual((CXoneChat.threads.customFields.get(for: threadId) as [CustomFieldType]).count, 3)
+        try CXoneChat.threads.customFields.set(["firstName": "John", "gender": "Male"], for: thread.id)
+        
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 3)
+    }
+    
+    func testLiveChatDoesNotFailToggleEnabled() async throws {
+        currentExpectation = XCTestExpectation(description: "testLiveChatDoesNotFailToggleEnabled")
+
+        connectionService.connectionContext.channelConfig = MockData.getChannelConfiguration(features: ["isRecoverLivechatDoesNotFailEnabled": true], isOnline: true, isLiveChat: true)
+        
+        XCTAssertTrue(connectionContext.channelConfig.settings.isRecoverLiveChatDoesNotFailEnabled)
+
+        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "Recovering failed")
+        threadsService.processRecoveringThreadFailedError(error)
+        
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
+    }
+    
+    func testLiveChatDoesNotFailToggleDisabled() async throws {
+        currentExpectation = XCTestExpectation(description: "testLiveChatDoesNotFailToggleDisabled")
+        currentExpectation.isInverted = true
+        
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(features: ["isRecoverLivechatDoesNotFailEnabled": false], isOnline: true, isLiveChat: true))
+        
+        XCTAssertFalse(connectionContext.channelConfig.settings.isRecoverLiveChatDoesNotFailEnabled)
+        
+        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "Recovering failed")
+        threadsService.processRecoveringThreadFailedError(error)
+        
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,10 @@ struct ChatThreadDTO {
     var messages: [MessageDTO]
     
     /// The agent assigned in the thread.
-    let threadAgent: AgentDTO?
+    let inboxAssignee: AgentDTO?
+    
+    /// The last agent that has been assigned to the thread
+    let previousInboxAssignee: AgentDTO?
     
     /// Id of the contact in this thread
     let contactId: String?

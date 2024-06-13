@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ class WelcomeMessageManagerTest: XCTestCase {
 
     // MARK: - Properties
     
+    private let manager = WelcomeMessageManager(dateProvider: DateProviderMock())
+    
     var sut = ""
     var expectation = ""
     
@@ -30,7 +32,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome {{customer.fullName}}!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -40,7 +42,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome stranger!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -50,7 +52,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome !"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -60,7 +62,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome stranger!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -70,7 +72,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome stranger!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -80,7 +82,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome John!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -90,7 +92,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome stranger!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -100,42 +102,42 @@ class WelcomeMessageManagerTest: XCTestCase {
         expectation = "Welcome John Doe!"
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
     
     func testComplexWelcomeMessage() {
-        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discount-value|5 %}}."
-        expectation = "Dear John, we would like to offer you a discount of 7.5 %."
+        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discount-value|5%}}."
+        expectation = "Dear John, we would like to offer you a discount of 7.5%."
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
-        let contactFields = [CustomFieldDTO(ident: "customer.customFields.discount-value", value: "7.5 %", updatedAt: Date())]
+        let contactFields = [CustomFieldDTO(ident: "customer.customFields.discount-value", value: "7.5%", updatedAt: Date())]
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: contactFields, customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: contactFields, customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
     
     func testWelcomeMessageComplexFallback() {
-        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discountValue|5 %}}."
-        expectation = "Dear customer, we would like to offer you a discount of 5 %."
+        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discountValue|5%}}."
+        expectation = "Dear customer, we would like to offer you a discount of 5%."
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
     
     func testWelcomeMessageCombiningContactAndCustomerFields() {
-        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{contact.customFields.discount_value|5 %}}."
+        sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{contact.customFields.discount_value|5%}}."
                 + " Do you have {{customer.customFields.minutes|15 minutes}}?"
-        expectation = "Dear John, we would like to offer you a discount of 2.5 %. Do you have 10 minutes?"
+        expectation = "Dear John, we would like to offer you a discount of 2.5%. Do you have 10 minutes?"
         
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
-        let customerFields = [CustomFieldDTO(ident: "contact.customFields.discount_value", value: "2.5 %", updatedAt: Date())]
+        let customerFields = [CustomFieldDTO(ident: "contact.customFields.discount_value", value: "2.5%", updatedAt: Date())]
         let contactFields = [CustomFieldDTO(ident: "customer.customFields.minutes", value: "10 minutes", updatedAt: Date())]
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: customerFields, customerFields: contactFields, customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: customerFields, customerFields: contactFields, customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }
@@ -146,7 +148,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         
         let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
         
-        let parsedMessage = WelcomeMessageManager.parse(sut, contactFields: [], customerFields: [], customer: customer)
+        let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
         XCTAssertEqual(expectation, parsedMessage, "Parsed message is not same as original one. Parsed message - \(parsedMessage)")
     }

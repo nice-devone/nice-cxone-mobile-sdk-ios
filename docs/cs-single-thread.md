@@ -1,7 +1,6 @@
 # Case Study: Single Thread
 
-The Mobile SDK has support for single-thread and multi-thread channel configuration. In case of single thread, some features are limited or not available, such as thread name update or thread archive. Whenever you want to use only a single thread, regardless of the server-side settings, you'll be able to use
-several shortcuts. In particular, you can bypass the thread list and automatically select the first conversation or create a new one.
+The Mobile SDK supports asynchronous (single-thread, multi-thread) and live chat channel configurations. With single-thread configurations, certain features, such as updating the thread name or archiving threads, are limited or unavailable.
 
 The SDK is using state-based architecture and it tries to handle automatically as much stuff as possible. For example, it automatically tries to load thread after the connection was established and in case of non thread available and pre-chat is not needed to be filled-in, it also creates thread and provides it for immediate usage. It means there is no longer need to call `load(with:)` to recover previously created thread or create it manually in case of non available and no pre-chat form. 
 

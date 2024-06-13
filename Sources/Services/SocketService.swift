@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -142,6 +142,24 @@ class SocketService: NSObject {
             }
         }
     }
+    
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
+    func downloadEventContentFromS3(_ object: EventInS3DTO) throws {
+        LogManager.trace("Downloads the content of the `\(object.originEventType)` event stored in S3")
+        
+        Task {
+            let request = URLRequest(url: object.url, method: .get, contentType: "application/json")
+            let (data, response) = try await connectionContext.session.data(for: request, fun: #function)
+            
+            guard let response = response as? HTTPURLResponse, (200 ... 299) ~= response.statusCode else {
+                throw CXoneChatError.serverError
+            }
+            
+            delegate?.handle(message: data.utf8string)
+        }
+    }
 }
 
 // MARK: - Private methods
@@ -153,11 +171,7 @@ private extension SocketService {
     func checkPulse() {
         do {
             let data = try JSONSerialization.data(withJSONObject: ["action": "heartbeat"], options: .fragmentsAllowed)
-            
-            guard let string = String(data: data, encoding: .utf8) else {
-                delegate?.didReceiveError(CXoneChatError.missingParameter("heartbeat"))
-                return
-            }
+            let string = String(decoding: data, as: UTF8.self)
             
             pongReceived = false
             

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,9 @@
 
 import Foundation
 
-/// All info about a payload of a message.
-public struct MessagePlugin {
-
-    /// The content of the payload.
-    public let text: String?
+struct LiveChatRecoveredDTO: Decodable {
     
-    /// The postaback of the payload.
-    public let postback: String?
-
-    /// The type of message payload content
-    public let element: PluginMessageType
+    let eventId: String
+    
+    let postback: LiveChatRecoveredPostbackDTO
 }

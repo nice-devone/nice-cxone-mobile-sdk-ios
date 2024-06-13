@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ import Foundation
 enum MessageContentDTOType {
     
     case text(MessagePayloadDTO)
-    
-    case plugin(MessagePluginDTO)
-    
+        
     case richLink(MessageRichLinkDTO)
     
     case quickReplies(MessageQuickRepliesDTO)
@@ -56,8 +54,6 @@ extension MessageContentDTOType: Codable {
                     text: try payloadContainer.decode(String.self, forKey: .text),
                     postback: try container.decodeIfPresent(String.self, forKey: .postback))
             )
-        case .plugin:
-            self = .plugin(try container.decode(MessagePluginDTO.self, forKey: .payload))
         case .richLink:
             self = .richLink(try container.decode(MessageRichLinkDTO.self, forKey: .payload))
         case .quickReplies:
@@ -79,9 +75,6 @@ extension MessageContentDTOType: Codable {
             try container.encode(ElementType.text.rawValue, forKey: .type)
             try payloadContainer.encode(text.text, forKey: .text)
             try container.encode(text.postback, forKey: .postback)
-        case .plugin(let plugin):
-            try container.encode(ElementType.plugin.rawValue, forKey: .type)
-            try container.encode(plugin, forKey: .payload)
         case .richLink(let richLink):
             try container.encode(ElementType.richLink.rawValue, forKey: .type)
             try container.encode(richLink, forKey: .payload)

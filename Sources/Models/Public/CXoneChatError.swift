@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -61,6 +61,20 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Check if channel environment works correctly
     ///     or gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case attachmentError
+    
+    /// The size of the attachment exceeds the allowed size
+    ///
+    /// Channel ``ChannelConfiguration/fileRestrictions`` define allowed file size which can be received by the backend
+    /// - Source of problem: SDK used incorrectly
+    /// - Attention: Attachments should be validated for correct file size by the host application
+    case invalidFileSize
+    
+    /// The type of the attachment is not included in the allowed file MIME type
+    ///
+    /// Channel ``ChannelConfiguration/fileRestrictions`` define allowed file MIME types which can be received by the backned
+    /// - Source of problem: SDK used incorrectly
+    /// - Attention: Attachments should be validated for correct file type by the host application
+    case invalidFileType
 
     /// The server experienced an internal error and was unable to perform the action.
     ///
@@ -70,7 +84,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     ///     or gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case serverError
 
-    /// The server experienced an error during recovering a thread or server does not contain any existing chat thread.
+    /// The server experienced an error during recovering a messaging thread or server does not contain any existing chat thread.
     ///
     /// This error indicates that thread recovery failed, either because the thread does not exist or for some other server-specific cause.
     /// - Source of problem: Information error/DFO issue
@@ -203,6 +217,18 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// SDK used incorrectly
     case illegalChatState
     
+    /// Unable to trigger the required method because the chat thread is not in the required state.
+    ///
+    /// The chat thread has to be in correct state to trigger required operation. 
+    /// For example, to update thread name via ``ChatThreadsProvider/updateName(_:for:)``
+    /// the thread can not be in ``ChatThreadState/closed`` state.
+    ///
+    /// Check ``ChatThreadState`` for more information.
+    ///
+    /// ## Source of problem
+    /// SDK used incorrectly
+    case illegalThreadState
+    
     // MARK: - Properties
 
     public var errorDescription: String? {
@@ -257,6 +283,12 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "`connect()` or an analytics event has been generated when no visitor id was available."
         case .illegalChatState:
             return "Unable to trigger required method because chat is not in required state."
+        case .invalidFileSize:
+            return "The size of the attachment exceeds the allowed size."
+        case .invalidFileType:
+            return "The type of the attachment is not included in the allowed file MIME type."
+        case .illegalThreadState:
+            return "Unable to trigger required method because thread is not in required state."
         }
     }
 

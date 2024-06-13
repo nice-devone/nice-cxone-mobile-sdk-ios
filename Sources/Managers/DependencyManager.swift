@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ class DependencyManager {
     private let socketService: SocketService
     private let eventsService: EventsService
     private let dateProvider: DateProvider
+    private let welcomeMessageManager: WelcomeMessageManager
     
     private var connection: ConnectionProvider?
     private var customer: CustomerProvider?
@@ -37,6 +38,10 @@ class DependencyManager {
     
     weak var delegate: CXoneChatDelegate? {
         didSet {
+            // To be able to decide scene (if chat conversation is opened) reset active thread whenever delegate is changed.
+            // Every thread-related action should store the thread as the active one
+            eventsService.connectionContext.activeThread = nil
+            
             socketDelegateManager?.delegate = delegate
             (threads as? ChatThreadsService)?.delegate = delegate
             (connection as? ConnectionService)?.delegate = delegate
@@ -54,6 +59,7 @@ class DependencyManager {
     init(socketService: SocketService, dateProvider: DateProvider) {
         self.socketService = socketService
         self.dateProvider = dateProvider
+        self.welcomeMessageManager = WelcomeMessageManager(dateProvider: dateProvider)
         self.eventsService = EventsService(connectionContext: socketService.connectionContext)
     }
     
@@ -82,7 +88,7 @@ class DependencyManager {
             return provider
         }
         
-        let provider = CustomerService(connectionContext: socketService.connectionContext, socketService: socketService)
+        let provider = CustomerService(connectionContext: socketService.connectionContext, socketService: socketService, threads: resolve())
         self.customer = provider
         
         return provider
@@ -119,7 +125,9 @@ class DependencyManager {
             contactFieldsProvider: resolve(),
             customerFieldsProvider: resolve(),
             socketService: socketService,
-            eventsService: eventsService
+            eventsService: eventsService,
+            dateProvider: dateProvider,
+            welcomeMessageManager: welcomeMessageManager
         )
         self.messages = provider
         
@@ -136,7 +144,8 @@ class DependencyManager {
             contactFields: resolve(),
             customerFields: resolve(),
             socketService: socketService,
-            eventsService: eventsService
+            eventsService: eventsService,
+            dateProvider: dateProvider
         )
         self.threads = provider
         
@@ -159,8 +168,7 @@ class DependencyManager {
             return manager
         }
         
-        let manager = SocketDelegateManager(threads: resolve(), customer: resolve(), connection: resolve())
-        socketService.delegate = manager
+        let manager = SocketDelegateManager(socketService: socketService, threads: resolve(), customer: resolve(), connection: resolve())
         self.socketDelegateManager = manager
         
         return manager

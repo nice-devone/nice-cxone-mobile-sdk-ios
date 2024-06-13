@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ extension HTTPURLResponse {
             output += "}\n"
         }
         
-        if let data, let formattedJSON = String(data: data, encoding: .utf8)?.formattedJSON {
+        if let data, let formattedJSON = String(decoding: data, as: UTF8.self).formattedJSON {
             output += "Body: \(formattedJSON)\n"
         }
         

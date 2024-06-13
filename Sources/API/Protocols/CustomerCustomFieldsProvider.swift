@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ public protocol CustomerCustomFieldsProvider {
     /// Custom fields for all chat threads.
     /// 
     /// - Returns: Array of ustom fields for a customer.
-    func get() -> [CustomFieldType]
+    func get() -> [String: String]
     
     /// Sets custom fields to be saved for a customer (persists across all threads involving the customer).
     /// - Parameter customFields: The custom fields to be saved.

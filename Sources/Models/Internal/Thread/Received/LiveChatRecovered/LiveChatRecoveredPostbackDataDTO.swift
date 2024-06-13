@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,18 +15,22 @@
 
 import Foundation
 
-/// The different types of sub elements that can be present in the content of a message.
-public enum PluginMessageSubElementType {
+struct LiveChatRecoveredPostbackDataDTO: Decodable {
     
-    /// A simple text subelement.
-    case text(PluginMessageText)
+    /// The info about a contact (case).
+    let contact: ContactDTO
     
-    /// A button subelement.
-    case button(PluginMessageButton)
+    /// The info about an agent.
+    let inboxAssignee: AgentDTO?
     
-    /// A file subelement.
-    case file(PluginMessageFile)
+    /// The last agent that has been assigned to the thread
+    let previousInboxAssignee: AgentDTO?
     
-    /// A title subelement.
-    case title(PluginMessageTitle)
+    /// The list of messages on the thread.
+    let messages: [MessageDTO]
+    
+    let messagesScrollToken: String
+    
+    /// The info abount about received thread.
+    let thread: ReceivedThreadDataDTO
 }

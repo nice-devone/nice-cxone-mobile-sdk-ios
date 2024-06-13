@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,26 @@ struct ChannelConfigurationDTO {
     
     let prechatSurvey: PreChatSurveyDTO?
     
-    let contactCustomFieldDefinitions: [CustomFieldDTOType]
+    let liveChatAvailability: CurrentLiveChatAvailability
+}
 
-    let customerCustomFieldDefinitions: [CustomFieldDTOType]
+// MARK: - Methods
+
+extension ChannelConfigurationDTO {
+ 
+    func copy(
+        settings: ChannelSettingsDTO? = nil,
+        isAuthorizationEnabled: Bool? = nil,
+        prechatSurvey: PreChatSurveyDTO? = nil,
+        liveChatAvailability: CurrentLiveChatAvailability? = nil
+    ) -> ChannelConfigurationDTO {
+        ChannelConfigurationDTO(
+            settings: settings ?? self.settings,
+            isAuthorizationEnabled: isAuthorizationEnabled ?? self.isAuthorizationEnabled,
+            prechatSurvey: prechatSurvey ?? self.prechatSurvey,
+            liveChatAvailability: liveChatAvailability ?? self.liveChatAvailability
+        )
+    }
 }
 
 // MARK: - Decodable
@@ -39,22 +56,24 @@ extension ChannelConfigurationDTO: Decodable {
         case settings
         case isAuthorizationEnabled
         case preContactForm
-        case customerCustomFields = "endUserCustomFields"
-        case contactCustomFields = "caseCustomFields"
+        case isLiveChat
     }
     
     enum PreContactFormCodingKeys: CodingKey {
         case name
         case customFields
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.settings = try container.decode(ChannelSettingsDTO.self, forKey: .settings)
         self.isAuthorizationEnabled = try container.decode(Bool.self, forKey: .isAuthorizationEnabled)
-        self.customerCustomFieldDefinitions = try container.decodeIfPresent([CustomFieldDTOType].self, forKey: .customerCustomFields) ?? []
-        self.contactCustomFieldDefinitions = try container.decodeIfPresent([CustomFieldDTOType].self, forKey: .contactCustomFields) ?? []
+        self.liveChatAvailability = CurrentLiveChatAvailability(
+            isChannelLiveChat: try container.decode(Bool.self, forKey: .isLiveChat),
+            isOnline: false,
+            expires: .distantPast
+        )
         
         if let prechatFormContainer = try? container.nestedContainer(keyedBy: PreContactFormCodingKeys.self, forKey: .preContactForm) {
             self.prechatSurvey = PreChatSurveyDTO(

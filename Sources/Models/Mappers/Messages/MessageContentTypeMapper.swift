@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ enum MessageContentTypeMapper {
         switch entity {
         case .text(let entity):
             return .text(MessagePayloadMapper.map(entity))
-        case .plugin(let entity):
-            return .plugin(try MessagePluginMapper.map(entity))
         case .richLink(let entity):
             return .richLink(MessageRichLinkMapper.map(from: entity))
         case .quickReplies(let entity):
@@ -38,8 +36,6 @@ enum MessageContentTypeMapper {
         switch entity {
         case .text(let entity):
             return .text(MessagePayloadMapper.map(entity))
-        case .plugin(let entity):
-            return .plugin(MessagePluginMapper.map(entity))
         case .richLink(let entity):
             return .richLink(MessageRichLinkMapper.map(from: entity))
         case .quickReplies(let entity):

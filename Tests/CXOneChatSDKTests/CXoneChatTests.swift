@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@ class CXoneChatTests: XCTestCase {
     func testConfigureLoggerProperly() {
         CXoneChat.configureLogger(level: .trace, verbosity: .simple)
         
-        XCTAssertTrue(LogManager.verbository == .simple)
+        XCTAssertTrue(LogManager.verbosity == .simple)
         XCTAssertTrue(LogManager.level == .trace)
     }
     
-    func testLoggerDelegateCalled() {
+    func testLoggerDelegateCalled() async {
         currentExpectation = XCTestExpectation(description: "testLoadThreadDataNoThrow")
         currentExpectation.expectedFulfillmentCount = 4
         
@@ -55,7 +55,7 @@ class CXoneChatTests: XCTestCase {
         LogManager.info("")
         LogManager.trace("")
         
-         wait(for: [currentExpectation], timeout: 1.0)
+         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
 }
 

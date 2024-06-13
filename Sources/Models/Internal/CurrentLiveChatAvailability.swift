@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,24 +15,18 @@
 
 import Foundation
 
-/// A title subelement.
-public struct PluginMessageTitle {
+struct CurrentLiveChatAvailability: Equatable {
+    
+    // MARK: - Static Properties
+    
+    /// The expiration interval for the live chat availability (1 minute).
+    static let expirationInterval: TimeInterval = 60
     
     // MARK: - Properties
     
-    /// The unique identifier of the subelement.
-    public let id: String
+    let isChannelLiveChat: Bool
     
-    /// The content of the sub element.
-    public let text: String
+    let isOnline: Bool
     
-    // MARK: - Init
-    
-    /// - Parameters:
-    ///   - id: The unique identifier of the subelement.
-    ///   - text: The content of the sub element.
-    public init(id: String, text: String) {
-        self.id = id
-        self.text = text
-    }
+    let expires: Date
 }

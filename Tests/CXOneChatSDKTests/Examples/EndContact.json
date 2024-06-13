@@ -1,0 +1,20 @@
+{
+    "eventType": "EndContact",
+    "brand": {
+        "id": 1234
+    },
+    "channel": {
+        "id": "chat_111"
+    },
+    "customerIdentity": {
+        "idOnExternalPlatform": "a91082b7-46f8-4d0d-af43-079994de98c6"
+    },
+    "data": {
+        "thread": {
+            "idOnExternalPlatform": "ad342920-c75e-4b06-b973-00494cc811b7"
+        },
+        "contact": {
+            "id": "12345"
+        }
+    }
+}

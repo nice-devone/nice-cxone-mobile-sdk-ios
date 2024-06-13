@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -55,6 +55,12 @@ enum EventDataType {
     case visitorEvent(VisitorsEventsDTO)
     
     case storeVisitorPayload(VisitorDTO)
+    
+    // MARK: - LiveChat
+    
+    case endContact(EndContactEventDataDTO)
+    
+    case loadLiveChatData(ThreadEventDataDTO)
 }
 
 // MARK: - Encodable
@@ -94,6 +100,10 @@ extension EventDataType: Encodable {
         case .visitorEvent(let data):
             try container.encode(data)
         case .storeVisitorPayload(let data):
+            try container.encode(data)
+        case .endContact(let data):
+            try container.encode(data)
+        case .loadLiveChatData(let data):
             try container.encode(data)
         }
     }

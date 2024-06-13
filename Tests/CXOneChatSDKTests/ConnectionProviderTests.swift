@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -108,9 +108,38 @@ class ConnectionProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(UUID()))
     }
     
-    func testChannelConfiguration() async throws {
-        try await setUpConnection()
+    func testChannelIsMultithread() async throws {
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
+
+        XCTAssertEqual(connectionContext.chatMode, .multithread)
+    }
+
+    func testChannelIsSinglethread() async throws {
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: false))
+
+        XCTAssertEqual(connectionContext.chatMode, .singlethread)
+    }
+    
+    func testChannelIsLiveChat() async throws {
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isLiveChat: true))
+
+        XCTAssertEqual(connectionContext.chatMode, .liveChat)
+    }
+
+    func testChannelIsOfflineLiveChat() async throws {
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isOnline: false, isLiveChat: true))
+
+        XCTAssertEqual(connectionContext.chatMode, .liveChat)
+        XCTAssertEqual(connectionContext.chatState, .offline)
+    }
+    
+    func testChannelFeatureListNonEmpty() throws {
+        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let configuration = try decoder.decode(ChannelConfigurationDTO.self, from: data)
         
-        XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(UUID()))
+        XCTAssertFalse(configuration.settings.features.isEmpty)
+        XCTAssertFalse(configuration.settings.isEnabled(feature: "liveChatLogoHidden"))
+        XCTAssertTrue(configuration.settings.isEnabled(feature: "isCoBrowsingEnabled"))
+        XCTAssertTrue(configuration.settings.isEnabled(feature: "UnknownFeature"))
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class AccessTokenTests: XCTestCase {
     // MARK: - Lifecycle
     
     override func setUpWithError() throws {
-        sut = AccessTokenDTO(token: "token", expiresIn: 180)
+        sut = AccessTokenDTO(token: "token", expiresIn: 180, currentDate: dateProvider.now)
     }
 
     override func tearDownWithError() throws {
@@ -41,7 +41,7 @@ class AccessTokenTests: XCTestCase {
     }
 
     func testAccessTokenIsExpired() {
-        sut = AccessTokenDTO(token: "token", expiresIn: 1)
+        sut = AccessTokenDTO(token: "token", expiresIn: 1, currentDate: dateProvider.now)
         
         RunLoop.main.run(until: Date() + 3)
         XCTAssertTrue(sut?.isExpired(currentDate: dateProvider.now) ?? false)

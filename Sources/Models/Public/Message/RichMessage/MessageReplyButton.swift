@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// A reply button rich message sub element.
-public struct MessageReplyButton {
+public struct MessageReplyButton: Hashable {
     
     /// The text displayed in the button
     public let text: String
@@ -40,4 +40,5 @@ public struct MessageReplyButton {
     
     /// The MIME type of an image that will be displayed as part of the options​ (256 KiB)
     public let iconMimeType: String?
+    
 }

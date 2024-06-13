@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public protocol MessagesProvider {
     ///
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing.
@@ -47,8 +48,5 @@ public protocol MessagesProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
-    ///
-    /// - Returns: New message in sending state. It has been  (not yet received by BE)
-    @discardableResult
-    func send(_ message: OutboundMessage, for chatThread: ChatThread) async throws -> Message
+    func send(_ message: OutboundMessage, for chatThread: ChatThread) async throws
 }

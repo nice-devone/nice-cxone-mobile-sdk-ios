@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -22,21 +22,10 @@ enum ChannelConfigurationMapper {
             hasMultipleThreadsPerEndUser: entity.settings.hasMultipleThreadsPerEndUser,
             isProactiveChatEnabled: entity.settings.isProactiveChatEnabled,
             isAuthorizationEnabled: entity.isAuthorizationEnabled,
-            contactCustomFieldDefinitions: entity.contactCustomFieldDefinitions.map(CustomFieldTypeMapper.map),
-            customerCustomFieldDefinitions: entity.customerCustomFieldDefinitions.map(CustomFieldTypeMapper.map)
-        )
-    }
-    
-    static func map(_ entity: ChannelConfiguration) -> ChannelConfigurationDTO {
-        ChannelConfigurationDTO(
-            settings: ChannelSettingsDTO(
-                hasMultipleThreadsPerEndUser: entity.hasMultipleThreadsPerEndUser,
-                isProactiveChatEnabled: entity.isProactiveChatEnabled
-            ),
-            isAuthorizationEnabled: entity.isAuthorizationEnabled,
-            prechatSurvey: nil,
-            contactCustomFieldDefinitions: entity.contactCustomFieldDefinitions.map(CustomFieldTypeMapper.map),
-            customerCustomFieldDefinitions: entity.customerCustomFieldDefinitions.map(CustomFieldTypeMapper.map)
+            fileRestrictions: FileRestrictions(from: entity.settings.fileRestrictions),
+            features: entity.settings.features,
+            isOnline: entity.liveChatAvailability.isOnline,
+            isLiveChat: entity.liveChatAvailability.isChannelLiveChat
         )
     }
 }

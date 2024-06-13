@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 extension ContactInboxAssigneeChangedDataDTO: Encodable {
     
     enum CodingKeys: CodingKey {
-        case brand
-        case channel
         case `case`
         case inboxAssignee
         case previousInboxAssignee
@@ -28,8 +26,6 @@ extension ContactInboxAssigneeChangedDataDTO: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(brand, forKey: .brand)
-        try container.encode(channel, forKey: .channel)
         try container.encode(self.case, forKey: .case)
         try container.encode(inboxAssignee, forKey: .inboxAssignee)
         try container.encodeIfPresent(previousInboxAssignee, forKey: .previousInboxAssignee)

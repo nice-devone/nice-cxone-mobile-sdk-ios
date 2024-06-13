@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testSenddMessagesWithPropertiesNoThrow() async throws {
-        socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
+        socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
         
         try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread()))
     }
@@ -78,7 +78,10 @@ class MessagesProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         await XCTAssertAsyncThrowsError(
-            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message", attachments: []), for: ChatThreadMapper.map(MockData.getThread()))
+            try await CXoneChat.threads.messages.send(
+                OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(MockData.attachment)]),
+                for: ChatThreadMapper.map(MockData.getThread())
+            )
         )
     }
     
@@ -95,22 +98,77 @@ class MessagesProviderTests: CXoneXCTestCase {
         )
     }
     
-    // TODO: - Remote `XCTSkip` when the bug on the BE side is resolved
-    func testSendMessageWithAttachmentsNoThrow() async throws {
-        throw XCTSkip("Upload attachment test unavailable – contains an error on the BE side")
+    func testSendMessageWithAttachmentsThrowsAttachmentError() async throws {
+        CXoneChat.connection.disconnect()
+        
+        try await setUpConnection(
+            channelConfiguration: MockData.getChannelConfiguration(
+                fileRestrictions: FileRestrictionsDTO(allowedFileSize: 0, allowedFileTypes: [], isAttachmentsEnabled: false)
+            )
+        )
         
         try await URLProtocolMock.with(
             handlers: accept(
-                url(equals: "\(self.chatURL)/1.0/brand/\(self.brandId)/channel/\(self.channelId)/attachment"),
+                url(equals: "\(self.channelURL)/\(self.channelId)/attachment"),
                 body: string(preAttachmentResponse)
             )
         ) {
-            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max)
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+            
+            await XCTAssertAsyncThrowsError(
+                try await CXoneChat.threads.messages.send(
+                    OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(MockData.attachment)]),
+                    for: ChatThreadMapper.map(MockData.getThread())
+                )
+            )
+        }
+    }
+    
+    func testSendMessageWithImageAttachmentNoThrow() async throws {
+        try await URLProtocolMock.with(
+            handlers: accept(
+                url(equals: "\(self.channelURL)/\(self.channelId)/attachment"),
+                body: string(preAttachmentResponse)
+            )
+        ) {
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
 
+            guard let data = UIImage(systemName: "pencil")?.jpegData(compressionQuality: 0.8) else {
+                throw CXoneChatError.attachmentError
+            }
+            
             try await CXoneChat.threads.messages.send(
-                OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(MockData.attachment)]),
+                OutboundMessage(text: "message", attachments: [storeDataInDocuments(data, fileName: "image.jpg", mimeType: "image/jpeg")]),
                 for: ChatThreadMapper.map(MockData.getThread())
             )
+            
+            try removeStoredFile(fileName: "image.jpg")
+        }
+    }
+    
+    func testSendMessageWithVideoAttachmentNoThrow() async throws {
+        guard let videoUrl = Bundle.module.url(forResource: "sample_video", withExtension: "mov") else {
+            throw XCTError("Video file not found")
+        }
+        
+        let data = try Data(contentsOf: videoUrl)
+        
+        XCTAssertNotNil(data, "Failed to load video data")
+        
+        try await URLProtocolMock.with(
+            handlers: accept(
+                url(equals: "\(self.channelURL)/\(self.channelId)/attachment"),
+                body: string(preAttachmentResponse)
+            )
+        ) {
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+            
+            try await CXoneChat.threads.messages.send(
+                OutboundMessage(text: "message", attachments: [storeDataInDocuments(data, fileName: "sample_video.mov", mimeType: "video/quicktime")]),
+                for: ChatThreadMapper.map(MockData.getThread())
+            )
+            
+            try removeStoredFile(fileName: "sample_video.mov")
         }
     }
     
@@ -140,22 +198,34 @@ class MessagesProviderTests: CXoneXCTestCase {
     func testWelcomeMessageAppendsToNewThread() async throws {
         UserDefaultsService.shared.set("Hello {{customer.firstName|stranger}}!", for: .welcomeMessage)
         
-        let threadId = try CXoneChat.threads.create(with: defaultAnswers)
-        let thread = try getThread(by: threadId)
+        try await CXoneChat.threads.create(with: defaultAnswers)
+        
+        let eventData = try loadStubFromBundle(withName: "FireProactiveAction+WelcomeMessage", extension: "json")
+        CXoneChat.socketDelegateManager.handle(message: eventData.utf8string)
+        
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
         
         XCTAssertEqual(thread.messages.count, 1, "Thread should contain welcome message")
         
         guard let message = thread.messages.first, case .text(let payload) = message.contentType else {
             throw XCTError("Message is not a text message type")
         }
-        XCTAssertEqual(payload.text, "Hello stranger!", "Thread should contain welcome message")
+        XCTAssertEqual(payload.text, "Dear customer, we would like to offer you a discount of 5%.", "Thread should contain welcome message")
     }
     
     func testSendMessageWithExistingWelcomeMessageNoThrow() async throws {
         UserDefaultsService.shared.set("Hello {{customer.firstName|stranger}}!", for: .welcomeMessage)
         
-        let threadId = try CXoneChat.threads.create(with: defaultAnswers)
-        var thread = try getThread(by: threadId)
+        try await CXoneChat.threads.create(with: defaultAnswers)
+        
+        let eventData = try loadStubFromBundle(withName: "FireProactiveAction+WelcomeMessage", extension: "json")
+        CXoneChat.socketDelegateManager.handle(message: eventData.utf8string)
+        
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
         
         XCTAssertEqual(thread.messages.count, 1, "Thread should contain welcome message")
         
@@ -165,8 +235,7 @@ class MessagesProviderTests: CXoneXCTestCase {
             throw XCTError("Message is not a text message type")
         }
         
-        thread = try getThread(by: threadId)
-        XCTAssertEqual(payload.text, "Hello stranger!", "Thread should contain welcome message")
+        XCTAssertEqual(payload.text, "Dear customer, we would like to offer you a discount of 5%.", "Thread should contain welcome message")
         XCTAssertEqual(
             socketService.messageSend, 4,
             "Socket should send 4 events - AuthorizeCustomer, Recover, OutboundMessage – welcome message, InboundMessage - customer message"
@@ -184,5 +253,30 @@ private extension MessagesProviderTests {
         }
         
         return thread
+    }
+    
+    func storeDataInDocuments(_ data: Data, fileName: String, mimeType: String) throws -> ContentDescriptor {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw CXoneChatError.attachmentError
+        }
+        
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        
+        try data.write(to: fileURL)
+        
+        return ContentDescriptor(url: fileURL, mimeType: mimeType, fileName: fileName, friendlyName: fileName)
+    }
+    
+    func removeStoredFile(fileName: String) throws {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw CXoneChatError.attachmentError
+        }
+
+        let filePath = documentsDirectory.appendingPathComponent(fileName).path
+        let fileManager = FileManager.default
+
+        if fileManager.fileExists(atPath: filePath) {
+            try fileManager.removeItem(atPath: filePath)
+        }
     }
 }

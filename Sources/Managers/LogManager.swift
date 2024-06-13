@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class LogManager {
         case error
     }
     
-    /// Configuration of a log verbository.
+    /// Configuration of a log verbosity.
     public enum Verbosity {
         /// Logs only date and given message.
         case simple
@@ -69,7 +69,7 @@ public class LogManager {
     
     static weak var delegate: LogDelegate?
     
-    static var verbository: Verbosity = .medium
+    static var verbosity: Verbosity = .medium
     static var level: Level = .warning
     static var isEnabled = false
     
@@ -86,7 +86,7 @@ public class LogManager {
     class func configure(level: Level, verbosity: Verbosity) {
         self.isEnabled = true
         self.level = level
-        self.verbository = verbosity
+        self.verbosity = verbosity
     }
     
     class func error(_ error: Error, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
@@ -135,7 +135,7 @@ public class LogManager {
 private extension LogManager {
 
     class func log(_ message: String, emoji: String, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) -> String {
-        switch verbository {
+        switch verbosity {
         case .simple:
             return "\(dateTime) \(emoji): \(message)"
         case .medium:

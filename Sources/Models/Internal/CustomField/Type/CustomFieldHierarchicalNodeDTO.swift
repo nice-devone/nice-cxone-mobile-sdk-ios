@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@ class CustomFieldHierarchicalNodeDTO {
     
     // MARK: - Properties
     
-    var value: String
+    var key: String
     
-    var label: String
+    var value: String
     
     var children: [CustomFieldHierarchicalNodeDTO]
     
     // MARK: - Init
     
-    init(value: String, label: String, children: [CustomFieldHierarchicalNodeDTO] = []) {
+    init(key: String, value: String, children: [CustomFieldHierarchicalNodeDTO] = []) {
+        self.key = key
         self.value = value
-        self.label = label
         self.children = children
     }
     
@@ -45,8 +45,7 @@ class CustomFieldHierarchicalNodeDTO {
 extension CustomFieldHierarchicalNodeDTO: Equatable {
     
     public static func == (lhs: CustomFieldHierarchicalNodeDTO, rhs: CustomFieldHierarchicalNodeDTO) -> Bool {
-        lhs.value == rhs.value
-            && lhs.label == rhs.label
+        lhs.key == rhs.key
             && lhs.value == rhs.value
             && lhs.children == rhs.children
     }

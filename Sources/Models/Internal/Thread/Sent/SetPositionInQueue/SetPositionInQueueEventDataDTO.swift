@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,37 +15,33 @@
 
 import Foundation
 
-struct PluginMessageTitleDTO {
+struct SetPositionInQueueEventDataDTO {
+
+    /// The contact ID for which this change applies.
+    let consumerContact: String
     
-    // MARK: - Properties
-    
-    let id: String
-    
-    let text: String
+    /// The customer's position in the queue
+    let positionInQueue: Int
 }
 
-// MARK: - Codable
+// MARK: - Decodable
 
-extension PluginMessageTitleDTO: Codable {
+extension SetPositionInQueueEventDataDTO: Decodable {
     
     enum CodingKeys: CodingKey {
+        case consumerContact
+        case positionInQueue
+    }
+    
+    enum ConsumerContactCodingKeys: CodingKey {
         case id
-        case type
-        case text
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.positionInQueue = try container.decode(Int.self, forKey: .positionInQueue)
         
-        self.id = try container.decode(String.self, forKey: .id)
-        self.text = try container.decode(String.self, forKey: .text)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(id, forKey: .id)
-        try container.encode(ElementType.title.rawValue, forKey: .type)
-        try container.encode(text, forKey: .text)
+        let consumerContainer = try container.nestedContainer(keyedBy: ConsumerContactCodingKeys.self, forKey: .consumerContact)
+        self.consumerContact = try consumerContainer.decode(String.self, forKey: .id)
     }
 }

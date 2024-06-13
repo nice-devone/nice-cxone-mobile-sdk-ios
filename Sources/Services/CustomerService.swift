@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -24,15 +24,17 @@ class CustomerService: CustomerProvider {
     weak var delegate: CXoneChatDelegate?
     
     private let socketService: SocketService
+    private let threadsService: ChatThreadsService?
     
     private var firstName: String?
     private var lastName: String?
     
     // MARK: - Init
     
-    init(connectionContext: ConnectionContext, socketService: SocketService) {
+    init(connectionContext: ConnectionContext, socketService: SocketService, threads: ChatThreadsProvider) {
         self.connectionContext = connectionContext
         self.socketService = socketService
+        self.threadsService = threads as? ChatThreadsService
     }
     
     // MARK: - Implementation
@@ -106,6 +108,11 @@ extension CustomerService {
 
 extension CustomerService {
     
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func processCustomerAuthorizedEvent(_ event: CustomerAuthorizedEventDTO) throws {
         LogManager.trace("Processing customer authorized")
         
@@ -123,12 +130,19 @@ extension CustomerService {
             )
         }
         
-        processCustomerReconnectEvent()
+        try processCustomerReconnectEvent()
     }
     
-    func processCustomerReconnectEvent() {
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func processCustomerReconnectEvent() throws {
         LogManager.trace("Processing customer reconnect")
         
-        delegate?.onConnect()
+        connectionContext.chatState = .connected
+        delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        
+        try threadsService?.handleForCurrentChatMode(connectionContext.chatMode)
     }
 }

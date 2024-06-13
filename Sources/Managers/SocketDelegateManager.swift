@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 
 import Foundation
 
-class SocketDelegateManager: SocketDelegate {
+class SocketDelegateManager {
     
     // MARK: - Properties
+    
+    let socketService: SocketService
     
     weak var delegate: CXoneChatDelegate?
     
@@ -28,16 +30,23 @@ class SocketDelegateManager: SocketDelegate {
     // MARK: - Init
     
     init(
+        socketService: SocketService,
         threads: ChatThreadsProvider,
         customer: CustomerProvider,
         connection: ConnectionProvider
     ) {
+        self.socketService = socketService
         self.threadsService = threads as? ChatThreadsService
         self.customerService = customer as? CustomerService
         self.connectionService = connection as? ConnectionService
+        
+        socketService.delegate = self
     }
-    
-    // MARK: - Methods
+}
+
+// MARK: - SocketDelegate
+
+extension SocketDelegateManager: SocketDelegate {
     
     func handle(message: String) {
         LogManager.trace("Handling a message - \(message.formattedJSON ?? message)")
@@ -56,16 +65,16 @@ class SocketDelegateManager: SocketDelegate {
     }
     
     func didReceiveError(_ error: Error) {
-        switch error {
-        case _ where (error as? OperationError)?.errorCode == .recoveringThreadFailed:
+        switch (error as? OperationError)?.errorCode {
+        case .recoveringThreadFailed, .recoveringLiveChatFailed:
             threadsService?.processRecoveringThreadFailedError(error)
-        case _ where (error as? OperationError)?.errorCode == .customerReconnectFailed:
+        case .customerReconnectFailed:
             do {
                 try refreshToken()
             } catch {
                 delegate?.onError(error)
             }
-        case _ where (error as? OperationError)?.errorCode == .tokenRefreshFailed:
+        case .tokenRefreshFailed:
             delegate?.onTokenRefreshFailed()
         default:
             delegate?.onError(error)
@@ -89,6 +98,7 @@ class SocketDelegateManager: SocketDelegate {
 
 private extension SocketDelegateManager {
     
+    // swiftlint:disable:next function_body_length
     func resolveGenericEventData(_ eventData: Data) throws {
         let event = try eventData.decode() as GenericEventDTO
         let eventType = event.eventType ?? event.postback?.eventType
@@ -101,38 +111,44 @@ private extension SocketDelegateManager {
         }
         
         switch eventType {
+        case .eventInS3:
+            try socketService.downloadEventContentFromS3(try eventData.decode())
         case .senderTypingStarted:
-            threadsService?.processAgentTypingEvent(try eventData.decode() as AgentTypingEventDTO, isTyping: true)
+            threadsService?.processAgentTypingEvent(try eventData.decode(), isTyping: true)
         case .senderTypingEnded:
-            threadsService?.processAgentTypingEvent(try eventData.decode() as AgentTypingEventDTO, isTyping: false)
+            threadsService?.processAgentTypingEvent(try eventData.decode(), isTyping: false)
         case .messageCreated:
-            try threadsService?.processMessageCreatedEvent(eventData)
+            try threadsService?.processMessageCreatedEvent(try eventData.decode())
         case .threadRecovered:
-            try threadsService?.processThreadRecoveredEvent(try eventData.decode() as ThreadRecoveredEventDTO)
+            try threadsService?.processThreadRecoveredEvent(try eventData.decode())
         case .messageReadChanged:
-            try threadsService?.processMessageReadChangeEvent(try eventData.decode() as MessageReadByAgentEventDTO)
+            try threadsService?.processMessageReadChangeEvent(try eventData.decode())
         case .contactInboxAssigneeChanged:
-            try threadsService?.processContactInboxAssigneeChangedEvent(try eventData.decode() as ContactInboxAssigneeChangedEventDTO)
+            try threadsService?.processContactInboxAssigneeChangedEvent(try eventData.decode())
         case .threadListFetched:
             try threadsService?.processThreadListFetchedEvent(event)
         case .customerAuthorized:
-            try customerService?.processCustomerAuthorizedEvent(try eventData.decode() as CustomerAuthorizedEventDTO)
+            try customerService?.processCustomerAuthorizedEvent(try eventData.decode())
         case .customerReconnected:
-            customerService?.processCustomerReconnectEvent()
+            try customerService?.processCustomerReconnectEvent()
         case .moreMessagesLoaded:
-            try threadsService?.processMoreMessagesLoaded(try eventData.decode() as MoreMessagesLoadedEventDTO)
+            try threadsService?.processMoreMessagesLoaded(try eventData.decode())
         case .threadArchived:
             threadsService?.processThreadArchivedEvent()
         case .tokenRefreshed:
-            connectionService?.saveAccessToken(try eventData.decode() as TokenRefreshedEventDTO)
+            connectionService?.saveAccessToken(try eventData.decode())
         case .threadMetadataLoaded:
-            try threadsService?.processThreadMetadataLoadedEvent(try eventData.decode() as ThreadMetadataLoadedEventDTO)
-        case .threadUpdated:
-            delegate?.onThreadUpdate()
+            try threadsService?.processThreadMetadataLoadedEvent(try eventData.decode())
         case .fireProactiveAction:
             try connectionService?.processProactiveAction(eventData)
         case .caseStatusChanged:
-            try threadsService?.processCaseStatusChangedEvent(try eventData.decode() as CaseStatusChangedEventDTO)
+            try threadsService?.processCaseStatusChangedEvent(try eventData.decode())
+        case .setPositionInQueue:
+            try threadsService?.processSetPositionInQueueEvent(try eventData.decode())
+        case .liveChatRecovered:
+            try threadsService?.processLiveChatRecoveredEvent(try eventData.decode())
+        case .custom:
+            delegate?.onCustomEventMessage(eventData)
         case .some:
             LogManager.info("Trying to handle unknown message event type - \(String(describing: eventType))")
         case .none:

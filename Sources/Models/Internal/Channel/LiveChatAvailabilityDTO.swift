@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,26 @@
 
 import Foundation
 
-enum MessagePluginMapper {
+struct LiveChatAvailabilityDTO: Equatable {
     
-    static func map(_ entity: MessagePlugin) throws -> MessagePluginDTO {
-        MessagePluginDTO(text: entity.text, postback: entity.postback, element: try PluginMessageTypeMapper.map(entity.element))
+    // MARK: - Properties
+    
+    private static let onlineStatus = "online"
+    
+    let isOnline: Bool
+}
+
+// MARK: - Decodable
+
+extension LiveChatAvailabilityDTO: Decodable {
+    
+    enum CodingKeys: CodingKey {
+        case status
     }
     
-    static func map(_ entity: MessagePluginDTO) -> MessagePlugin {
-        MessagePlugin(text: entity.text, postback: entity.postback, element: PluginMessageTypeMapper.map(entity.element))
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.isOnline = try container.decode(String.self, forKey: .status) == Self.onlineStatus
     }
 }

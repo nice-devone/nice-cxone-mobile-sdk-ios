@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -54,27 +54,13 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.customerCustomFields.set(testDictionary))
     }
     
-    func testSetCustomerFieldsDontAdd() async throws {
-        try await setUpConnection(contactCustomFields: [.selector(MockData.genderSelectorCustomField)])
-        
-        XCTAssertNoThrow(try CXoneChat.threads.customFields.set(["key": "value"], for: testThread.idOnExternalPlatform))
-        XCTAssertTrue((CXoneChat.threads.customFields.get(for: testThread.idOnExternalPlatform) as [CustomFieldType]).isEmpty)
-    }
-    
-    func testSetContactFieldsDontAdd() async throws {
-        try await setUpConnection(customerCustomFields: [.selector(MockData.genderSelectorCustomField)])
-        
-        XCTAssertNoThrow(try CXoneChat.customerCustomFields.set(["key": "value"]))
-        XCTAssertTrue((CXoneChat.customerCustomFields.get() as [CustomFieldType]).isEmpty)
-    }
-    
     func testGetContactFieldsForSingleThread() async throws {
-        try await setUpConnection(contactCustomFields: [.selector(MockData.genderSelectorCustomField)])
+        try await setUpConnection()
         
         XCTAssertNoThrow(try CXoneChat.threads.customFields.set(testDictionary, for: testThread.idOnExternalPlatform))
         XCTAssertEqual(
             CXoneChat.threads.customFields.get(for: testThread.idOnExternalPlatform),
-            [CustomFieldTypeMapper.map(from: .selector(MockData.genderSelectorCustomField))]
+            Dictionary<String, String>(uniqueKeysWithValues: [MockData.genderSelectorCustomField].map { ($0.ident, $0.value ?? "") })
         )
     }
     
@@ -83,14 +69,11 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         let threadB = ChatThread(id: UUID(), state: .ready)
         
         let dictionaryA = ["firstName": "Peter"]
-        let dataA: [CustomFieldType] = [CustomFieldTypeMapper.map(from: .textField(MockData.nameTextCustomField))]
+        let dataA = Dictionary<String, String>(uniqueKeysWithValues: [MockData.nameTextCustomField].map { ($0.ident, $0.value ?? "") })
         let dictionaryB = ["email": "peter.parker@gmail.com"]
-        let dataB: [CustomFieldType] = [CustomFieldTypeMapper.map(from: .textField(MockData.emailTextCustomField))]
+        let dataB = Dictionary<String, String>(uniqueKeysWithValues: [MockData.emailTextCustomField].map { ($0.ident, $0.value ?? "") })
         
-        try await setUpConnection(isMultithread: true, contactCustomFields: [
-            .textField(MockData.nameTextCustomField),
-            .textField(MockData.emailTextCustomField)
-        ])
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryA, for: threadA.id))
         XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryB, for: threadB.id))
@@ -100,11 +83,7 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
     }
     
     func testUpdateCustomerCustomFields() async throws {
-        try await setUpConnection(isMultithread: true, customerCustomFields: [
-            .textField(CustomFieldTextFieldDTO(ident: "key1", label: "Key 1", value: nil, updatedAt: .distantPast, isEmail: false)),
-            .textField(CustomFieldTextFieldDTO(ident: "key2", label: "Key 2", value: nil, updatedAt: .distantPast, isEmail: false)),
-            .textField(CustomFieldTextFieldDTO(ident: "key3", label: "Key 3", value: nil, updatedAt: .distantPast, isEmail: false))
-        ])
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         customerFieldsService.updateFields([
             CustomFieldDTO(ident: "key1", value: "value1", updatedAt: dateProvider.now),
@@ -126,10 +105,8 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
     }
     
     func testUpdateContactCustomFields() async throws {
-        try await setUpConnection(isMultithread: true, contactCustomFields: [
-            .textField(MockData.nameTextCustomField),
-            .textField(MockData.emailTextCustomField)
-        ])
+        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
+        
         let threadId = UUID()
         
         contactFieldsService.updateFields(

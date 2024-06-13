@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -295,7 +295,7 @@ private extension AnalyticsProviderTests {
         ) {
             try await during()
 
-            await waitForExpectations(timeout: 10.0)
+            await fulfillment(of: [expectation], timeout: 10.0)
         }
 
         XCTAssertEqual(expects.count, requests.count)
@@ -334,7 +334,8 @@ private extension AnalyticsProviderTests {
                 return l == r
             case let (.some(l as NSDictionary), .some(r as NSDictionary)):
                 return matches(lhs: l, rhs: r)
-            default:                                return false
+            default:                                
+                return false
             }
         }
 

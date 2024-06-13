@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ import Foundation
 enum MessageListPickerMapper {
     
     static func map(from entity: MessageListPickerDTO) -> MessageListPicker {
-        MessageListPicker(title: entity.title, text: entity.text, elements: entity.elements.map(MessageSubElementMapper.map))
+        MessageListPicker(title: entity.title, text: entity.text, buttons: entity.buttons.map(MessageSubElementMapper.map))
     }
     
     static func map(from entity: MessageListPicker) -> MessageListPickerDTO {
-        MessageListPickerDTO(title: entity.title, text: entity.text, elements: entity.elements.map(MessageSubElementMapper.map))
+        MessageListPickerDTO(title: entity.title, text: entity.text, buttons: entity.buttons.map(MessageSubElementMapper.map))
     }
 }

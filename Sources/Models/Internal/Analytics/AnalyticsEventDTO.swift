@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ struct AnalyticsEventDTO {
         type: AnalyticsEventType,
         visitId: UUID,
         destinationId: UUID,
-        createdAt: Date = Date(),
+        createdAt: Date,
         data: Encodable = [String: String]()
     ) {
         self.eventId = eventId
@@ -48,7 +48,7 @@ struct AnalyticsEventDTO {
         eventId: UUID = UUID(),
         type: AnalyticsEventType,
         connection: ConnectionContext,
-        createdAt: Date = Date(),
+        createdAt: Date,
         data: Encodable = [String: String]()
     ) throws {
         guard let visitId = connection.visitId else {

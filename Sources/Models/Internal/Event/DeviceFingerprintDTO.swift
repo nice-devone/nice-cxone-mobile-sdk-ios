@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,60 +17,77 @@ import Foundation
 import UIKit
 
 /// Represents fingerprint data about the customer.
-struct DeviceFingerprintDTO: Codable {
+struct DeviceFingerprintDTO {
+    /// Country code per locale.
+    let country: String?
 
-    let browser: String
+    /// Current IP address if available.
+    let ipAddress: String?
 
-    let browserVersion: String
+    /// Language code per locale.
+    let language: String?
 
-    let country: String
-
-    // swiftlint:disable:next identifier_name
-    let ip: String
-
-    let language: String
-
-    let location: String
+    /// Current location if available.
+    let location: String?
 
     /// The type of application the customer is using (native or web app).
-    let applicationType: String
+    let applicationType: String?
 
     /// The operating system the customer is currently using.
-    let os: String
-    // swiftlint:disable:previous identifier_name
-    
+    let operatingSystem: String?
+
     /// The operating system version that the customer is currently using.
-    let osVersion: String
+    let osVersion: String?
 
     /// The type of device that the customer is currently using.
-    let deviceType: String
+    let deviceType: String?
 
     /// The token of the device for push notifications.
-    let deviceToken: String
+    let deviceToken: String?
 
     init(
-        browser: String = "",
-        browserVersion: String = "",
-        country: String = "",
-        ip: String = "", // swiftlint:disable:this identifier_name
-        language: String = "",
-        location: String = "",
-        applicationType: String = "native",
-        os: String = "iOS", // swiftlint:disable:this identifier_name
-        osVersion: String = UIDevice.current.systemVersion,
-        deviceType: String = "mobile",
-        deviceToken: String = ""
+        country: String? = Locale.current.countryCode,
+        ipAddress: String? = nil,
+        language: String? = Locale.current.languageCode,
+        location: String? = nil,
+        applicationType: String? = "native",
+        operatingSystem: String? = UIDevice.current.systemName,
+        osVersion: String? = UIDevice.current.systemVersion,
+        deviceType: String? = "mobile",
+        deviceToken: String? = nil
     ) {
-        self.browser = browser
-        self.browserVersion = browserVersion
         self.country = country
-        self.ip = ip
+        self.ipAddress = ipAddress
         self.language = language
         self.location = location
         self.applicationType = applicationType
-        self.os = os
+        self.operatingSystem = operatingSystem
         self.osVersion = osVersion
         self.deviceType = deviceType
         self.deviceToken = deviceToken
+    }
+}
+
+private extension Locale {
+    var countryCode: String? {
+        if #available(iOS 16, *) {
+            region?.identifier
+        } else {
+            regionCode
+        }
+    }
+}
+
+extension DeviceFingerprintDTO: Codable {
+    enum CodingKeys: String, CodingKey {
+        case country
+        case ipAddress = "ip"
+        case language
+        case location
+        case applicationType
+        case operatingSystem = "os"
+        case osVersion
+        case deviceType
+        case deviceToken
     }
 }

@@ -1,36 +1,12 @@
 ![](https://img.shields.io/badge/security-BlackDuck-blue) ![](https://img.shields.io/badge/security-Veracode-blue)
 
-# Get Started with CXone Mobile SDK for iOS
-
-CXone Mobile SDK lets you integrate CXone into your enterprise iOS mobile phone application with operation system iOS 14 and later.
-
-Developing an iOS app using the CXone Mobile package requires the following:
-- An Apple Mac computer
-- Xcode, downloaded, installed and set up
-- Expertise in developing in Swift
-- An iPhone or iPad to test push notifications or features related with real device
-
-
-## Requirements
-
-- iOS 14.0+
-- Swift 5+
-
-
-## SDK Integration
-The sample codes come from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) or [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
+# SDK Integration
+The sample comes from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) or [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
 
 > Important: Complete each of these tasks in given order.
 
-### Import SDK Package to Xcode
 
-1. Open Xcode.
-2. Navigate to `File > Swift Packages > Add Package Dependency...`
-3. Enter the SDK repository URL https://github.com/nice-devone/nice-cxone-mobile-sdk-ios in the search bar.
-4. Select a **Dependency Rule** and specify where you want to save the project. Select your new Xcode project in  **Add to Project**.
-5. Finish package import process with click on **Add Package**.
-
-### Configure OAuth
+## Configure OAuth
 If you're using OAuth to authenticate your app users, use the steps below. Otherwise, skip this section. This must occur just before the  `connect()` method in your application.
 
 CXone Mobile SDK supports OAuth 2.0. You can access OAuth 2.0 APIs using a bearer token. A bearer token is a single string sent in an HTTP Authorization header to act as the authentication of the API request. The string can be any length.
@@ -69,7 +45,8 @@ CXone Mobile SDK supports OAuth 2.0. You can access OAuth 2.0 APIs using a beare
     ```
 5. Have your app navigate the user to the chat view once authentication is complete.
 
-### Connect Your Application to CXone
+
+## Connect Your Application to CXone
 You need to connect your app to **CXone** to begin communication with the **CXone platform** and to create a *Web Socket* connection. You also need to authorize your app users to use the chat features so they can begin loading threads.
 
 > Important: To use the CXone analytic APIs, it is necessary to have the chat in the `.prepared` state, which is achieved using the `ConnectionProvider.prepare(environment:brandId:channelId:)` method, otherwise the SDK will respond with an `illegalChatState` error. Also, the *Web Socket* should only run when necessary. Take care to call `ConnectionProvider.connect()` only for active chat conversations purposes.
@@ -80,10 +57,11 @@ You need to connect your app to **CXone** to begin communication with the **CXon
     ```
 2. Register `onError(_ error:)` to be able to handle errors occured during thread/s load or other processes.
 
-### Thread handling
-You will handle the CXone Mobile SDK for iOS as an extension of a manager. You can make your app single- or multi-threaded. 
 
-Set up your app to handle single-thread handling, multi-thread handling, or both. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time.
+## Thread handling
+You will handle the CXone Mobile SDK for iOS as an extension of a manager. You have the option to use either an asynchronous or live chat channel. The asynchronous channel can be configured in either a single-threaded or multi-threaded configuration.
+
+Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.
 
 Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/index.html) as you work.
 
@@ -103,11 +81,11 @@ Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/inde
     }
     ```
 
-#### Single-thread - Set Up the Thread Manager
+### Single-thread - Set Up the Thread Manager
 In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:
 
 1. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods in the manager. There are two scenarios:
-    a) No thread available and pre-chat has to be filled-in before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be fill-ed in. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadsProvider.create(with:)` method.
+    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadsProvider.create(with:)` method.
     ```swift
     extension Manager: CXoneChatDelegate {
 
@@ -135,7 +113,7 @@ In this moment, you should be already connected to the Web Socket with SDK metho
     }
     ```
 
-    b) Thread recovered with previously sent messages or no form needs to be filled-in – the SDK successfully recovered previously created thread or created a new chat thread. The host application is notified the Manager via `onThreadUpdated(_:)` delegate method. From this point, the UI can be reloaded with thread data and thread is ready to use.
+    b) Thread recovered with previously sent messages or no form needs to be completed – the SDK successfully recovered previously created thread or created a new chat thread. The host application is notified the Manager via `onThreadUpdated(_:)` delegate method. From this point, the UI can be reloaded with thread data and thread is ready to use.
     ```swift
     extension Manager: CXoneChatDelegate {
 
@@ -144,7 +122,7 @@ In this moment, you should be already connected to the Web Socket with SDK metho
     }
     ```
 
-2. *(optional)* In case you had to fill-in a pre-chat form, you have to provide those custom fields to the SDK with threads provider method `create(with:)`.
+2. *(optional)* In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method `create(with:)`.
     ```swift
     func createNewThread(with customFields: [String: String]? = nil) {
         do {
@@ -161,7 +139,7 @@ In this moment, you should be already connected to the Web Socket with SDK metho
 
 > Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: Single Thread](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-single-thread.md).
 
-#### Multi-thread - Set Up the Thread List
+### Multi-thread - Set Up the Thread List
 Handling the CXone Mobile SDK thread list is up to you, based on used design pattern. In the examples shown here, sample application is handling the CXoneChatSDK delegate as an extension of the **DefaultChatListViewModel**. After you set up the extension, you don't need to inherit whole CXoneChat delegate - it has its default implementation so you can inherit just those methods you need in the current chat context.
 
 As already mentioned, it is not necessary to load previously created threads because it is automatically handled with `ConnectionProvider.connect()` method. For multi thread continue with following steps:
@@ -207,7 +185,68 @@ As already mentioned, it is not necessary to load previously created threads bec
 
 > Note: For detailed information on how to handle multi-thread channel configuration, see [Case Study: Multi Thread](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-multi-thread.md).
 
-#### Pre-Chat Survey
+### LiveChat - Set Up the Thread Manager
+Live chat channel may also be offline, based on the chat state `.offline` which can be obtained via `onChatUpdated(_:mode:)` API method. It his case, there is no
+
+In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:
+
+1. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods in the manager. There are two scenarios:
+    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadsProvider.create(with:)` method.
+    ```swift
+    extension Manager: CXoneChatDelegate {
+
+    func onChatUpdated(_:mode:) {
+        guard chatState >= .ready else {
+            return
+        }
+
+        ...
+        if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+            LogManager.trace("Chat(`.singlethread`) is ready to use but there is no thread to use but firstly it is need to fill in the prechat")
+        
+            let fieldEntities = preChatSurvey.customFields.map(FormCustomFieldTypeMapper.map)
+
+            coordinator.presentForm(title: preChatSurvey.name, customFields: fieldEntities) { [weak self] customFields in
+                LogManager.trace("Pre-chat was filled successfully -> create a new thread")
+                        
+                self?.createNewThread(with: customFields)
+            }
+        } else {
+            LogManager.trace("Chat is ready to use but there is no thread to use -> chat mode = `.singlethread` -> creating a new thread")
+
+            createNewThread()
+        }
+    }
+    ```
+
+    b) Thread recovered with previously sent messages or no form needs to be completed – the SDK successfully recovered previously created thread or created a new chat thread. The host application is notified the Manager via `onThreadUpdated(_:)` delegate method. From this point, the UI can be reloaded with thread data and thread is ready to use.
+    ```swift
+    extension Manager: CXoneChatDelegate {
+
+    func onThreadUpdated(_ thread: ChatThread) {
+        ...
+    }
+    ```
+
+2. *(optional)* In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method `create(with:)`.
+    ```swift
+    func createNewThread(with customFields: [String: String]? = nil) {
+        do {
+            if let customFields {
+                try CXoneChat.shared.threads.create(with: customFields)
+            } else {
+                try CXoneChat.shared.threads.create()
+            }
+        } catch {
+            ...
+        }
+    }
+    ```
+
+> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: LiveChat](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-livechat.md).
+
+
+## Pre-Chat Survey
 Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from `ChatThreadsProvider.prechatSurvey`. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:
 1. Check that a pre-chat has been defined for the channel.
     ```swift
