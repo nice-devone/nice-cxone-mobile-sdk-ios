@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CXoneChatSDK  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a title="CXoneChatSDK  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">CXoneChatSDK 2.0.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">CXoneChatSDK</a>
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LogManager.html">LogManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LogManager/Level.html">– Level</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/LogManager/Verbosity.html">– Verbosity</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/ActionType.html">ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/LogDelegate.html">LogDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/MessagesProvider.html">MessagesProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <p><img src="https://img.shields.io/badge/security-BlackDuck-blue" alt=""> <img src="https://img.shields.io/badge/security-Veracode-blue" alt=""></p>
+<h1 id='sdk-integration' class='heading'>SDK Integration</h1>
+
+<p>The sample comes from a sample app that you can get from <a href="https://github.com/nice-devone/nice-cxone-mobile-sample-ios">CXone Mobile SDK sample application</a> or <a href="https://github.com/nice-devone/nice-cxone-mobile-ui-ios">UI Module</a>.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>Complete each of these tasks in given order.</p>
+
+</div>
+<h2 id='configure-oauth' class='heading'>Configure OAuth</h2>
+
+<p>If you&rsquo;re using OAuth to authenticate your app users, use the steps below. Otherwise, skip this section. This must occur just before the  <code>connect()</code> method in your application.</p>
+
+<p>CXone Mobile SDK supports OAuth 2.0. You can access OAuth 2.0 APIs using a bearer token. A bearer token is a single string sent in an HTTP Authorization header to act as the authentication of the API request. The string can be any length.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>The code examples in this section use Login with Amazon. Your implementation will look different, depending on your OAuth provider.</p>
+
+<ol>
+<li>Configure your chat channel for use with OAuth in  CXone.</li>
+</ol>
+
+</div>
+<pre class="highlight plaintext"><code>![](https://help.incontact.com/Dk204am2Whc/Content/CXoneMobileSDK/iOS/Images/OAuthForm.png)
+</code></pre>
+
+<ol>
+<li><p>Configure your application to prompt the user to sign in with your chosen OAuth service.</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="kt">AMZNAuthorizeRequest</span><span class="p">()</span>
+<span class="n">request</span><span class="o">.</span><span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="kt">AMZNProfileScope</span><span class="o">.</span><span class="nf">userID</span><span class="p">(),</span> <span class="kt">AMZNProfileScope</span><span class="o">.</span><span class="nf">profile</span><span class="p">()]</span>
+<span class="n">request</span><span class="o">.</span><span class="n">codeChallengeMethod</span> <span class="o">=</span> <span class="s">"S256"</span>
+<span class="n">request</span><span class="o">.</span><span class="n">grantType</span> <span class="o">=</span> <span class="o">.</span><span class="n">code</span>
+</code></pre></li>
+<li><p>If your OAuth service requires a code verifier and code challenge, have your app generate those and pass the code verifier to the SDK with the <code><a href="Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP15setCodeVerifieryySSF">CustomerProvider.setCodeVerifier(_:)</a></code> method.</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">codeVerifier</span> <span class="o">=</span> <span class="k">try</span> <span class="nf">generateCodeVerifier</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">codeChallenge</span> <span class="o">=</span> <span class="k">try</span> <span class="nf">generateCodeChallenge</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="n">codeVerifier</span><span class="p">)</span>
+
+    <span class="kt">CXOneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="nf">setCodeVerifier</span><span class="p">(</span><span class="n">codeVerifier</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></li>
+<li><p>Configure your app to receive the authorization code when the user signs in and pass it to the SDK using the <code><a href="Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP20setAuthorizationCodeyySSF">CustomerProvider.setAuthorizationCode(_:)</a></code> method.</p>
+<pre class="highlight swift"><code><span class="kt">AMZNAuthorizationManager</span><span class="o">.</span><span class="nf">shared</span><span class="p">()</span><span class="o">.</span><span class="nf">authorize</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="n">result</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+    <span class="o">...</span>
+    <span class="kt">CXOneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="nf">setAuthorizationCode</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">authorizationCode</span><span class="p">)</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></li>
+<li><p>Have your app navigate the user to the chat view once authentication is complete.</p></li>
+</ol>
+<h2 id='connect-your-application-to-cxone' class='heading'>Connect Your Application to CXone</h2>
+
+<p>You need to connect your app to <strong>CXone</strong> to begin communication with the <strong>CXone platform</strong> and to create a <em>Web Socket</em> connection. You also need to authorize your app users to use the chat features so they can begin loading threads.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>To use the CXone analytic APIs, it is necessary to have the chat in the <code>.prepared</code> state, which is achieved using the <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">ConnectionProvider.prepare(environment:brandId:channelId:)</a></code> method, otherwise the SDK will respond with an <code>illegalChatState</code> error. Also, the <em>Web Socket</em> should only run when necessary. Take care to call <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> only for active chat conversations purposes.</p>
+
+</div>
+
+<ol>
+<li>Add <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> to your app code as early on as possible to fully track user activity. If you&rsquo;ve configured OAuth for your app, <code>connect()</code> should immediately follow the OAuth code. It uses previously set <code><a href="Enums/Environment.html">Environment</a></code>, brandId and channelId using the <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">ConnectionProvider.prepare(environment:brandId:channelId:)</a></code> method.
+<code>swift
+try await CXoneChat.shared.connection.connect()
+</code></li>
+<li>Register <code>onError(_ error:)</code> to be able to handle errors occured during thread/s load or other processes.</li>
+</ol>
+<h2 id='thread-handling' class='heading'>Thread handling</h2>
+
+<p>You will handle the CXone Mobile SDK for iOS as an extension of a manager. You have the option to use either an asynchronous or live chat channel. The asynchronous channel can be configured in either a single-threaded or multi-threaded configuration.</p>
+
+<p>Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.</p>
+
+<p>Use the <a href="https://cautious-sniffle-1d4a9c48.pages.github.io/index.html">iOS SDK library</a> as you work.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>The SDK utilizes a state-based architecture so it is not necessary to handle everything on your own. For example after establishing a connection, it is not necessary to load thread(s) on your own. The SDK automatically recovers existing or creates a new thread for single-threaded and loads thread metadata for multi-threaded channel configuration. However, if the chat channel contains a pre-chat survey, it is necessary to fill in the survey and manually create a new thread using the <code><a href="Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">ChatThreadsProvider.create(with:)</a></code> method, to which custom fields must be passed. </p>
+
+</div>
+
+<ol>
+<li>Choose the manager where you want to add the SDK. Open the file.</li>
+<li>Import the SDKs into the controller you chose.
+<code>swift
+import CXoneChatSDK
+</code></li>
+<li>Add the inheritance to the manager and set up the delegate. You can define a variable on the class to access the shared functionality from the SDK client or call the SDK singleton directly.
+<code>swift
+override func viewDidSubscribe() {
+    ...
+    CXoneChat.shared.delegate = self
+    ...
+}
+</code></li>
+</ol>
+<h3 id='single-thread-set-up-the-thread-manager' class='heading'>Single-thread - Set Up the Thread Manager</h3>
+
+<p>In this moment, you should be already connected to the Web Socket with SDK method <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code>. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:</p>
+
+<ol>
+<li><p>Register <code>onChatUpdated(_:mode:)</code> and <code>onThreadUpdated(_:)</code> delegate methods in the manager. There are two scenarios:
+a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with <code>onChatUpdated(_:mode:)</code> delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via <code><a href="Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">ChatThreadsProvider.create(with:)</a></code> method.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onChatUpdated</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span><span class="nv">mode</span><span class="p">:)</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="n">chatState</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="n">ready</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="o">...</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">preChatSurvey</span> <span class="o">=</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="n">preChatSurvey</span> <span class="p">{</span>
+        <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Chat(`.singlethread`) is ready to use but there is no thread to use but firstly it is need to fill in the prechat"</span><span class="p">)</span>
+
+        <span class="k">let</span> <span class="nv">fieldEntities</span> <span class="o">=</span> <span class="n">preChatSurvey</span><span class="o">.</span><span class="n">customFields</span><span class="o">.</span><span class="nf">map</span><span class="p">(</span><span class="kt">FormCustomFieldTypeMapper</span><span class="o">.</span><span class="n">map</span><span class="p">)</span>
+
+        <span class="n">coordinator</span><span class="o">.</span><span class="nf">presentForm</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="n">preChatSurvey</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nv">customFields</span><span class="p">:</span> <span class="n">fieldEntities</span><span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="n">customFields</span> <span class="k">in</span>
+            <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Pre-chat was filled successfully -&gt; create a new thread"</span><span class="p">)</span>
+
+            <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">createNewThread</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">customFields</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Chat is ready to use but there is no thread to use -&gt; chat mode = `.singlethread` -&gt; creating a new thread"</span><span class="p">)</span>
+
+        <span class="nf">createNewThread</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>b) Thread recovered with previously sent messages or no form needs to be completed – the SDK successfully recovered previously created thread or created a new chat thread. The host application is notified the Manager via <code>onThreadUpdated(_:)</code> delegate method. From this point, the UI can be reloaded with thread data and thread is ready to use.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onThreadUpdated</span><span class="p">(</span><span class="n">_</span> <span class="nv">thread</span><span class="p">:</span> <span class="kt">ChatThread</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></li>
+<li><p><em>(optional)</em> In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method <code>create(with:)</code>.</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createNewThread</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">customFields</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">customFields</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></li>
+</ol>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-single-thread.md">Case Study: Single Thread</a>.</p>
+
+</div>
+<h3 id='multi-thread-set-up-the-thread-list' class='heading'>Multi-thread - Set Up the Thread List</h3>
+
+<p>Handling the CXone Mobile SDK thread list is up to you, based on used design pattern. In the examples shown here, sample application is handling the CXoneChatSDK delegate as an extension of the <strong>DefaultChatListViewModel</strong>. After you set up the extension, you don&rsquo;t need to inherit whole CXoneChat delegate - it has its default implementation so you can inherit just those methods you need in the current chat context.</p>
+
+<p>As already mentioned, it is not necessary to load previously created threads because it is automatically handled with <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> method. For multi thread continue with following steps:</p>
+
+<ol>
+<li><p>Register <code>onChatUpdated(_:mode:)</code> and <code>onThreadsUpdated(_:)</code> delegate methods in the manager. There are two scenarios:
+a) No threads available – the SDK finished load process without receiving any threads from the BE -&gt; Empty thread list should be presented.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onChatUpdated</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span><span class="nv">mode</span><span class="p">:)</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>b) Threads have been loaded with their metadata – the SDK successfully loaded thread list and also loaded metadata of each thread -&gt; the UI can be reloaded with threads data.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onThreadsUpdated</span><span class="p">(</span><span class="n">_</span> <span class="nv">thread</span><span class="p">:</span> <span class="kt">ChatThread</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></li>
+<li><p>Multi-threaded channel configuration allows to create a new thread even with another existing one. Also, you can automatically create a new one in case thread list is empty. For a new chat thread, use a threads provider method <code>create()</code>.</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>If your channel configuration contains pre-chat, it is firstly necessary to fill-in the form and then use <code>create(with:)</code> alternative method to provide the custom fields to the SDK.</p>
+
+</div>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createNewThread</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">UUID</span>
+
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">customFields</span> <span class="p">{</span>
+            <span class="n">threadId</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">customFields</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">threadId</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="o">...</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></li>
+</ol>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>For detailed information on how to handle multi-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-multi-thread.md">Case Study: Multi Thread</a>.</p>
+
+</div>
+<h3 id='livechat-set-up-the-thread-manager' class='heading'>LiveChat - Set Up the Thread Manager</h3>
+
+<p>Live chat channel may also be offline, based on the chat state <code>.offline</code> which can be obtained via <code>onChatUpdated(_:mode:)</code> API method. It his case, there is no</p>
+
+<p>In this moment, you should be already connected to the Web Socket with SDK method <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code>. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:</p>
+
+<ol>
+<li><p>Register <code>onChatUpdated(_:mode:)</code> and <code>onThreadUpdated(_:)</code> delegate methods in the manager. There are two scenarios:
+a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with <code>onChatUpdated(_:mode:)</code> delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via <code><a href="Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">ChatThreadsProvider.create(with:)</a></code> method.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onChatUpdated</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span><span class="nv">mode</span><span class="p">:)</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="n">chatState</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="n">ready</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="o">...</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">preChatSurvey</span> <span class="o">=</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="n">preChatSurvey</span> <span class="p">{</span>
+        <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Chat(`.singlethread`) is ready to use but there is no thread to use but firstly it is need to fill in the prechat"</span><span class="p">)</span>
+
+        <span class="k">let</span> <span class="nv">fieldEntities</span> <span class="o">=</span> <span class="n">preChatSurvey</span><span class="o">.</span><span class="n">customFields</span><span class="o">.</span><span class="nf">map</span><span class="p">(</span><span class="kt">FormCustomFieldTypeMapper</span><span class="o">.</span><span class="n">map</span><span class="p">)</span>
+
+        <span class="n">coordinator</span><span class="o">.</span><span class="nf">presentForm</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="n">preChatSurvey</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nv">customFields</span><span class="p">:</span> <span class="n">fieldEntities</span><span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="n">customFields</span> <span class="k">in</span>
+            <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Pre-chat was filled successfully -&gt; create a new thread"</span><span class="p">)</span>
+
+            <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">createNewThread</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">customFields</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="kt">LogManager</span><span class="o">.</span><span class="nf">trace</span><span class="p">(</span><span class="s">"Chat is ready to use but there is no thread to use -&gt; chat mode = `.singlethread` -&gt; creating a new thread"</span><span class="p">)</span>
+
+        <span class="nf">createNewThread</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>b) Thread recovered with previously sent messages or no form needs to be completed – the SDK successfully recovered previously created thread or created a new chat thread. The host application is notified the Manager via <code>onThreadUpdated(_:)</code> delegate method. From this point, the UI can be reloaded with thread data and thread is ready to use.</p>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Manager</span><span class="p">:</span> <span class="kt">CXoneChatDelegate</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nf">onThreadUpdated</span><span class="p">(</span><span class="n">_</span> <span class="nv">thread</span><span class="p">:</span> <span class="kt">ChatThread</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></li>
+<li><p><em>(optional)</em> In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method <code>create(with:)</code>.</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createNewThread</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="k">let</span> <span class="nv">customFields</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">customFields</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="kt">CXoneChat</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="nf">create</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></li>
+</ol>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-livechat.md">Case Study: LiveChat</a>.</p>
+
+</div>
+<h2 id='pre-chat-survey' class='heading'>Pre-Chat Survey</h2>
+
+<p>Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from <code>ChatThreadsProvider.prechatSurvey</code>. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:</p>
+
+<ol>
+<li>Check that a pre-chat has been defined for the channel.
+<code>swift
+if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+    ...
+}
+</code></li>
+<li>Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by a <code>presentForm(title:customFields:onFinished:)</code> UI module method.
+<code>swift
+/// A function that presents a form view with custom fields to collect user input.
+///
+/// This function is designed to simplify the presentation of a dynamic form with custom fields,
+/// allowing you to specify the form&#39;s title and structure.
+/// Once the user completes the form, the `onFinished` closure is invoked, providing access to the collected data for further processing.
+///
+/// - Parameters:
+///   - title: The title of the form.
+///   - customFields: An array of custom form field types (conforming to `FormCustomFieldType`) to define the form&#39;s structure.
+///   - onFinished: A closure that is called when the user completes the form, passing a dictionary of collected data.
+///
+/// ## Example
+///</code>
+/// let customFields = [
+///     FormCustomFieldType(label: &ldquo;Email&rdquo;, isRequired: false, ident: &ldquo;emailField&rdquo;, value: &ldquo;<a href="mailto:john.doe@gmail.com">john.doe@gmail.com</a>&rdquo;),
+///     FormCustomFieldType(label: &ldquo;First Name&rdquo;, isRequired: true, ident: &ldquo;firstName&rdquo;, value: &ldquo;John&rdquo;),
+///     FormCustomFieldType(label: &ldquo;Last Name&rdquo;, isRequired: true, ident: &ldquo;lastName&rdquo;, value: &ldquo;Doe&rdquo;)
+/// ]
+///
+/// chatCoordinator.presentForm(title: &ldquo;User Details&rdquo;, customFields: customFields) {
+///     &hellip;
+/// }
+/// <code>
+public func presentForm(title: String, customFields: [FormCustomFieldType], onFinished: @escaping ([String: String]) -&gt; Void)
+</code></li>
+<li>Create a new thread with custom fields from the pre-chat survey form controller, as seen in the form completion handler of the code snippet.</li>
+</ol>
+<h2 id='configure-chat-functions' class='heading'>Configure Chat Functions</h2>
+
+<p>How you configure your application to send, receive and display chat messages is unique to your situation. The <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/wiki/ios-samples">iOS Samples</a> section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2024 NICE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

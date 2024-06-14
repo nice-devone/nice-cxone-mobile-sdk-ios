@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CXoneChatError Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Enum/CXoneChatError" class="dashAnchor"></a>
+    <a title="CXoneChatError Enumeration Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CXoneChatSDK 2.0.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CXoneChatSDK</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Enums.html">Enumerations</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        CXoneChatError Enumeration Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LogManager.html">LogManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LogManager/Level.html">– Level</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/ActionType.html">ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>CXoneChatError</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">CXoneChatError</span><span class="p">:</span> <span class="kt">LocalizedError</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+
+                </div>
+              </div>
+            <p>The different types of errors that may be experienced.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Errors%20when%20calling%20any%20method"></a>
+                <a name="//apple_ref/swift/Section/Errors when calling any method" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Errors%20when%20calling%20any%20method"></a>
+                  <h3 class="section-name"><span>Errors when calling any method</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/notConnected" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An attempt was made to use a method without connecting first.</p>
+
+<p>Most of the methods in the SDK require a connection to CXone services.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly.
+<div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Make sure you call <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code>
+or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> method first.
+
+</div></li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">notConnected</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/unsupportedChannelConfig" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The method being called is not supported with the current channel configuration.</p>
+
+<p>Some features are available only with multithread channel configuration.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly.
+<div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    The channel is configured as a single-thread and called method requires a feature of multi-thread configuration,
+e.g.  <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6createyyYaKF">create()</a></code>.
+
+</div></li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unsupportedChannelConfig</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidData" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The conversion from object instance to data failed.</p>
+
+<p>SDK is converting an object, like <code>String</code>, to the <code>Data</code> and the conversion failed.</p>
+
+<ul>
+<li>Source of problem: SDK/DFO issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidData</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidThread" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF">invalidThread</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The provided ID for the thread was invalid, so the action could not be performed.</p>
+
+<p>The SDK tried to find required thread but it does not exist or it is no more available.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check if thread exists and you are providing correct thread <code>id</code> which reffers to <code>threadIdOnExternalPlatform</code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidThread</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO14noMoreMessagesyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/noMoreMessages" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO14noMoreMessagesyA2CmF">noMoreMessages</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>There aren&rsquo;t any other messages, so additional messages could not be loaded.</p>
+<div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">noMoreMessages</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO010attachmentD0yA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/attachmentError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO010attachmentD0yA2CmF">attachmentError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The provided attachment was unable to be sent.</p>
+
+<p>CXone service does not receive any/all attachments.</p>
+
+<ul>
+<li>Source of problem: Unstable connection/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check if channel environment works correctly
+or gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">attachmentError</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidFileSize" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF">invalidFileSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The size of the attachment exceeds the allowed size</p>
+
+<p>Channel <code><a href="../Structs/ChannelConfiguration.html#/s:12CXoneChatSDK20ChannelConfigurationV16fileRestrictionsAA04FileG0Vvp">fileRestrictions</a></code> define allowed file size which can be received by the backend</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Attachments should be validated for correct file size by the host application
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidFileSize</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidFileType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF">invalidFileType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The type of the attachment is not included in the allowed file MIME type</p>
+
+<p>Channel <code><a href="../Structs/ChannelConfiguration.html#/s:12CXoneChatSDK20ChannelConfigurationV16fileRestrictionsAA04FileG0Vvp">fileRestrictions</a></code> define allowed file MIME types which can be received by the backned</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Attachments should be validated for correct file type by the host application
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidFileType</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/serverError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The server experienced an internal error and was unable to perform the action.</p>
+
+<p>SDK failed to upload attachment(s).</p>
+
+<ul>
+<li>Source of problem: Unstable connection/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check if channel environment works correctly
+or gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">serverError</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO22recoveringThreadFailedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/recoveringThreadFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO22recoveringThreadFailedyA2CmF">recoveringThreadFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The server experienced an error during recovering a messaging thread or server does not contain any existing chat thread.</p>
+
+<p>This error indicates that thread recovery failed, either because the thread does not exist or for some other server-specific cause.</p>
+
+<ul>
+<li>Source of problem: Information error/DFO issue</li>
+</ul><div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    The SDK throws this error even in case of empty thread list.
+
+</div><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Can be ignored in case of empty thread list.
+Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">recoveringThreadFailed</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/missingParameter(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The parameter has not been set properly or it was unable to unwrap it as a required type.</p>
+
+<p>The SDK tried to unwrap an object but it was missing. Could be internal object or data from the server.</p>
+
+<ul>
+<li>Source of problem: DFO issue/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">missingParameter</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidParameter(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A invalid parameter has been passed to a method call.</p>
+
+<p>This is one of:</p>
+
+<ul>
+<li><code>MessagesProvider.send(message:)</code> was called with no valid postback, empty text, and no attachments.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">invalidParameter</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/missingPreChatCustomFields" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF">missingPreChatCustomFields</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The brand has configured pre-chat survey with contact custom fields which needs to be provided via <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:)</a></code> method.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Fill-up custom fields available in the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP03preB6SurveyAA03PrebG0VSgvp">preChatSurvey</a></code>
+and pass them as a parameter in the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:)</a></code> method.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">missingPreChatCustomFields</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO23unknownCaseCustomFieldsyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/unknownCaseCustomFields" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO23unknownCaseCustomFieldsyA2CmF">unknownCaseCustomFields</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A provided custom field does not have a definition in the case custom fields.</p>
+
+<p>CXone service handles only those custom fields that are configured in the brand settings and others are ignored.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check content of the <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP20channelConfigurationAA07ChannelG0Vvp">channelConfiguration</a></code>,
+specifically <code>ChannelConfiguration/contactCustomFieldDefinitions</code> or your brand settings.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unknownCaseCustomFields</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO27unknownCustomerCustomFieldsyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/unknownCustomerCustomFields" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO27unknownCustomerCustomFieldsyA2CmF">unknownCustomerCustomFields</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A provided custom field does not have a definition in the customer custom fields.</p>
+
+<p>CXone service handles only those custom fields that are configured in the brand settings and others are ignored.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check content of the <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP20channelConfigurationAA07ChannelG0Vvp">channelConfiguration</a></code>,
+specifically <code>ChannelConfiguration/customerCustomFieldDefinitions</code> or your brand settings.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unknownCustomerCustomFields</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/customerAssociationFailure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The SDK instance could not get customer identity possibly because it may not have been set.</p>
+
+<p>Customer identity is necessary for binding threads to the visitor.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">customerAssociationFailure</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Errors%20when%20calling%20connect"></a>
+                <a name="//apple_ref/swift/Section/Errors when calling connect" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Errors%20when%20calling%20connect"></a>
+                  <h3 class="section-name"><span>Errors when calling connect</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO26webSocketConnectionFailureyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/webSocketConnectionFailure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO26webSocketConnectionFailureyA2CmF">webSocketConnectionFailure</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The WebSocket refused to connect.</p>
+
+<p>This error may occur within connection establishing process
+    and it can relate to several issues - wrong IDs, an internet or CXone service connectivity issue or wrong connection URL.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly/DFO issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check entered BrandID and ChannelID. If you are providing your own chatURL or socketURL, double check that these URLs are correct.
+Otherwise, Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">webSocketConnectionFailure</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/channelConfigFailure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The channel configuration could not be retrieved.</p>
+
+<p>This error may occur with getting channel configuration and it can relate to several issues - wrong IDs or wrong connection URL.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check entered BrandID and ChannelID. If you are providing your own chatURL or socketURL, double check that these URLs are correct.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">channelConfigFailure</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO18missingAccessTokenyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/missingAccessToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO18missingAccessTokenyA2CmF">missingAccessToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The customer was successfully authorized, but an access token wasn&rsquo;t returned.</p>
+
+<p>The access token is used in case of OAuth authorization process.</p>
+
+<ul>
+<li>Source of problem: DFO issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">missingAccessToken</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO33customerVisitorAssociationFailureyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/customerVisitorAssociationFailure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO33customerVisitorAssociationFailureyA2CmF">customerVisitorAssociationFailure</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The customer could not be associated with a visitor.</p>
+
+<p>Some events, except customer identity, uses <code>visitorId</code> to match an user.</p>
+
+<ul>
+<li>Source of problem: SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">customerVisitorAssociationFailure</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO14invalidRequestyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidRequest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO14invalidRequestyA2CmF">invalidRequest</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The connection request was invalid and couldn&rsquo;t be completed.</p>
+
+<p><code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code>
+    or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> may throw this error in case of incorrectly set socket enpoint object.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check entered IDs and URLs. Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidRequest</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO17invalidOldestDateyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidOldestDate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO17invalidOldestDateyA2CmF">invalidOldestDate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Thread is missing the timestamp of when the message was created.</p>
+
+<p>Every thread message contains timestamp to be able to identify latest message for loading previously created
+    and not yet loaded messages via <code><a href="../Protocols/MessagesProvider.html#/s:12CXoneChatSDK16MessagesProviderP8loadMore3foryAA0B6ThreadV_tKF">loadMore(for:)</a></code> method.</p>
+
+<ul>
+<li>Source of problem: DFO issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidOldestDate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO10noSuchFileyACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/noSuchFile(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO10noSuchFileyACSScACmF">noSuchFile(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An attached file could not be found.</p>
+
+<p>It has been stored in an unknown location or its location is not accessible from the secure scope and it is not handled.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Store your attachment in the secured scope or in the application documents directory.
+Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">noSuchFile</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO14missingVisitIdyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/missingVisitId" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO14missingVisitIdyA2CmF">missingVisitId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An analytics event has been generated when no visit was available.</p>
+<div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    <code><a href="../Protocols/AnalyticsProvider.html#/s:12CXoneChatSDK17AnalyticsProviderP8viewPage5title3urlySS_SStYaKF">viewPage(title:url:)</a></code> must be called before any other analytics events are generated
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">missingVisitId</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/missingVisitorId" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> or an analytics event has been generated when no visitor id was available.</p>
+<div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+must be called before <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> or any other analytics events are generated.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">missingVisitorId</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/illegalChatState" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unable to trigger the required method because the SDK is not in the required state.</p>
+
+<p>The SDK has to be in correct state to trigger required operation. For example, connecting to the CXone service for chatting with an agent,
+it is firstly necessary to <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> channel configuration
+which leads to the <code><a href="../Enums/ChatState.html#/s:12CXoneChatSDK0B5StateO8preparedyA2CmF">prepared</a></code> state and then it&rsquo;s possible  to <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> to the websocket.</p>
+
+<p>Check <code><a href="../Enums/ChatState.html">ChatState</a></code> for more information.</p>
+<h2 id='source-of-problem' class='heading'>Source of problem</h2>
+
+<p>SDK used incorrectly</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">illegalChatState</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/illegalThreadState" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unable to trigger the required method because the chat thread is not in the required state.</p>
+
+<p>The chat thread has to be in correct state to trigger required operation. 
+For example, to update thread name via <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP10updateName_3forySS_10Foundation4UUIDVtKF">updateName(_:for:)</a></code>
+the thread can not be in <code><a href="../Enums/ChatThreadState.html#/s:12CXoneChatSDK0B11ThreadStateO6closedyA2CmF">closed</a></code> state.</p>
+
+<p>Check <code><a href="../Enums/ChatThreadState.html">ChatThreadState</a></code> for more information.</p>
+<h2 id='source-of-problem' class='heading'>Source of problem</h2>
+
+<p>SDK used incorrectly</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">illegalThreadState</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Properties"></a>
+                  <h3 class="section-name"><span>Properties</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/errorDescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgvp">errorDescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">errorDescription</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Methods"></a>
+                <a name="//apple_ref/swift/Section/Methods" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Methods"></a>
+                  <h3 class="section-name"><span>Methods</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="k">Self</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="k">Self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2024 NICE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>
