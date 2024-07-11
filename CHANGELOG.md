@@ -1,3 +1,12 @@
+<a name="2.0.1"></a>
+# [2.0.1] - 2024-07-11
+
+## CXoneChatSDK
+
+### Bug Fixes
+- Working Live chat set position in queue
+
+
 <a name="2.0.0"></a>
 # [2.0.0] - 2024-06-13
 
