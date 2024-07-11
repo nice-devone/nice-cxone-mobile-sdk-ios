@@ -762,7 +762,7 @@ extension ChatThreadsService {
             return
         }
                 
-        // Check if the persistend thread is related to the event        
+        // Check if the persistend thread is related to the event
         guard let thread = threads.first(where: { $0.contactId == event.data.consumerContact }), let index = threads.index(of: thread.id) else {
             throw CXoneChatError.invalidThread
         }
