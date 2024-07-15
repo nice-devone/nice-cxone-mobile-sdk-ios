@@ -21,11 +21,6 @@ class ChatThreadsService: ChatThreadsProvider {
     
     private let dateProvider: DateProvider
     
-    private var connectionContext: ConnectionContext {
-        get { socketService.connectionContext }
-        set { socketService.connectionContext = newValue }
-    }
-    
     let socketService: SocketService
     let eventsService: EventsService
     let customerFields: CustomerCustomFieldsService?
@@ -33,6 +28,13 @@ class ChatThreadsService: ChatThreadsProvider {
     var threads = [ChatThread]()
     
     weak var delegate: CXoneChatDelegate?
+    
+    private var persistedSetPositionInQueueEvent: SetPositionInQueueEventDTO?
+        
+    private var connectionContext: ConnectionContext {
+        get { socketService.connectionContext }
+        set { socketService.connectionContext = newValue }
+    }
     
     // MARK: - Protocol Properties
     
@@ -652,6 +654,12 @@ extension ChatThreadsService {
         connectionContext.contactId = event.data.case.id
         threads[index].contactId = event.data.case.id
 
+        if persistedSetPositionInQueueEvent?.data.consumerContact == event.data.case.id, let persistedSetPositionInQueueEvent {
+            self.persistedSetPositionInQueueEvent = nil
+            
+            try processSetPositionInQueueEvent(persistedSetPositionInQueueEvent)
+        }
+
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
         guard let service = messages as? MessagesService, !service.shouldIgnoreMessage(event.data.message) else {
             LogManager.info("Ignoring incomming message from BE - it's content is a special one like begin liveChat conversation or welcome message")
@@ -748,6 +756,13 @@ extension ChatThreadsService {
     func processSetPositionInQueueEvent(_ event: SetPositionInQueueEventDTO) throws {
         LogManager.trace("Processing setPositionInQueueEvent")
 
+        // Store the event for later processing if threads are not loaded yet
+        if let thread = threads.first, thread.contactId == nil {
+            self.persistedSetPositionInQueueEvent = event
+            return
+        }
+                
+        // Check if the persistend thread is related to the event
         guard let thread = threads.first(where: { $0.contactId == event.data.consumerContact }), let index = threads.index(of: thread.id) else {
             throw CXoneChatError.invalidThread
         }
