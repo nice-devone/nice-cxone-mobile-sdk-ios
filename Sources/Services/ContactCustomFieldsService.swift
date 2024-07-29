@@ -82,11 +82,10 @@ extension ContactCustomFieldsService {
             // If the ident matches the prechat custom field ident, validate the value if it is among the options
             // Otherwise, filter it out and don't override the custom field
             if let prechatDefinition = channelConfig.prechatSurvey?.customFields.first(where: { $0.type.ident == newField.ident }) {
-                let isValueIdentifier = prechatDefinition.type.getValueIdentifier(for: newField.value) != nil
-                let isActualValue = prechatDefinition.type.getOptionValue(for: newField.value) != nil
+                let isValueIdentifier = prechatDefinition.type.isValueIdentifier(newField.value)
                 
                 return prechatDefinition.type.shouldCheckValue
-                    ? !isValueEmpty && isValueIdentifier || isActualValue
+                    ? !isValueEmpty && isValueIdentifier
                     : !isValueEmpty
             } else {
                 return !isValueEmpty

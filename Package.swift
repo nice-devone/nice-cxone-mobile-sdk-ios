@@ -21,7 +21,7 @@ import Foundation
 let package = Package(
     name: "CXoneChatSDK",
     platforms: [
-        .iOS(.v14),
+        .iOS(.v15),
         .macOS(.v11)
     ],
     products: [

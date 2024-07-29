@@ -31,10 +31,8 @@ class ConnectionService: ConnectionProvider {
         socketService.dateProvider
     }
     var connectionContext: ConnectionContext {
-        didSet {
-            socketService.connectionContext = connectionContext
-            eventsService.connectionContext = connectionContext
-        }
+        get { socketService.connectionContext }
+        set { socketService.connectionContext = newValue }
     }
     
     // MARK: - Protocol Properties
@@ -46,14 +44,12 @@ class ConnectionService: ConnectionProvider {
     // MARK: - Init
     
     init(
-        connectionContext: ConnectionContext,
         customer: CustomerProvider,
         threads: ChatThreadsProvider,
         customerFields: CustomerCustomFieldsProvider,
         socketService: SocketService,
         eventsService: EventsService
     ) {
-        self.connectionContext = connectionContext
         self.customerService = customer as? CustomerService
         self.threadsService = threads as? ChatThreadsService
         self.customerFieldsService = customerFields as? CustomerCustomFieldsService
@@ -520,7 +516,7 @@ private extension ConnectionService {
                     )
                 )
                 
-                try await self.connectionContext.session.data(for: request)
+                try await self.connectionContext.session.data(for: request, file: #file)
             }
             .value
     }

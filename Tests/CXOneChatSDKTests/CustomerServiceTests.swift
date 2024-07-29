@@ -18,20 +18,18 @@ import XCTest
 
 class CustomerProviderTests: CXoneXCTestCase {
     
-    // MARK: - Lifecycle
-    
-    override func setUp() async throws {
-        try await super.setUp()
-        
-        try await setUpConnection()
-    }
-    
     // MARK: - Tests
     
-    func testSetUser() {
-        CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+    func testSetUserIdentityNoThrows() throws {
+        try CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
         
         XCTAssertNotNil(CXoneChat.customer.get())
+    }
+    
+    func testSetUserIdentityThrows() async throws {
+        try await setUpConnection()
+        
+        XCTAssertThrowsError(try CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe")))
     }
     
     func testEmptyDeviceToken() {
@@ -70,7 +68,9 @@ class CustomerProviderTests: CXoneXCTestCase {
         XCTAssertEqual(connectionContext.codeVerifier, "verifier")
     }
     
-    func testSetCustomerNameForEmptyCustomer() {
+    func testSetCustomerNameForEmptyCustomer() async throws {
+        try await setUpConnection()
+        
         CXoneChat.customer.setName(firstName: "John", lastName: "Doe")
         
         XCTAssertNotNil(CXoneChat.customer.get())
@@ -78,8 +78,8 @@ class CustomerProviderTests: CXoneXCTestCase {
         XCTAssertEqual(CXoneChat.customer.get()?.lastName, "Doe")
     }
     
-    func testUpdateCustomerName() {
-        CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+    func testUpdateCustomerName() throws {
+        try CXoneChat.customer.set(CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
         
         CXoneChat.customer.setName(firstName: "Peter", lastName: "Parker")
         
@@ -88,7 +88,9 @@ class CustomerProviderTests: CXoneXCTestCase {
         XCTAssertEqual(CXoneChat.customer.get()?.lastName, "Parker")
     }
     
-    func testCustomerCustomFieldsDontOverride() throws {
+    func testCustomerCustomFieldsDontOverride() async throws {
+        try await setUpConnection()
+        
         customerFieldsService.customerFields = [
             CustomFieldDTO(ident: "email", value: "", updatedAt: .distantFuture),
             CustomFieldDTO(ident: "age", value: "34", updatedAt: dateProvider.now)

@@ -445,7 +445,7 @@ private extension [CustomFieldDTO] {
     mutating func convertValueToIdentifier(with prechatDefinitions: [PreChatSurveyCustomFieldDTO]?) -> [CustomFieldDTO] {
         compactMap { customField in
             let definition = prechatDefinitions?.first { prechatField in
-                prechatField.type.getOptionValue(for: customField.value) != nil
+                prechatField.type.isOptionValue(customField.value)
             }
             
             return CustomFieldDTO(

@@ -30,7 +30,7 @@ class ChatThreadsService: ChatThreadsProvider {
     weak var delegate: CXoneChatDelegate?
     
     private var persistedSetPositionInQueueEvent: SetPositionInQueueEventDTO?
-        
+    
     private var connectionContext: ConnectionContext {
         get { socketService.connectionContext }
         set { socketService.connectionContext = newValue }
@@ -659,7 +659,7 @@ extension ChatThreadsService {
             
             try processSetPositionInQueueEvent(persistedSetPositionInQueueEvent)
         }
-
+        
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
         guard let service = messages as? MessagesService, !service.shouldIgnoreMessage(event.data.message) else {
             LogManager.info("Ignoring incomming message from BE - it's content is a special one like begin liveChat conversation or welcome message")
@@ -761,7 +761,7 @@ extension ChatThreadsService {
             self.persistedSetPositionInQueueEvent = event
             return
         }
-                
+        
         // Check if the persistend thread is related to the event
         guard let thread = threads.first(where: { $0.contactId == event.data.consumerContact }), let index = threads.index(of: thread.id) else {
             throw CXoneChatError.invalidThread

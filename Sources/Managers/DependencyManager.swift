@@ -71,7 +71,6 @@ class DependencyManager {
         }
         
         let provider = ConnectionService(
-            connectionContext: connectionContext,
             customer: resolve(),
             threads: resolve(),
             customerFields: resolve(),
@@ -88,7 +87,7 @@ class DependencyManager {
             return provider
         }
         
-        let provider = CustomerService(connectionContext: socketService.connectionContext, socketService: socketService, threads: resolve())
+        let provider = CustomerService(socketService: socketService, threads: resolve())
         self.customer = provider
         
         return provider

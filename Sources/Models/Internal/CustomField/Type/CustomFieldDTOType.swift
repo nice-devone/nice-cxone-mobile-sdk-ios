@@ -62,65 +62,45 @@ enum CustomFieldDTOType: Equatable {
     
     // MARK: - Methods
     
-    mutating func updateValue(_ value: String) {
+    /// Returns identifier for the value
+    ///
+    /// For custom field `"gender-male": "Male"` returns `gender-male`
+    func isValueIdentifier(_ valueIdentifier: String) -> Bool {
         switch self {
-        case .textField(let entity):
-            self = .textField(
-                CustomFieldTextFieldDTO(ident: entity.ident, label: entity.label, value: value, updatedAt: entity.updatedAt, isEmail: entity.isEmail)
-            )
         case .selector(let entity):
-            self = .selector(
-                CustomFieldSelectorDTO(ident: entity.ident, label: entity.label, value: value, updatedAt: entity.updatedAt, options: entity.options)
-            )
+            return entity.options.contains { $0.key == valueIdentifier }
         case .hierarchical(let entity):
-            self = .hierarchical(
-                CustomFieldHierarchicalDTO(ident: entity.ident, label: entity.label, value: value, updatedAt: entity.updatedAt, nodes: entity.nodes)
-            )
-        }
-    }
-    
-    mutating func updateUpdatedAt(_ updatedAt: Date) {
-        switch self {
-        case .textField(let entity):
-            self = .textField(
-                CustomFieldTextFieldDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: updatedAt, isEmail: entity.isEmail)
-            )
-        case .selector(let entity):
-            self = .selector(
-                CustomFieldSelectorDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: updatedAt, options: entity.options)
-            )
-        case .hierarchical(let entity):
-            self = .hierarchical(
-                CustomFieldHierarchicalDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: updatedAt, nodes: entity.nodes)
-            )
+            return entity.nodes.contains { $0.getValueIdentifier(with: valueIdentifier) != nil }
+        default:
+            return false
         }
     }
     
     /// Returns identifier for the value
     ///
-    /// For custom field `"gender-male": "Male"` returns `gender-male`
+    /// For custom field `"gender-male": "Male"`, based on `"Male"` returns `gender-male`
     func getValueIdentifier(for value: String) -> String? {
         switch self {
-        case .textField:
-            return nil
         case .selector(let entity):
-            return entity.options.first { $0.value == value }?.key
+            return entity.options.first { $0.key == value }?.key
         case .hierarchical(let entity):
-            return entity.nodes.first { $0.value == value }?.key
+            return entity.nodes.first { $0.getValueIdentifier(with: value) != nil }?.key
+        default:
+            return nil
         }
     }
     
-    /// Returns value
+    /// Returns actual value based on the `value` parameter
     ///
-    /// For custom field `"gender-male": "Male"` returns `Male`
-    func getOptionValue(for value: String) -> String? {
+    /// For custom field `"gender-male": "Male"`, based on `"Male"` returns `Male`
+    func isOptionValue(_ value: String) -> Bool {
         switch self {
         case .textField:
-            return nil
+            return false
         case .selector(let entity):
-            return entity.options.first { $0.value == value }?.value
+            return entity.options.contains { $0.value == value }
         case .hierarchical(let entity):
-            return entity.nodes.first { $0.value == value }?.value
+            return entity.nodes.contains { $0.value == value }
         }
     }
 }
@@ -140,6 +120,17 @@ extension CustomFieldDTOType: Decodable {
             self = .hierarchical(hierarchical)
         } else {
             throw DecodingError.valueNotFound(CustomFieldDTOType.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "type"))
+        }
+    }
+}
+
+private extension CustomFieldHierarchicalNodeDTO {
+ 
+    func getValueIdentifier(with value: String) -> String? {
+        if children.isEmpty {
+            return key
+        } else {
+            return children.first { $0.getValueIdentifier(with: value) != nil }?.key
         }
     }
 }
