@@ -4,17 +4,12 @@
 ## Features
 - Custom Customer ID
 - Remove custom field definitions validation
-- Minimum iOS deployment target
+- Update minimum iOS deployment target to 15
 
 ## Bug Fixes
 - Prefill prechat survey with customer data
 - correct check for locally created thread
 - "properly" handle start/stopSecurelyScopedResource
-- Working Live chat set position in queue
-
-## Chore
-- Change version to 2.1.0
-- Resolve SwiftLint warnings
 
 <a name="2.0.1"></a>
 # [2.0.1] - 2024-07-11
