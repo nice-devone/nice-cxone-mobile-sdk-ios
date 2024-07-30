@@ -17,7 +17,7 @@
     <a title="ChatThreadsProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.0.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -255,7 +255,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">preChatSurvey</span><span class="p">:</span> <span class="kt"><a href="../Structs/PreChatSurvey.html">PreChatSurvey</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">preChatSurvey</span><span class="p">:</span> <span class="kt"><a href="../Structs/PreChatSurvey.html">PreChatSurvey</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -282,7 +282,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">messages</span><span class="p">:</span> <span class="kt"><a href="../Protocols/MessagesProvider.html">MessagesProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">messages</span><span class="p">:</span> <span class="kt"><a href="../Protocols/MessagesProvider.html">MessagesProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -309,7 +309,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customFields</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customFields</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -354,6 +354,9 @@
                     <a name="//apple_ref/swift/Method/create()" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6createyyYaKF">create()</a>
                     </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -405,6 +408,9 @@ Make sure you call the <code>connect</code> method first.</p>
                     <a name="//apple_ref/swift/Method/create(with:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:<wbr>)</a>
                     </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -440,7 +446,7 @@ Make sure you call the <code>connect</code> method first.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">create</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">create</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>

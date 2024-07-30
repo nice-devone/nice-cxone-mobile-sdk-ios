@@ -17,7 +17,7 @@
     <a title="ChatProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.0.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -253,7 +253,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">version</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">version</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -280,7 +280,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">ChatProvider</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">ChatProvider</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -309,7 +309,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatState.html">ChatState</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatState.html">ChatState</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -336,7 +336,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">mode</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatMode.html">ChatMode</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">mode</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatMode.html">ChatMode</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -363,7 +363,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">logDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogDelegate.html">LogDelegate</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">logDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogDelegate.html">LogDelegate</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -390,7 +390,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -417,7 +417,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">connection</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">connection</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -444,7 +444,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CustomerProvider.html">CustomerProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CustomerProvider.html">CustomerProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -471,7 +471,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customerCustomFields</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">customerCustomFields</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -498,7 +498,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">threads</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">threads</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -525,7 +525,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">analytics</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">analytics</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>

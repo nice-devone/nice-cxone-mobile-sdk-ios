@@ -17,7 +17,7 @@
     <a title="CustomerProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.0.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -267,9 +267,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgF"></a>
+                    <a name="/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgKF"></a>
                     <a name="//apple_ref/swift/Method/set(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgF">set(_:<wbr>)</a>
+                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgKF">set(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -279,12 +279,28 @@
                       <div class="abstract">
                         <p>Sets the customer currently using the app.</p>
 
+<p>If you set your customer ID, you must ensure that it is unique and that it is not used by any other customer.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Setting your own Customer ID may result in security vulnerabilities.
+It is recommended to use the customer ID provided by the SDK. If you want to update the customer name, use the <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP7setName05firstG004lastG0ySS_SStF">setName(firstName:lastName:)</a></code> method.</p>
+
+</div><div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>This method must be called before SDK initialization via <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the chat is already initialized.</p>
+
+</div>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
