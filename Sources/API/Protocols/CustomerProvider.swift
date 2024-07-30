@@ -25,8 +25,17 @@ public protocol CustomerProvider {
     
     /// Sets the customer currently using the app.
     ///
+    /// If you set your customer ID, you must ensure that it is unique and that it is not used by any other customer.
+    ///
+    /// - Note: Setting your own Customer ID may result in security vulnerabilities.
+    /// It is recommended to use the customer ID provided by the SDK. If you want to update the customer name, use the ``setName(firstName:lastName:)`` method.
+    ///
+    /// - Warning: This method must be called before SDK initialization via ``ConnectionProvider/prepare(environment:brandId:channelId:)``.
+    ///
     /// - Parameter customer: The customer. Might be `nil`.
-    func set(_ customer: CustomerIdentity?)
+    ///
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat is already initialized.
+    func set(_ customer: CustomerIdentity?) throws
     
     /// Registers a device to be used for push notifications.
     ///

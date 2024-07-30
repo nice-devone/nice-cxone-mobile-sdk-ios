@@ -141,7 +141,6 @@ class ConnectionContextImpl: ConnectionContext {
     
     func clear() {
         keychainService.purge()
-        
         UserDefaultsService.purge()
     }
 }

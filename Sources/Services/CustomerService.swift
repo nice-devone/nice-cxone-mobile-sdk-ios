@@ -19,7 +19,10 @@ class CustomerService: CustomerProvider {
     
     // MARK: - Properties
     
-    var connectionContext: ConnectionContext
+    private var connectionContext: ConnectionContext {
+        get { socketService.connectionContext }
+        set { socketService.connectionContext = newValue }
+    }
     
     weak var delegate: CXoneChatDelegate?
     
@@ -31,8 +34,7 @@ class CustomerService: CustomerProvider {
     
     // MARK: - Init
     
-    init(connectionContext: ConnectionContext, socketService: SocketService, threads: ChatThreadsProvider) {
-        self.connectionContext = connectionContext
+    init(socketService: SocketService, threads: ChatThreadsProvider) {
         self.socketService = socketService
         self.threadsService = threads as? ChatThreadsService
     }
@@ -43,7 +45,13 @@ class CustomerService: CustomerProvider {
         connectionContext.customer.map(CustomerIdentityMapper.map)
     }
     
-    func set(_ customer: CustomerIdentity?) {
+    func set(_ customer: CustomerIdentity?) throws {
+        guard connectionContext.chatState == .initial else {
+            LogManager.error("Tried to set customer identity after chat initialization")
+            
+            throw CXoneChatError.illegalChatState
+        }
+        
         LogManager.trace("Setting customer: \(String(describing: customer))")
         
         connectionContext.customer = customer.map(CustomerIdentityMapper.map)

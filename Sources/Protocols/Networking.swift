@@ -44,7 +44,6 @@ protocol URLSessionWebSocketTaskProtocol {
     
     func resume()
     
-    @available(iOS 15.0, *)
     var delegate: URLSessionTaskDelegate? { get set }
 }
 

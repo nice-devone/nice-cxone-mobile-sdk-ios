@@ -1,53 +1,81 @@
+<a name="2.1.0"></a>
+# [2.1.0] - 2024-07-29
+
+## Features
+- Custom Customer ID
+- Remove custom field definitions validation
+- Update minimum iOS deployment target to 15
+
+## Bug Fixes
+- Prefill prechat survey with customer data
+- correct check for locally created thread
+- "properly" handle start/stopSecurelyScopedResource
+
 <a name="2.0.1"></a>
 # [2.0.1] - 2024-07-11
 
-## CXoneChatSDK
-
 ### Bug Fixes
-- Working Live chat set position in queue
+- Correct live chat set position in queue
 
 <a name="2.0.0"></a>
 # [2.0.0] - 2024-06-13
 
-### Features
-- Add Live chat mode
-- Remove custom field definitions validation
-- Minimum iOS deployment target set to iOS 14.0
+## Bug Fixes
+- Update ListFieldView behavior for iOS 14
+- Exclude links from multiattachments view
+- correct check for locally created thread
+- Rotation bug on iOS15
+- Incorrect attachment size displayed for single attachment
+- append UTType.movie for all videos
+- remove validation for Prechat survey
+- Fix installation of SwiftGen with homebrew disabling swiftgen
+- Fix Build/test break
+- "properly" handle start/stopSecurelyScopedResource
+
+## Dependency Change
+- Bump peaceiris/actions-gh-pages from 3 to 4
+- Bump xavierLowmiller/xcodegen-action from 1.1.3 to 1.2.0
+
+## Features
+- add Mobile SDK EU1 QA configurations
+- Better welcome message handling
+- Disable modification for archived thread
+- Add localized strings to sdk package
 - implement file restrictions parsing and publication
 - update DeviceFingerprint with new expectations from web team
+- Add Live chat mode
 - Deprecate legacy plugins
+- Attachments validation in the SDK
+- Attachments Restrictions - file type
 - Handle sent message via `onThreadUpdated(_:)`
 - Privacy Manifest
 - Implement Feature Toggles
 - Create SDK's UserDefaults + Better Keychain handling
 - Process large events from S3
 
-### Bug Fixes
-- correct check for locally created thread
-- "properly" handle start/stopSecurelyScopedResource
 
 <a name="1.3.3"></a>
-## [1.3.3] - 2024-05-15
+# [1.3.3] - 2024-05-15
 
-### Bug Fixes
+## Bug Fixes
 - make assignedAgent optional for the event
 
 <a name="1.3.2"></a>
-## [1.3.2] - 2024-03-21
+# [1.3.2] - 2024-03-21
 
 ### Features
 - Create SDK's UserDefaults + Better Keychain handling
 
 <a name="1.3.1"></a>
-## [1.3.1] - 2024-03-12
+# [1.3.1] - 2024-03-12
 
-### Features
+## Features
 - Privacy Manifest
 
 <a name="1.3.0"></a>
-## [1.3.0] - 2024-03-12
+# [1.3.0] - 2024-03-12
 
-### Bug Fixes
+## Bug Fixes
 - Fixed deeplink format
 - Correct CreateOrUpdateVisitor URL
 - Resolve issue with submodules for GitHub Actions
@@ -71,7 +99,7 @@
 - Handle different thread correctly
 - Fix issue when multiple messages with matching ids are received
 
-### Features
+## Features
 - add login error state in case of unreachable API
 - Add basic validation for brandId and channelId
 - Login with Amazon SDK update + fixed Launch screen storyboard
@@ -89,9 +117,9 @@
 - Correct handling of welcome message
 
 <a name="1.2.0"></a>
-## [1.2.0] - 2023-09-22
+# [1.2.0] - 2023-09-22
 
-### Bug Fixes
+## Bug Fixes
 - working Login preview
 - Remove reporting viewPage for chat related
 - duplicate SFSymbol image to SwiftUI + remove conversion from UIImage to Image
@@ -106,7 +134,7 @@
 - Correct title when enter thread detail
 - Fixed problem in hexString where wrong color was being created.
 
-### Features
+## Features
 - change open Chat button background color
 - Login with Amazon SDK update + fixed Launch screen storyboard
 - Update version to 1.2.0
@@ -124,15 +152,15 @@
 - Analytics Usage in E-shop
 
 <a name="1.1.1"></a>
-## [1.1.1] - 2023-07-10
+# [1.1.1] - 2023-07-10
 
-### Features
+## Features
 - Update decoding of ThreadRecoveredEvent
 
 <a name="1.1.0"></a>
-## [1.1.0] - 2023-06-23
+# [1.1.0] - 2023-06-23
 
-### Bug Fixes
+## Bug Fixes
 - Remove not supported fields in ReceivedThreadRecoveredPostbackData
 - Return message with attachments
 - use correct EventDataType for loadThreadData and messageSeenByCustomer
@@ -141,7 +169,8 @@
 - use Docker image for changelog GitHub action
 - use correct UUID for thread
 - access file stored in Documents
-### Features
+
+## Features
 - SwiftLint explicit init
 - Event Type Unification
 - use Codable only in valid cases + Encodable in test target
@@ -157,15 +186,15 @@
 - Add case studies + change jazzy output file
 
 <a name="1.0.1"></a>
-## [1.0.1] - 2023-03-14
+# [1.0.1] - 2023-03-14
 
-### Features
+## Features
 - notify about close connection
 
 <a name="1.0.0"></a>
-## 1.0.0 - 2023-01-31
+# 1.0.0 - 2023-01-31
 
-### Features
+## Features
 - Logging PoC
 - Error handling
 - Connection
@@ -226,7 +255,9 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.1...2.1.0
+[2.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.3...2.0.0
 [1.3.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.1...1.3.2

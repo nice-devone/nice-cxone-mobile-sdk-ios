@@ -154,6 +154,8 @@ let customer = CXoneChat.shared.customer.get()
 ### Set Current Customer
 `CustomerProvider.set(_:)` a customer can be used to update empty credentials, creating new one or removing the current.
 
+> Important: This feature has to be called before the SDK initialization, via `ConnectionProvider.prepare(brandId:channelId:)` method, or after the sign out. Otherwise, it throws an error.
+
 > Important: Some features are available only when any customer is set. Setting `nil` customer might impact usability of the SDK.
 
 ```swift
@@ -161,15 +163,17 @@ let customer = CXoneChat.shared.customer.get()
 var customer = CXoneChat.shared.customer.get()
 customer.firstName = "John"
 customer.lastName = "Doe"
-CXoneChat.shared.customer.set(customer)
+try CXoneChat.shared.customer.set(customer)
 
 // Create new
 let customer = Customer(id: UUID().uuidString, firstName: "John", lastName: "Doe")
-CXoneChat.shared.customer.set(customer)
+try CXoneChat.shared.customer.set(customer)
 
 // Reset current
-CXoneChat.shared.customer.set(nil)
+try CXoneChat.shared.customer.set(nil)
 ```
+
+> Important: Setting this feature can lead to security vulnerability. We don't take any responsibility if you will to use your own customer ID. It is recommended to use the SDK generated customer ID.
 
 ### Set Device Token
 It is necessary to register the device to be able to use push notifications. For this case the SDK provides two methods `CustomerProvider.setDeviceToken(_:)` - the first one uses a `String` representation of the token, the second one uses the `Data` datatype.
