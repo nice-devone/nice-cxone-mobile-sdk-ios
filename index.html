@@ -232,16 +232,8 @@
 <div class="aside aside-important">
     <p class="aside-title">Important</p>
     <p>The code examples in this section use Login with Amazon. Your implementation will look different, depending on your OAuth provider.</p>
-
 <ol>
 <li>Configure your chat channel for use with OAuth in  CXone.</li>
-</ol>
-
-</div>
-<pre class="highlight plaintext"><code>![](https://help.incontact.com/Dk204am2Whc/Content/CXoneMobileSDK/iOS/Images/OAuthForm.png)
-</code></pre>
-
-<ol>
 <li><p>Configure your application to prompt the user to sign in with your chosen OAuth service.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="kt">AMZNAuthorizeRequest</span><span class="p">()</span>
 <span class="n">request</span><span class="o">.</span><span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="kt">AMZNProfileScope</span><span class="o">.</span><span class="nf">userID</span><span class="p">(),</span> <span class="kt">AMZNProfileScope</span><span class="o">.</span><span class="nf">profile</span><span class="p">()]</span>
@@ -486,38 +478,15 @@ a) No thread available and pre-chat has to be completed before creating a new th
 
 <ol>
 <li>Check that a pre-chat has been defined for the channel.
-<code>swift
-if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
-    ...
-}
-</code></li>
-<li>Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by a <code>presentForm(title:customFields:onFinished:)</code> UI module method.
-<code>swift
-/// A function that presents a form view with custom fields to collect user input.
-///
-/// This function is designed to simplify the presentation of a dynamic form with custom fields,
-/// allowing you to specify the form&#39;s title and structure.
-/// Once the user completes the form, the `onFinished` closure is invoked, providing access to the collected data for further processing.
-///
-/// - Parameters:
-///   - title: The title of the form.
-///   - customFields: An array of custom form field types (conforming to `FormCustomFieldType`) to define the form&#39;s structure.
-///   - onFinished: A closure that is called when the user completes the form, passing a dictionary of collected data.
-///
-/// ## Example
-///</code>
-/// let customFields = [
-///     FormCustomFieldType(label: &ldquo;Email&rdquo;, isRequired: false, ident: &ldquo;emailField&rdquo;, value: &ldquo;<a href="mailto:john.doe@gmail.com">john.doe@gmail.com</a>&rdquo;),
-///     FormCustomFieldType(label: &ldquo;First Name&rdquo;, isRequired: true, ident: &ldquo;firstName&rdquo;, value: &ldquo;John&rdquo;),
-///     FormCustomFieldType(label: &ldquo;Last Name&rdquo;, isRequired: true, ident: &ldquo;lastName&rdquo;, value: &ldquo;Doe&rdquo;)
-/// ]
-///
-/// chatCoordinator.presentForm(title: &ldquo;User Details&rdquo;, customFields: customFields) {
-///     &hellip;
-/// }
-/// <code>
-public func presentForm(title: String, customFields: [FormCustomFieldType], onFinished: @escaping ([String: String]) -&gt; Void)
-</code></li>
+<p>
+  <code>
+    if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+      ...
+    }
+  </code>
+</p>
+</li>
+<li>Prepare your custom UI form controller where user can fill those required and optional fields. In the sample application this is solved by a <code>presentForm(title:customFields:onFinished:)</code> UI module method.</li>
 <li>Create a new thread with custom fields from the pre-chat survey form controller, as seen in the form completion handler of the code snippet.</li>
 </ol>
 <h2 id='configure-chat-functions' class='heading'>Configure Chat Functions</h2>
