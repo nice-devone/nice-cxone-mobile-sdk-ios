@@ -17,7 +17,7 @@
     <a title="ConnectionProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -279,7 +279,7 @@
                         <p>Makes an HTTP request to get the channel configuration details.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p>- <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if provided parameters do not create a valid URL.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if provided parameters do not create a valid URL.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -296,6 +296,14 @@
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code>DecodingError.valueNotFound</code> if a response has a null value for the given key.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>NSError</code> object that indicates why the request failed</p>
 
 </div>
 
@@ -394,6 +402,14 @@
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code>DecodingError.valueNotFound</code> if a response has a null value for the given key.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>NSError</code> object that indicates why the request failed</p>
 
 </div>
 
@@ -497,7 +513,7 @@
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -522,6 +538,14 @@
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code>NSError</code> object that indicates why the request failed</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue</code> if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is <code>.throw</code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -609,7 +633,7 @@
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -634,6 +658,14 @@
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code>NSError</code> object that indicates why the request failed</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue</code> if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is <code>.throw</code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -734,10 +766,6 @@ must be called before this method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26webSocketConnectionFailureyA2CmF">webSocketConnectionFailure</a></code> if the web socket refused to connect.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
 
 </div><div class="aside aside-throws">
@@ -746,7 +774,15 @@ must be called before this method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF">invalidThread</a></code> if the provided ID for the thread was invalid, so the action could not be performed.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:)</a></code> if the socket endpoint URL has not been set properly</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -849,6 +885,10 @@ must be called before this method.</p>
                         <p>Manually executes a trigger that was defined in CXone. This can be used to test that proactive actions are displaying.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
 Make sure you call the <code>connect</code> method first.</p>
 
@@ -862,7 +902,15 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -903,7 +951,7 @@ Make sure you call the <code>connect</code> method first.</p>
         </section>
         <section id="footer">
           <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

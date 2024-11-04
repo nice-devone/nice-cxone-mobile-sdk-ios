@@ -17,7 +17,7 @@
     <a title="CustomerProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -300,7 +300,70 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "The method uses a shorthand unnamed parameter, which can obscure the meaning of the method for developers unfamiliar with the code.\n Please update your usage to the new method `set(customer:﹚`.")</span>
+<span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>customer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The customer. Might be <code>nil</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK16CustomerProviderP3set8customeryAA0D8IdentityVSg_tKF"></a>
+                    <a name="//apple_ref/swift/Method/set(customer:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP3set8customeryAA0D8IdentityVSg_tKF">set(customer:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the customer currently using the app.</p>
+
+<p>If you set your customer ID, you must ensure that it is unique and that it is not used by any other customer.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Setting your own Customer ID may result in security vulnerabilities.
+It is recommended to use the customer ID provided by the SDK. If you want to update the customer name, use the <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP7setName05firstG004lastG0ySS_SStF">setName(firstName:lastName:)</a></code> method.</p>
+
+</div><div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>This method must be called before SDK initialization via <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the chat is already initialized.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -584,7 +647,7 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
         </section>
         <section id="footer">
           <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

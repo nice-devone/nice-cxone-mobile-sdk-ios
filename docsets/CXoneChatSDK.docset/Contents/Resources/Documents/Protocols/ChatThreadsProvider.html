@@ -17,7 +17,7 @@
     <a title="ChatThreadsProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -248,7 +248,7 @@
                       <div class="abstract">
                         <p>The dynamic pre-chat survey element with title and custom fields.</p>
 
-<p>To fill in the parameters of the pre-chat survey, use the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:)</a></code> method.</p>
+<p>To fill in the parameters of the pre-chat survey, use the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">create(with:)</a></code> method.</p>
 
                       </div>
                       <div class="declaration">
@@ -350,9 +350,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK0B15ThreadsProviderP6createyyYaKF"></a>
+                    <a name="/s:12CXoneChatSDK0B15ThreadsProviderP6createAA0B6ThreadVyYaKF"></a>
                     <a name="//apple_ref/swift/Method/create()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6createyyYaKF">create()</a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6createAA0B6ThreadVyYaKF">create()</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -371,8 +371,24 @@
 </div><div class="aside aside-warning">
     <p class="aside-title">Warning</p>
     <p>Channel might have configured dynamic pre-chat survey with required contact custom fields.
-These identifiers and values must be sent. To fill in the parameters of the pre-chat survey, use the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:)</a></code> method.
+These identifiers and values must be sent. To fill in the parameters of the pre-chat survey, use the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">create(with:)</a></code> method.
 Otherwise; this method throws <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF">missingPreChatCustomFields</a></code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a></code> if the method being called is not supported with the current channel configuration.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF">missingPreChatCustomFields</a></code> if the server requires to fill-up some contact custom fields before initializing chat thread.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010attachmentD0yA2CmF">attachmentError</a></code> if the provided attachment was unable to be sent.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -381,11 +397,56 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a></code> if the method being called is not supported with the current channel configuration.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF">missingPreChatCustomFields</a></code> if the prechat survey has missing required fields.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if attachments upload <code>url</code> has not been set properly or attachment uploaded data object is missing.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a></code> if the server experienced an internal error and was unable to perform the action.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:)</a></code> if the the outbound message has no <code>postback</code>, empty <code>text</code>, and empty <code>attachments</code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>CXoneChatError/noSuchFile</code> if an attached file could not be found.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF">invalidFileSize</a></code> if size of the attachment exceeds the allowed size</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF">invalidFileType</a></code> if type of the attachment is not included in the allowed file MIME type</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> if the conversion from object instance to data failed
+when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>NSError</code> object that indicates why the request failed</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error in the Cocoa domain, if <code>url</code> cannot be read.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -394,9 +455,14 @@ Make sure you call the <code>connect</code> method first.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">create</span><span class="p">()</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">create</span><span class="p">()</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChatThread.html">ChatThread</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Newly created <code><a href="../Structs/ChatThread.html">ChatThread</a></code></p>
                       </div>
                     </section>
                   </div>
@@ -404,9 +470,9 @@ Make sure you call the <code>connect</code> method first.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF"></a>
+                    <a name="/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF"></a>
                     <a name="//apple_ref/swift/Method/create(with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withySDyS2SG_tYaKF">create(with:<wbr>)</a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">create(with:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -428,16 +494,77 @@ Otherwise; this method throws <code><a href="../Enums/CXoneChatError.html#/s:12C
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
-Make sure you call the <code>connect</code> method first.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a></code> if the method being called is not supported with the current channel configuration.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010missingPreB12CustomFieldsyA2CmF">missingPreChatCustomFields</a></code> if the server requires to fill-up some contact custom fields before initializing chat thread.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010attachmentD0yA2CmF">attachmentError</a></code> if the provided attachment was unable to be sent.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if attachments upload <code>url</code> has not been set properly or attachment uploaded data object is missing</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a></code> if the server experienced an internal error and was unable to perform the action.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:)</a></code> if the the outbound message has no <code>postback</code>, empty <code>text</code>, and empty <code>attachments</code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>CXoneChatError/noSuchFile</code> if an attached file could not be found.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF">invalidFileSize</a></code> if size of the attachment exceeds the allowed size</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF">invalidFileType</a></code> if type of the attachment is not included in the allowed file MIME type</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> if the conversion from object instance to data failed
+or when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>NSError</code> object that indicates why the request failed</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error in the Cocoa domain, if <code>url</code> cannot be read.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -446,7 +573,8 @@ Make sure you call the <code>connect</code> method first.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">create</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">create</span><span class="p">(</span><span class="n">with</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChatThread.html">ChatThread</a></span></code></pre>
 
                         </div>
                       </div>
@@ -468,6 +596,10 @@ Make sure you call the <code>connect</code> method first.</p>
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Newly created <code><a href="../Structs/ChatThread.html">ChatThread</a></code></p>
                       </div>
                     </section>
                   </div>
@@ -507,6 +639,10 @@ Make sure you call the <code>connect</code> method first.</p>
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF">invalidThread</a></code> if the provided ID for the thread was invalid, so the action could not be performed.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -579,11 +715,15 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
 
 </div>
 
@@ -671,7 +811,15 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>OperationError</code> if there is any operaton error received from the BE.</p>
 
 </div>
 
@@ -731,7 +879,7 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -830,6 +978,10 @@ Make sure you call the <code>connect</code> method first.
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.
 
 </div>
@@ -868,6 +1020,10 @@ Make sure you call the <code>connect</code> method first.</p>
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -924,7 +1080,7 @@ Make sure you call the <code>connect</code> method first.</p>
         </section>
         <section id="footer">
           <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

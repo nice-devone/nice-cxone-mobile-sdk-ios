@@ -17,7 +17,7 @@
     <a title="MessagesProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -266,6 +266,10 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.&ldquo;</p>
 
 </div>
@@ -320,24 +324,7 @@ Make sure you call the <code>connect</code> method first.</p>
                         <p>Sends a message in the specified chat thread through CXone chat.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
-Make sure you call the <code>connect</code> method first.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a></code> if the server experienced an internal error and was unable to perform the action.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if attachments upload <code>url</code> has not been set properly or attachment uploaded data object is missing.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -345,7 +332,41 @@ Make sure you call the <code>connect</code> method first.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if attachments upload <code>url</code> has not been set properly or attachment uploaded data object is missing.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a></code> if the server experienced an internal error and was unable to perform the action.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:)</a></code> if the the outbound message has no <code>postback</code>, empty <code>text</code>, and empty <code>attachments</code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>CXoneChatError/noSuchFile</code> if an attached file could not be found.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF">invalidFileSize</a></code> if size of the attachment exceeds the allowed size</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF">invalidFileType</a></code> if type of the attachment is not included in the allowed file MIME type</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> if the conversion from object instance to data failed
+or when the Data object cannot be successfully converted to a valid UTF-8 string</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -362,6 +383,10 @@ Make sure you call the <code>connect</code> method first.</p>
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p>An error in the Cocoa domain, if <code>url</code> cannot be read.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
 
 </div>
 
@@ -414,7 +439,7 @@ Make sure you call the <code>connect</code> method first.</p>
         </section>
         <section id="footer">
           <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

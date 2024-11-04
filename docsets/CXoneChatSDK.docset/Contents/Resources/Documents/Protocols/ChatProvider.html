@@ -17,7 +17,7 @@
     <a title="ChatProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.1.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -223,7 +223,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ChatProvider</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ChatProvider</span> <span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
 
                 </div>
               </div>
@@ -390,7 +390,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Deprecated with 2.2.0 Please use add(delegate:﹚")</span>
+<span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -535,6 +536,67 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:12CXoneChatSDK0B8ProviderP3add8delegateyAA0aB8Delegate_p_tF"></a>
+                    <a name="//apple_ref/swift/Method/add(delegate:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B8ProviderP3add8delegateyAA0aB8Delegate_p_tF">add(delegate:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a <code><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></code></p>
+
+<p>Future delegate messages will be routed to the newly added delegate.</p>
+
+<p>Note: No strong reference to the delegate is maintained so the caller
+is responsible for its lifecycle.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B8ProviderP6remove8delegateyAA0aB8Delegate_p_tF"></a>
+                    <a name="//apple_ref/swift/Method/remove(delegate:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B8ProviderP6remove8delegateyAA0aB8Delegate_p_tF">remove(delegate:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Remove a <code><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></code>`</p>
+
+<p>No future delegate messages will be routed to the removed delegate.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">remove</span><span class="p">(</span><span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:12CXoneChatSDK0B8ProviderP15configureLogger5level9verbosityyAA10LogManagerC5LevelO_AH9VerbosityOtFZ"></a>
                     <a name="//apple_ref/swift/Method/configureLogger(level:verbosity:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK0B8ProviderP15configureLogger5level9verbosityyAA10LogManagerC5LevelO_AH9VerbosityOtFZ">configureLogger(level:<wbr>verbosity:<wbr>)</a>
@@ -623,7 +685,7 @@
         </section>
         <section id="footer">
           <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
