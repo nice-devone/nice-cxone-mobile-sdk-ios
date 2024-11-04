@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct DesignColorDTO: Codable {
+struct DesignColorDTO: Codable, Equatable {
     
     let headlineColor: String?
 

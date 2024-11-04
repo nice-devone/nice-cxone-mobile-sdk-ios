@@ -13,11 +13,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Foundation
+@testable import CXoneChatSDK
 
-class DateProviderImpl: DateProvider {
-    
-    var now: Date {
-        Date()
+extension WebSocketError: Equatable {
+    public static func == (lhs: WebSocketError, rhs: WebSocketError) -> Bool {
+        lhs.description == rhs.description
     }
 }

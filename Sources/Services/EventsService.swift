@@ -16,31 +16,37 @@
 import Foundation
 
 final class EventsService {
-    
+
     // MARK: - Properties
-    
+
     private let encoder = JSONEncoder()
-    
-    var connectionContext: ConnectionContext
-    
+
+    let connectionContext: ConnectionContext
+
     // MARK: - Init
-    
+
     init(connectionContext: ConnectionContext) {
         self.connectionContext = connectionContext
     }
-    
+
     // MARK: - Methods
-    
+
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func create(_ eventType: EventType, with eventData: EventDataType? = nil) throws -> Data {
+        try serialize(event: create(event: eventType, with: eventData))
+    }
+
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func create(event eventType: EventType, with eventData: EventDataType? = nil) throws -> EventDTO {
         LogManager.trace("Creating an event of type - \(eventType).")
-        
+
         guard let customer = connectionContext.customer else {
             throw CXoneChatError.customerAssociationFailure
         }
-        
-        let event = EventDTO(
+
+        return EventDTO(
             brandId: connectionContext.brandId,
             channelId: connectionContext.channelId,
             customerIdentity: customer,
@@ -48,7 +54,9 @@ final class EventsService {
             data: eventData,
             visitorId: connectionContext.visitorId?.asLowerCaseUUID
         )
+    }
 
-        return try encoder.encode(event)
+    func serialize(event: EventDTO) throws -> Data {
+        try encoder.encode(event)
     }
 }

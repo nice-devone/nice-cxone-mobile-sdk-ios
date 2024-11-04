@@ -16,7 +16,7 @@
 import Foundation
 @testable import CXoneChatSDK
 
-class SocketServiceMock: SocketService {
+class SocketServiceMock: SocketServiceImpl {
     
     // MARK: - Properties
     
@@ -24,7 +24,6 @@ class SocketServiceMock: SocketService {
     var messageSend = 0
     var messageSent: ((String) -> Void)?
     
-    var socket: URLSessionWebSocketTaskProtocol?
     var internalAccessToken: AccessTokenDTO?
     var internalAccessTokenGetterCount = 0
     var internalAccessTokenSetterCount = 0
@@ -47,7 +46,7 @@ class SocketServiceMock: SocketService {
     // MARK: - Init
     
     init(session: URLSession = .shared) {
-        super.init(connectionContext: ConnectionContextMock(session: session), dateProvider: DateProviderMock())
+        super.init(connectionContext: ConnectionContextMock(session: session))
     }
     
     // MARK: - Methods
@@ -56,8 +55,12 @@ class SocketServiceMock: SocketService {
         pingNumber += 1
     }
     
-    override func send(message: String, shouldCheck: Bool = true) {
+    override func send(data: Data, shouldCheck: Bool = true) throws {
+        guard let utf8string = data.utf8string else {
+            throw CXoneChatError.missingParameter("utf8string")
+        }
+        
         messageSend += 1
-        messageSent?(message)
+        messageSent?(utf8string)
     }
 }

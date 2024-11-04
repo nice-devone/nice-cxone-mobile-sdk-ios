@@ -151,9 +151,9 @@ enum EventType: String, CaseIterable {
     // MARK: - S3
     
     case eventInS3 = "EventInS3"
-    
+
     // MARK: - Default
-    
+
     /// An unknown and unsupported event.
     case unknown
 }

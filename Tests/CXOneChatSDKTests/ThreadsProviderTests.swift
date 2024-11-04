@@ -124,27 +124,6 @@ class ThreadsProviderTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testArchiveThreadSendToServerMessage() async throws {
-        currentExpectation = XCTestExpectation(description: "closure Called")
-        
-        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
-        
-        let thread = ChatThreadMapper.map(MockData.getThread())
-        threadsService.threads.append(thread)
-        
-        socketService.messageSend = 0
-        socketService.messageSent = { [weak self] message in
-            XCTAssertTrue(!message.isEmpty)
-            
-            self?.currentExpectation.fulfill()
-        }
-        
-        XCTAssertNoThrow(try CXoneChat.threads.archive(thread))
-        XCTAssertEqual(socketService.messageSend, 1)
-        
-        await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
     func testThreadRecover() async throws {
         currentExpectation = XCTestExpectation(description: "loadthread exp")
         
@@ -212,10 +191,10 @@ class ThreadsProviderTests: CXoneXCTestCase {
                 return
             }
             
-            self.CXoneChat.delegate = self
-            
+            self.CXoneChat.add(delegate: self)
+
             do {
-                let data = try self.loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
+                let data = try self.loadBundleData(from: "ThreadMetadataLoadedEvent", type: "json")
                 let event = try self.decoder.decode(ThreadMetadataLoadedEventDTO.self, from: data)
                 
                 try self.threadsService.processThreadMetadataLoadedEvent(event)
@@ -224,7 +203,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             }
         }
         
-        let data = try loadStubFromBundle(withName: "ThreadListFetchedEvent", extension: "json")
+        let data = try loadBundleData(from: "ThreadListFetchedEvent", type: "json")
         let event = try decoder.decode(GenericEventDTO.self, from: data)
         
         try threadsService.processThreadListFetchedEvent(event)
@@ -253,15 +232,6 @@ class ThreadsProviderTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testNotifyArchiveThreadEvent() async {
-        currentExpectation = XCTestExpectation(description: "Thread Archive Event")
-        
-        connectionContext.activeThread = ChatThreadMapper.map(MockData.getThread())
-        threadsService.processThreadArchivedEvent()
-        
-        await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
     func testProcessThreadLoad() async throws {
         currentExpectation = XCTestExpectation(description: "On Thread Load from Process")
         
@@ -274,14 +244,14 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         id: UUID().uuidString,
                         threadIdOnExternalPlatform: UUID(),
                         status: .open,
-                        createdAt: dateProvider.now,
-                        customFields: [CustomFieldDTO(ident: "contact.customFields.location", value: "EU", updatedAt: dateProvider.now)]
+                        createdAt: Date.provide(),
+                        customFields: [CustomFieldDTO(ident: "contact.customFields.location", value: "EU", updatedAt: Date.provide())]
                     ),
                     messages: [],
                     inboxAssignee: nil,
                     thread: ReceivedThreadDataDTO(idOnExternalPlatform: UUID(), channelId: "", threadName: "", canAddMoreMessages: true),
                     messagesScrollToken: "asdasda",
-                    customerContactFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: dateProvider.now)]
+                    customerContactFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: Date.provide())]
                 )
             )
         )
@@ -296,7 +266,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testProcessThreadLastMessage() async throws {
         currentExpectation = XCTestExpectation(description: "On ThreadInfo load")
         
-        let data = try loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
+        let data = try loadBundleData(from: "ThreadMetadataLoadedEvent", type: "json")
         let event = try decoder.decode(ThreadMetadataLoadedEventDTO.self, from: data)
         
         threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7")!)))
@@ -307,8 +277,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
     
     func testProcessThreadLastMessageThrowsInvalidThread() throws {
-        let data = try loadStubFromBundle(withName: "ThreadMetadataLoadedEvent", extension: "json")
-        
+        let data = try loadBundleData(from: "ThreadMetadataLoadedEvent", type: "json")
+
         XCTAssertThrowsError(try threadsService.processThreadMetadataLoadedEvent(try data.decode() as ThreadMetadataLoadedEventDTO)) { error in
             XCTAssertEqual(error as? CXoneChatError, CXoneChatError.invalidThread)
         }
@@ -559,5 +529,25 @@ class ThreadsProviderTests: CXoneXCTestCase {
         threadsService.processRecoveringThreadFailedError(error)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
+    }
+    
+    func testInboxAssigneeImageUrlMappedCorrectly() throws {
+        let data = try loadBundleData(from: "CaseInboxAssigneeChanged", type: "json")
+        let event = try decoder.decode(ContactInboxAssigneeChangedEventDTO.self, from: data)
+        
+        guard let inboxAssignee = event.data.inboxAssignee else {
+            throw XCTError("inboxAssignee is nil")
+        }
+        
+        XCTAssertEqual(inboxAssignee.id, 12328)
+        XCTAssertEqual(inboxAssignee.nickname, "Nickname")
+        XCTAssertFalse(inboxAssignee.isBotUser)
+        XCTAssertFalse(inboxAssignee.isSurveyUser)
+        XCTAssertEqual(inboxAssignee.publicImageUrl, "https://app-de-na1.niceincontact.com/img/user/z.png")
+        
+        let agent = AgentMapper.map(inboxAssignee)
+        XCTAssertNil(agent.inContactId)
+        XCTAssertEqual(agent.loginUsername, "")
+        XCTAssertNil(agent.emailAddress)
     }
 }

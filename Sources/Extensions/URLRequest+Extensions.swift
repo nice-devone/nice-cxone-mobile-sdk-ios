@@ -16,14 +16,25 @@
 import Foundation
 
 extension URLRequest {
-    
+
+    // MARK: - Properties
+
+    private static let headerContentType = "Content-Type"
+    private static let headerPlatform = "x-sdk-platform"
+    private static let headerVersion = "x-sdk-version"
+
     // MARK: - Init
     
-    init(url: URL, method: HTTPMethod, contentType: String) {
+    init(url: URL, method: HTTPMethod, contentType: String? = nil) {
         self.init(url: url)
         
         httpMethod = method.rawValue
-        setValue(contentType, forHTTPHeaderField: "Content-Type")
+        setValue("ios", forHTTPHeaderField: Self.headerPlatform)
+        setValue(CXoneChat.version, forHTTPHeaderField: Self.headerVersion)
+        
+        if let contentType {
+            setValue(contentType, forHTTPHeaderField: Self.headerContentType)
+        }
     }
     
     // MARK: - Methods
@@ -71,7 +82,7 @@ private extension Data {
             
             return "{\(json)\n}"
         } else {
-            return String(decoding: self, as: UTF8.self).formattedJSON
+            return self.utf8string?.formattedJSON
         }
     }
 }

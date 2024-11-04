@@ -24,14 +24,6 @@ class WelcomeMessageManager {
     private static let closingParam = "}}"
     private static let fallbackMessageIndicator = "{{fallbackMessage|"
     
-    private var dateProvider: DateProvider
-    
-    // MARK: - Init
-    
-    init(dateProvider: DateProvider) {
-        self.dateProvider = dateProvider
-    }
-    
     // MARK: - Methods
     
     /// Parses a raw welcome message with contact and customer custom fields and customer credentials.
@@ -99,7 +91,7 @@ class WelcomeMessageManager {
         
         var parameters = contactFields
         parameters.merge(with: customerFields)
-        parameters.merge(with: customer.credentialParameters(dateProvider: dateProvider))
+        parameters.merge(with: customer.credentialParameters())
         
         var result = message
         
@@ -162,14 +154,14 @@ private extension String {
 
 private extension CustomerIdentityDTO {
     
-    func credentialParameters(dateProvider: DateProvider) -> [CustomFieldDTO] {
+    func credentialParameters() -> [CustomFieldDTO] {
         let firstName = self.firstName ?? ""
         let lastName = self.lastName ?? ""
         
         return [
-            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: dateProvider.now),
-            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: dateProvider.now),
-            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: dateProvider.now)
+            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: Date.provide()),
+            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: Date.provide()),
+            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: Date.provide())
         ]
     }
 }

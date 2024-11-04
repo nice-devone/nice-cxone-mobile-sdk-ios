@@ -49,7 +49,7 @@ class ConnectionContextImpl: ConnectionContext {
     var environment: EnvironmentDetails
     
     /// An object that coordinates a group of related, network data transfer tasks.
-    let session: URLSession
+    let session: URLSessionProtocol
     
     /// Current chat state of the SDK
     ///
@@ -97,7 +97,7 @@ class ConnectionContextImpl: ConnectionContext {
     
     init(
         keychainService: KeychainService,
-        session: URLSession,
+        session: URLSession? = nil,
         environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: ""),
         brandId: Int = .min,
         deviceToken: String? = nil,
@@ -120,7 +120,7 @@ class ConnectionContextImpl: ConnectionContext {
             liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
         ),
         channelId: String = "",
-        destinationId: UUID = UUID(),
+        destinationId: UUID = UUID.provide(),
         visitDetailsStore: CurrentVisitDetails? = nil
     ) {
         self.keychainService = keychainService
@@ -133,7 +133,11 @@ class ConnectionContextImpl: ConnectionContext {
         self.channelId = channelId
         self.destinationId = destinationId
         self.environment = environment
-        self.session = session
+        #if DEBUG
+        self.session = session ?? URLSession.lenient()
+        #else
+        self.session = session ?? URLSession.shared
+        #endif
         self.visitDetailsStore = visitDetailsStore
     }
 

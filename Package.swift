@@ -31,23 +31,34 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0")
+        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0"),
+        .package(url: "https://github.com/lukepistrol/SwiftLintPlugin", from: "0.2.2"),
+        .package(url: "https://github.com/Kolos65/Mockable", from: "0.0.11"),
     ],
     targets: [
         .target(
             name: "CXoneChatSDK",
             dependencies: [
-                .product(name: "KeychainSwift", package: "keychain-swift")
+                .product(name: "KeychainSwift", package: "keychain-swift"),
+                .product(name: "Mockable", package: "Mockable")
             ],
             path: "Sources",
             resources: [
                 .copy("../PrivacyInfo.xcprivacy")
             ],
-            plugins: []
+            swiftSettings: [
+                .define("MOCKING", .when(configuration: .debug))
+            ],
+            plugins: [
+                .plugin(name: "SwiftLint", package: "SwiftLintPlugin")
+            ]
         ),
         .testTarget(
             name: "CXoneChatSDKTests",
-            dependencies: ["CXoneChatSDK"],
+            dependencies: [
+                "CXoneChatSDK",
+                .product(name: "Mockable", package: "Mockable")
+            ],
             path: "Tests",
             resources: [
                 .copy("CXOneChatSDKTests/Samples/sample_video.mov")

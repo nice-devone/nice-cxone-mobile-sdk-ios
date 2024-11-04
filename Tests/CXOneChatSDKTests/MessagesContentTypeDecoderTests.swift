@@ -25,8 +25,8 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - ContentType Text
     
     func testContentTypeTextDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "MessageType/MessageTypeText", extension: "json")
-        
+        let data = try loadBundleData(from: "MessageType/MessageTypeText", type: "json")
+
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
         switch message.contentType {
@@ -40,8 +40,8 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - ContentType Rich Link
     
     func testContentTypeRichLinkDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeRichLink", extension: "json")
-        
+        let data = try loadBundleData(from: "RichMessages/MessageTypeRichLink", type: "json")
+
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
         guard case .richLink(let entity) = message.contentType else {
@@ -58,8 +58,8 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - ContentType Quick Replies
     
     func testContentTypeQuickRepliesDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeQuickReplies", extension: "json")
-        
+        let data = try loadBundleData(from: "RichMessages/MessageTypeQuickReplies", type: "json")
+
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         
         guard case .quickReplies(let entity) = message.contentType else {
@@ -77,7 +77,7 @@ class MessagesContentTypeDecoderTests: XCTestCase {
     // MARK: - ContentType List Picker
     
     func testContentTypeListPickerDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "RichMessages/MessageTypeListPicker", extension: "json")
+        let data = try loadBundleData(from: "RichMessages/MessageTypeListPicker", type: "json")
         
         let message = MessageMapper.map(try decoder.decode(MessageDTO.self, from: data))
         

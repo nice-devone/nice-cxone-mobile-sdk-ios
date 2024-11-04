@@ -16,7 +16,7 @@
 import Foundation
 
 /// The objects for which an event is applicable.
-enum EventObjectType: String, Codable {
+enum EventObjectType: String, Codable, Equatable {
     
     /// The event is dealing with a contact.
     case contact = "Case"

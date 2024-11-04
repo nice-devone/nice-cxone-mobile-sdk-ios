@@ -89,7 +89,7 @@ public enum ChatState: Comparable {
     
     /// Check if chat is currently connected to the Websocket
     ///
-    /// - Attention: State is either ``connected``, ``ready``or ``closed``.
+    /// - Attention: State is either ``connected``, ``ready`` or ``closed``.
     public var isChatAvailable: Bool {
         [.connected, .ready, .closed].contains(self)
     }

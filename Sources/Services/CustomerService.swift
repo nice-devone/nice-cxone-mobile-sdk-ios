@@ -13,39 +13,64 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Combine
 import Foundation
 
-class CustomerService: CustomerProvider {
-    
+class CustomerService {
+
     // MARK: - Properties
     
     private var connectionContext: ConnectionContext {
-        get { socketService.connectionContext }
-        set { socketService.connectionContext = newValue }
+        socketService.connectionContext
     }
     
-    weak var delegate: CXoneChatDelegate?
-    
-    private let socketService: SocketService
+    let delegate: CXoneChatDelegate
+
+    let socketService: SocketService
     private let threadsService: ChatThreadsService?
     
     private var firstName: String?
     private var lastName: String?
     
+    // MARK: - Protocol properties
+
+    var cancellables = [AnyCancellable]()
+    var events: AnyPublisher<any ReceivedEvent, Never> { socketService.events }
+
     // MARK: - Init
     
-    init(socketService: SocketService, threads: ChatThreadsProvider) {
+    init(
+        socketService: SocketService,
+        threads: ChatThreadsProvider,
+        delegate: CXoneChatDelegate
+    ) {
         self.socketService = socketService
         self.threadsService = threads as? ChatThreadsService
+        self.delegate = delegate
+
+        addListeners()
     }
-    
-    // MARK: - Implementation
-    
+}
+
+// MARK: - CustomerProvider
+
+extension CustomerService: CustomerProvider {
+
     func get() -> CustomerIdentity? {
         connectionContext.customer.map(CustomerIdentityMapper.map)
     }
     
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat is already initialized.
+    @available(*, deprecated, message: """
+The method uses a shorthand unnamed parameter, which can obscure the meaning of the method for developers unfamiliar with the code.
+ Please update your usage to the new method `set(customer:)`.
+""")
     func set(_ customer: CustomerIdentity?) throws {
+        try set(customer: customer)
+    }
+    
+	/// - Throws: ``CXoneChatError/illegalChatState`` if the chat is already initialized.
+    func set(customer: CustomerIdentity?) throws {
         guard connectionContext.chatState == .initial else {
             LogManager.error("Tried to set customer identity after chat initialization")
             
@@ -98,6 +123,18 @@ class CustomerService: CustomerProvider {
     }
 }
 
+// MARK: - EventReceiver
+
+extension CustomerService: EventReceiver {
+
+    func addListeners() {
+        addListener(processCustomerAuthorizedEvent(_:))
+        addListener(for: .customerReconnected) { [weak self] (_: GenericEventDTO) in
+            try self?.processCustomerReconnectEvent()
+        }
+    }
+}
+
 // MARK: - Internal Methods
 
 extension CustomerService {
@@ -120,6 +157,8 @@ extension CustomerService {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func processCustomerAuthorizedEvent(_ event: CustomerAuthorizedEventDTO) throws {
         LogManager.trace("Processing customer authorized")
@@ -144,12 +183,14 @@ extension CustomerService {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func processCustomerReconnectEvent() throws {
         LogManager.trace("Processing customer reconnect")
         
         connectionContext.chatState = .connected
-        delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         
         try threadsService?.handleForCurrentChatMode(connectionContext.chatMode)
     }

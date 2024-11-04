@@ -1,25 +1,26 @@
 # Case Study: Rich Content Messages
 
-In addition to sending/receiving classic text messages or attachments that can have their own visual form, such as audio as a cell with an audio player, the SDK supports content-rich messages. It allows TORM (truly omnichannel rich messaging) approach.
+In addition to sending and receiving classic text messages or attachments—which can include visual forms like audio files displayed with an audio player—the SDK supports content-rich messages. This enables a Truly Omnichannel Rich Messaging (TORM) approach.More information about Rich content messages can be found in the [CXone documentation](https://help.nice-incontact.com/content/acd/digital/channelfeatures/richmessagesettings.htm?tocpath=Digital%20Experience%7CDigital%20Experience%20%7C_____2).
 
 
 ## Types
 
 - Rich Link
+  - Message with a title, an image and a URL address. The link can be a deeplink or an ordinary url.
 - Quick Replies
+  - Message with a list of buttons. Only one action can be selected from the options provided, and once selected, it should be made inactive.
 - List Picker
+  - Message with title, body and list of buttons (possibly with images). Each action in the list can be selected multiple times.
 
 - Sub Elements
   - Reply Button
-
-> Note: List Picker differs from Quick Reply in that repeated and multiple selections can be made from a List Picker while a Quick Reply allows only a single selection.
+    - Button with a text label and a postback value.
 
 ## Postback
 
 When users interact with a content-rich message, it is necessary to provide the selected subelement's 'postback' value, if it exists. This is necessary because the user may be interacting with a chatbot that doesn't provide a content-rich response but instead responds with the mentioned 'postback' value.
 
 > Warning: If you don't provide TORM sub-element `postback`, chat bot integration may not work correctly!
-
 
 ### Button
 

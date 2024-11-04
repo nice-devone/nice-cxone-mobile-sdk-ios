@@ -17,8 +17,27 @@ import Foundation
 
 /// Event received when a token has been successfully refreshed.
 struct TokenRefreshedEventDTO: Decodable {
-    
+
     let eventId: UUID
     
+    /// Type of event
+    let eventType: EventType?
+
     let postback: TokenRefreshedEventPostbackDTO
+
+    // MARK: - constructor
+
+    init(eventId: UUID, eventType: EventType? = .tokenRefreshed, postback: TokenRefreshedEventPostbackDTO) {
+        self.eventId = eventId
+        self.eventType = eventType
+        self.postback = postback
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension TokenRefreshedEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .tokenRefreshed
+
+    var postbackEventType: EventType? { postback.eventType }
 }

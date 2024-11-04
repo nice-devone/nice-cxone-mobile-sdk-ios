@@ -16,15 +16,40 @@
 import Foundation
 
 /// The initial decoding of a message from the WebSocket.
-struct GenericEventDTO: Decodable {
+struct GenericEventDTO: Decodable, Equatable {
     
+    // MARK: - Properties
+    
+    /// Event ID of this event (or original event we're responding to)
+    let eventId: LowerCaseUUID?
     /// The type of the event.
-	let eventType: EventType?
-
+    let eventType: EventType?
     /// The postback of the event.
-	let postback: GenericEventPostbackDTO?
-
+    let postback: GenericEventPostbackDTO?
     let error: OperationError?
-
     let internalServerError: InternalServerError?
+
+    // MARK: - Init
+    
+    init(
+        eventId: LowerCaseUUID? = nil,
+        eventType: EventType?,
+        postback: GenericEventPostbackDTO?,
+        error: OperationError?,
+        internalServerError: InternalServerError?
+    ) {
+        self.eventId = eventId
+        self.eventType = eventType
+        self.postback = postback
+        self.error = error
+        self.internalServerError = internalServerError
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension GenericEventDTO: ReceivedEvent {
+    static let eventType: EventType? = nil
+
+    var postbackEventType: EventType? { postback?.eventType }
 }

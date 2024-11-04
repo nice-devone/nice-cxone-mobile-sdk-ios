@@ -26,15 +26,12 @@ enum MockData {
     
     static let agent = AgentDTO(
         id: Int.random(in: 1..<1000),
-        inContactId: UUID().uuidString,
-        emailAddress: "john.doe@nice.com",
-        loginUsername: "jDoe",
         firstName: "John",
         surname: "Doe",
         nickname: "Johney",
         isBotUser: false,
         isSurveyUser: false,
-        imageUrl: imageUrl
+        publicImageUrl: imageUrl
     )
     static let customerIdentity = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: nil, lastName: nil)
     

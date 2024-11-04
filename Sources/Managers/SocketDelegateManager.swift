@@ -13,146 +13,120 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Combine
 import Foundation
 
 class SocketDelegateManager {
     
+    class Reference {
+        weak var value: CXoneChatDelegate?
+
+        init(value: CXoneChatDelegate? = nil) {
+            self.value = value
+        }
+    }
+
     // MARK: - Properties
     
-    let socketService: SocketService
-    
-    weak var delegate: CXoneChatDelegate?
-    
-    private let threadsService: ChatThreadsService?
-    private let customerService: CustomerService?
-    private let connectionService: ConnectionService?
-    
-    // MARK: - Init
-    
-    init(
-        socketService: SocketService,
-        threads: ChatThreadsProvider,
-        customer: CustomerProvider,
-        connection: ConnectionProvider
-    ) {
-        self.socketService = socketService
-        self.threadsService = threads as? ChatThreadsService
-        self.customerService = customer as? CustomerService
-        self.connectionService = connection as? ConnectionService
+    private var delegates = [Reference]()
+
+    func add(delegate: CXoneChatDelegate) {
+        LogManager.trace("Add a delegate")
         
-        socketService.delegate = self
+        delegates.append(delegate)
+    }
+
+    func remove(delegate: CXoneChatDelegate) {
+        LogManager.trace("Remove a delegate")
+        
+        delegates.remove(delegate)
     }
 }
 
-// MARK: - SocketDelegate
+// MARK: - Extend Array for convenience
 
-extension SocketDelegateManager: SocketDelegate {
+private extension Array where Element == SocketDelegateManager.Reference {
     
-    func handle(message: String) {
-        LogManager.trace("Handling a message - \(message.formattedJSON ?? message)")
-        
-        do {
-            let data = Data(message.utf8)
+    func contains(_ value: CXoneChatDelegate) -> Bool {
+        contains { element in
+            element.value === value
+        }
+    }
+
+    mutating func append(_ value: CXoneChatDelegate) {
+        if contains(value) {
+            LogManager.trace("Unable to add a delegate - already exists")
+        } else {
+            append(SocketDelegateManager.Reference(value: value))
             
-            if let error: ServerError = try? data.decode(), !error.message.isEmpty {
-                didReceiveError(error)
+            LogManager.trace("Delegate added")
+        }
+    }
+
+    mutating func remove(_ value: CXoneChatDelegate) {
+        self = filter { element in
+            if let element = element.value {
+                return element !== value
             } else {
-                try resolveGenericEventData(data)
+                return false
             }
-        } catch {
-            didReceiveError(error)
         }
     }
-    
-    func didReceiveError(_ error: Error) {
-        switch (error as? OperationError)?.errorCode {
-        case .recoveringThreadFailed, .recoveringLiveChatFailed:
-            threadsService?.processRecoveringThreadFailedError(error)
-        case .customerReconnectFailed:
-            do {
-                try refreshToken()
-            } catch {
-                delegate?.onError(error)
+
+    func forEach(_ perform: (CXoneChatDelegate) -> Void) {
+        forEach { (value: Element) in
+            if let value = value.value {
+                perform(value)
             }
-        case .tokenRefreshFailed:
-            delegate?.onTokenRefreshFailed()
-        default:
-            delegate?.onError(error)
         }
-    }
-    
-    func didCloseConnection() {
-        LogManager.trace("Websocket connection has been closed")
-        
-        connectionService?.connectionContext.chatState = .prepared
-        
-        delegate?.onUnexpectedDisconnect()
-    }
-    
-    func refreshToken() throws {
-        try connectionService?.refreshToken()
     }
 }
 
-// MARK: - Private methods
+// MARK: - Implement CXoneChatDelegate
 
-private extension SocketDelegateManager {
+extension SocketDelegateManager: CXoneChatDelegate {
     
-    // swiftlint:disable:next function_body_length
-    func resolveGenericEventData(_ eventData: Data) throws {
-        let event = try eventData.decode() as GenericEventDTO
-        let eventType = event.eventType ?? event.postback?.eventType
-        
-        if let error = event.error {
-            didReceiveError(error)
-        }
-        if let error = event.internalServerError {
-            didReceiveError(error)
-        }
-        
-        switch eventType {
-        case .eventInS3:
-            try socketService.downloadEventContentFromS3(try eventData.decode())
-        case .senderTypingStarted:
-            threadsService?.processAgentTypingEvent(try eventData.decode(), isTyping: true)
-        case .senderTypingEnded:
-            threadsService?.processAgentTypingEvent(try eventData.decode(), isTyping: false)
-        case .messageCreated:
-            try threadsService?.processMessageCreatedEvent(try eventData.decode())
-        case .threadRecovered:
-            try threadsService?.processThreadRecoveredEvent(try eventData.decode())
-        case .messageReadChanged:
-            try threadsService?.processMessageReadChangeEvent(try eventData.decode())
-        case .contactInboxAssigneeChanged:
-            try threadsService?.processContactInboxAssigneeChangedEvent(try eventData.decode())
-        case .threadListFetched:
-            try threadsService?.processThreadListFetchedEvent(event)
-        case .customerAuthorized:
-            try customerService?.processCustomerAuthorizedEvent(try eventData.decode())
-        case .customerReconnected:
-            try customerService?.processCustomerReconnectEvent()
-        case .moreMessagesLoaded:
-            try threadsService?.processMoreMessagesLoaded(try eventData.decode())
-        case .threadArchived:
-            threadsService?.processThreadArchivedEvent()
-        case .tokenRefreshed:
-            connectionService?.saveAccessToken(try eventData.decode())
-        case .threadMetadataLoaded:
-            try threadsService?.processThreadMetadataLoadedEvent(try eventData.decode())
-        case .fireProactiveAction:
-            try connectionService?.processProactiveAction(eventData)
-        case .caseStatusChanged:
-            try threadsService?.processCaseStatusChangedEvent(try eventData.decode())
-        case .setPositionInQueue:
-            try threadsService?.processSetPositionInQueueEvent(try eventData.decode())
-        case .liveChatRecovered:
-            try threadsService?.processLiveChatRecoveredEvent(try eventData.decode())
-        case .custom:
-            delegate?.onCustomEventMessage(eventData)
-        case .some:
-            LogManager.info("Trying to handle unknown message event type - \(String(describing: eventType))")
-        case .none:
-            break
-        }
+    func onUnexpectedDisconnect() {
+        delegates.forEach { $0.onUnexpectedDisconnect() }
+    }
+
+    func onChatUpdated(_ state: ChatState, mode: ChatMode) { 
+        delegates.forEach { $0.onChatUpdated(state, mode: mode) }
+    }
+
+    func onThreadUpdated(_ chatThread: ChatThread) { 
+        delegates.forEach { $0.onThreadUpdated(chatThread) }
+    }
+
+    func onThreadsUpdated(_ chatThreads: [ChatThread]) { 
+        delegates.forEach { $0.onThreadsUpdated(chatThreads) }
+    }
+
+    func onCustomEventMessage(_ messageData: Data) { 
+        delegates.forEach { $0.onCustomEventMessage(messageData) }
+    }
+
+    func onAgentTyping(_ isTyping: Bool, threadId: UUID) { 
+        delegates.forEach { $0.onAgentTyping(isTyping, threadId: threadId) }
+    }
+
+    func onContactCustomFieldsSet() { 
+        delegates.forEach { $0.onContactCustomFieldsSet() }
+    }
+
+    func onCustomerCustomFieldsSet() { 
+        delegates.forEach { $0.onCustomerCustomFieldsSet() }
+    }
+
+    func onError(_ error: Error) { 
+        delegates.forEach { $0.onError(error) }
+    }
+
+    func onTokenRefreshFailed() { 
+        delegates.forEach { $0.onTokenRefreshFailed() }
+    }
+
+    func onProactivePopupAction(data: [String: Any], actionId: UUID) { 
+        delegates.forEach { $0.onProactivePopupAction(data: data, actionId: actionId) }
     }
 }

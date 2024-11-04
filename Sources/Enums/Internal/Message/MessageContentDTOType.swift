@@ -15,7 +15,7 @@
 
 import Foundation
 
-enum MessageContentDTOType {
+enum MessageContentDTOType: Equatable {
     
     case text(MessagePayloadDTO)
         

@@ -15,47 +15,43 @@
 
 import Foundation
 
-class AnalyticsService: AnalyticsProvider {
+class AnalyticsService {
 
     // MARK: - Properties
 
     private let jsonEncoder = JSONEncoder()
     
+    let socketService: SocketService
+    /// Visit valid interval is 30 minutes
+    let visitValidInterval: TimeInterval = 30 * 60
+    
     var lastPageViewed: PageViewEventDTO?
     
-    let socketService: SocketService
-    let dateProvider: DateProvider
-
     var connectionContext: ConnectionContext {
-        get { socketService.connectionContext }
-        set { socketService.connectionContext = newValue }
+        socketService.connectionContext
     }
     var visitId: UUID? {
         connectionContext.visitId
     }
-
-    /// Visit valid interval is 30 minutes
-    let visitValidInterval: TimeInterval = 30 * 60
     
-    // MARK: - Protocol Properties
+    // MARK: - Init
+
+    init(socketService: SocketService) {
+        self.socketService = socketService
+    }
+}
+ 
+// MARK: - AnalyticsProvider Implementation
+
+// These public protocol implementations just forward to the actual
+// private implementation.  The two are distinct to maintain the existing
+// interface while allowing tests to specify an additional date parameter.
+extension AnalyticsService: AnalyticsProvider {
     
     public var visitorId: UUID? {
         get { connectionContext.visitorId }
         set { connectionContext.visitorId = newValue }
     }
-
-    // MARK: - Init
-
-    init(socketService: SocketService, dateProvider: DateProvider) {
-        self.socketService = socketService
-        self.dateProvider = dateProvider
-    }
-
-    // MARK: - Public Protocol Implementation
-
-    // These public protocol implementations just forward to the actual
-    // private implementation.  The two are distinct to maintain the existing
-    // interface while allowing tests to specify an additional date parameter.
 
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
     /// - Parameters:
@@ -80,7 +76,7 @@ class AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting page view started - \(title).")
 
-        let date = dateProvider.now
+        let date = Date.provide()
         let sendVisit = checkVisit(date: date)
 
         if sendVisit {
@@ -124,13 +120,13 @@ class AnalyticsService: AnalyticsProvider {
             throw CXoneChatError.illegalChatState
         }
         
-        let timeSpentInSeconds = Int(dateProvider.now.timeIntervalSince(lastPageViewed.timestamp))
+        let timeSpentInSeconds = Int(Date.provide().timeIntervalSince(lastPageViewed.timestamp))
         LogManager.trace("Reporting page view ended - \(title) Time spent: \(timeSpentInSeconds).")
         
         if lastPageViewed.title == title, lastPageViewed.url == url {
             try await trigger(
                 .timeSpentOnPage,
-                date: dateProvider.now,
+                date: Date.provide(),
                 data: TimeSpentOnPageEventDTO(url: url, title: title, timeSpentOnPage: timeSpentInSeconds)
             )
             
@@ -158,7 +154,7 @@ class AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting chat window open.")
         
-        try await trigger(.chatWindowOpened, date: dateProvider.now)
+        try await trigger(.chatWindowOpened, date: Date.provide())
     }
 
     /// Reports to CXone that a conversion has occurred.
@@ -184,7 +180,7 @@ class AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting conversion occurred.")
 
-        let date = dateProvider.now
+        let date = Date.provide()
 
         try await trigger(
             .conversion,
@@ -208,7 +204,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     public func proactiveActionDisplay(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionDisplayed, data: data, date: dateProvider.now)
+        try await proactiveAction(.proactiveActionDisplayed, data: data, date: Date.provide())
     }
 
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
@@ -226,7 +222,7 @@ class AnalyticsService: AnalyticsProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     public func proactiveActionClick(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionClicked, data: data, date: dateProvider.now)
+        try await proactiveAction(.proactiveActionClicked, data: data, date: Date.provide())
     }
     
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
@@ -248,13 +244,14 @@ class AnalyticsService: AnalyticsProvider {
         try await proactiveAction(
             isSuccess ? .proactiveActionSuccess : .proactiveActionFailed,
             data: data,
-            date: dateProvider.now
+            date: Date.provide()
         )
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
     public func customVisitorEvent(data: VisitorEventDataType) throws {
@@ -269,12 +266,12 @@ class AnalyticsService: AnalyticsProvider {
         let data = try jsonEncoder.encode(
             StoreVisitorEventsDTO(
                 action: .chatWindowEvent,
-                eventId: UUID(),
+                eventId: UUID.provide(),
                 payload: getVisitorEventsPayload(eventType: .custom, data: data)
             )
         )
 
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
 }
 
@@ -294,7 +291,7 @@ private extension AnalyticsService {
             // if there is no visit, or the current visit has expired
             // create a new visit expiring in 30 minutes.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: UUID(),
+                visitId: UUID.provide(),
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -303,7 +300,7 @@ private extension AnalyticsService {
             // if the visit is current, then we just update the visit
             // expiration date, maintaining the existing visit id.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: connectionContext.visitId ?? UUID(),
+                visitId: connectionContext.visitId ?? UUID.provide(),
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -416,7 +413,7 @@ private extension AnalyticsService {
         var request = URLRequest(url: url, method: .post, contentType: "application/json")
         request.httpBody = try JSONEncoder().encode(event)
 
-        try await connectionContext.session.data(for: request, fun: fun, file: file, line: line)
+        try await connectionContext.session.fetch(for: request, fun: fun, file: file, line: line)
     }
 
 }
@@ -440,9 +437,9 @@ private extension AnalyticsService {
                 VisitorsEventsDTO(
                     visitorEvents: [
                         VisitorEventDTO(
-                            id: LowerCaseUUID(uuid: UUID()),
+                            id: LowerCaseUUID(uuid: UUID.provide()),
                             type: eventType,
-                            createdAtWithMilliseconds: dateProvider.now.iso8601withFractionalSeconds,
+                            createdAtWithMilliseconds: Date.provide().iso8601withFractionalSeconds,
                             data: data
                         )
                     ]

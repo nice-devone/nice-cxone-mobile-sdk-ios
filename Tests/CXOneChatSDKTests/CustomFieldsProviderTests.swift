@@ -86,14 +86,14 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
         customerFieldsService.updateFields([
-            CustomFieldDTO(ident: "key1", value: "value1", updatedAt: dateProvider.now),
-            CustomFieldDTO(ident: "key2", value: "value2", updatedAt: dateProvider.now.addingTimeInterval(-dayInterval)),
-            CustomFieldDTO(ident: "key3", value: "value3", updatedAt: dateProvider.now.addingTimeInterval(-dayInterval))
+            CustomFieldDTO(ident: "key1", value: "value1", updatedAt: Date.provide()),
+            CustomFieldDTO(ident: "key2", value: "value2", updatedAt: Date.provide().addingTimeInterval(-dayInterval)),
+            CustomFieldDTO(ident: "key3", value: "value3", updatedAt: Date.provide().addingTimeInterval(-dayInterval))
         ])
         
         let newCustomFields: [CustomFieldDTO] = [
-            CustomFieldDTO(ident: "key1", value: "newValue1", updatedAt: dateProvider.now.addingTimeInterval(-dayInterval)),
-            CustomFieldDTO(ident: "key2", value: "newValue2", updatedAt: dateProvider.now)
+            CustomFieldDTO(ident: "key1", value: "newValue1", updatedAt: Date.provide().addingTimeInterval(-dayInterval)),
+            CustomFieldDTO(ident: "key2", value: "newValue2", updatedAt: Date.provide())
         ]
         
         customerFieldsService.updateFields(newCustomFields)
@@ -111,15 +111,15 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         
         contactFieldsService.updateFields(
             [
-                CustomFieldDTO(ident: "firstName", value: "John", updatedAt: dateProvider.now),
-                CustomFieldDTO(ident: "email", value: "john.doe@gmail.com", updatedAt: dateProvider.now.addingTimeInterval(-dayInterval))
+                CustomFieldDTO(ident: "firstName", value: "John", updatedAt: Date.provide()),
+                CustomFieldDTO(ident: "email", value: "john.doe@gmail.com", updatedAt: Date.provide().addingTimeInterval(-dayInterval))
             ],
             for: threadId
         )
         
         let newCustomFields: [CustomFieldDTO] = [
-            CustomFieldDTO(ident: "firstName", value: "Johnnie", updatedAt: dateProvider.now.addingTimeInterval(-dayInterval)),
-            CustomFieldDTO(ident: "email", value: "john.doe2@gmail.com", updatedAt: dateProvider.now)
+            CustomFieldDTO(ident: "firstName", value: "Johnnie", updatedAt: Date.provide().addingTimeInterval(-dayInterval)),
+            CustomFieldDTO(ident: "email", value: "john.doe2@gmail.com", updatedAt: Date.provide())
         ]
         
         contactFieldsService.updateFields(newCustomFields, for: threadId)

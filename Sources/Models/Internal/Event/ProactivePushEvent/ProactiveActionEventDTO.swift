@@ -15,19 +15,27 @@
 
 import Foundation
 
-struct ProactiveActionEventDTO: ReceivedEvent {
-    
+struct ProactiveActionEventDTO: Equatable {
+
     // MARK: - Properties
     
     let eventId: UUID
 
     let eventObject: EventObjectType
 
-    let eventType: EventType
+    let eventType: EventType?
 
     let createdAt: Date
 
     let data: ProactiveActionEventDataDTO
+}
+
+// MARK: - ReceivedEvent
+
+extension ProactiveActionEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .fireProactiveAction
+
+    var postbackEventType: EventType? { nil }
 }
 
 // MARK: - Codable

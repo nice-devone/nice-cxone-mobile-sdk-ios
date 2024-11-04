@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct DesignBackgroundDTO: Codable {
+struct DesignBackgroundDTO: Codable, Equatable {
     
     let color: String?
 

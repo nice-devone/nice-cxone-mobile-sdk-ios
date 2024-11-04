@@ -36,9 +36,9 @@ public enum CXoneChatError: LocalizedError, Equatable {
     ///     e.g.  ``ChatThreadsProvider/create()``.
     case unsupportedChannelConfig
 
-    /// The conversion from object instance to data failed.
+    /// The conversion from object instance to data failed or when the Data object cannot be successfully converted to a valid UTF-8 string
     ///
-    /// SDK is converting an object, like `String`, to the `Data` and the conversion failed.
+    /// SDK is converting an object, like `String`, to the `Data` and vice versa and the conversion failed.
     /// - Source of problem: SDK/DFO issue
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case invalidData

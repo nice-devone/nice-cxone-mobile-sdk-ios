@@ -18,7 +18,7 @@ import Foundation
 // CustomerIdentityView
 
 /// Represents information about a customer identity to be sent on events.
-struct CustomerIdentityDTO: Codable {
+struct CustomerIdentityDTO: Codable, Equatable {
     
     /// The unique id for the customer identity.
     let idOnExternalPlatform: String

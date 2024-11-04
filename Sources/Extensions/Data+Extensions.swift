@@ -20,8 +20,8 @@ extension Data {
     // MARK: - Properties
     
     /// Converts to the String with UTF8 encoding.
-    var utf8string: String {
-        String(decoding: self, as: UTF8.self)
+    var utf8string: String? {
+        String(data: self, encoding: .utf8)
     }
     
     // MARK: - Methods

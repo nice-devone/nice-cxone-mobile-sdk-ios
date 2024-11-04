@@ -13,30 +13,36 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Combine
 import Foundation
 
 /// The implementation of the interface for interacting with chat features of the CXone platform.
-public class CXoneChat: ChatProvider {
-    
+public class CXoneChat: ChatProvider, EventReceiver {
+
     // MARK: - Static properties
-    
+
     /// The version of the CXone chat SDK.
-    public static var version: String = "2.1.0"
+    public static var version: String = "2.2.0"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
-        socketService: SocketService(
-            connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared),
-            dateProvider: DateProviderImpl()
+        socketService: SocketServiceImpl(
+            connectionContext: ConnectionContextImpl(keychainService: KeychainService())
         )
     )
     
     // MARK: - Public properties
     
     /// The handler for the chat events.
+    @available(*, deprecated, message: "Deprecated with 2.2.0 Please use add(delegate:)")
     public weak var delegate: CXoneChatDelegate? {
-        didSet {
-            resolver.delegate = delegate
+        willSet {
+            if let delegate = delegate {
+                remove(delegate: delegate)
+            }
+            if let delegate = newValue {
+                add(delegate: delegate)
+            }
         }
     }
     
@@ -51,51 +57,96 @@ public class CXoneChat: ChatProvider {
     /// The state defines if the SDK is prepared for API services (analytics), connected for chat features
     /// or if it needs to be prepared or connected for proper usage.
     public var state: ChatState {
-        resolver.connectionContext.chatState
+        connectionContext.chatState
     }
     
     /// Chat mode defining available functionality.
     public var mode: ChatMode {
-        resolver.connectionContext.chatMode
+        connectionContext.chatMode
     }
+    
     // MARK: - API providers
     
     /// The provider for connection related properties and methods.
-    public var connection: ConnectionProvider {
-        resolver.resolve()
-    }
+    public let connection: ConnectionProvider
     /// The provider for customer related properties and methods.
-    public var customer: CustomerProvider {
-        resolver.resolve()
-    }
+    public let customer: CustomerProvider
     /// The provider for customer chat fields related properties and methods.
-    public var customerCustomFields: CustomerCustomFieldsProvider {
-        resolver.resolve()
-    }
+    public let customerCustomFields: CustomerCustomFieldsProvider
     /// The provider for thread related properties and methods.
-    public var threads: ChatThreadsProvider {
-        resolver.resolve()
-    }
+    public let threads: ChatThreadsProvider
     /// The provider for report related properties and methods.
-    public var analytics: AnalyticsProvider {
-        resolver.resolve()
-    }
-    
+    public let analytics: AnalyticsProvider
+    /// The connection context
+    private let connectionContext: ConnectionContext
+
     // MARK: - Internal properties
     
     let socketDelegateManager: SocketDelegateManager
-    
+    let socketService: SocketService
+
     // MARK: - Private properties
     
     private let resolver: DependencyManager
     
+    // MARK: - EventReceiver properties
+
+    var events: AnyPublisher<any ReceivedEvent, Never> { socketService.events }
+
+    var cancellables = [AnyCancellable]()
+
     // MARK: - Init
-    
+
     init(socketService: SocketService) {
-        self.resolver = DependencyManager(socketService: socketService, dateProvider: socketService.dateProvider)
+        self.socketService = socketService
+
+        self.resolver = DependencyManager(socketService: socketService)
         self.socketDelegateManager = resolver.resolve()
+        self.connection = resolver.resolve()
+        self.customer = resolver.resolve()
+        self.customerCustomFields = resolver.resolve()
+        self.threads = resolver.resolve()
+        self.analytics = resolver.resolve()
+        self.connectionContext = resolver.connectionContext
+
+        addListeners()
     }
     
+    func addListeners() {
+        addListener(onOperationError(_:))
+    }
+
+    /// Add a ``CXoneChatDelegate``
+    ///
+    /// Future delegate messages will be routed to the newly added delegate.
+    ///
+    /// Note: No strong reference to the delegate is maintained so the caller
+    /// is responsible for its lifecycle.
+    public func add(delegate: CXoneChatDelegate) {
+        socketDelegateManager.add(delegate: delegate)
+    }
+
+    /// Remove a `CXoneChatDelegate``
+    ///
+    /// No future delegate messages will be routed to the removed delegate.
+    public func remove(delegate: CXoneChatDelegate) {
+        socketDelegateManager.remove(delegate: delegate)
+    }
+
+    private func onOperationError(_ error: OperationError) {
+        switch error.errorCode {
+        case .recoveringThreadFailed,
+                .recoveringLiveChatFailed,
+                .customerReconnectFailed:
+            // these are handled elsewhere
+            break
+        case .tokenRefreshFailed:
+            socketDelegateManager.onTokenRefreshFailed()
+        default:
+            socketDelegateManager.onError(error)
+        }
+    }
+
     // MARK: - Static methods
     
     /// Signs the customer out and disconnects from the CXone service.
@@ -108,9 +159,8 @@ public class CXoneChat: ChatProvider {
         UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
         
         shared = CXoneChat(
-            socketService: SocketService(
-                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared),
-                dateProvider: DateProviderImpl()
+            socketService: SocketServiceImpl(
+                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared)
             )
         )
     }

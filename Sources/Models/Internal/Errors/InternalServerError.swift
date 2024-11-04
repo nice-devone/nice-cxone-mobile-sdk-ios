@@ -15,14 +15,26 @@
 
 import Foundation
 
-struct InternalServerError: LocalizedError {
-    
+struct InternalServerError: LocalizedError, Equatable {
+
+    var eventType: EventType? { nil }
+
     let eventId: UUID
 
     let error: OperationError
 
     let thread: ThreadDTO?
 }
+
+// MARK: - ReceivedEvent
+
+extension InternalServerError: ReceivedEvent {
+    static let eventType: EventType? = nil
+
+    var postbackEventType: EventType? { nil }
+}
+
+// MARK: - Decodable
 
 extension InternalServerError: Decodable {
     

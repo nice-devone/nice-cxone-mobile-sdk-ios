@@ -15,8 +15,10 @@
 
 import Foundation
 
-struct ServerError: LocalizedError, Codable {
-    
+struct ServerError: LocalizedError, Codable, Equatable {
+
+    var eventType: EventType? { nil }
+
     let message: String
 
     let connectionId: UUID
@@ -24,4 +26,12 @@ struct ServerError: LocalizedError, Codable {
     let requestId: UUID
 
     var errorDescription: String? { message }
+}
+
+// MARK: - ReceivedEvent
+
+extension ServerError: ReceivedEvent {
+    static let eventType: EventType? = nil
+
+    var postbackEventType: EventType? { nil }
 }

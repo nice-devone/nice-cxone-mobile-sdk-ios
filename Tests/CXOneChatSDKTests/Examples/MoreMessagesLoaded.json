@@ -1,0 +1,11 @@
+{
+    "eventId": "56d6b327-9763-47eb-8e0c-67a7d3fcccfb",
+    "postback": {
+        "eventType": "MoreMessagesLoaded",
+        "data": {
+            "messages": [],
+            "scrollToken": "",
+            "contactHistory": []
+        }
+    }
+}

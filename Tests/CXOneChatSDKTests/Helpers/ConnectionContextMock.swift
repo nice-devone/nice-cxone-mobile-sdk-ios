@@ -58,7 +58,7 @@ class ConnectionContextMock: ConnectionContext {
     var environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "")
     
     /// An object that coordinates a group of related, network data transfer tasks.
-    let session: URLSession
+    let session: URLSessionProtocol
     
     var isConnected: Bool {
         channelId != "" && brandId != .min && visitorId != nil && _customer != nil

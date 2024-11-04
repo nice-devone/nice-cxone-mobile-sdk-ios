@@ -86,33 +86,33 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - AuthorizeCustomerEventDataDTO
     
     func testAuthorizeCustomerEventDataDTODecodeCorrectly() throws {
-        let json = """
-        {
-            "authorization": {
-                "authorizationCode": "authCode",
-                "codeVerifier": "verifier"
-            }
-        }
-        """
-        
-        guard let data = json.data(using: .utf8) else {
-            throw DecodingError.valueNotFound(Data.self, DecodingError.Context(codingPath: [], debugDescription: json))
-        }
-        
+        let data = try loadBundleData(from: "AuthorizeCustomer", type: "json")
         let entity = try decoder.decode(AuthorizeCustomerEventDataDTO.self, from: data)
         
-        XCTAssertEqual(entity.authorizationCode, "authCode")
-        XCTAssertEqual(entity.codeVerifier, "verifier")
+        XCTAssertEqual(entity.authorizationCode, "1234")
+        XCTAssertEqual(entity.codeVerifier, "1234")
+        XCTAssertTrue(entity.disableChannelInfo)
+        XCTAssertEqual(entity.sdkPlatform, "ios")
+        XCTAssertEqual(entity.sdkVersion, "1.0.0")
     }
     
     func testAuthorizeCustomerEventDataDTOEncodeCorrectly() throws {
-        var entity = AuthorizeCustomerEventDataDTO(authorizationCode: "authCode", codeVerifier: "verifier")
+        var entity = AuthorizeCustomerEventDataDTO(
+            authorizationCode: "authCode",
+            codeVerifier: "verifier",
+            disableChannelInfo: false,
+            sdkPlatform: "ios",
+            sdkVersion: "2.0.0"
+        )
         
         let data = try encoder.encode(entity)
         entity = try decoder.decode(AuthorizeCustomerEventDataDTO.self, from: data)
         
         XCTAssertEqual(entity.authorizationCode, "authCode")
         XCTAssertEqual(entity.codeVerifier, "verifier")
+        XCTAssertFalse(entity.disableChannelInfo)
+        XCTAssertEqual(entity.sdkPlatform, "ios")
+        XCTAssertEqual(entity.sdkVersion, "2.0.0")
     }
     
     // MARK: - ReconnectCustomerEventDataDTO
@@ -428,8 +428,8 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - StoreVisitorEventsPayloadDTO
     
     func testStoreVisitorEventsPayloadDTOEncodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "StoreVisitorEventsPayloadDTO", extension: "json")
-        
+        let data = try loadBundleData(from: "StoreVisitorEventsPayloadDTO", type: "json")
+
         let visitorId = UUID(uuidString: "c80f620c-7825-4695-aadd-cdfeb0bb7376")!
         let eventId = UUID(uuidString: "5812e395-89d0-4680-a142-3f3d32b65bf0")!
         
@@ -465,8 +465,8 @@ class ModelDecoderEncoderTests: XCTestCase {
     }
     
     func testThreadRecoveredEventDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent", extension: "json")
-        
+        let data = try loadBundleData(from: "ThreadRecoveredEvent", type: "json")
+
         let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
@@ -479,8 +479,8 @@ class ModelDecoderEncoderTests: XCTestCase {
     }
     
     func testThreadRecoveredEventFallbackDecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "ThreadRecoveredEvent_fallback", extension: "json")
-        
+        let data = try loadBundleData(from: "ThreadRecoveredEvent_fallback", type: "json")
+
         let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
         XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
@@ -495,7 +495,7 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - EventInS3
     
     func testEventInS3DecodeCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "EventInS3+ThreadRecovered", extension: "json")
+        let data = try loadBundleData(from: "EventInS3+ThreadRecovered", type: "json")
         let genericEvent = try decoder.decode(GenericEventDTO.self, from: data)
         
         XCTAssertEqual(genericEvent.eventType, .eventInS3)

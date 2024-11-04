@@ -15,8 +15,8 @@
 
 import Foundation
 
-struct DesignDTO: Codable {
-    
+struct DesignDTO: Codable, Equatable {
+
     let background: DesignBackgroundDTO
 
     let designBorder: DesignBorderDTO

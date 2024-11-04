@@ -34,6 +34,7 @@ For live chat channel configuration, it is recommended to do following steps:
 > Important: To see logged warnings/errors you need to configure the SDK logger. This can be done using the `configureLogger(level:verbosity:)` method available in `CXoneChat`.
 
 ### Prepare usage of the CXoneChatSDK - `LoginViewModel.swift`
+
 Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/Presentation/Views/Login/LoginViewModel.swift).
 
 ```swift
@@ -50,7 +51,6 @@ class LoginViewModel: AnalyticsReporter, ObservableObject {
     }
     ...
 }
-
 ...
 
 // MARK: - Private methods
@@ -78,6 +78,7 @@ private extension LoginViewModel {
 ```
 
 ### Handle Connection and Loading of the thread - `DefaultChatViewModel.swift`
+
 Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/cxone-chat-ui/Sources/Presentation/Implementation/Default/Chat/DefaultChatViewModel.swift).
 
 Note that `ConnectionProvider.connect()` (3) is not part of the `DefaultChatViewModel.onAppear()` method because sample application handles all channel configuration and connection has been already established in the `DefaultChatCoordinatorViewModel` which is a screen to decide if the user should be forwarded straight to the chat or to the thread list based on the channel configuration. But the examples demonstrate where the `ConnectionProvider.connect()` method could be used.
@@ -91,7 +92,7 @@ class DefaultChatViewModel: ObservableObject {
     
     init(thread: ChatThread, coordinator: DefaultChatCoordinator) {
         ...
-        CXoneChat.shared.delegate = self // (2)
+        CXoneChat.shared.add(delegate: self) // (2)
     }
     ...
     
@@ -152,4 +153,7 @@ extension DefaultChatViewModel: CXoneChatDelegate {
             ..
         }
     }
+
+    ...
+}
 ``` 

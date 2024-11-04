@@ -18,7 +18,7 @@ import Foundation
 // ContactView
 
 /// Represents all info about a contact (case).
-struct ContactDTO {
+struct ContactDTO: Equatable {
 
     // MARK: - Properties
 

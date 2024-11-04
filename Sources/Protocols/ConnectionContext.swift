@@ -14,8 +14,10 @@
 //
 
 import Foundation
+import Mockable
 
-protocol ConnectionContext {
+@Mockable
+protocol ConnectionContext: AnyObject {
     
     var keychainService: KeychainService { get set }
     
@@ -47,8 +49,8 @@ protocol ConnectionContext {
     var environment: EnvironmentDetails { get set }
     
     /// An object that coordinates a group of related, network data transfer tasks.
-    var session: URLSession { get }
-    
+    var session: URLSessionProtocol { get }
+
     var chatState: ChatState { get set }
     
     var visitorId: UUID? { get set }

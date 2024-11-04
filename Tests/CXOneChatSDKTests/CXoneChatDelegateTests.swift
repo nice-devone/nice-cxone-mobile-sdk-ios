@@ -21,15 +21,15 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testUnexpectedDisconnectCalled() async {
         currentExpectation = XCTestExpectation(description: "`UnexpectedDisconnect` delegate method called properly")
         
-        CXoneChat.delegate?.onUnexpectedDisconnect()
-        
+        CXoneChat.socketDelegateManager.onUnexpectedDisconnect()
+
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testChatUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onChatUpdated(.connected, mode: .singlethread)
+        CXoneChat.socketDelegateManager.onChatUpdated(.connected, mode: .singlethread)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -37,7 +37,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testThreadUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onThreadUpdated(ChatThreadMapper.map(MockData.getThread()))
+        CXoneChat.socketDelegateManager.onThreadUpdated(ChatThreadMapper.map(MockData.getThread()))
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -45,7 +45,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testThreadsUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onThreadsUpdated([ChatThreadMapper.map(MockData.getThread())])
+        CXoneChat.socketDelegateManager.onThreadsUpdated([ChatThreadMapper.map(MockData.getThread())])
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -53,7 +53,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testCustomEventMessageCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onCustomEventMessage(Data())
+        CXoneChat.socketDelegateManager.onCustomEventMessage(Data())
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -61,7 +61,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testProactivePopupActionCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onProactivePopupAction(data: [:], actionId: UUID())
+        CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: UUID())
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -69,7 +69,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnAgentTypingDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onAgentTyping(true, threadId: UUID())
+        CXoneChat.socketDelegateManager.onAgentTyping(true, threadId: UUID())
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -77,7 +77,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnContactCustomFieldsSetDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onContactCustomFieldsSet()
+        CXoneChat.socketDelegateManager.onContactCustomFieldsSet()
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -85,7 +85,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnCustomerCustomFieldsSetDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onCustomerCustomFieldsSet()
+        CXoneChat.socketDelegateManager.onCustomerCustomFieldsSet()
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -93,7 +93,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnErrorDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onError(CXoneChatError.attachmentError)
+        CXoneChat.socketDelegateManager.onError(CXoneChatError.attachmentError)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -101,7 +101,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnTokenRefreshFailedDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onTokenRefreshFailed()
+        CXoneChat.socketDelegateManager.onTokenRefreshFailed()
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -109,7 +109,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testOnProactivePopupActionDefaultImplementationCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.delegate?.onProactivePopupAction(data: [:], actionId: UUID())
+        CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: UUID())
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }

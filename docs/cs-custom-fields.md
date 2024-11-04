@@ -4,6 +4,8 @@ CXone provides the capability to define custom fields for both the chat itself a
 
 > Important: When setting custom fields it is necessary to respect their definitions. The definitions are available as variables of the `channelConfiguration` object available in the `ConnectionProvider`. If an attempt is made to set a custom field that is not defined for the selected brand, it will be ignored from the CXone perspective.  If the requirements are not met, an error will be logged via ``LogDelegate.logError(_:)`` The error will be either `.unknownCaseCustomFields` or `.unknownCustomerCustomFields` depending on the provider of the definitions.
 
+> Note: **Case** custom fields are custom fields associated with a single chat conversation/thread, whereas **Customer** custom fields are custom fields associated with a customer. This information is available for all conversations
+
 
 ## Static/Dynamic Custom Fields
 

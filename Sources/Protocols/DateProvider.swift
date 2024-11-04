@@ -14,8 +14,20 @@
 //
 
 import Foundation
+import Mockable
 
+@Mockable
 protocol DateProvider {
-    
+
     var now: Date { get }
+}
+
+struct DateProviderImpl: DateProvider {
+    var now: Date { Date.now }
+}
+
+extension Date {
+    static var provider: DateProvider = DateProviderImpl()
+
+    static func provide() -> Date { provider.now }
 }

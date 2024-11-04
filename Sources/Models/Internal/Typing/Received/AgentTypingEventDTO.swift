@@ -18,19 +18,30 @@ import Foundation
 // SenderTypingStarted
 
 /// Event received when the agent begins typing or stops typing.
-struct AgentTypingEventDTO: ReceivedEvent {
+struct AgentTypingEventDTO: Equatable {
 
     // MARK: - Properties
+    let eventId: UUID
 
-    var eventId: UUID
+    let eventObject: EventObjectType
 
-    var eventObject: EventObjectType
+    let eventType: EventType?
 
-    let eventType: EventType
+    let createdAt: Date
 
-    var createdAt: Date
+    let data: AgentTypingEventDataDTO
 
-    var data: AgentTypingEventDataDTO
+    var agentTyping: Bool {
+        eventType == .senderTypingStarted
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension AgentTypingEventDTO: ReceivedEvent {
+    static let eventType: EventType? = nil
+
+    var postbackEventType: EventType? { nil }
 }
 
 // MARK: - Codable

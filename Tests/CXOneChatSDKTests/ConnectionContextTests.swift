@@ -59,7 +59,7 @@ class ConnectionContextTests: XCTestCase {
     }
     
     func testPrechatSurveyMapCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let data = try loadBundleData(from: "ChannelConfiguration", type: "json")
         let configuration = try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
         
         XCTAssertEqual(configuration.prechatSurvey?.customFields.count, 4)
@@ -94,7 +94,7 @@ class ConnectionContextTests: XCTestCase {
     }
     
     func testLiveChatAvailabilityMapCorrectly() throws {
-        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let data = try loadBundleData(from: "ChannelConfiguration", type: "json")
         let configuration = try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
         
         XCTAssertFalse(configuration.liveChatAvailability.isChannelLiveChat)

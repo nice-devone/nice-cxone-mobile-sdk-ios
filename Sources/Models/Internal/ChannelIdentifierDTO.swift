@@ -18,7 +18,7 @@ import Foundation
 // ChannelView
 
 /// Uniquely identifies a channel.
-struct ChannelIdentifierDTO: Codable {
+struct ChannelIdentifierDTO: Codable, Equatable {
     
     /// The id of the channel.
     let id: String

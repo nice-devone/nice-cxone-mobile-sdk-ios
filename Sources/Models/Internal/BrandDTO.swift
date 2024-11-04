@@ -18,7 +18,7 @@ import Foundation
 // BrandView
 
 /// Represents all info about the brand.
-struct BrandDTO: Codable {
+struct BrandDTO: Codable, Equatable {
     
     /// The id of the brand.
     let id: Int

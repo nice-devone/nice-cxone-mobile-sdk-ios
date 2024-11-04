@@ -60,21 +60,21 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[0]["visitId"] as? String)
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[1]["visitId"] as? String)
 
-        XCTAssertEqual(Date(timeInterval: 30 * 60, since: dateProvider.now), visitDetails?.expires)
+        XCTAssertEqual(Date(timeInterval: 30 * 60, since: Date.provide()), visitDetails?.expires)
     }
 
     func testViewPageStaleVisitCreatesVisit() async throws {
         try await setUpConnection()
         
         let oldUUID = UUID()
-        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: Date.provide()))
 
         try await verify(sends: visit(), pageView(title: "page", url: "url", visitId: "*")) {
             try await analyticsService.viewPage(title: "page", url: "url")
         }
 
         XCTAssertNotNil(visitDetails)
-        XCTAssertEqual(Date(timeInterval: 30 * 60, since: dateProvider.now), visitDetails?.expires)
+        XCTAssertEqual(Date(timeInterval: 30 * 60, since: Date.provide()), visitDetails?.expires)
         XCTAssertNotEqual(oldUUID, visitDetails?.visitId)
     }
 
@@ -82,19 +82,19 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         try await setUpConnection()
         
         let oldUUID = UUID()
-        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: pageView(title: "page", url: "url")) {
             try await analyticsService.viewPage(title: "page", url: "url")
         }
 
         XCTAssertNotNil(visitDetails)
-        XCTAssertEqual(Date(timeInterval: 30 * 60, since: dateProvider.now), visitDetails?.expires)
+        XCTAssertEqual(Date(timeInterval: 30 * 60, since: Date.provide()), visitDetails?.expires)
         XCTAssertEqual(oldUUID, visitDetails?.visitId)
     }
     
     func testViewPageEndedNoConnectionThrows() async throws {
-        analyticsService.lastPageViewed = PageViewEventDTO(title: "page", url: "url", timestamp: dateProvider.now.addingTimeInterval(-100))
+        analyticsService.lastPageViewed = PageViewEventDTO(title: "page", url: "url", timestamp: Date.provide().addingTimeInterval(-100))
         
         await XCTAssertAsyncThrowsError(try await analyticsService.viewPageEnded(title: "page", url: "url"))
     }
@@ -103,19 +103,19 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         try await setUpConnection()
         
         let oldUUID = UUID()
-        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: Date.provide()))
 
         try await verify(sends: visit(), pageView(title: "page", url: "url", visitId: "*")) {
             try await analyticsService.viewPage(title: "page", url: "url")
         }
 
         XCTAssertNotNil(visitDetails)
-        XCTAssertEqual(Date(timeInterval: 30 * 60, since: dateProvider.now), visitDetails?.expires)
+        XCTAssertEqual(Date(timeInterval: 30 * 60, since: Date.provide()), visitDetails?.expires)
         XCTAssertNotEqual(oldUUID, visitDetails?.visitId)
     }
 
     func testChatWindowOpenDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
         
         await XCTAssertAsyncThrowsError(try await analyticsService.chatWindowOpen())
     }
@@ -127,7 +127,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testChatWindowOpen() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: chatWindowOpen()) {
             try await analyticsService.chatWindowOpen()
@@ -135,7 +135,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testConversionDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         await XCTAssertAsyncThrowsError(try await analyticsService.conversion(type: "sale", value: 98))
     }
@@ -147,7 +147,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testConversion() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: conversion(type: "sale", amount: 98)) {
             try await analyticsService.conversion(type: "sale", value: 98)
@@ -165,7 +165,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
     
     func testProactiveActionDisplayDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         await XCTAssertAsyncThrowsError(try await analyticsService.proactiveActionDisplay(data: proactiveDetails))
     }
@@ -177,7 +177,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testProactiveActionDisplay() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: proactiveActionDisplayed(details: proactiveDetails)) {
             try await analyticsService.proactiveActionDisplay(data: proactiveDetails)
@@ -185,7 +185,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
     
     func testProactiveActionClickedDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         await XCTAssertAsyncThrowsError(try await analyticsService.proactiveActionClick(data: proactiveDetails))
     }
@@ -197,7 +197,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testProactiveActionClicked() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: proactiveActionClicked(details: proactiveDetails)) {
             try await analyticsService.proactiveActionClick(data: proactiveDetails)
@@ -205,7 +205,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionSuccessDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
        
         await XCTAssertAsyncThrowsError(try await analyticsService.proactiveActionSuccess(true, data: proactiveDetails))
     }
@@ -217,7 +217,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testProactiveActionSuccess() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: proactiveActionSuccess(details: proactiveDetails)) {
             try await analyticsService.proactiveActionSuccess(true, data: proactiveDetails)
@@ -225,7 +225,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionFailureDisconnectedThrows() async throws {
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
         
         await XCTAssertAsyncThrowsError(try await analyticsService.proactiveActionSuccess(false, data: proactiveDetails))
     }
@@ -237,7 +237,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testProactiveActionFailure() async throws {
         try await setUpConnection()
         
-        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: dateProvider.now))
+        visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
         try await verify(sends: proactiveActionFailure(details: proactiveDetails)) {
             try await analyticsService.proactiveActionSuccess(false, data: proactiveDetails)
@@ -362,7 +362,7 @@ private extension AnalyticsProviderTests {
             "type": type,
             "id": id,
             "visitId": visitId ?? visitDetails?.visitId.uuidString ?? "*",
-            "createdAtWithMilliseconds": createdAtWithMilliseconds ?? dateProvider.now.iso8601withFractionalSeconds,
+            "createdAtWithMilliseconds": createdAtWithMilliseconds ?? Date.provide().iso8601withFractionalSeconds,
             "destination": [
                 "id": destination ?? connectionContext.destinationId.uuidString
             ],
@@ -392,7 +392,7 @@ private extension AnalyticsProviderTests {
             data: [
                 "conversionType": type,
                 "conversionValue": amount,
-                "conversionTimeWithMilliseconds": dateProvider.now.iso8601withFractionalSeconds
+                "conversionTimeWithMilliseconds": Date.provide().iso8601withFractionalSeconds
             ] as NSDictionary
         )
     }

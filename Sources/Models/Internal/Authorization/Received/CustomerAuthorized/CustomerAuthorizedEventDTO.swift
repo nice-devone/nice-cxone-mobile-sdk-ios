@@ -16,11 +16,46 @@
 import Foundation
 
 /// Event received when a customer is successfully authorized.
-struct CustomerAuthorizedEventDTO: Decodable {
-    
+struct CustomerAuthorizedEventDTO: Equatable {
     /// The unique identifier of the event.
     let eventId: UUID
 
+    /// Type of event
+    let eventType: EventType?
+
     /// The postback for the customer authorized event.
     let postback: CustomerAuthorizedEventPostbackDTO
+
+    init(eventId: UUID, eventType: EventType? = .customerAuthorized, postback: CustomerAuthorizedEventPostbackDTO) {
+        self.eventId = eventId
+        self.eventType = eventType
+        self.postback = postback
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension CustomerAuthorizedEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .customerAuthorized
+
+    var postbackEventType: EventType? { postback.eventType }
+}
+
+// MARK: - Decoder
+
+extension CustomerAuthorizedEventDTO: Decodable {
+    enum CodingKeys: CodingKey {
+        case eventId
+        case eventType
+        case postback
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let postback = try container.decode(CustomerAuthorizedEventPostbackDTO.self, forKey: .postback)
+        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        // Use eventtype from postback if not available at top level
+        self.eventType = try container.decodeIfPresent(EventType.self, forKey: .eventType) ?? postback.eventType
+        self.postback = postback
+    }
 }

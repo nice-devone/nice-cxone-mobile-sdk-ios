@@ -22,12 +22,15 @@ public struct Agent {
     public let id: Int
 
     /// The id of the agent in the inContact (CXone) system.
+    @available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")
     public let inContactId: String?
 
     /// The email address of the agent.
+    @available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")
     public let emailAddress: String?
 
     /// The username of the agent used to log in.
+    @available(*, deprecated, message: "The field is no longer accessible. It will always return an empty string and it will be removed in a future release.")
     public let loginUsername: String
 
     /// The first name of the agent.

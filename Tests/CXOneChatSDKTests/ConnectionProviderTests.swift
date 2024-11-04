@@ -134,7 +134,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
     }
     
     func testChannelFeatureListNonEmpty() throws {
-        let data = try loadStubFromBundle(withName: "ChannelConfiguration", extension: "json")
+        let data = try loadBundleData(from: "ChannelConfiguration", type: "json")
         let configuration = try decoder.decode(ChannelConfigurationDTO.self, from: data)
         
         XCTAssertFalse(configuration.settings.features.isEmpty)

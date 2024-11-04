@@ -32,7 +32,7 @@ extension HTTPURLResponse {
             output += "}\n"
         }
         
-        if let data, let formattedJSON = String(decoding: data, as: UTF8.self).formattedJSON {
+        if let data, let formattedJSON = data.utf8string?.formattedJSON {
             output += "Body: \(formattedJSON)\n"
         }
         
