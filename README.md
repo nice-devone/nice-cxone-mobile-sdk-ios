@@ -23,9 +23,9 @@ Developing an iOS app using the CXone Mobile package requires the following:
 
 ## Modules
 
-- [Core](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/develop/cxone-chat-sdk)
-- [UI](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/develop/cxone-chat-ui) (⚠️ still under development, not yet actively supported)
-- [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/develop/sample)
+- [Core](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios)
+- [UI](https://github.com/nice-devone/nice-cxone-mobile-ui-ios) (⚠️ still under development, not yet actively supported)
+- [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sample-ios)
 
 
 ## SDK Integration
@@ -58,7 +58,7 @@ You will handle the CXone Mobile SDK for iOS as an extension of a manager. You h
 
 Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.
 
-Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/index.html) as you work.
+Use the [iOS SDK library](https://nice-devone.github.io/nice-cxone-mobile-sdk-ios/) as you work.
 
 > Important: The SDK utilizes a state-based architecture so it is not necessary to handle everything on your own. For example after establishing a connection, it is not necessary to load thread(s) on your own. The SDK automatically recovers existing or creates a new thread for single-threaded and loads thread metadata for multi-threaded channel configuration. However, if the chat channel contains a pre-chat survey, it is necessary to fill in the survey and manually create a new thread using the `ChatThreadsProvider.create(with:)` method, to which custom fields must be passed. 
 
