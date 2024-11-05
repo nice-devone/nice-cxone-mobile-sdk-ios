@@ -16,11 +16,29 @@
 import Foundation
 
 /// Represents data of a thread recovered event.
-struct ThreadRecoveredEventDTO: Decodable {
-    
+struct ThreadRecoveredEventDTO: Decodable, Equatable {
+
+    let eventType: EventType?
+
     /// The unique identifier of the event.
-	let eventId: UUID
+    let eventId: UUID
 
     /// The postback of the thread recovered event.
-	let postback: ThreadRecoveredEventPostbackDTO
+    let postback: ThreadRecoveredEventPostbackDTO
+
+    // MARK: - constructor
+
+    init(eventType: EventType? = .threadRecovered, eventId: UUID, postback: ThreadRecoveredEventPostbackDTO) {
+        self.eventType = eventType
+        self.eventId = eventId
+        self.postback = postback
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension ThreadRecoveredEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .threadRecovered
+
+    var postbackEventType: EventType? { postback.eventType }
 }

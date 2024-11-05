@@ -20,7 +20,6 @@ open class CXoneXCTestCase: XCTestCase {
     
     // MARK: - Properties
     
-    let dateProvider = DateProviderMock()
     /// "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4"
     let channelId = "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4"
     /// "https://channels-de-na1.niceincontact.com/chat/1.0/brand/1386/channel"
@@ -33,6 +32,10 @@ open class CXoneXCTestCase: XCTestCase {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
     
+    open override class func setUp() {
+        Date.provider = DateProviderMock()
+    }
+
     lazy var eventsService: EventsService = connectionService.eventsService
     lazy var socketService = SocketServiceMock(session: urlSession)
     lazy var CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
@@ -79,7 +82,8 @@ open class CXoneXCTestCase: XCTestCase {
         
         UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
         
-        CXoneChat.delegate = self
+        CXoneChat.add(delegate: self)
+
         didCheckDelegate = false
     }
     

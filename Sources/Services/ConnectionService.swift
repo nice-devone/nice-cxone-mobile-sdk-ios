@@ -13,26 +13,23 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Combine
 import Foundation
 
-class ConnectionService: ConnectionProvider {
-    
+class ConnectionService {
+
     // MARK: - Properties
     
-    weak var delegate: CXoneChatDelegate?
-    
+    let delegate: CXoneChatDelegate
+
     var socketService: SocketService
     var eventsService: EventsService
     var customerService: CustomerService?
     var threadsService: ChatThreadsService?
     var customerFieldsService: CustomerCustomFieldsService?
     
-    var dateProvider: DateProvider {
-        socketService.dateProvider
-    }
     var connectionContext: ConnectionContext {
-        get { socketService.connectionContext }
-        set { socketService.connectionContext = newValue }
+        socketService.connectionContext
     }
     
     // MARK: - Protocol Properties
@@ -40,7 +37,9 @@ class ConnectionService: ConnectionProvider {
     var channelConfiguration: ChannelConfiguration {
         ChannelConfigurationMapper.map(connectionContext.channelConfig)
     }
-    
+    var cancellables = [AnyCancellable]()
+    var events: AnyPublisher<any ReceivedEvent, Never> { socketService.events }
+
     // MARK: - Init
     
     init(
@@ -48,22 +47,33 @@ class ConnectionService: ConnectionProvider {
         threads: ChatThreadsProvider,
         customerFields: CustomerCustomFieldsProvider,
         socketService: SocketService,
-        eventsService: EventsService
+        eventsService: EventsService,
+        delegate: CXoneChatDelegate
     ) {
         self.customerService = customer as? CustomerService
         self.threadsService = threads as? ChatThreadsService
         self.customerFieldsService = customerFields as? CustomerCustomFieldsService
         self.socketService = socketService
         self.eventsService = eventsService
+        self.delegate = delegate
+
+        socketService.delegate = self
+
+        addListeners()
     }
-    
-    // MARK: - Implementation
-    
+}
+
+// MARK: - ConnectionProvider
+
+extension ConnectionService: ConnectionProvider {
+
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
     /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
     func getChannelConfiguration(environment: Environment, brandId: Int, channelId: String) async throws -> ChannelConfiguration {
         LogManager.trace("Getting channel configuration")
 
@@ -79,6 +89,8 @@ class ConnectionService: ConnectionProvider {
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
     /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
     func getChannelConfiguration(chatURL: String, brandId: Int, channelId: String) async throws -> ChannelConfiguration {
         LogManager.trace("Getting channel configuration")
 
@@ -89,12 +101,6 @@ class ConnectionService: ConnectionProvider {
         return ChannelConfigurationMapper.map(try await getChannelConfiguration(url: url))
     }
     
-    /// Connects to the CXone service and configures the SDK for use.
-    /// - Parameters:
-    ///   - environment: The CXone ``Environment`` used to connect. Relates to your location.
-    ///   - brandId: The unique id of the brand for which to open the connection.
-    ///   - channelId: The unique id of the channel for the connection.
-    ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -104,6 +110,8 @@ class ConnectionService: ConnectionProvider {
     /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
     func prepare(environment: Environment, brandId: Int, channelId: String) async throws {
         if connectionContext.chatState == .preparing {
             return
@@ -119,13 +127,6 @@ class ConnectionService: ConnectionProvider {
         try await prepare(brandId: brandId, channelId: channelId)
     }
     
-    /// Connects to the CXone service and configures the SDK for use.
-    /// - Parameters:
-    ///   - chatURL: The URL to be used for chat requests (channel config and attachment upload).
-    ///   - socketURL: The URL to be used for the WebSocket connection.
-    ///   - brandId: The unique id of the brand for which to open the connection.
-    ///   - channelId: The unique id of the channel for the connection.
-    ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -135,6 +136,8 @@ class ConnectionService: ConnectionProvider {
     /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
     func prepare(chatURL: String, socketURL: String, brandId: Int, channelId: String) async throws {
         if connectionContext.chatState == .preparing {
             return
@@ -151,21 +154,24 @@ class ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
-    /// - Throws: ``CXoneChatError/webSocketConnectionFailure`` if the web socket refused to connect.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func connect() async throws {
         if connectionContext.chatState == .connecting {
-            // Calling `connect` in mentioned states is ignored
+            // Calling `connect` in `.connecting` state is ignored
             return
         }
         if connectionContext.chatState.isChatAvailable {
-            delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            return
         }
+        
         guard connectionContext.chatState == .prepared else {
             throw CXoneChatError.illegalChatState
         }
@@ -174,19 +180,19 @@ class ConnectionService: ConnectionProvider {
             LogManager.trace("Chat mode is live chat but the chat is offline")
             
             connectionContext.chatState = .offline
-            delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } else {
             LogManager.trace("Setting `state` to `connecting` and connecting to the CXone service")
             
             connectionContext.chatState = .connecting
-            delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
             
             do {
                 try connectToSocket()
-
-                try await checkForAuthorization()
+                
+                try checkForAuthorization()
             } catch {
-                disconnect()
+                socketService.disconnect(unexpectedly: true)
                 
                 throw error
             }
@@ -205,7 +211,7 @@ class ConnectionService: ConnectionProvider {
         } else if connectionContext.chatState > .prepared {
             LogManager.trace("Disconnecting from the CXone service and changing to `prepared`")
 
-            socketService.disconnect()
+            socketService.disconnect(unexpectedly: false)
         }
     }
     
@@ -225,6 +231,7 @@ class ConnectionService: ConnectionProvider {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
     func executeTrigger(_ triggerId: UUID) throws {
@@ -253,9 +260,20 @@ class ConnectionService: ConnectionProvider {
             triggerId: LowerCaseUUID(uuid: triggerId)
         )
 
-        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID(), payload: payload))
+        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID.provide(), payload: payload))
 
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
+    }
+}
+
+// MARK: - EventReceiver
+
+extension ConnectionService: EventReceiver {
+    
+    func addListeners() {
+        addListener(saveAccessToken(_:))
+        addListener(processProactiveAction(_:))
+        addListener(onOperationError(_:))
     }
 }
 
@@ -266,7 +284,7 @@ extension ConnectionService {
     func signOut() {
         LogManager.trace("Signing out an user")
         
-        socketService.disconnect()
+        socketService.disconnect(unexpectedly: false)
         
         connectionContext.clear()
     }
@@ -276,32 +294,9 @@ extension ConnectionService {
 
 extension ConnectionService {
     
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func refreshToken() throws {
-        LogManager.trace("Refreshing a token")
-        
-        guard let token = socketService.accessToken?.token else {
-            throw CXoneChatError.missingAccessToken
-        }
-        
-        let data = try eventsService.create(.refreshToken, with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: token)))
-        
-        socketService.send(message: data.utf8string, shouldCheck: false)
-    }
-    
-    func saveAccessToken(_ decode: TokenRefreshedEventDTO?) {
-        LogManager.trace("Saving a access token")
-        
-        socketService.accessToken = decode?.postback.accessToken
-    }
-    
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    func processProactiveAction(_ data: Data) throws {
+    func processProactiveAction(_ event: ProactiveActionEventDTO) throws {
         LogManager.trace("Processing proactive action")
-        
-        let event = try data.decode() as ProactiveActionEventDTO
         
         switch event.data.actionType {
         case .welcomeMessage:
@@ -318,34 +313,43 @@ extension ConnectionService {
             try threadsService?.handleWelcomeMessage(messageData)
             
             if let activeThread = connectionContext.activeThread {
-                delegate?.onThreadUpdated(activeThread)
+                delegate.onThreadUpdated(activeThread)
             }
         case .customPopupBox:
-            LogManager.trace("Processing proactive action of type custom popup box")
-            
-            guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                throw CXoneChatError.invalidData
-            }
-            
-            let data = dict["data"] as? [String: Any]
-            let proactiveAction = data?["proactiveAction"] as? [String: Any]
-            let action = proactiveAction?["action"] as? [String: Any]
-            let actionData = action?["data"] as? [String: Any]
-            let content = actionData?["content"] as? [String: Any]
-            let variables = content?["variables"] as? [String: Any]
-            
-            guard let actionId = action?["actionId"] as? String else {
-                throw CXoneChatError.missingParameter("actionId")
-            }
-            guard let variables, !variables.isEmpty else {
-                throw CXoneChatError.missingParameter("variables")
-            }
-            
-            let id = UUID(uuidString: actionId) ?? UUID()
-            
-            delegate?.onProactivePopupAction(data: variables, actionId: id)
+            LogManager.trace("Ignoring proactive action of type custom popup box")
+//
+//            guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+//                throw CXoneChatError.invalidData
+//            }
+//            
+//            let data = dict["data"] as? [String: Any]
+//            let proactiveAction = data?["proactiveAction"] as? [String: Any]
+//            let action = proactiveAction?["action"] as? [String: Any]
+//            let actionData = action?["data"] as? [String: Any]
+//            let content = actionData?["content"] as? [String: Any]
+//            let variables = content?["variables"] as? [String: Any]
+//            
+//            guard let actionId = action?["actionId"] as? String else {
+//                throw CXoneChatError.missingParameter("actionId")
+//            }
+//            guard let variables, !variables.isEmpty else {
+//                throw CXoneChatError.missingParameter("variables")
+//            }
+//            
+//            let id = UUID(uuidString: actionId) ?? UUID()
+//            
+//            delegate.onProactivePopupAction(data: variables, actionId: id)
         }
 	}
+
+    func onOperationError(_ error: OperationError) {
+        switch error.errorCode {
+        case .customerReconnectFailed:
+            refreshToken()
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - Private methods
@@ -361,7 +365,7 @@ private extension ConnectionService {
     func getChannelConfiguration(url: URL) async throws -> ChannelConfigurationDTO {
         try await Task
             .retrying {
-                let (data, _) = try await self.connectionContext.session.data(from: url)
+                let (data, _) = try await self.connectionContext.session.fetch(from: url)
                 
                 return try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
             }
@@ -376,6 +380,8 @@ private extension ConnectionService {
     /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
     func prepare(brandId: Int, channelId: String) async throws {
         LogManager.trace("Changing state to `preparing` and setting channel configuration to the brand: \(brandId) and channel: \(channelId)")
         
@@ -393,16 +399,16 @@ private extension ConnectionService {
             
             LogManager.trace("Did get channel configuration")
             
-            connectionContext.destinationId = UUID()
+            connectionContext.destinationId = UUID.provide()
             
             let visitorId: UUID = connectionContext.visitorId ?? {
-                let visitorId = UUID()
+                let visitorId = UUID.provide()
                 connectionContext.visitorId = visitorId
                 
                 return visitorId
             }()
             let customerId: String = connectionContext.customer?.idOnExternalPlatform ?? {
-                let customerId = UUID()
+                let customerId = UUID.provide()
                 customerService?.createCustomer(customerId: customerId)
                 
                 return customerId.uuidString
@@ -412,7 +418,7 @@ private extension ConnectionService {
             
             connectionContext.chatState = .prepared
             
-            delegate?.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } catch {
             connectionContext.chatState = .initial
             
@@ -420,7 +426,7 @@ private extension ConnectionService {
         }
     }
     
-    /// - Throws: ``CXoneChatError/webSocketConnectionFailure`` if the web socket refused to connect.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     func connectToSocket() throws {
         LogManager.trace("Connecting to the socket")
         
@@ -436,18 +442,18 @@ private extension ConnectionService {
             method: .get
         )
         
-        do {
-            socketService.connect(socketURL: try socketEndpoint.urlRequest())
-        } catch {
-            error.logError()
-            throw CXoneChatError.webSocketConnectionFailure
+        guard let url = socketEndpoint.url else {
+            throw CXoneChatError.invalidParameter("Configuration has invalid websocket url")
         }
+        
+        socketService.connect(socketURL: url)
     }
     
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func checkForAuthorization() async throws {
+    func checkForAuthorization() throws {
         LogManager.trace("Checking authorization")
         
         if connectionContext.channelConfig.isAuthorizationEnabled {
@@ -459,6 +465,7 @@ private extension ConnectionService {
     
     /// Authorizes a new customer to communicate through the WebSocket.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func authorizeCustomer() throws {
         LogManager.trace("Authorizing customer")
@@ -473,12 +480,13 @@ private extension ConnectionService {
             )
         )
         
-        socketService.send(message: data.utf8string, shouldCheck: false)
+        try socketService.send(data: data, shouldCheck: false)
     }
     
     /// Reconnects a returning customer to communicate through the WebSocket.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func reconnectCustomer() throws {
         LogManager.trace("Reconnecting customer")
@@ -489,7 +497,7 @@ private extension ConnectionService {
         
         let data = try eventsService.create(.reconnectCustomer, with: .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: token)))
         
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
     
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -516,13 +524,16 @@ private extension ConnectionService {
                     )
                 )
                 
-                try await self.connectionContext.session.data(for: request, file: #file)
+                try await self.connectionContext.session.fetch(for: request, file: #file)
             }
             .value
     }
     
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
     func isLiveChatAvailable() async throws -> Bool {
-        guard connectionContext.channelConfig.liveChatAvailability.expires <= socketService.dateProvider.now else {
+        guard connectionContext.channelConfig.liveChatAvailability.expires <= Date.provide() else {
             return connectionContext.channelConfig.liveChatAvailability.isOnline
         }
         guard let url = connectionContext.environment.chatServerUrl?.liveChatAvailabilityUrl(
@@ -534,7 +545,7 @@ private extension ConnectionService {
         
         let isOnline = try await Task
             .retrying {
-                let (data, _) = try await self.connectionContext.session.data(from: url)
+                let (data, _) = try await self.connectionContext.session.fetch(from: url)
                 let response = try JSONDecoder().decode(LiveChatAvailabilityDTO.self, from: data)
                 
                 return response.isOnline
@@ -545,7 +556,7 @@ private extension ConnectionService {
             liveChatAvailability: CurrentLiveChatAvailability(
                 isChannelLiveChat: connectionContext.chatMode == .liveChat,
                 isOnline: isOnline,
-                expires: dateProvider.now.addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
+                expires: Date.provide().addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
             )
         )
         
@@ -563,5 +574,53 @@ private extension URL {
     
     func liveChatAvailabilityUrl(brandId: Int, channelId: String) -> URL? {
         channelUrl(brandId: brandId, channelId: channelId) / "availability"
+    }
+}
+
+// MARK: - SocketDelegate
+
+extension ConnectionService: SocketDelegate {
+    
+    func didReceive(error: any Error) {
+        delegate.onError(error)
+    }
+
+    func didCloseConnection(unexpectedly: Bool) {
+        LogManager.trace("Websocket connection has been closed")
+
+        connectionContext.chatState = .prepared
+
+        if unexpectedly {
+            delegate.onUnexpectedDisconnect()
+        } else {
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        }
+    }
+
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func refreshToken() {
+        do {
+            LogManager.trace("Refreshing a token")
+
+            guard let token = socketService.accessToken?.token else {
+                throw CXoneChatError.missingAccessToken
+            }
+
+            let data = try eventsService.create(.refreshToken, with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: token)))
+            
+            try socketService.send(data: data, shouldCheck: false)
+        } catch {
+            error.logError()
+            delegate.onError(error)
+        }
+    }
+    
+    func saveAccessToken(_ decode: TokenRefreshedEventDTO?) {
+        LogManager.trace("Saving a access token")
+        
+        socketService.accessToken = decode?.postback.accessToken
     }
 }

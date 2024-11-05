@@ -43,7 +43,7 @@ public struct SenderInfo {
             self.firstName = message.authorUser?.firstName ?? "Automated"
             self.lastName = message.authorUser?.surname ?? "Agent"
         } else {
-            self.id = String(message.authorEndUserIdentity?.id ?? UUID().uuidString)
+            self.id = String(message.authorEndUserIdentity?.id ?? UUID.provide().uuidString)
             self.firstName = message.authorEndUserIdentity?.firstName ?? "Unknown"
             self.lastName = message.authorEndUserIdentity?.lastName ?? "Customer"
         }

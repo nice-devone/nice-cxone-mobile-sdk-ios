@@ -18,6 +18,8 @@ import Foundation
 /// Represents info about data of the authorize customer event.
 struct AuthorizeCustomerEventDataDTO {
     
+    // MARK: - Properties
+    
     /// The auth code for OAuth.
     let authorizationCode: String?
 
@@ -25,14 +27,44 @@ struct AuthorizeCustomerEventDataDTO {
     ///
     /// Optional, only needed for OAuth with code verifier.
     let codeVerifier: String?
+    
+    /// Flag to disable partial channel info properties.
+    ///
+    /// Response to this event, `CustomerAuthorizedEventDTO` is able to return some additional data from channel info but we are not using it.
+    let disableChannelInfo: Bool
+    
+    /// Platform identifier.
+    let sdkPlatform: String
+    
+    /// The SDK version.
+    let sdkVersion: String
+    
+    // MARK: - Init
+    
+    init(
+        authorizationCode: String?,
+        codeVerifier: String?,
+        disableChannelInfo: Bool = true,
+        sdkPlatform: String = "ios",
+        sdkVersion: String = CXoneChat.version
+    ) {
+        self.authorizationCode = authorizationCode
+        self.codeVerifier = codeVerifier
+        self.disableChannelInfo = disableChannelInfo
+        self.sdkPlatform = sdkPlatform
+        self.sdkVersion = sdkVersion
+    }
 }
 
-// MARK: - Codable
+// MARK: - Encodable
 
-extension AuthorizeCustomerEventDataDTO: Codable {
+extension AuthorizeCustomerEventDataDTO: Encodable {
 
     enum CodingKeys: CodingKey {
         case authorization
+        case disableChannelInfo
+        case sdkPlatform
+        case sdkVersion
     }
     
     enum OAuthKeys: CodingKey {
@@ -40,18 +72,14 @@ extension AuthorizeCustomerEventDataDTO: Codable {
         case codeVerifier
     }
     
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let oAuthContainer = try? container.nestedContainer(keyedBy: OAuthKeys.self, forKey: .authorization)
-        
-        self.authorizationCode = try oAuthContainer?.decodeIfPresent(String.self, forKey: .authorizationCode)
-        self.codeVerifier = try oAuthContainer?.decodeIfPresent(String.self, forKey: .codeVerifier)
-    }
-    
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        if authorizationCode != nil || authorizationCode != "" || codeVerifier != nil || codeVerifier != "" {
+        try container.encode(disableChannelInfo, forKey: .disableChannelInfo)
+        try container.encode(sdkPlatform, forKey: .sdkPlatform)
+        try container.encode(sdkVersion, forKey: .sdkVersion)
+        
+        if authorizationCode != "" || codeVerifier != "" {
             var oAuthContainer = container.nestedContainer(keyedBy: OAuthKeys.self, forKey: .authorization)
             
             try oAuthContainer.encodeIfPresent(authorizationCode, forKey: .authorizationCode)

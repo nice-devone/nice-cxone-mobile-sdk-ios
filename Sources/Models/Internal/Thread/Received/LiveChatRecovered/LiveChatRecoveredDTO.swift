@@ -16,8 +16,19 @@
 import Foundation
 
 struct LiveChatRecoveredDTO: Decodable {
-    
+
     let eventId: String
     
+    /// Type of event
+    let eventType: EventType?
+
     let postback: LiveChatRecoveredPostbackDTO
+}
+
+// MARK: - ReceivedEvent
+
+extension LiveChatRecoveredDTO: ReceivedEvent {
+    static let eventType: EventType? = .liveChatRecovered
+
+    var postbackEventType: EventType? { postback.eventType }
 }

@@ -1,26 +1,119 @@
+<a name="unreleased"></a>
+# [Unreleased]
+
+<a name="2.2.0"></a>
+# [2.2.0] - 2024-11-04
+
+## CXoneChatSDK
+
+### Features
+- Enhance AuthorizeCustomer of new attributes
+- Map actual agent image URL to Agent's imageUrl
+- Hide `inContactId` from Agent
+- Expanded Unit Testing
+- Deprecate `inContactId`, `loginUsername` and `emailAddress` for an Agent object
+- Improve handling of archiveThread
+- Added additional HTTP headers for `URLRequest`
+- deprecate CXoneChat.delegate in favor of CXoneChat.add/remove(delegate:)
+- Change `set(_:)` to `set(customer:)` in CustomerProvider
+
+### Fixes
+- Increased the timeout duration for the server response during the ping/pong checks.
+- Handle properly chat states after connect and when thread recover fails
+- Handle disconnect based on expectation state (disconnect triggered by host application vs. disconnect due to websocket pong not received)
+
+## CXoneChatUI
+
+### Features
+- Add colors related to the UI redesign
+
+### Fixes
+- Fix load more messages
+- Fixed issue where messages in the middle of a group might not be displayed.
+- Add/Remove delegate correctly in onAppear/onDisappear methods 
+
+## Sample
+
+### Features
+- Fallback to default customer name for guest login
+
+## CI
+
+### Features
+- Exclude hardcoded versions from workflows to GitHub repository variables
+- Bumps xavierLowmiller/xcodegen-action from 1.2.2 to 1.2.3
+
+### Fixes
+- Exclude SwiftGen from workflows to separate script and fix "build", "deploy_app" and "deploy_documentation" workflows
+
 <a name="2.1.0"></a>
 # [2.1.0] - 2024-07-29
 
-## Features
+## CXoneChatSDK
+
+### Features
 - Custom Customer ID
 - Remove custom field definitions validation
 - Update minimum iOS deployment target to 15
 
-## Bug Fixes
+### Bug Fixes
 - Prefill prechat survey with customer data
 - correct check for locally created thread
 - "properly" handle start/stopSecurelyScopedResource
+- Working Live chat set position in queue
+
+### Chore
+- Change version to 2.1.0
+- Resolve SwiftLint warnings
+
+## CXoneChatUI
+
+### Features
+- Attachments upload dialog
+- Highlight text message cell content for links/phone numbers
+- Minimum iOS deployment target
+- Display thumbnail previews for selected attachment videos/images.
+- Utilize Swift's Quicklook framework to view documents
+- Refactors chat window navigation and presentation to:
+    - not be dependent on host application UINavigationController
+    - host application interface with chat window is greatly simplified and can be integrated into either a UIKit or SwiftUI interface as a sheet or other "presented" view controller.
+
+### Bug Fixes
+- Prefill prechat survey with customer data
+- Rotation bug on iOS15
+- Incorrect attachment size displayed for single attachment
+- append UTType.movie for all videos
+
+### Chore
+- fix MessageGroupView preview
+- Resolve SwiftLint warnings
+
+## Sample
+
+### Features
+- Move customer details form from UI module to sample app
+- Minimum iOS deployment target
+
+### Chore
+- Resolve SwiftLint warnings
+
+## CI
+- GitHub action to deploy to GitHub Artifactory, Perfecto and TestFlight
+- Bump tarides/changelog-check-action from 2 to 3
+- Update GitHub action runners to macos-latest
 
 <a name="2.0.1"></a>
 # [2.0.1] - 2024-07-11
+
+## CXoneChatSDK
 
 ### Bug Fixes
 - Correct live chat set position in queue
 
 <a name="2.0.0"></a>
-# [2.0.0] - 2024-06-13
+# [2.0.0] - 2024-05-22
 
-## Bug Fixes
+### Bug Fixes
 - Update ListFieldView behavior for iOS 14
 - Exclude links from multiattachments view
 - correct check for locally created thread
@@ -32,11 +125,11 @@
 - Fix Build/test break
 - "properly" handle start/stopSecurelyScopedResource
 
-## Dependency Change
+### Dependency Change
 - Bump peaceiris/actions-gh-pages from 3 to 4
 - Bump xavierLowmiller/xcodegen-action from 1.1.3 to 1.2.0
 
-## Features
+### Features
 - add Mobile SDK EU1 QA configurations
 - Better welcome message handling
 - Disable modification for archived thread
@@ -57,8 +150,9 @@
 <a name="1.3.3"></a>
 # [1.3.3] - 2024-05-15
 
-## Bug Fixes
+### Bug Fixes
 - make assignedAgent optional for the event
+
 
 <a name="1.3.2"></a>
 # [1.3.2] - 2024-03-21
@@ -66,16 +160,18 @@
 ### Features
 - Create SDK's UserDefaults + Better Keychain handling
 
+
 <a name="1.3.1"></a>
 # [1.3.1] - 2024-03-12
 
-## Features
+### Features
 - Privacy Manifest
+
 
 <a name="1.3.0"></a>
 # [1.3.0] - 2024-03-12
 
-## Bug Fixes
+### Bug Fixes
 - Fixed deeplink format
 - Correct CreateOrUpdateVisitor URL
 - Resolve issue with submodules for GitHub Actions
@@ -99,7 +195,7 @@
 - Handle different thread correctly
 - Fix issue when multiple messages with matching ids are received
 
-## Features
+### Features
 - add login error state in case of unreachable API
 - Add basic validation for brandId and channelId
 - Login with Amazon SDK update + fixed Launch screen storyboard
@@ -116,10 +212,11 @@
 - Enhance SDK Architecture
 - Correct handling of welcome message
 
+
 <a name="1.2.0"></a>
 # [1.2.0] - 2023-09-22
 
-## Bug Fixes
+### Bug Fixes
 - working Login preview
 - Remove reporting viewPage for chat related
 - duplicate SFSymbol image to SwiftUI + remove conversion from UIImage to Image
@@ -134,7 +231,7 @@
 - Correct title when enter thread detail
 - Fixed problem in hexString where wrong color was being created.
 
-## Features
+### Features
 - change open Chat button background color
 - Login with Amazon SDK update + fixed Launch screen storyboard
 - Update version to 1.2.0
@@ -151,16 +248,18 @@
 - Implement pageViewEnded
 - Analytics Usage in E-shop
 
+
 <a name="1.1.1"></a>
 # [1.1.1] - 2023-07-10
 
-## Features
+### Features
 - Update decoding of ThreadRecoveredEvent
+
 
 <a name="1.1.0"></a>
 # [1.1.0] - 2023-06-23
 
-## Bug Fixes
+### Bug Fixes
 - Remove not supported fields in ReceivedThreadRecoveredPostbackData
 - Return message with attachments
 - use correct EventDataType for loadThreadData and messageSeenByCustomer
@@ -170,7 +269,7 @@
 - use correct UUID for thread
 - access file stored in Documents
 
-## Features
+### Features
 - SwiftLint explicit init
 - Event Type Unification
 - use Codable only in valid cases + Encodable in test target
@@ -185,16 +284,18 @@
 - Fresh Event Naming
 - Add case studies + change jazzy output file
 
+
 <a name="1.0.1"></a>
 # [1.0.1] - 2023-03-14
 
-## Features
+### Features
 - notify about close connection
+
 
 <a name="1.0.0"></a>
 # 1.0.0 - 2023-01-31
 
-## Features
+### Features
 - Logging PoC
 - Error handling
 - Connection
@@ -255,7 +356,8 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.1.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/1.3.3...2.0.0

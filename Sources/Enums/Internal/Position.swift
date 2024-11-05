@@ -15,7 +15,7 @@
 
 import Foundation
 
-enum Position: String, Codable {
+enum Position: String, Codable, Equatable {
     
     case bottomRight
     

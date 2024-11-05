@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CaseStatusChangedEventDTO: ReceivedEvent {
+struct CaseStatusChangedEventDTO: Equatable {
     
     // MARK: - Properties
     
@@ -23,11 +23,19 @@ struct CaseStatusChangedEventDTO: ReceivedEvent {
     
     var eventObject: EventObjectType
     
-    var eventType: EventType
+    var eventType: EventType?
     
     var createdAt: Date
     
     let data: CaseStatusChangedDataDTO
+}
+
+// MARK: - ReceivedEvent
+
+extension CaseStatusChangedEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .caseStatusChanged
+
+    var postbackEventType: EventType? { nil }
 }
 
 // MARK: - Decodable

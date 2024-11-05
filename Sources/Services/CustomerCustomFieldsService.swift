@@ -15,7 +15,7 @@
 
 import Foundation
 
-final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
+final class CustomerCustomFieldsService {
     
     // MARK: - Properties
     
@@ -25,22 +25,23 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     
     var socketService: SocketService
     var eventsService: EventsService
-    let dateProvider: DateProvider
-    
+
     // MARK: - Protocol Properties
     
     var customerFields = [CustomFieldDTO]()
     
     // MARK: - Init
     
-    init(socketService: SocketService, eventsService: EventsService, dateProvider: DateProvider) {
+    init(socketService: SocketService, eventsService: EventsService) {
         self.socketService = socketService
         self.eventsService = eventsService
-        self.dateProvider = dateProvider
     }
-    
-    // MARK: - Implementation
-    
+}
+
+// MARK: - CustomerCustomFieldsProvider
+
+extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
+
     func get() -> [String: String] {
         Dictionary(uniqueKeysWithValues: customerFields.lazy.map { ($0.ident, $0.value) })
     }
@@ -48,20 +49,21 @@ final class CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func set(_ customFields: [String: String]) throws {
         LogManager.trace("Setting custom fields for a contact (persists across all threads involving the customer).")
         
         try socketService.checkForConnection()
         
-        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: dateProvider.now) })
+        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date.provide()) })
         
         let data = try eventsService.create(
             .setCustomerCustomFields,
             with: .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: customerFields))
         )
         
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
     
     // MARK: - Internal methods

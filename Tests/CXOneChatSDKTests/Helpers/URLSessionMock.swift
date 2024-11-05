@@ -46,19 +46,30 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
                 
                 switch decode.payload.eventType {
                 case .authorizeCustomer:
-                    messageString = try loadStubFromBundle(withName: "authorize", extension: "json").utf8string
+                    guard let utf8string = try loadStubFromBundle(withName: "authorize", extension: "json").utf8string else {
+                        completionHandler(CXoneChatError.missingParameter("utf8string"))
+                        return
+                    }
                     
-                    closure?(messageString)
+                    messageString = utf8string
                 case .customerAuthorized, .tokenRefreshed, .messageCreated, .moreMessagesLoaded,
                         .messageReadChanged, .threadRecovered, .threadListFetched, .threadMetadataLoaded, .threadArchived,
                         .contactInboxAssigneeChanged, .messageSeenByCustomer, .reconnectCustomer, .refreshToken:
                     break
                 case .sendMessage:
-                    messageString = try loadStubFromBundle(withName: "MessageCreated", extension: "json").utf8string
-                case .loadThreadMetadata:
-                    messageString = try loadStubFromBundle(withName: "threadMetadaLoaded", extension: "json").utf8string
+                    guard let utf8string = try loadStubFromBundle(withName: "MessageCreated", extension: "json").utf8string else {
+                        completionHandler(CXoneChatError.missingParameter("utf8string"))
+                        return
+                    }
                     
-                    closure?(messageString)
+                    messageString = utf8string
+                case .loadThreadMetadata:
+                    guard let utf8string = try loadStubFromBundle(withName: "threadMetadaLoaded", extension: "json").utf8string else {
+                        completionHandler(CXoneChatError.missingParameter("utf8string"))
+                        return
+                    }
+                    
+                    messageString = utf8string
                 default:
                     break
                 }
@@ -96,15 +107,23 @@ class URLSessionWebSocketTaskMock: URLSessionWebSocketTaskProtocol {
 // MARK: - URLSessionMock
  
 class URLSessionMock: URLProtocol, URLSessionProtocol {
-    
+
     // MARK: - Properties
-    
+
     var delegate: URLSessionDelegate?
     
     // MARK: - Methods
     
-    func webSocketTask(with request: URLRequest) -> URLSessionWebSocketTaskMock { URLSessionWebSocketTaskMock() }
-    
+    func data(for request: URLRequest, delegate: (any URLSessionTaskDelegate)?) async throws -> (Data, URLResponse) {
+        return (Data(), HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+    }
+
+    func data(from url: URL, delegate: (any URLSessionTaskDelegate)?) async throws -> (Data, URLResponse) {
+        return (Data(), HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+    }
+
+    func webSocketTask(with url: URL) -> URLSessionWebSocketTaskProtocol { URLSessionWebSocketTaskMock() }
+
     override class func canInit(with request: URLRequest) -> Bool { true }
     
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }

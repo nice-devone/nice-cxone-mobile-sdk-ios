@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ProactiveEventDTO {
+struct ProactiveEventDTO: Equatable {
 
     // MARK: - Properties
 

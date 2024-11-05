@@ -16,8 +16,8 @@
 import Foundation
 
 /// The interface for interacting with chat features of the CXone platform.
-public protocol ChatProvider {
-    
+public protocol ChatProvider: AnyObject {
+
     /// The version of the CXone chat SDK.
     static var version: String { get }
     
@@ -36,6 +36,7 @@ public protocol ChatProvider {
     var logDelegate: LogDelegate? { get set }
     
     /// The handler for the chat events.
+    @available(*, deprecated, message: "Deprecated with 2.2.0 Please use add(delegate:)")
     var delegate: CXoneChatDelegate? { get set }
     
     /// The provider for connection related properties and methods.
@@ -53,6 +54,19 @@ public protocol ChatProvider {
     /// The provider for report related properties and methods.
     var analytics: AnalyticsProvider { get }
     
+    /// Add a ``CXoneChatDelegate``
+    ///
+    /// Future delegate messages will be routed to the newly added delegate.
+    ///
+    /// Note: No strong reference to the delegate is maintained so the caller
+    /// is responsible for its lifecycle.
+    func add(delegate: CXoneChatDelegate)
+
+    /// Remove a `CXoneChatDelegate``
+    ///
+    /// No future delegate messages will be routed to the removed delegate.
+    func remove(delegate: CXoneChatDelegate)
+
     /// Configures internal logger to be able to detect errors, warnings or even trace chat flow.
     ///
     /// - Parameters:

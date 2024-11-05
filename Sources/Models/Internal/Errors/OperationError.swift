@@ -15,8 +15,10 @@
 
 import Foundation
 
-struct OperationError: Codable, LocalizedError {
-    
+struct OperationError: Codable, LocalizedError, Equatable {
+
+    var eventType: EventType? { nil }
+
     let errorCode: ErrorCode
 
     let transactionId: LowerCaseUUID
@@ -32,4 +34,12 @@ struct OperationError: Codable, LocalizedError {
         }
         """
     }
+}
+
+// MARK: - ReceivedEvent
+
+extension OperationError: ReceivedEvent {
+    static let eventType: EventType? = nil
+
+    var postbackEventType: EventType? { nil }
 }

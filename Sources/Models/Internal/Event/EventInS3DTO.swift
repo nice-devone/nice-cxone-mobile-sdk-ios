@@ -15,8 +15,10 @@
 
 import Foundation
 
-struct EventInS3DTO {
-    
+struct EventInS3DTO: Equatable {
+
+    var eventType: EventType?
+
     // MARK: - Properties
     
     let originEventType: EventType
@@ -24,11 +26,20 @@ struct EventInS3DTO {
     let url: URL
 }
 
+// MARK: - ReceivedEvent
+
+extension EventInS3DTO: ReceivedEvent {
+    static let eventType: EventType? = .eventInS3
+
+    var postbackEventType: EventType? { nil }
+}
+
 // MARK: - Decodable
 
 extension EventInS3DTO: Decodable {
     
     enum CodingKeys: CodingKey {
+        case eventType
         case data
     }
     
@@ -49,7 +60,8 @@ extension EventInS3DTO: Decodable {
         let dataContainer = try container.nestedContainer(keyedBy: DataCodingKeys.self, forKey: .data)
         let eventTypeContainer = try dataContainer.nestedContainer(keyedBy: OriginEventTypeCodingKeys.self, forKey: .originEvent)
         let urlContainer = try dataContainer.nestedContainer(keyedBy: UrlCodingKeys.self, forKey: .s3Object)
-        
+
+        self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.originEventType = try eventTypeContainer.decode(EventType.self, forKey: .eventType)
         self.url = try urlContainer.decode(URL.self, forKey: .url)
     }

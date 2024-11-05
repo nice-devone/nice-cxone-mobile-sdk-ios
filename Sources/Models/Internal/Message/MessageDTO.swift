@@ -18,7 +18,7 @@ import Foundation
 // MessageView
 
 /// Represents all info about a message in a chat.
-struct MessageDTO {
+struct MessageDTO: Equatable {
     
     // MARK: - Properties
     

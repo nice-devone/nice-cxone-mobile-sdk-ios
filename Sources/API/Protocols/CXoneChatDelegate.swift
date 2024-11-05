@@ -14,8 +14,10 @@
 //
 
 import Foundation
+import Mockable
 
 /// The handler for the chat events.
+@Mockable
 public protocol CXoneChatDelegate: AnyObject {
     
     /// Callback to be called when the connection unexpectedly drops.

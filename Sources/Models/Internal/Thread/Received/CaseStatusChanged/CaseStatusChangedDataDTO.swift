@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CaseStatusChangedDataDTO: Decodable {
+struct CaseStatusChangedDataDTO: Decodable, Equatable {
     
     /// The brand for which this change applies.
     let brand: BrandDTO

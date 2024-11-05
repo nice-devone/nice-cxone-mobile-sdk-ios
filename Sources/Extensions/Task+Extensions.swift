@@ -30,7 +30,12 @@ extension Task where Success == Never, Failure == Never {
         do {
             try await Task.sleep(nanoseconds: duration)
         } catch {
-            error.logError()
+            switch error {
+            case is CancellationError:
+                break
+            default:
+                error.logError()
+            }
         }
     }
 }

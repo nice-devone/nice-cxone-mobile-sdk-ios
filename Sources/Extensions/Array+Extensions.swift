@@ -13,6 +13,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Combine
 import Foundation
 
 // MARK: - Array
@@ -40,8 +41,8 @@ extension Array where Element: Equatable {
 
 // MARK: - Array + ChatThread
 
-extension [ChatThread] {
-    
+extension Array where Element == ChatThread {
+
     /// Returns `ChatThread` based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
     /// - Returns: `ChatThread`, if it exists.
@@ -70,8 +71,8 @@ extension [ChatThread] {
 
 // MARK: - Array + CustomFieldDTO
 
-extension [CustomFieldDTO] {
-    
+extension Array where Element == CustomFieldDTO {
+
     mutating func merge(with array: Array) {
         var result = self
         
@@ -85,5 +86,14 @@ extension [CustomFieldDTO] {
         }
         
         self = result
+    }
+}
+
+// MARK: - Array + AnyCancellable
+
+extension Array where Element: AnyCancellable {
+    mutating func cancel() {
+        forEach { $0.cancel() }
+        removeAll()
     }
 }

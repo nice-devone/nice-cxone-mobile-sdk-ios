@@ -8,3 +8,6 @@ To help you get started, here's a selection of case studies that simplify the us
 - [Rich Content Messages](cs-rich-content-messages.md)
 - [Custom Fields](cs-custom-fields.md)
 - [Analytics](cs–analytics.md)
+- [Customer Customer ID](cs-custom-customer-id.md)
+- [OAuth](cs-oauth.md)
+- [Logging](cs-logging.md)

@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info abount a content of a proactive action data message.
-struct ProactiveActionDataMessageContentDTO: Codable {
+struct ProactiveActionDataMessageContentDTO: Codable, Equatable {
 
     // MARK: - Properties
 

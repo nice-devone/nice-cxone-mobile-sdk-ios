@@ -15,7 +15,7 @@
 
 import Foundation
 
-enum TemplateIdType: String, Codable {
+enum TemplateIdType: String, Codable, Equatable {
     
     case fullImage
     

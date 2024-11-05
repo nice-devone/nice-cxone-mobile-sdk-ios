@@ -18,7 +18,7 @@ import Foundation
 // MessageCreated
 
 /// Event Received when a message has been successfully sent/created.
-struct MessageCreatedEventDTO: ReceivedEvent {
+struct MessageCreatedEventDTO: Equatable {
     
     // MARK: - Properties
 
@@ -29,13 +29,21 @@ struct MessageCreatedEventDTO: ReceivedEvent {
     let eventObject: EventObjectType
 
     /// The type of the event.
-    let eventType: EventType
+    let eventType: EventType?
 
     /// The timestamp of when the message was created.
     let createdAt: Date
 
     /// Data of the message created event.
     let data: MessageCreatedEventDataDTO
+}
+
+// MARK: - ReceivedEvent
+
+extension MessageCreatedEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .messageCreated
+
+    var postbackEventType: EventType? { nil }
 }
 
 // MARK: - Decodable

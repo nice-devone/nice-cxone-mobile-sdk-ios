@@ -28,7 +28,7 @@ extension String {
             let jsonArray = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
             let data = try JSONSerialization.data(withJSONObject: jsonArray, options: [.prettyPrinted])
             
-            return String(decoding: data, as: UTF8.self)
+            return data.utf8string
         } catch {
             error.logError()
             return nil

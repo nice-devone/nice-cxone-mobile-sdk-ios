@@ -16,10 +16,39 @@
 import XCTest
 
 extension XCTestCase {
-    
-    func loadStubFromBundle(withName name: String, extension: String) throws -> Data {
-        let url = URL(forResource: name, type: `extension`)
-        
-        return try Data(contentsOf: url)
+    enum Errors: Error, CustomStringConvertible {
+        case invalidStringData
+
+        var description: String {
+            return "Invalid String Data"
+        }
+
+    }
+
+    func XCTAssertIs<Root, Type>(
+        _ value: Root,
+        _ type: Type.Type,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        XCTAssert(
+            value is Type,
+            "Expected \(value) is \(type)",
+            file: file,
+            line: line
+        )
+    }
+
+    func loadBundleData(from file: String, type: String) throws -> Data {
+        return try Data(contentsOf: URL(forResource: file, type: type))
+    }
+
+    func loadBundleString(from file: String, type: String) throws -> String {
+        let data = try loadBundleData(from: file, type: type)
+        guard let string = String(data: data, encoding: .utf8) else {
+            throw Errors.invalidStringData
+        }
+
+        return string
     }
 }

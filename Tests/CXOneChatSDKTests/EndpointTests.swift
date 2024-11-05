@@ -84,7 +84,13 @@ class EndpointTests: XCTestCase {
         let request = try sut?.urlRequest()
         
         XCTAssertNotNil(request)
-        XCTAssertTrue(request?.httpMethod == HTTPMethod.get.rawValue, "get not equal to \(request?.httpMethod?.lowercased() ?? "get")")
+    }
+    
+    func testAdditionalHeadersAreFilled() throws {
+        let request = try sut?.urlRequest()
+        
+        XCTAssertTrue(request?.allHTTPHeaderFields?["x-sdk-platform"] == "ios")
+        XCTAssertTrue(request?.allHTTPHeaderFields?["x-sdk-version"] == CXoneChat.version)
     }
     
     func testEndpointWithChatValue() throws {

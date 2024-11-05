@@ -24,15 +24,23 @@ struct EventDTO: Encodable {
     let action: EventActionType
 
     /// The unique id for the event.
-    let eventId = UUID()
-    
+    let eventId: UUID
+
     /// The event details.
     let payload: EventPayloadDTO
     
     // MARK: - Init
     
-    init(brandId: Int, channelId: String, customerIdentity: CustomerIdentityDTO, eventType: EventType, data: EventDataType?, visitorId: LowerCaseUUID?) {
-        payload = EventPayloadDTO(
+    init(
+        eventId: UUID = UUID.provide(),
+        brandId: Int,
+        channelId: String,
+        customerIdentity: CustomerIdentityDTO,
+        eventType: EventType,
+        data: EventDataType?,
+        visitorId: LowerCaseUUID?
+    ) {
+        self.payload = EventPayloadDTO(
             brandId: brandId,
             channelId: channelId,
             customerIdentity: customerIdentity,
@@ -40,6 +48,7 @@ struct EventDTO: Encodable {
             data: data,
             visitorId: visitorId
         )
-        action = (eventType == .authorizeCustomer || eventType == .refreshToken) ? .register : .chatWindowEvent
+        self.eventId = eventId
+        self.action = (eventType == .authorizeCustomer || eventType == .refreshToken) ? .register : .chatWindowEvent
     }
 }

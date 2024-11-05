@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info about an uploaded attachment.
-struct AttachmentDTO: Codable {
+struct AttachmentDTO: Codable, Equatable {
     
     /// The URL where the attachment can be found.
     let url: String

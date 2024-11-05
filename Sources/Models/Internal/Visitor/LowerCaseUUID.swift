@@ -20,7 +20,7 @@ import Foundation
 /// This is required because with Swift, all `UUID` values are uppercase and cannot be
 /// changed while keeping the `UUID` type. Currently, the back end doesn't support these
 /// uppercase values on certain events (visitor events), so this is done as a workaround.
-struct LowerCaseUUID {
+struct LowerCaseUUID: Equatable {
 
     // MARK: - Properties
 
@@ -28,7 +28,7 @@ struct LowerCaseUUID {
 
     // MARK: - Init
 
-    init(uuid: UUID = UUID()) {
+    init(uuid: UUID = UUID.provide()) {
         self.uuid = UUID(uuidString: uuid.uuidString.lowercased()) ?? uuid
     }
 }
@@ -52,5 +52,15 @@ extension LowerCaseUUID: Codable {
 extension UUID {
     var asLowerCaseUUID: LowerCaseUUID {
         LowerCaseUUID(uuid: self)
+    }
+}
+
+extension LowerCaseUUID {
+    static func == (lhs: UUID, rhs: LowerCaseUUID) -> Bool {
+        lhs == rhs.uuid
+    }
+
+    static func == (lhs: LowerCaseUUID, rhs: UUID) -> Bool {
+        lhs.uuid == rhs
     }
 }

@@ -22,6 +22,6 @@ class LowerCaseUUIDTest: XCTestCase {
         let uuid = UUID()
         let data = try JSONEncoder().encode(LowerCaseUUID(uuid: uuid))
         
-        XCTAssertEqual(uuid.uuidString.lowercased(), data.utf8string.replacingOccurrences(of: "\"", with: ""))
+        XCTAssertEqual(uuid.uuidString.lowercased(), data.utf8string?.replacingOccurrences(of: "\"", with: ""))
     }
 }

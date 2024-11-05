@@ -16,8 +16,8 @@
 import Foundation
 
 /// Event received when an agent has read a message.
-struct MessageReadByAgentEventDTO {
-    
+struct MessageReadByAgentEventDTO: Equatable {
+
     // MARK: - Properties
     
     /// The unique identifier of the event.
@@ -27,13 +27,21 @@ struct MessageReadByAgentEventDTO {
     let eventObject: EventObjectType
     
     /// The type of the event.
-    let eventType: EventType
+    let eventType: EventType?
     
     /// The timestamp of when the message was created.
     let createdAt: Date
     
     /// The data of the message read by agent event.
     let data: MessageReadByAgentEventDataDTO
+}
+
+// MARK: - ReceivedEvent
+
+extension MessageReadByAgentEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .messageReadChanged
+
+    var postbackEventType: EventType? { nil }
 }
 
 // MARK: - Decodable

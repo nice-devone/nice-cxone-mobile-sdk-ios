@@ -16,7 +16,7 @@
 import Foundation
 
 /// The data for the AgentTypingEvent.
-struct AgentTypingEventDataDTO: Codable {
+struct AgentTypingEventDataDTO: Codable, Equatable {
 
     let brand: BrandDTO
 

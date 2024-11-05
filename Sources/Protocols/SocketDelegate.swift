@@ -14,14 +14,14 @@
 //
 
 import Foundation
+import Mockable
 
+@Mockable
 protocol SocketDelegate: AnyObject {
     
-    func didCloseConnection()
+    func didCloseConnection(unexpectedly: Bool)
     
-    func didReceiveError(_ error: Error)
-    
-    func refreshToken() throws
-    
-    func handle(message: String)
+    func didReceive(error: Error)
+
+    func refreshToken()
 }

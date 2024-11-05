@@ -16,11 +16,30 @@
 import Foundation
 
 /// Event received when more messages are loaded.
-struct MoreMessagesLoadedEventDTO: Decodable {
-    
+struct MoreMessagesLoadedEventDTO: Decodable, Equatable {
+
     /// The unique identifier of the event.
     let eventId: UUID
 
+    /// Type of event
+    let eventType: EventType?
+
     /// The postback of the more message loaded event.
     let postback: MoreMessagesLoadedEventPostbackDTO
+
+    // MARK: - constructors
+    
+    init(eventId: UUID, eventType: EventType? = .moreMessagesLoaded, postback: MoreMessagesLoadedEventPostbackDTO) {
+        self.eventId = eventId
+        self.eventType = eventType
+        self.postback = postback
+    }
+}
+
+// MARK: - ReceivedEvent
+
+extension MoreMessagesLoadedEventDTO: ReceivedEvent {
+    static let eventType: EventType? = .moreMessagesLoaded
+
+    var postbackEventType: EventType? { postback.eventType }
 }

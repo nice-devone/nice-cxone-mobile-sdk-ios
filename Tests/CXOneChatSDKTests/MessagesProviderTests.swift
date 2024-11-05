@@ -69,7 +69,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testSenddMessagesWithPropertiesNoThrow() async throws {
-        socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+        socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
         
         try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread()))
     }
@@ -113,7 +113,7 @@ class MessagesProviderTests: CXoneXCTestCase {
                 body: string(preAttachmentResponse)
             )
         ) {
-            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
             
             await XCTAssertAsyncThrowsError(
                 try await CXoneChat.threads.messages.send(
@@ -131,7 +131,7 @@ class MessagesProviderTests: CXoneXCTestCase {
                 body: string(preAttachmentResponse)
             )
         ) {
-            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
 
             guard let data = UIImage(systemName: "pencil")?.jpegData(compressionQuality: 0.8) else {
                 throw CXoneChatError.attachmentError
@@ -161,7 +161,7 @@ class MessagesProviderTests: CXoneXCTestCase {
                 body: string(preAttachmentResponse)
             )
         ) {
-            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: dateProvider.now)
+            socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
             
             try await CXoneChat.threads.messages.send(
                 OutboundMessage(text: "message", attachments: [storeDataInDocuments(data, fileName: "sample_video.mov", mimeType: "video/quicktime")]),
@@ -200,8 +200,8 @@ class MessagesProviderTests: CXoneXCTestCase {
         
         try await CXoneChat.threads.create(with: defaultAnswers)
         
-        let eventData = try loadStubFromBundle(withName: "FireProactiveAction+WelcomeMessage", extension: "json")
-        CXoneChat.socketDelegateManager.handle(message: eventData.utf8string)
+        let eventData = try loadBundleData(from: "FireProactiveAction+WelcomeMessage", type: "json")
+        CXoneChat.handle(message: eventData.utf8string!)
         
         guard let thread = CXoneChat.threads.get().last else {
             throw XCTError("Unable to retrieve required thread")
@@ -220,8 +220,8 @@ class MessagesProviderTests: CXoneXCTestCase {
         
         try await CXoneChat.threads.create(with: defaultAnswers)
         
-        let eventData = try loadStubFromBundle(withName: "FireProactiveAction+WelcomeMessage", extension: "json")
-        CXoneChat.socketDelegateManager.handle(message: eventData.utf8string)
+        let eventData = try loadBundleData(from: "FireProactiveAction+WelcomeMessage", type: "json")
+        CXoneChat.handle(message: eventData.utf8string!)
         
         guard let thread = CXoneChat.threads.get().last else {
             throw XCTError("Unable to retrieve required thread")

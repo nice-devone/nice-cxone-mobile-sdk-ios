@@ -25,18 +25,16 @@ class MessagesService: MessagesProvider {
     let socketService: SocketService
     let eventsService: EventsService
     
-    weak var delegate: CXoneChatDelegate?
-    
+    let delegate: CXoneChatDelegate
+
     private let contactFieldsProvider: ContactCustomFieldsProvider
     private let customerFieldsProvider: CustomerCustomFieldsProvider
-    private let dateProvider: DateProvider
     private let welcomeMessageManager: WelcomeMessageManager
     
     private var parsedWelcomeMessage: String?
     
     private var connectionContext: ConnectionContext {
-        get { socketService.connectionContext }
-        set { socketService.connectionContext = newValue }
+        socketService.connectionContext
     }
     
     // MARK: - Init
@@ -46,15 +44,15 @@ class MessagesService: MessagesProvider {
         customerFieldsProvider: CustomerCustomFieldsProvider,
         socketService: SocketService,
         eventsService: EventsService,
-        dateProvider: DateProvider,
-        welcomeMessageManager: WelcomeMessageManager
+        welcomeMessageManager: WelcomeMessageManager,
+        delegate: CXoneChatDelegate
     ) {
         self.contactFieldsProvider = contactFieldsProvider
         self.customerFieldsProvider = customerFieldsProvider
         self.socketService = socketService
         self.eventsService = eventsService
-        self.dateProvider = dateProvider
         self.welcomeMessageManager = welcomeMessageManager
+        self.delegate = delegate
     }
     
     // MARK: - Implementation
@@ -64,6 +62,7 @@ class MessagesService: MessagesProvider {
     /// - Throws: ``CXoneChatError/noMoreMessages`` if there aren't any other messages, so additional messages could not be loaded.
     /// - Throws: ``CXoneChatError/invalidOldestDate`` if Thread is missing the timestamp of when the message was created.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.``
     func loadMore(for chatThread: ChatThread) throws {
         LogManager.trace("Loading more messages.")
@@ -85,7 +84,7 @@ class MessagesService: MessagesProvider {
             with: .loadMoreMessageData(LoadMoreMessagesEventDataDTO(scrollToken: chatThread.scrollToken, thread: thread, oldestMessageDatetime: oldestDate))
         )
         
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
     
     /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
@@ -93,13 +92,14 @@ class MessagesService: MessagesProvider {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
     /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
-    /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed.
+    /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
+    ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
@@ -137,7 +137,7 @@ class MessagesService: MessagesProvider {
             SendMessageEventDataDTO(
                 thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
                 contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback)),
-                idOnExternalPlatform: UUID(),
+                idOnExternalPlatform: UUID.provide(),
                 customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
                 contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
                 attachments: mappedAttachments,
@@ -148,10 +148,10 @@ class MessagesService: MessagesProvider {
         
         if message.text != Self.beginLiveChatConversationMessage {
             let message = Message(
-                id: UUID(),
+                id: UUID.provide(),
                 threadId: chatThread.id,
                 contentType: .text(MessagePayload(text: message.text, postback: message.postback)),
-                createdAt: dateProvider.now,
+                createdAt: Date.provide(),
                 attachments: mappedAttachments.map(AttachmentMapper.map),
                 direction: .toAgent,
                 userStatistics: nil,
@@ -161,12 +161,12 @@ class MessagesService: MessagesProvider {
             var threadCopy = chatThread
             threadCopy.messages.append(message)
             
-            delegate?.onThreadUpdated(threadCopy)
+            delegate.onThreadUpdated(threadCopy)
         }
         
         let data = try eventsService.create(.sendMessage, with: eventData)
         
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
 }
 
@@ -187,10 +187,10 @@ extension MessagesService {
         self.parsedWelcomeMessage = parsedMessage
         
         return Message(
-            id: UUID(),
+            id: UUID.provide(),
             threadId: thread.id,
             contentType: .text(MessagePayload(text: parsedMessage, postback: nil)),
-            createdAt: dateProvider.now,
+            createdAt: Date.provide(),
             attachments: [],
             direction: .toClient,
             userStatistics: nil,
@@ -222,6 +222,24 @@ extension MessagesService {
         return false
     }
     
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/attachmentError`` if the provided attachment was unable to be sent.
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
+    ///     or  when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
+    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
+    /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
+    /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
+    /// - Throws: An error if any value throws an error during encoding.
     func sendBeginLiveChatConversation(for thread: ChatThread) async throws {
         LogManager.trace("Sending begin conversation content to create a live chat thread.")
         
@@ -236,6 +254,7 @@ private extension MessagesService {
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func sendWelcomeMessageIfNeeded(for thread: ChatThread) throws {
         guard let parsedWelcomeMessage, thread.messages.count == 1 else {
@@ -257,7 +276,7 @@ private extension MessagesService {
                     threadName: thread.messages.isEmpty ? nil : thread.name
                 ),
                 contentType: .text(MessagePayloadDTO(text: parsedWelcomeMessage, postback: nil)),
-                idOnExternalPlatform: UUID(),
+                idOnExternalPlatform: UUID.provide(),
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
@@ -267,7 +286,7 @@ private extension MessagesService {
         
         let data = try eventsService.create(.sendOutbound, with: eventData)
         
-        socketService.send(message: data.utf8string)
+        try socketService.send(data: data)
     }
 }
 
@@ -283,10 +302,11 @@ private extension [ContentDescriptor] {
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed.
-    /// - Throws: An error if any value throws an error during encoding.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
+    /// - Throws: An error if any value throws an error during encoding.
     func map(
         with connectionContext: ConnectionContext,
         fun: StaticString = #function,
@@ -304,7 +324,7 @@ private extension [ContentDescriptor] {
         let returned = try await self.asyncMap { attachment in
             request.httpBody = try await attachment.httpBody(fileRestrictions: connectionContext.channelConfig.settings.fileRestrictions)
             
-            let (data, response) = try await connectionContext.session.data(for: request, fun: fun, file: file, line: line)
+            let (data, response) = try await connectionContext.session.fetch(for: request, fun: fun, file: file, line: line)
 
             guard let response = response as? HTTPURLResponse, (200 ... 299) ~= response.statusCode else {
                 throw CXoneChatError.serverError

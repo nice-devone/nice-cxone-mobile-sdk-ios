@@ -15,7 +15,7 @@
 
 import Foundation
 
-enum MessageDirectionDTOType: String, Codable {
+enum MessageDirectionDTOType: String, Codable, Equatable {
     
     /// Agent is receiving the message.
     case inbound

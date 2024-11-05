@@ -1,0 +1,10 @@
+{
+    "eventId": "52E519A4-60FD-4A40-9EF8-19E051A02AAB",
+    "authorization": {
+        "authorizationCode": "1234",
+        "codeVerifier": "1234"
+    },
+    "disableChannelInfo": true,
+    "sdkPlatform": "ios",
+    "sdkVersion": "1.0.0"
+}

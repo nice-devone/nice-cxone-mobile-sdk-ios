@@ -16,7 +16,7 @@
 import Foundation
 
 /// An access token used by the customer for sending messages if OAuth authorization is on for the channel.
-struct AccessTokenDTO {
+struct AccessTokenDTO: Equatable {
 
     // MARK: - Properties
 

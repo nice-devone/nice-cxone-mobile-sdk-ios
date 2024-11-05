@@ -20,8 +20,11 @@ class WelcomeMessageManagerTest: XCTestCase {
 
     // MARK: - Properties
     
-    private let manager = WelcomeMessageManager(dateProvider: DateProviderMock())
-    
+    private let manager = {
+        Date.provider = DateProviderMock()
+        return WelcomeMessageManager()
+    }()
+
     var sut = ""
     var expectation = ""
     

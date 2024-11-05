@@ -18,19 +18,10 @@ import Foundation
 // UserView
 
 /// Represents all info about an agent.
-struct AgentDTO: Codable {
-    
+struct AgentDTO: Equatable {
+
     /// The id of the agent.
     let id: Int
-
-    /// The id of the agent in the inContact (CXone) system.
-    let inContactId: String?
-
-    /// The email address of the agent.
-    let emailAddress: String?
-
-    /// The username of the agent used to log in.
-    let loginUsername: String
 
     /// The first name of the agent.
     let firstName: String
@@ -48,10 +39,25 @@ struct AgentDTO: Codable {
     let isSurveyUser: Bool
 
     /// The URL for the profile photo of the agent.
-    let imageUrl: String
+    let publicImageUrl: String
 
     /// The full name of the agent (readonly).
     var fullName: String {
         "\(firstName) \(surname)"
+    }
+}
+
+// MARK: - Codable
+
+extension AgentDTO: Codable {
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case firstName
+        case surname
+        case nickname
+        case isBotUser
+        case isSurveyUser
+        case publicImageUrl
     }
 }

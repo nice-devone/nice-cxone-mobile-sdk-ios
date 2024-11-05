@@ -17,9 +17,9 @@ import Foundation
 
 /// Represents info data of a recconect customer event.
 struct ReconnectCustomerEventDataDTO {
-    
+
     // MARK: - Properties
-    
+
     /// Authorization Token.
     let token: String
 }
@@ -46,7 +46,7 @@ extension ReconnectCustomerEventDataDTO: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         var tokenContainer = container.nestedContainer(keyedBy: TokenKeys.self, forKey: .accessToken)
-        
+
         try tokenContainer.encode(token, forKey: .token)
     }
 }

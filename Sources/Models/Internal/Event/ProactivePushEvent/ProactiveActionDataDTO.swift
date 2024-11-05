@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info about data of a proactive action.
-struct ProactiveActionDataDTO {
+struct ProactiveActionDataDTO: Equatable {
     
     // MARK: - Properties
     

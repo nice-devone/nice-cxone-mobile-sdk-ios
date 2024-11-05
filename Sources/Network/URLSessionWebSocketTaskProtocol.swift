@@ -14,37 +14,23 @@
 //
 
 import Foundation
-
-// MARK: - URLSessionProtocol
-
-protocol URLSessionProtocol {
-    
-    associatedtype DTA: URLSessionWebSocketTaskProtocol
-    
-    func webSocketTask(with request: URLRequest) -> DTA
-    
-    var delegate: URLSessionDelegate? { get }
-}
-
-// MARK: - URLSession + URLSessionProtocol
-
-extension URLSession: URLSessionProtocol { }
+import Mockable
 
 // MARK: - URLSessionWebSocketTaskProtocol
 
-protocol URLSessionWebSocketTaskProtocol {
+@Mockable
+protocol URLSessionWebSocketTaskProtocol: AnyObject {
+    var delegate: URLSessionTaskDelegate? { get set }
     
     func send(_ message: URLSessionWebSocketTask.Message, completionHandler: @escaping (Error?) -> Void)
-    
+
     func receive(completionHandler: @escaping (Result<URLSessionWebSocketTask.Message, Error>) -> Void)
-    
+
     func sendPing(pongReceiveHandler: @escaping @Sendable (Error?) -> Void)
-    
+
     func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
-    
+
     func resume()
-    
-    var delegate: URLSessionTaskDelegate? { get set }
 }
 
 // MARK: - URLSessionWebSocketTask + URLSessionWebSocketTaskProtocol

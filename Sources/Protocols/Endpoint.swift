@@ -45,9 +45,6 @@ extension Endpoint {
             throw CXoneChatError.invalidRequest
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = self.method.rawValue
-        
-        return request
+        return URLRequest(url: url, method: method)
     }
 }

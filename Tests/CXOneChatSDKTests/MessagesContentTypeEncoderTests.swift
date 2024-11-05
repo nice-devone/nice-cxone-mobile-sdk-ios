@@ -47,8 +47,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "MessageType/MessageTypeText", extension: "json")
-        
+        let expectationData = try loadBundleData(from: "MessageType/MessageTypeText", type: "json")
+
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
@@ -94,8 +94,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeRichLink", extension: "json")
-        
+        let expectationData = try loadBundleData(from: "RichMessages/MessageTypeRichLink", type: "json")
+
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
@@ -141,8 +141,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeQuickReplies", extension: "json")
-        
+        let expectationData = try loadBundleData(from: "RichMessages/MessageTypeQuickReplies", type: "json")
+
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
@@ -207,7 +207,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
-        let expectationData = try loadStubFromBundle(withName: "RichMessages/MessageTypeListPicker", extension: "json")
+        let expectationData = try loadBundleData(from: "RichMessages/MessageTypeListPicker", type: "json")
         
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
