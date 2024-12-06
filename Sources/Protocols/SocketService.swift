@@ -48,6 +48,7 @@ protocol SocketService: AnyObject {
     func send(data: Data, shouldCheck: Bool) throws
 
     /// Sends a ping through the WebSocket to ensure that the server is connected.
+    @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping()
 }
 

@@ -18,37 +18,6 @@ import XCTest
 
 final class ReceivedEventTests: XCTestCase {
 
-    @discardableResult
-    private func checkParsing<Type: ReceivedEvent & Decodable & Equatable>(
-        from file: String,
-        type: Type.Type,
-        source: StaticString = #file,
-        line: UInt = #line
-    ) throws -> Type? {
-        var data: Data
-        var expect: Type
-
-        do {
-            data = try loadBundleData(from: file, type: "json")
-        } catch {
-            XCTFail("Error loading \(file): \(error)", file: source, line: line)
-            throw error
-        }
-
-        do {
-            expect = try JSONDecoder().decode(type, from: data)
-        } catch {
-            XCTFail("Error parsing \(file): \(error)", file: source, line: line)
-            throw error
-        }
-
-        let actual = data.toReceivedEvent() as? Type
-
-        XCTAssertEqual(actual, expect, file: source, line: line)
-
-        return actual
-    }
-
     func testServerError() throws {
         try checkParsing(from: "ServerError", type: ServerError.self)
     }
@@ -101,6 +70,10 @@ final class ReceivedEventTests: XCTestCase {
         try checkParsing(from: "ThreadRecoveredEvent", type: ThreadRecoveredEventDTO.self)
     }
 
+    func testLivechatRecovered() throws {
+        try checkParsing(from: "LivechatRecoveredEvent", type: LiveChatRecoveredDTO.self)
+    }
+    
     func testMessageRead() throws {
         try checkParsing(from: "MessageReadEventByAgent", type: MessageReadByAgentEventDTO.self)
     }
@@ -162,5 +135,41 @@ final class ReceivedEventTests: XCTestCase {
 
     func testLiveChatRestored() throws {
         #warning("Implement LiveChatRecovered parsing test")
+    }
+}
+
+// MARK: - Helpers
+
+private extension ReceivedEventTests {
+    
+    @discardableResult
+    func checkParsing<Type: ReceivedEvent & Decodable & Equatable>(
+        from file: String,
+        type: Type.Type,
+        source: StaticString = #file,
+        line: UInt = #line
+    ) throws -> Type? {
+        var data: Data
+        var expect: Type
+
+        do {
+            data = try loadBundleData(from: file, type: "json")
+        } catch {
+            XCTFail("Error loading \(file): \(error)", file: source, line: line)
+            throw error
+        }
+
+        do {
+            expect = try JSONDecoder().decode(type, from: data)
+        } catch {
+            XCTFail("Error parsing \(file): \(error)", file: source, line: line)
+            throw error
+        }
+
+        let actual = data.toReceivedEvent() as? Type
+
+        XCTAssertEqual(actual, expect, file: source, line: line)
+
+        return actual
     }
 }

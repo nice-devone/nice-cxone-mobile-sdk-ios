@@ -33,6 +33,10 @@ class ChatThreadsService {
     private var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
+    private var contactCustomFields: ContactCustomFieldsService? {
+        customFields as? ContactCustomFieldsService
+    }
+        
 
     // MARK: - Protocol Properties
 
@@ -553,7 +557,7 @@ extension ChatThreadsService: EventReceiver {
 
         threads.removeAll()
 
-        (customFields as? ContactCustomFieldsService)?.clearStoredData()
+        contactCustomFields?.clearStoredData()
     }
 }
 
@@ -561,17 +565,28 @@ extension ChatThreadsService: EventReceiver {
 
 extension ChatThreadsService {
     
+    func processOperationError(_ event: OperationError) {
+        #warning("DE-114311 - takes recoveringThreadFailed out of this list")
+        #warning("DE-114310 - takes recoveringLiveChatFailed out of this list")
+        switch event.errorCode {
+        case .recoveringThreadFailed, .recoveringLiveChatFailed:
+            processRecoveringThreadFailedError(event)
+        default:
+            break
+        }
+    }
+    
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processThreadRecoveredEvent(_ event: ThreadRecoveredEventDTO) throws {
         LogManager.trace("Processing thread recovered with UUID - \(event.postback.data.thread.idOnExternalPlatform)")
         
         socketService.connectionContext.contactId = event.postback.data.consumerContact.id
         
-        (customFields as? ContactCustomFieldsService)?.updateFields(
+        contactCustomFields?.updateFields(
             event.postback.data.consumerContact.customFields,
             for: event.postback.data.thread.idOnExternalPlatform
         )
-        customerFields?.updateFields(event.postback.data.customerContactFields)
+        customerFields?.updateFields(event.postback.data.customerCustomFields)
         
         if !threads.contains(where: { $0.id == event.postback.data.thread.idOnExternalPlatform }) {
             threads.append(
@@ -594,17 +609,6 @@ extension ChatThreadsService {
         delegate.onThreadUpdated(thread)
         delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
     }
-    
-    func processOperationError(_ event: OperationError) {
-        #warning("DE-114311 - takes recoveringThreadFailed out of this list")
-        #warning("DE-114310 - takes recoveringLiveChatFailed out of this list")
-        switch event.errorCode {
-        case .recoveringThreadFailed, .recoveringLiveChatFailed:
-            processRecoveringThreadFailedError(event)
-        default:
-            break
-        }
-    }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processLiveChatRecoveredEvent(_ event: LiveChatRecoveredDTO) throws {
@@ -625,7 +629,8 @@ extension ChatThreadsService {
         
         socketService.connectionContext.contactId = data.contact.id
         
-        customerFields?.updateFields(data.contact.customFields)
+        contactCustomFields?.updateFields(data.contact.customFields, for: data.thread.idOnExternalPlatform)
+        customerFields?.updateFields(data.customerCustomFields)
         
         if !threads.contains(where: { $0.id == data.thread.idOnExternalPlatform }) {
             threads.append(ChatThread(id: data.thread.idOnExternalPlatform, state: .ready))

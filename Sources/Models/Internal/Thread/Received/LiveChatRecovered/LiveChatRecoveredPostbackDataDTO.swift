@@ -15,7 +15,9 @@
 
 import Foundation
 
-struct LiveChatRecoveredPostbackDataDTO: Decodable {
+struct LiveChatRecoveredPostbackDataDTO: Equatable {
+    
+    // MARK: - Properties
     
     /// The info about a contact (case).
     let contact: ContactDTO
@@ -33,4 +35,38 @@ struct LiveChatRecoveredPostbackDataDTO: Decodable {
     
     /// The info abount about received thread.
     let thread: ReceivedThreadDataDTO
+    
+    let customerCustomFields: [CustomFieldDTO]
+}
+
+// MARK: - Decodable
+
+extension LiveChatRecoveredPostbackDataDTO: Decodable {
+    
+    enum CodingKeys: CodingKey {
+        case contact
+        case inboxAssignee
+        case previousInboxAssignee
+        case messages
+        case messagesScrollToken
+        case thread
+        case customer
+    }
+    
+    enum CustomerKeys: CodingKey {
+        case customFields
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let customerContainer = try container.nestedContainer(keyedBy: CustomerKeys.self, forKey: .customer)
+        
+        self.contact = try container.decode(ContactDTO.self, forKey: .contact)
+        self.inboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .inboxAssignee)
+        self.previousInboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .previousInboxAssignee)
+        self.messages = try container.decode([MessageDTO].self, forKey: .messages)
+        self.messagesScrollToken = try container.decode(String.self, forKey: .messagesScrollToken)
+        self.thread = try container.decode(ReceivedThreadDataDTO.self, forKey: .thread)
+        self.customerCustomFields = try customerContainer.decode([CustomFieldDTO].self, forKey: .customFields)
+    }
 }
