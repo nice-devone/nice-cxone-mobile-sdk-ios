@@ -169,7 +169,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
                     inboxAssignee: MockData.agent,
                     thread: ReceivedThreadDataDTO(idOnExternalPlatform: thread.id, channelId: "channel_1", threadName: "name", canAddMoreMessages: true),
                     messagesScrollToken: "token",
-                    customerContactFields: []
+                    customerCustomFields: []
                 )
             )
         )
@@ -251,7 +251,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
                     inboxAssignee: nil,
                     thread: ReceivedThreadDataDTO(idOnExternalPlatform: UUID(), channelId: "", threadName: "", canAddMoreMessages: true),
                     messagesScrollToken: "asdasda",
-                    customerContactFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: Date.provide())]
+                    customerCustomFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: Date.provide())]
                 )
             )
         )

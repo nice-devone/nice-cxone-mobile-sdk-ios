@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct LiveChatRecoveredPostbackDTO: Decodable {
+struct LiveChatRecoveredPostbackDTO: Decodable, Equatable {
     
     let eventType: EventType
     

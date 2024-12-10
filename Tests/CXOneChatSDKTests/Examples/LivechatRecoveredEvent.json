@@ -1,0 +1,1070 @@
+{
+    "eventId": "681D0917-796D-402B-AB51-DB61BE2AEE80",
+    "postback": {
+        "eventType": "LivechatRecovered",
+        "data": {
+            "ownerAssignee": {
+                "id": 62713508,
+                "username": "lukas.sanda@nice.com",
+                "loginUsername": "lukas.sanda@nice.com",
+                "name": "Lukas",
+                "firstName": "Lukas",
+                "surname": "Sanda",
+                "fullName": "Lukas Sanda",
+                "image": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "imagePublic": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "email": "lukas.sanda@nice.com",
+                "emailAddress": "lukas.sanda@nice.com",
+                "nickname": "",
+                "inContactId": null,
+                "incontactId": null,
+                "agentId": null,
+                "inContactSharedUser": false,
+                "isChatbot": false,
+                "isBotUser": false,
+                "isSurveyUser": false,
+                "userType": "superuser"
+            },
+            "inboxAssignee": {
+                "id": 62713508,
+                "username": "lukas.sanda@nice.com",
+                "loginUsername": "lukas.sanda@nice.com",
+                "name": "Lukas",
+                "firstName": "Lukas",
+                "surname": "Sanda",
+                "fullName": "Lukas Sanda",
+                "image": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "imagePublic": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                "email": "lukas.sanda@nice.com",
+                "emailAddress": "lukas.sanda@nice.com",
+                "nickname": "",
+                "inContactId": null,
+                "incontactId": null,
+                "agentId": null,
+                "inContactSharedUser": false,
+                "isChatbot": false,
+                "isBotUser": false,
+                "isSurveyUser": false,
+                "userType": "superuser"
+            },
+            "messages": [
+                {
+                    "id": "b9a2d956-0cff-4163-80b6-dae9d7d171b5",
+                    "idOnExternalPlatform": "90A4D0B8-9335-4057-B0FE-5AA807FD4C48",
+                    "postId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                    "threadId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                    "threadIdOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                    "messageContent": {
+                        "text": "Hello",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "Hello",
+                            "postback": "",
+                            "elements": [
+                                
+                            ]
+                        },
+                        "fallbackText": "Unsupported message content",
+                        "isAutoTranslated": false,
+                        "parameters": [
+                            
+                        ],
+                        "postback": null
+                    },
+                    "createdAt": "2024-12-06T08:37:50+00:00",
+                    "createdAtWithMilliseconds": "2024-12-06T08:37:50.858+00:00",
+                    "isMadeByUser": false,
+                    "direction": "inbound",
+                    "user": null,
+                    "authorUser": null,
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "nickname": "John Doe",
+                        "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                        "externalPlatformId": "chat",
+                        "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "fullName": "John Doe"
+                    },
+                    "isRead": false,
+                    "attachments": [
+                        
+                    ],
+                    "tags": [
+                        
+                    ],
+                    "sentiment": "neutral",
+                    "deletedOnExternalPlatform": false,
+                    "isDeletedOnExternalPlatform": false,
+                    "isHiddenOnExternalPlatform": false,
+                    "reactionStatistics": {
+                        "likes": 0,
+                        "shares": 0,
+                        "isLikedByChannel": false,
+                        "isSharedByChannel": false
+                    },
+                    "contentRemoved": null,
+                    "authorNameRemoved": null,
+                    "replyToMessage": null,
+                    "readAt": null,
+                    "title": "",
+                    "recipients": [
+                        
+                    ],
+                    "url": null,
+                    "replyChannel": null,
+                    "channel": {
+                        "id": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d"
+                    },
+                    "customerStatistics": {
+                        "seenAt": null
+                    },
+                    "userStatistics": {
+                        "seenAt": null,
+                        "readAt": null,
+                        "createdToReadSeconds": null
+                    },
+                    "contactNumber": "9313975",
+                    "isReplyAllowed": false,
+                    "seen": [
+                        
+                    ],
+                    "delivered": [
+                        
+                    ],
+                    "deviceFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "iOS",
+                        "osVersion": "18.1",
+                        "language": "en",
+                        "ip": "",
+                        "location": "",
+                        "country": "CZ",
+                        "deviceType": "mobile",
+                        "deviceToken": "",
+                        "applicationType": "native",
+                        "supportedMessageTypes": [
+                            
+                        ]
+                    },
+                    "forward": null,
+                    "externalAttributes": [
+                        
+                    ],
+                    "isReplyToSpecificMessage": false,
+                    "hasAdditionalMessageContent": false
+                },
+                {
+                    "id": "6099ea7c-e236-445e-8721-a98afa478f02",
+                    "idOnExternalPlatform": "24C8856E-5545-46C5-B015-85A407661CE8",
+                    "postId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                    "threadId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                    "threadIdOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                    "messageContent": {
+                        "text": "__Begin Live Chat Conversation__",
+                        "type": "TEXT",
+                        "payload": {
+                            "text": "__Begin Live Chat Conversation__",
+                            "postback": "",
+                            "elements": [
+                                
+                            ]
+                        },
+                        "fallbackText": "Unsupported message content",
+                        "isAutoTranslated": false,
+                        "parameters": [
+                            
+                        ],
+                        "postback": null
+                    },
+                    "createdAt": "2024-12-06T08:36:46+00:00",
+                    "createdAtWithMilliseconds": "2024-12-06T08:36:46.548+00:00",
+                    "isMadeByUser": false,
+                    "direction": "inbound",
+                    "user": null,
+                    "authorUser": null,
+                    "authorEndUserIdentity": {
+                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "nickname": "John Doe",
+                        "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                        "externalPlatformId": "chat",
+                        "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "fullName": "John Doe"
+                    },
+                    "isRead": false,
+                    "attachments": [
+                        
+                    ],
+                    "tags": [
+                        
+                    ],
+                    "sentiment": "neutral",
+                    "deletedOnExternalPlatform": false,
+                    "isDeletedOnExternalPlatform": false,
+                    "isHiddenOnExternalPlatform": false,
+                    "reactionStatistics": {
+                        "likes": 0,
+                        "shares": 0,
+                        "isLikedByChannel": false,
+                        "isSharedByChannel": false
+                    },
+                    "contentRemoved": null,
+                    "authorNameRemoved": null,
+                    "replyToMessage": null,
+                    "readAt": null,
+                    "title": "",
+                    "recipients": [
+                        
+                    ],
+                    "url": null,
+                    "replyChannel": null,
+                    "channel": {
+                        "id": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d"
+                    },
+                    "customerStatistics": {
+                        "seenAt": null
+                    },
+                    "userStatistics": {
+                        "seenAt": null,
+                        "readAt": null,
+                        "createdToReadSeconds": null
+                    },
+                    "contactNumber": "9313975",
+                    "isReplyAllowed": false,
+                    "seen": [
+                        
+                    ],
+                    "delivered": [
+                        
+                    ],
+                    "deviceFingerprint": {
+                        "browser": "",
+                        "browserVersion": "",
+                        "os": "iOS",
+                        "osVersion": "18.1",
+                        "language": "en",
+                        "ip": "",
+                        "location": "",
+                        "country": "CZ",
+                        "deviceType": "mobile",
+                        "deviceToken": "",
+                        "applicationType": "native",
+                        "supportedMessageTypes": [
+                            
+                        ]
+                    },
+                    "forward": null,
+                    "externalAttributes": [
+                        
+                    ],
+                    "isReplyToSpecificMessage": false,
+                    "hasAdditionalMessageContent": false
+                }
+            ],
+            "messagesScrollToken": "Ozs2MDk5ZWE3Yy1lMjM2LTQ0NWUtODcyMS1hOThhZmE0NzhmMDI7OzE3MzM0NzQyMDY7OzE3MzM0NzQyMDc=",
+            "thread": {
+                "id": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                "idOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                "threadName": "",
+                "channelId": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                "canAddMoreMessages": true
+            },
+            "contactHistory": [
+                {
+                    "eventId": "abdc548d-c84e-44db-8c08-92faa6ea76ee",
+                    "eventObject": "Case",
+                    "eventType": "CaseToRoutingQueueAssignmentChanged",
+                    "createdAt": "2024-12-06T08:36:47+00:00",
+                    "createdAtWithMilliseconds": "2024-12-06T08:36:47.000+00:00",
+                    "data": {
+                        "brand": {
+                            "id": 6435,
+                            "friendlyName": "Lukas Sanda Brand",
+                            "timezone": "Europe/Prague",
+                            "brandHash": "e1c7b9baec9d6f2ee1ea",
+                            "tenantId": null,
+                            "businessUnitId": null
+                        },
+                        "channel": {
+                            "id": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "idOnExternalPlatform": "9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "name": "iOS livechat channel",
+                            "channelIntegrationId": "2507eb36-065b-4e41-aca9-c5a07af4803d",
+                            "integrationBoxIdentifier": "chat",
+                            "realExternalPlatformId": "chat",
+                            "externalPlatformId": "chat",
+                            "externalPlatformAvatar": "https://channels-assets-qa.brandembassy.com/all/default/external-platform-avatar/chat.png",
+                            "externalPlatformIcon": "live-chat",
+                            "isPrivate": true,
+                            "hasReply": true,
+                            "hasTreeStructure": false,
+                            "hasPostAsPlaceholder": true,
+                            "contentFormat": "plain",
+                            "hasCustomerOnThirdParty": false,
+                            "isPostWritable": true,
+                            "hasAbilityToQuoteMessage": false,
+                            "hasAbilityToLike": false,
+                            "isHidden": false,
+                            "isDeleted": false,
+                            "wysiwygEnabled": false,
+                            "hasAbilityToTag": false,
+                            "ownerUserId": 62713508,
+                            "hasPublishing": false,
+                            "hasAbilityToSendFiles": true,
+                            "hasOutboundFlow": false,
+                            "hasManualOutboundFlow": false,
+                            "hasOutboundTemplates": false,
+                            "hasAbilityToShare": false,
+                            "hasAbilityToDelete": false,
+                            "hasAbilityToHide": false,
+                            "replyPrefixMentionTemplate": "",
+                            "nicknameOnExternalPlatform": "",
+                            "isLiveChat": true,
+                            "hasAbilityToChangeRecipient": false,
+                            "hasMultipleRecipient": false,
+                            "hasCcAndBcc": false,
+                            "hasVisibleTitle": false,
+                            "hasEditableTitle": false,
+                            "hasVisibleRecipients": false,
+                            "hasAbilityToForwardMessage": false,
+                            "canSaveResponse": false,
+                            "hasAbilityToChangeFrom": false,
+                            "isAutomaticSignatureAttached": false,
+                            "isCaseBasedStorage": true,
+                            "hasMultipleThreadsPerEndUser": false,
+                            "translationGroup": "default",
+                            "studioScript": null,
+                            "mediaType": 3,
+                            "canAgentInviteCustomersToContact": false,
+                            "canReplyToAnyMessage": false,
+                            "pointOfContactId": null,
+                            "isTrackingMessageDeliveryStatus": false,
+                            "channelNumber": 22
+                        },
+                        "case": {
+                            "id": "9313975",
+                            "threadId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                            "threadIdOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                            "channelId": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "interactionId": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f",
+                            "consumerContactStorageId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                            "contactId": "b7c19e0c-97b3-4182-ae70-75ce226f6b23",
+                            "customerContactId": "e37fdc41-c47b-4c7a-8a4f-6b825e62d9fe",
+                            "status": "new",
+                            "statusUpdatedAt": "2024-12-06T08:36:47+00:00",
+                            "statusUpdatedAtWithMilliseconds": "2024-12-06T08:36:47.126+00:00",
+                            "tags": [
+                                
+                            ],
+                            "routingQueueId": "643d4e95-e404-4ae1-9ad5-b0346cc3ce41",
+                            "routingQueuePriority": 0,
+                            "inboxAssignee": 62713508,
+                            "inboxAssigneeLastAssignedAt": "2024-12-06T08:36:49+00:00",
+                            "inboxAssigneeUser": {
+                                "id": 62713508,
+                                "incontactId": null,
+                                "agentId": null,
+                                "emailAddress": "lukas.sanda@nice.com",
+                                "loginUsername": "lukas.sanda@nice.com",
+                                "firstName": "Lukas",
+                                "surname": "Sanda",
+                                "nickname": "",
+                                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "isBotUser": false,
+                                "isSurveyUser": false
+                            },
+                            "ownerAssigneeUser": {
+                                "id": 62713508,
+                                "incontactId": null,
+                                "agentId": null,
+                                "emailAddress": "lukas.sanda@nice.com",
+                                "loginUsername": "lukas.sanda@nice.com",
+                                "firstName": "Lukas",
+                                "surname": "Sanda",
+                                "nickname": "",
+                                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "isBotUser": false,
+                                "isSurveyUser": false
+                            },
+                            "inboxPreAssigneeUser": null,
+                            "ownerAssignee": 62713508,
+                            "endUserRecipients": [
+                                
+                            ],
+                            "recipients": [
+                                {
+                                    "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                    "name": "John Doe",
+                                    "isPrimary": true,
+                                    "isPrivate": false,
+                                    "anonymizedAt": null,
+                                    "anonymizedReason": null
+                                }
+                            ],
+                            "detailUrl": "https://app-eu1-qa.brandembassy.com/care?redirect=no#/care/tab/7ea3edd0-ecf4-4e87-a924-3f84df002eb7/case/9313975",
+                            "authorEndUserIdentity": {
+                                "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "nickname": "John Doe",
+                                "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                "externalPlatformId": "chat",
+                                "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "fullName": "John Doe"
+                            },
+                            "direction": "inbound",
+                            "createdAt": "2024-12-06T08:36:47+00:00",
+                            "inboxPreAssignee": null,
+                            "customFields": [
+                                
+                            ],
+                            "userFingerprint": {
+                                "browser": "",
+                                "browserVersion": "",
+                                "os": "iOS",
+                                "osVersion": "18.1",
+                                "language": "en",
+                                "ip": "",
+                                "location": "",
+                                "country": "CZ",
+                                "deviceType": "mobile",
+                                "deviceToken": "",
+                                "applicationType": "native"
+                            },
+                            "statistics": {
+                                "inboxAssigneeResponseTime": {
+                                    "valueInSeconds": 0,
+                                    "slaInSeconds": null,
+                                    "slaEnabled": false,
+                                    "isRunning": false
+                                }
+                            },
+                            "endUser": {
+                                "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "updatedAt": "2024-12-06T08:37:51+00:00",
+                                "firstName": "John",
+                                "surname": "Doe",
+                                "fullName": "John Doe",
+                                "customFields": [
+                                    
+                                ],
+                                "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                "identities": [
+                                    {
+                                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                        "firstName": "John",
+                                        "lastName": "Doe",
+                                        "nickname": "John Doe",
+                                        "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                        "externalPlatformId": "chat",
+                                        "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F"
+                                    }
+                                ],
+                                "messageStatistics": {
+                                    "inbound": 2,
+                                    "outbound": 0
+                                },
+                                "sentimentStatistics": {
+                                    "positive": 0,
+                                    "neutral": 2,
+                                    "negative": 0
+                                }
+                            },
+                            "abandon": null,
+                            "routableType": "NOT_ROUTABLE",
+                            "proficiency": {
+                                "from": 1,
+                                "to": 20
+                            },
+                            "sla": {
+                                "firstResponseTime": {
+                                    "raw": 99,
+                                    "label": "",
+                                    "exceeded": 0,
+                                    "percent": 3,
+                                    "treshold": 3600,
+                                    "isRunning": true,
+                                    "alreadyHasValue": false
+                                },
+                                "solutionTime": {
+                                    "raw": 99,
+                                    "label": "",
+                                    "exceeded": 0,
+                                    "percent": 1,
+                                    "treshold": 10000,
+                                    "isRunning": true,
+                                    "alreadyHasValue": false
+                                }
+                            },
+                            "preview": "Hello",
+                            "isOutboundAllowed": true,
+                            "customerStatistics": {
+                                "unseenMessagesCount": 0
+                            },
+                            "userStatistics": {
+                                "unseenMessagesCount": 2
+                            },
+                            "elevation": {
+                                "interaction": {
+                                    "id": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f"
+                                },
+                                "agentContact": {
+                                    "id": null
+                                },
+                                "contact": {
+                                    "contactId": null,
+                                    "contactNumber": null
+                                },
+                                "fromProvider": null
+                            },
+                            "pointOfContactId": null
+                        },
+                        "routingQueue": {
+                            "id": "643d4e95-e404-4ae1-9ad5-b0346cc3ce41",
+                            "name": "Livechat Queue",
+                            "isSubqueue": false,
+                            "isDeleted": false,
+                            "skillId": null,
+                            "isAcceptRejectFlowEnabled": false,
+                            "acceptRejectFlowRefusalTimeoutInSeconds": 0,
+                            "evaluationCriteria": "off",
+                            "focusMetric": "per_contact",
+                            "focusLock": "always",
+                            "focusFallbackTime": 10,
+                            "initialPriority": 0,
+                            "acceleration": 1,
+                            "maxPriority": 1000,
+                            "afterContactWork": {
+                                "isEnabled": false,
+                                "outstateId": null,
+                                "timerInMilliseconds": null
+                            }
+                        },
+                        "routingMode": "legacy",
+                        "previousRoutingQueue": null,
+                        "preferredUserForNextAssign": null
+                    },
+                    "context": {
+                        "initiator": {
+                            "id": "0",
+                            "type": "system"
+                        }
+                    },
+                    "traceId": "74e52866-9f2a-44fc-9eec-46aaaed6d277"
+                },
+                {
+                    "eventId": "fd7b10dc-650b-4910-81ba-af6517430d4b",
+                    "eventObject": "Case",
+                    "eventType": "CaseInboxAssigneeChanged",
+                    "createdAt": "2024-12-06T08:36:49+00:00",
+                    "createdAtWithMilliseconds": "2024-12-06T08:36:49.000+00:00",
+                    "data": {
+                        "brand": {
+                            "id": 6435,
+                            "friendlyName": "Lukas Sanda Brand",
+                            "timezone": "Europe/Prague",
+                            "brandHash": "e1c7b9baec9d6f2ee1ea",
+                            "tenantId": null,
+                            "businessUnitId": null
+                        },
+                        "channel": {
+                            "id": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "idOnExternalPlatform": "9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "name": "iOS livechat channel",
+                            "channelIntegrationId": "2507eb36-065b-4e41-aca9-c5a07af4803d",
+                            "integrationBoxIdentifier": "chat",
+                            "realExternalPlatformId": "chat",
+                            "externalPlatformId": "chat",
+                            "externalPlatformAvatar": "https://channels-assets-qa.brandembassy.com/all/default/external-platform-avatar/chat.png",
+                            "externalPlatformIcon": "live-chat",
+                            "isPrivate": true,
+                            "hasReply": true,
+                            "hasTreeStructure": false,
+                            "hasPostAsPlaceholder": true,
+                            "contentFormat": "plain",
+                            "hasCustomerOnThirdParty": false,
+                            "isPostWritable": true,
+                            "hasAbilityToQuoteMessage": false,
+                            "hasAbilityToLike": false,
+                            "isHidden": false,
+                            "isDeleted": false,
+                            "wysiwygEnabled": false,
+                            "hasAbilityToTag": false,
+                            "ownerUserId": 62713508,
+                            "hasPublishing": false,
+                            "hasAbilityToSendFiles": true,
+                            "hasOutboundFlow": false,
+                            "hasManualOutboundFlow": false,
+                            "hasOutboundTemplates": false,
+                            "hasAbilityToShare": false,
+                            "hasAbilityToDelete": false,
+                            "hasAbilityToHide": false,
+                            "replyPrefixMentionTemplate": "",
+                            "nicknameOnExternalPlatform": "",
+                            "isLiveChat": true,
+                            "hasAbilityToChangeRecipient": false,
+                            "hasMultipleRecipient": false,
+                            "hasCcAndBcc": false,
+                            "hasVisibleTitle": false,
+                            "hasEditableTitle": false,
+                            "hasVisibleRecipients": false,
+                            "hasAbilityToForwardMessage": false,
+                            "canSaveResponse": false,
+                            "hasAbilityToChangeFrom": false,
+                            "isAutomaticSignatureAttached": false,
+                            "isCaseBasedStorage": true,
+                            "hasMultipleThreadsPerEndUser": false,
+                            "translationGroup": "default",
+                            "studioScript": null,
+                            "mediaType": 3,
+                            "canAgentInviteCustomersToContact": false,
+                            "canReplyToAnyMessage": false,
+                            "pointOfContactId": null,
+                            "isTrackingMessageDeliveryStatus": false,
+                            "channelNumber": 22
+                        },
+                        "case": {
+                            "id": "9313975",
+                            "threadId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                            "threadIdOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                            "channelId": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                            "interactionId": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f",
+                            "consumerContactStorageId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                            "contactId": "b7c19e0c-97b3-4182-ae70-75ce226f6b23",
+                            "customerContactId": "e37fdc41-c47b-4c7a-8a4f-6b825e62d9fe",
+                            "status": "new",
+                            "statusUpdatedAt": "2024-12-06T08:36:47+00:00",
+                            "statusUpdatedAtWithMilliseconds": "2024-12-06T08:36:47.126+00:00",
+                            "tags": [
+                                
+                            ],
+                            "routingQueueId": "643d4e95-e404-4ae1-9ad5-b0346cc3ce41",
+                            "routingQueuePriority": 0,
+                            "inboxAssignee": 62713508,
+                            "inboxAssigneeLastAssignedAt": "2024-12-06T08:36:49+00:00",
+                            "inboxAssigneeUser": {
+                                "id": 62713508,
+                                "incontactId": null,
+                                "agentId": null,
+                                "emailAddress": "lukas.sanda@nice.com",
+                                "loginUsername": "lukas.sanda@nice.com",
+                                "firstName": "Lukas",
+                                "surname": "Sanda",
+                                "nickname": "",
+                                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "isBotUser": false,
+                                "isSurveyUser": false
+                            },
+                            "ownerAssigneeUser": {
+                                "id": 62713508,
+                                "incontactId": null,
+                                "agentId": null,
+                                "emailAddress": "lukas.sanda@nice.com",
+                                "loginUsername": "lukas.sanda@nice.com",
+                                "firstName": "Lukas",
+                                "surname": "Sanda",
+                                "nickname": "",
+                                "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                                "isBotUser": false,
+                                "isSurveyUser": false
+                            },
+                            "inboxPreAssigneeUser": null,
+                            "ownerAssignee": 62713508,
+                            "endUserRecipients": [
+                                
+                            ],
+                            "recipients": [
+                                {
+                                    "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                    "name": "John Doe",
+                                    "isPrimary": true,
+                                    "isPrivate": false,
+                                    "anonymizedAt": null,
+                                    "anonymizedReason": null
+                                }
+                            ],
+                            "detailUrl": "https://app-eu1-qa.brandembassy.com/care?redirect=no#/care/tab/7ea3edd0-ecf4-4e87-a924-3f84df002eb7/case/9313975",
+                            "authorEndUserIdentity": {
+                                "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "nickname": "John Doe",
+                                "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                "externalPlatformId": "chat",
+                                "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "fullName": "John Doe"
+                            },
+                            "direction": "inbound",
+                            "createdAt": "2024-12-06T08:36:47+00:00",
+                            "inboxPreAssignee": null,
+                            "customFields": [
+                                
+                            ],
+                            "userFingerprint": {
+                                "browser": "",
+                                "browserVersion": "",
+                                "os": "iOS",
+                                "osVersion": "18.1",
+                                "language": "en",
+                                "ip": "",
+                                "location": "",
+                                "country": "CZ",
+                                "deviceType": "mobile",
+                                "deviceToken": "",
+                                "applicationType": "native"
+                            },
+                            "statistics": {
+                                "inboxAssigneeResponseTime": {
+                                    "valueInSeconds": 0,
+                                    "slaInSeconds": null,
+                                    "slaEnabled": false,
+                                    "isRunning": false
+                                }
+                            },
+                            "endUser": {
+                                "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                "updatedAt": "2024-12-06T08:37:51+00:00",
+                                "firstName": "John",
+                                "surname": "Doe",
+                                "fullName": "John Doe",
+                                "customFields": [
+                                    
+                                ],
+                                "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                "identities": [
+                                    {
+                                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                                        "firstName": "John",
+                                        "lastName": "Doe",
+                                        "nickname": "John Doe",
+                                        "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                                        "externalPlatformId": "chat",
+                                        "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F"
+                                    }
+                                ],
+                                "messageStatistics": {
+                                    "inbound": 2,
+                                    "outbound": 0
+                                },
+                                "sentimentStatistics": {
+                                    "positive": 0,
+                                    "neutral": 2,
+                                    "negative": 0
+                                }
+                            },
+                            "abandon": null,
+                            "routableType": "NOT_ROUTABLE",
+                            "proficiency": {
+                                "from": 1,
+                                "to": 20
+                            },
+                            "sla": {
+                                "firstResponseTime": {
+                                    "raw": 99,
+                                    "label": "",
+                                    "exceeded": 0,
+                                    "percent": 3,
+                                    "treshold": 3600,
+                                    "isRunning": true,
+                                    "alreadyHasValue": false
+                                },
+                                "solutionTime": {
+                                    "raw": 99,
+                                    "label": "",
+                                    "exceeded": 0,
+                                    "percent": 1,
+                                    "treshold": 10000,
+                                    "isRunning": true,
+                                    "alreadyHasValue": false
+                                }
+                            },
+                            "preview": "Hello",
+                            "isOutboundAllowed": true,
+                            "customerStatistics": {
+                                "unseenMessagesCount": 0
+                            },
+                            "userStatistics": {
+                                "unseenMessagesCount": 2
+                            },
+                            "elevation": {
+                                "interaction": {
+                                    "id": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f"
+                                },
+                                "agentContact": {
+                                    "id": null
+                                },
+                                "contact": {
+                                    "contactId": null,
+                                    "contactNumber": null
+                                },
+                                "fromProvider": null
+                            },
+                            "pointOfContactId": null
+                        },
+                        "previousInboxAssignee": null,
+                        "inboxAssignee": {
+                            "id": 62713508,
+                            "incontactId": null,
+                            "agentId": null,
+                            "emailAddress": "lukas.sanda@nice.com",
+                            "loginUsername": "lukas.sanda@nice.com",
+                            "firstName": "Lukas",
+                            "surname": "Sanda",
+                            "nickname": "",
+                            "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                            "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                            "isBotUser": false,
+                            "isSurveyUser": false
+                        },
+                        "routingQueue": {
+                            "id": "643d4e95-e404-4ae1-9ad5-b0346cc3ce41",
+                            "name": "Livechat Queue",
+                            "isSubqueue": false,
+                            "isDeleted": false,
+                            "skillId": null,
+                            "isAcceptRejectFlowEnabled": false,
+                            "acceptRejectFlowRefusalTimeoutInSeconds": 0,
+                            "evaluationCriteria": "off",
+                            "focusMetric": "per_contact",
+                            "focusLock": "always",
+                            "focusFallbackTime": 10,
+                            "initialPriority": 0,
+                            "acceleration": 1,
+                            "maxPriority": 1000,
+                            "afterContactWork": {
+                                "isEnabled": false,
+                                "outstateId": null,
+                                "timerInMilliseconds": null
+                            }
+                        },
+                        "routingMode": "legacy",
+                        "acceptRejectFlow": null,
+                        "preferredUserForNextAssign": null
+                    },
+                    "context": [
+                        
+                    ],
+                    "traceId": "74e52866-9f2a-44fc-9eec-46aaaed6d277"
+                }
+            ],
+            "customer": {
+                "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                "name": "John",
+                "surname": "Doe",
+                "firstName": "John",
+                "lastName": "Doe",
+                "fullName": "John Doe",
+                "lastUpdateAt": "2024-12-06T09:37:51+0100",
+                "idents": [
+                    {
+                        "id": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "source": "chat",
+                        "externalPlatformId": "chat",
+                        "followingCount": 0,
+                        "followedCount": 0,
+                        "name": "John",
+                        "surname": "Doe",
+                        "nickname": "John Doe",
+                        "description": ""
+                    }
+                ],
+                "customFields": [
+                    
+                ]
+            },
+            "contact": {
+                "id": "9313975",
+                "threadId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                "threadIdOnExternalPlatform": "F6EA358E-08CE-4425-845C-7EC88F554CFC",
+                "channelId": "chat_9f374c5f-056f-4363-ba52-e6ca6339589d",
+                "interactionId": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f",
+                "consumerContactStorageId": "7ea3edd0-ecf4-4e87-a924-3f84df002eb7",
+                "contactId": "b7c19e0c-97b3-4182-ae70-75ce226f6b23",
+                "customerContactId": "e37fdc41-c47b-4c7a-8a4f-6b825e62d9fe",
+                "status": "new",
+                "statusUpdatedAt": "2024-12-06T08:36:47+00:00",
+                "statusUpdatedAtWithMilliseconds": "2024-12-06T08:36:47.126+00:00",
+                "tags": [
+                    
+                ],
+                "routingQueueId": "643d4e95-e404-4ae1-9ad5-b0346cc3ce41",
+                "routingQueuePriority": 0,
+                "inboxAssignee": 62713508,
+                "inboxAssigneeLastAssignedAt": "2024-12-06T08:36:49+00:00",
+                "inboxAssigneeUser": {
+                    "id": 62713508,
+                    "incontactId": null,
+                    "agentId": null,
+                    "emailAddress": "lukas.sanda@nice.com",
+                    "loginUsername": "lukas.sanda@nice.com",
+                    "firstName": "Lukas",
+                    "surname": "Sanda",
+                    "nickname": "",
+                    "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                    "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                    "isBotUser": false,
+                    "isSurveyUser": false
+                },
+                "ownerAssigneeUser": {
+                    "id": 62713508,
+                    "incontactId": null,
+                    "agentId": null,
+                    "emailAddress": "lukas.sanda@nice.com",
+                    "loginUsername": "lukas.sanda@nice.com",
+                    "firstName": "Lukas",
+                    "surname": "Sanda",
+                    "nickname": "",
+                    "imageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                    "publicImageUrl": "https://brand-embassy-avatars-qa.s3.eu-west-1.amazonaws.com/1a15f048-6a0c-451d-a964-18de8e0cbf4f.jpg",
+                    "isBotUser": false,
+                    "isSurveyUser": false
+                },
+                "inboxPreAssigneeUser": null,
+                "ownerAssignee": 62713508,
+                "endUserRecipients": [
+                    
+                ],
+                "recipients": [
+                    {
+                        "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                        "name": "John Doe",
+                        "isPrimary": true,
+                        "isPrivate": false,
+                        "anonymizedAt": null,
+                        "anonymizedReason": null
+                    }
+                ],
+                "detailUrl": "https://app-eu1-qa.brandembassy.com/care?redirect=no#/care/tab/7ea3edd0-ecf4-4e87-a924-3f84df002eb7/case/9313975",
+                "authorEndUserIdentity": {
+                    "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "nickname": "John Doe",
+                    "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                    "externalPlatformId": "chat",
+                    "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                    "fullName": "John Doe"
+                },
+                "direction": "inbound",
+                "createdAt": "2024-12-06T08:36:47+00:00",
+                "inboxPreAssignee": null,
+                "customFields": [
+                    
+                ],
+                "userFingerprint": {
+                    "browser": "",
+                    "browserVersion": "",
+                    "os": "iOS",
+                    "osVersion": "18.1",
+                    "language": "en",
+                    "ip": "",
+                    "location": "",
+                    "country": "CZ",
+                    "deviceType": "mobile",
+                    "deviceToken": "",
+                    "applicationType": "native"
+                },
+                "statistics": {
+                    "inboxAssigneeResponseTime": {
+                        "valueInSeconds": 0,
+                        "slaInSeconds": null,
+                        "slaEnabled": false,
+                        "isRunning": false
+                    }
+                },
+                "endUser": {
+                    "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                    "updatedAt": "2024-12-06T08:37:51+00:00",
+                    "firstName": "John",
+                    "surname": "Doe",
+                    "fullName": "John Doe",
+                    "customFields": [
+                        
+                    ],
+                    "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                    "identities": [
+                        {
+                            "idOnExternalPlatform": "FC3EF67C-3DA6-499F-BC40-54A1171C955F",
+                            "firstName": "John",
+                            "lastName": "Doe",
+                            "nickname": "John Doe",
+                            "image": "https://assets-qa.brandembassy.com/platform/static/public/img/user-default.png",
+                            "externalPlatformId": "chat",
+                            "id": "chat_FC3EF67C-3DA6-499F-BC40-54A1171C955F"
+                        }
+                    ],
+                    "messageStatistics": {
+                        "inbound": 2,
+                        "outbound": 0
+                    },
+                    "sentimentStatistics": {
+                        "positive": 0,
+                        "neutral": 2,
+                        "negative": 0
+                    }
+                },
+                "abandon": null,
+                "routableType": "NOT_ROUTABLE",
+                "proficiency": {
+                    "from": 1,
+                    "to": 20
+                },
+                "sla": {
+                    "firstResponseTime": {
+                        "raw": 98,
+                        "label": "",
+                        "exceeded": 0,
+                        "percent": 3,
+                        "treshold": 3600,
+                        "isRunning": true,
+                        "alreadyHasValue": false
+                    },
+                    "solutionTime": {
+                        "raw": 98,
+                        "label": "",
+                        "exceeded": 0,
+                        "percent": 1,
+                        "treshold": 10000,
+                        "isRunning": true,
+                        "alreadyHasValue": false
+                    }
+                },
+                "preview": "Hello",
+                "isOutboundAllowed": true,
+                "customerStatistics": {
+                    "unseenMessagesCount": 0
+                },
+                "userStatistics": {
+                    "unseenMessagesCount": 2
+                },
+                "elevation": {
+                    "interaction": {
+                        "id": "4b6eed8b-f9f3-4114-9351-7d99a5a9d92f"
+                    },
+                    "agentContact": {
+                        "id": null
+                    },
+                    "contact": {
+                        "contactId": null,
+                        "contactNumber": null
+                    },
+                    "fromProvider": null
+                },
+                "pointOfContactId": null
+            }
+        }
+    }
+}

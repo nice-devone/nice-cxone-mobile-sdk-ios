@@ -35,7 +35,7 @@ struct ThreadRecoveredEventPostbackDataDTO: Equatable {
     /// The scroll token of the messages.
     let messagesScrollToken: String
     
-    let customerContactFields: [CustomFieldDTO]
+    let customerCustomFields: [CustomFieldDTO]
 }
 
 // MARK: - Decodable
@@ -70,6 +70,6 @@ extension ThreadRecoveredEventPostbackDataDTO: Decodable {
         self.inboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .inboxAssignee)
         self.thread = try container.decode(ReceivedThreadDataDTO.self, forKey: .thread)
         self.messagesScrollToken = try container.decode(String.self, forKey: .messagesScrollToken)
-        self.customerContactFields = try customerContainer.decode([CustomFieldDTO].self, forKey: .customFields)
+        self.customerCustomFields = try customerContainer.decode([CustomFieldDTO].self, forKey: .customFields)
     }
 }

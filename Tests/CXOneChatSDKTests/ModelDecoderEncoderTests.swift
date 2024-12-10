@@ -469,9 +469,9 @@ class ModelDecoderEncoderTests: XCTestCase {
 
         let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.value, "24")
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.count, 1)
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.first?.ident, "customer.customFields.age")
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.first?.value, "24")
         
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.count, 2)
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")
@@ -483,9 +483,9 @@ class ModelDecoderEncoderTests: XCTestCase {
 
         let threadRecover = try decoder.decode(ThreadRecoveredEventDTO.self, from: data)
         
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.count, 1)
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.ident, "customer.customFields.age")
-        XCTAssertEqual(threadRecover.postback.data.customerContactFields.first?.value, "24")
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.count, 1)
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.first?.ident, "customer.customFields.age")
+        XCTAssertEqual(threadRecover.postback.data.customerCustomFields.first?.value, "24")
         
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.count, 2)
         XCTAssertEqual(threadRecover.postback.data.consumerContact.customFields.first?.ident, "contact.customFields.department")

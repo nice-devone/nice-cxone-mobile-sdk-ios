@@ -61,6 +61,6 @@ extension ThreadRecoveredEventPostbackDataDTO: Encodable {
         try container.encode(thread, forKey: .thread)
         try container.encode(messagesScrollToken, forKey: .messagesScrollToken)
         
-        try customFieldsContainer.encode(customerContactFields, forKey: .customFields)
+        try customFieldsContainer.encode(customerCustomFields, forKey: .customFields)
     }
 }

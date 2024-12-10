@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct LiveChatRecoveredDTO: Decodable {
+struct LiveChatRecoveredDTO: Decodable, Equatable {
 
     let eventId: String
     

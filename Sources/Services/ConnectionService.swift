@@ -216,6 +216,7 @@ extension ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
