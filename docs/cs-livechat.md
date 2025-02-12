@@ -14,7 +14,8 @@ The SDK employs a state-based architecture and handles many operations automatic
 
 ## Example
 
-This example uses some parts of the example application and is an abbreviated snippet to demonstrate this functionality. The full implementation can be found in the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/sample) and [UI Module](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/cxone-chat-ui) repositories. However, some parts are edited just to demonstrate the ability to handle single thread configuration.
+This example uses some parts of the example application and is an abbreviated snippet to demonstrate this functionality. The full implementation can be found in the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) and [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios) repositories. However, some parts are edited just to demonstrate the ability to handle single thread configuration.
+Note that sample application handles all channel configuration so snippets come from different files. Host application will be focused on a single channel configuration (single-threaded, multi-threaded or live chat) so implementation is much simplier.
 
 For live chat channel configuration, it is recommended to do following steps:
 
@@ -35,7 +36,7 @@ For live chat channel configuration, it is recommended to do following steps:
 
 ### Prepare usage of the CXoneChatSDK - `LoginViewModel.swift`
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/sample/iOSSDKExample/Sources/Presentation/Views/Login/LoginViewModel.swift).
+Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Presentation/Views/Login/LoginViewModel.swift).
 
 ```swift
 class LoginViewModel: AnalyticsReporter, ObservableObject {
@@ -77,33 +78,28 @@ private extension LoginViewModel {
 }
 ```
 
-### Handle Connection and Loading of the thread - `DefaultChatViewModel.swift`
+### Handle Connection - `ChatContainerViewModel.swift`
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/cxone-chat-ui/Sources/Presentation/Implementation/Default/Chat/DefaultChatViewModel.swift).
-
-Note that `ConnectionProvider.connect()` (3) is not part of the `DefaultChatViewModel.onAppear()` method because sample application handles all channel configuration and connection has been already established in the `DefaultChatCoordinatorViewModel` which is a screen to decide if the user should be forwarded straight to the chat or to the thread list based on the channel configuration. But the examples demonstrate where the `ConnectionProvider.connect()` method could be used.
+Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Container/ChatContainerViewModel.swift).
 
 ```swift
-class DefaultChatViewModel: ObservableObject {
+class ChatContainerViewModel: ObservableObject {
 
-    ...
-    
-    // MARK: - Lifecycle
-    
-    init(thread: ChatThread, coordinator: DefaultChatCoordinator) {
-        ...
-        CXoneChat.shared.add(delegate: self) // (2)
-    }
     ...
     
     // MARK: - Methods
     
     func onAppear() {
-        ...
-        Task { @MainActor in
-            isLoading = true
-            
-            await connect() // (3)
+        LogManager.trace("View did appear")
+
+        chatProvider.add(delegate: self) // (2)
+        
+        Task {
+            do {
+                try await CXoneChat.shared.connection.connect() // (3)
+            } catch {
+                ...
+            }
         }
     }
     ...
@@ -113,47 +109,83 @@ class DefaultChatViewModel: ObservableObject {
 
 // MARK: - CXoneChatDelegate
 
-extension DefaultChatViewModel: CXoneChatDelegate {
+extension ChatContainerViewModel: CXoneChatDelegate {
     
-    func onChatUpdated(_ state: ChatState, mode: ChatMode) { // (4)
-        switch state {
+    func onChatUpdated(_ chatState: ChatState, mode: ChatMode) { // (4)
+        ...
+        switch chatState {
         case .connecting:
-            LogManager.trace("Connecting to the CXone chat services")
-            
-            Task { @MainActor in
-                isLoading = true
-            }
-        case .offline:
-            LogManager.trace("CXone chat is offline due to no agents available")
-            
-            // Handle offline state
             ...
         case .connected:
             ...
+        case .offline:
+            ...
+        case .ready:
+            startChat()
         default:
-            return
+            ...
         }
+
     }
     
-    ...
-    
-    func onThreadUpdated(_ chatThread: ChatThread) { // (4)
-        LogManager.trace("Thread has been updated")
-        
-        Task { @MainActor in
-            ... // (5)
-
-            if !isEndConversationVisible, CXoneChat.shared.mode == .liveChat, updatedThread.state == .closed { // (6)
-                if updatedThread.state != thread.state {
-                    isEndConversationVisible = true
-                } else if updatedThread.assignedAgent == nil, thread.assignedAgent != nil {
-                    isEndConversationVisible = false
+    private func startChat() {
+        ...
+        switch chatProvider.mode {
+        case .multithread:
+            ...
+        case .singlethread, .liveChat:
+            if let thread = chatProvider.threads.get().first, thread.state != .closed {
+                show(thread: thread)
+            } else {
+                createThread(onCancel: onDismiss) { [weak self] thread in
+                    self?.show(thread: thread)
                 }
             }
-            ..
         }
     }
-
-    ...
 }
 ``` 
+
+### Handle Thread - `ThreadViewModel.swift`
+
+Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Thread/ThreadViewModel.swift).
+
+```swift
+...
+// MARK: - Methods
+
+extension ThreadViewModel {
+    
+    func onAppear() {
+        ...
+        containerViewModel?.chatProvider.add(delegate: self) // (2)
+        ...
+    }
+    ...
+}
+...
+// MARK: - CXoneChatDelegate
+
+extension ThreadViewModel: CXoneChatDelegate {
+    ...
+    func onThreadUpdated(_ updatedThread: ChatThread) { // (4)
+        ...
+        Task { @MainActor in
+            if thread.id != updatedThread.id {
+                ...
+            } else {
+                ... // (5)
+                if !isEndConversationVisible, chatProvider.mode == .liveChat, updatedThread.state == .closed { // (6)
+                    if updatedThread.state != thread.state {
+                        isEndConversationVisible = true
+                    } else if updatedThread.assignedAgent == nil, thread.assignedAgent != nil {
+                        isEndConversationVisible = false
+                    }
+                }
+                ...
+            }
+        }
+    }
+    ...
+}
+```
