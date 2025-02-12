@@ -1,5 +1,5 @@
-<a name="unreleased"></a>
-# [Unreleased]
+<a name="2.3.0"></a>
+# [2.3.0] - 2025-02-12
 
 ## CXoneChatSDK
 
