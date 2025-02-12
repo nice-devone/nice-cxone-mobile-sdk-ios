@@ -176,8 +176,8 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 // MARK: - Private methods
 
 private extension SocketServiceImpl {
-    static let pingDelay = 5.0
-    static let pingResponseTimeout = 3.0
+    static let pingDelay = 10.0
+    static let pingResponseTimeout = 5.0
 
     func startPulseTimer() -> Task<(), Never> {
         Task {

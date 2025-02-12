@@ -46,7 +46,7 @@ struct AuthorizeCustomerEventDataDTO {
         codeVerifier: String?,
         disableChannelInfo: Bool = true,
         sdkPlatform: String = "ios",
-        sdkVersion: String = CXoneChat.version
+        sdkVersion: String = CXoneChatSDKModule.version
     ) {
         self.authorizationCode = authorizationCode
         self.codeVerifier = codeVerifier

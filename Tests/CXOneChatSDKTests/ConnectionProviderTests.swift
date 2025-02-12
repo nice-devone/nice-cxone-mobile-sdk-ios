@@ -70,6 +70,29 @@ class ConnectionProviderTests: CXoneXCTestCase {
             _ = try await CXoneChat.connection.prepare(chatURL: chatURL, socketURL: socketURL, brandId: brandId, channelId: channelId)
     }
     
+    func testConnect() async throws {
+        try await setUpConnection()
+        
+        XCTAssertTrue(socketService.isConnected)
+        
+        guard let url = socketService.socketUrl, let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems else {
+            throw XCTError("Failed to get query parameters")
+        }
+        
+        let brandId = queryItems.first { $0.name == "brandId" }?.value
+        let channelId = queryItems.first { $0.name == "channelId" }?.value
+        let visitorId = queryItems.first { $0.name == "visitorId" }?.value
+        let sdkVersion = queryItems.first { $0.name == "sdkVersion" }?.value
+        let sdkPlatform = queryItems.first { $0.name == "sdkPlatform" }?.value
+        
+        XCTAssertEqual(brandId, self.brandId.description)
+        XCTAssertEqual(channelId, self.channelId)
+        XCTAssertEqual(visitorId, connectionContext.visitorId?.uuidString)
+        XCTAssertEqual(sdkVersion, CXoneChatSDK.CXoneChat.version)
+        XCTAssertEqual(sdkVersion, CXoneChatSDKModule.version)
+        XCTAssertEqual(sdkPlatform, "ios")
+    }
+    
     func testConnectWithoutPrepareThrows() async {
         await XCTAssertAsyncThrowsError(
             try await CXoneChat.connection.connect()
@@ -97,6 +120,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         XCTAssertNoThrow(try CXoneChat.connection.ping())
         XCTAssertTrue(socketService.pingNumber != 0)
     }
+    
     
     func testExecuteTriggerThrowsNoConnected() {
         XCTAssertThrowsError(try CXoneChat.connection.executeTrigger(UUID()))

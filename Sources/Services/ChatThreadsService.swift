@@ -24,7 +24,10 @@ class ChatThreadsService {
     let eventsService: EventsService
     let customerFields: CustomerCustomFieldsService?
 
-    var threads = [ChatThread]()
+    var threads: [ChatThread] {
+        get { connectionContext.threads }
+        set { connectionContext.threads = newValue }
+    }
 
     let delegate: CXoneChatDelegate
 
@@ -36,7 +39,6 @@ class ChatThreadsService {
     private var contactCustomFields: ContactCustomFieldsService? {
         customFields as? ContactCustomFieldsService
     }
-        
 
     // MARK: - Protocol Properties
 
@@ -165,7 +167,11 @@ extension ChatThreadsService: ChatThreadsProvider {
         connectionContext.activeThread = thread
         
         connectionContext.chatState = .ready
-
+        
+        if connectionContext.chatMode != .liveChat {
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        }
+        
         // Thread has been successfully created, store its ID for faster recovering
         if connectionContext.chatMode != .multithread {
             UserDefaultsService.shared.set(thread.id, for: .cachedThreadIdOnExternalPlatform)

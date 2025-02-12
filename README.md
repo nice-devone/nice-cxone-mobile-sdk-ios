@@ -43,7 +43,7 @@ The sample comes from a sample app that you can get from [CXone Mobile SDK sampl
 
 You need to connect your app to **CXone** to begin communication with the **CXone platform** and to create a *Web Socket* connection. You also need to authorize your app users to use the chat features so they can begin loading threads.
 
-> Important: To use the CXone analytic APIs, it is necessary to have the chat in the `.prepared` state, which is achieved using the `ConnectionProvider.prepare(environment:brandId:channelId:)` method, otherwise the SDK will respond with an `illegalChatState` error. Also, the *Web Socket* should only run when necessary. Take care to call `ConnectionProvider.connect()` only for active chat conversations purposes.
+> ⚠️⚠️⚠️ Important: To use the CXone analytic APIs, it is necessary to have the chat in the `.prepared` state, which is achieved using the `ConnectionProvider.prepare(environment:brandId:channelId:)` method, otherwise the SDK will respond with an `illegalChatState` error. Also, the *Web Socket* should only run when necessary. Take care to call `ConnectionProvider.connect()` only for active chat conversations purposes.
 
 1.  Add `ConnectionProvider.connect()` to your app code as early on as possible to fully track user activity. If you've configured OAuth for your app, `connect()` should immediately follow the OAuth code. It uses previously set `Environment`, brandId and channelId using the `ConnectionProvider.prepare(environment:brandId:channelId:)` method.
     ```swift

@@ -139,5 +139,6 @@ public protocol AnalyticsProvider {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    @available(*, deprecated, message: "Deprecated with 2.3.0. Sending `customVisitorEvent(data:)` via WebSocket is not supported.")
     func customVisitorEvent(data: VisitorEventDataType) throws
 }

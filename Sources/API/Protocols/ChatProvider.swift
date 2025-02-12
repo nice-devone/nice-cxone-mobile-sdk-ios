@@ -19,6 +19,7 @@ import Foundation
 public protocol ChatProvider: AnyObject {
 
     /// The version of the CXone chat SDK.
+    @available(*, deprecated, message: "Deprecated with 2.3.0. Please use version property of CXoneChatSDK struct.")
     static var version: String { get }
     
     /// The singleton instance of the CXone chat SDK.

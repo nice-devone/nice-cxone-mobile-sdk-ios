@@ -17,7 +17,7 @@ import Foundation
 
 extension HTTPURLResponse {
     
-    func log(data: Data?, error: Error?, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
+    func log(data: Data?, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
         guard let urlString = url?.absoluteString else {
             return
         }
@@ -34,10 +34,6 @@ extension HTTPURLResponse {
         
         if let data, let formattedJSON = data.utf8string?.formattedJSON {
             output += "Body: \(formattedJSON)\n"
-        }
-        
-        if let error {
-            output += "\nError: \(error.localizedDescription)\n"
         }
         
         LogManager.info(output, fun: fun, file: file, line: line)

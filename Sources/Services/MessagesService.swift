@@ -100,6 +100,7 @@ class MessagesService: MessagesProvider {
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided thread was invalid, so the action could not be performed.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
@@ -108,6 +109,9 @@ class MessagesService: MessagesProvider {
     func send(_ message: OutboundMessage, for chatThread: ChatThread) async throws {
         LogManager.trace("Sending a message in the specified chat thread.")
 
+        guard let threadIndex = connectionContext.threads.index(of: chatThread.id) else {
+            throw CXoneChatError.invalidThread
+        }
         guard chatThread.state != .closed else {
             throw CXoneChatError.illegalChatState
         }
@@ -133,11 +137,13 @@ class MessagesService: MessagesProvider {
         
         let mappedAttachments = try await message.attachments.map(with: connectionContext)
         
+        let messageId = UUID.provide()
+        
         let eventData = EventDataType.sendMessageData(
             SendMessageEventDataDTO(
                 thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
                 contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback)),
-                idOnExternalPlatform: UUID.provide(),
+                idOnExternalPlatform: messageId,
                 customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
                 contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
                 attachments: mappedAttachments,
@@ -148,7 +154,7 @@ class MessagesService: MessagesProvider {
         
         if message.text != Self.beginLiveChatConversationMessage {
             let message = Message(
-                id: UUID.provide(),
+                id: messageId,
                 threadId: chatThread.id,
                 contentType: .text(MessagePayload(text: message.text, postback: message.postback)),
                 createdAt: Date.provide(),
@@ -158,10 +164,10 @@ class MessagesService: MessagesProvider {
                 authorUser: chatThread.assignedAgent,
                 authorEndUserIdentity: connectionContext.customer.map(CustomerIdentityMapper.map)
             )
-            var threadCopy = chatThread
-            threadCopy.messages.append(message)
             
-            delegate.onThreadUpdated(threadCopy)
+            connectionContext.threads[threadIndex].messages.append(message)
+            
+            delegate.onThreadUpdated(connectionContext.threads[threadIndex])
         }
         
         let data = try eventsService.create(.sendMessage, with: eventData)
