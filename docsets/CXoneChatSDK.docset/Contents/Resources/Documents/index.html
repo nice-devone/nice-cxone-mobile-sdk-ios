@@ -16,7 +16,7 @@
     <a title="CXoneChatSDK  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">CXoneChatSDK 2.2.0 Docs</a> (100% documented)</p>
+        <p><a href="index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="search.json">
@@ -142,6 +142,9 @@
                 <a href="Structs/Attachment.html">Attachment</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/CXoneChatSDKModule.html">CXoneChatSDKModule</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/ChannelConfiguration.html">ChannelConfiguration</a>
               </li>
               <li class="nav-group-task">
@@ -240,9 +243,9 @@
 <h2 id='modules' class='heading'> Modules</h2>
 
 <ul>
-<li><a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/develop/cxone-chat-sdk">Core</a></li>
-<li><a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/develop/cxone-chat-ui">UI</a> (⚠️ still under development, not yet actively supported)</li>
-<li><a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/develop/sample">Sample app</a></li>
+<li><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios">Core</a></li>
+<li><a href="https://github.com/nice-devone/nice-cxone-mobile-ui-ios">UI</a> (⚠️ still under development, not yet actively supported)</li>
+<li><a href="https://github.com/nice-devone/nice-cxone-mobile-sample-ios">Sample app</a></li>
 </ul>
 <h2 id='sdk-integration' class='heading'>SDK Integration</h2>
 
@@ -258,11 +261,10 @@
 <h2 id='connect-your-application-to-cxone' class='heading'>Connect Your Application to CXone</h2>
 
 <p>You need to connect your app to <strong>CXone</strong> to begin communication with the <strong>CXone platform</strong> and to create a <em>Web Socket</em> connection. You also need to authorize your app users to use the chat features so they can begin loading threads.</p>
-<div class="aside aside-important">
-    <p class="aside-title">Important</p>
-    <p>To use the CXone analytic APIs, it is necessary to have the chat in the <code>.prepared</code> state, which is achieved using the <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">ConnectionProvider.prepare(environment:brandId:channelId:)</a></code> method, otherwise the SDK will respond with an <code>illegalChatState</code> error. Also, the <em>Web Socket</em> should only run when necessary. Take care to call <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> only for active chat conversations purposes.</p>
 
-</div>
+<blockquote>
+<p>⚠️⚠️⚠️ Important: To use the CXone analytic APIs, it is necessary to have the chat in the <code>.prepared</code> state, which is achieved using the <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">ConnectionProvider.prepare(environment:brandId:channelId:)</a></code> method, otherwise the SDK will respond with an <code>illegalChatState</code> error. Also, the <em>Web Socket</em> should only run when necessary. Take care to call <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> only for active chat conversations purposes.</p>
+</blockquote>
 
 <ol>
 <li>Add <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">ConnectionProvider.connect()</a></code> to your app code as early on as possible to fully track user activity. If you&rsquo;ve configured OAuth for your app, <code>connect()</code> should immediately follow the OAuth code. It uses previously set <code><a href="Enums/Environment.html">Environment</a></code>, brandId and channelId using the <code><a href="Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">ConnectionProvider.prepare(environment:brandId:channelId:)</a></code> method.
@@ -277,7 +279,7 @@ try await CXoneChat.shared.connection.connect()
 
 <p>Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.</p>
 
-<p>Use the <a href="https://cautious-sniffle-1d4a9c48.pages.github.io/index.html">iOS SDK library</a> as you work.</p>
+<p>Use the <a href="https://nice-devone.github.io/nice-cxone-mobile-sdk-ios/">iOS SDK library</a> as you work.</p>
 <div class="aside aside-important">
     <p class="aside-title">Important</p>
     <p>The SDK utilizes a state-based architecture so it is not necessary to handle everything on your own. For example after establishing a connection, it is not necessary to load thread(s) on your own. The SDK automatically recovers existing or creates a new thread for single-threaded and loads thread metadata for multi-threaded channel configuration. However, if the chat channel contains a pre-chat survey, it is necessary to fill in the survey and manually create a new thread using the <code><a href="Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">ChatThreadsProvider.create(with:)</a></code> method, to which custom fields must be passed. </p>
@@ -361,7 +363,7 @@ a) No thread available and pre-chat has to be completed before creating a new th
 </ol>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/main/docs/cs-single-thread.md">Case Study: Single Thread</a>.</p>
+    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-single-thread.md">Case Study: Single Thread</a>.</p>
 
 </div>
 <h3 id='multi-thread-set-up-the-thread-list' class='heading'>Multi-thread - Set Up the Thread List</h3>
@@ -417,7 +419,7 @@ a) No threads available – the SDK finished load process without receiving any 
 </ol>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>For detailed information on how to handle multi-thread channel configuration, see <a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/main/docs/cs-multi-thread.md">Case Study: Multi Thread</a>.</p>
+    <p>For detailed information on how to handle multi-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-multi-thread.md">Case Study: Multi Thread</a>.</p>
 
 </div>
 <h3 id='livechat-set-up-the-thread-manager' class='heading'>LiveChat - Set Up the Thread Manager</h3>
@@ -484,7 +486,7 @@ a) No thread available and pre-chat has to be completed before creating a new th
 </ol>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/tree/main/docs/cs-livechat.md">Case Study: LiveChat</a>.</p>
+    <p>For detailed information on how to handle single-thread channel configuration, see <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-livechat.md">Case Study: LiveChat</a>.</p>
 
 </div>
 <h2 id='pre-chat-survey' class='heading'>Pre-Chat Survey</h2>
@@ -503,7 +505,7 @@ if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
 </ol>
 <h2 id='configure-chat-functions' class='heading'>Configure Chat Functions</h2>
 
-<p>How you configure your application to send, receive and display chat messages is unique to your situation. The <a href="https://github.com/BrandEmbassy/cxone-mobile-sdk-ios/blob/main/docs/samples.md">iOS Samples</a> section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.</p>
+<p>How you configure your application to send, receive and display chat messages is unique to your situation. The <a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/docs/samples.md">iOS Samples</a> section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.</p>
 
           </section>
         </section>
