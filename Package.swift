@@ -32,7 +32,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0"),
-        .package(url: "https://github.com/lukepistrol/SwiftLintPlugin", from: "0.2.2"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.0.11"),
     ],
     targets: [
@@ -49,9 +48,7 @@ let package = Package(
             swiftSettings: [
                 .define("MOCKING", .when(configuration: .debug))
             ],
-            plugins: [
-                .plugin(name: "SwiftLint", package: "SwiftLintPlugin")
-            ]
+            plugins: []
         ),
         .testTarget(
             name: "CXoneChatSDKTests",
