@@ -81,6 +81,8 @@ class ConnectionContextMock: ConnectionContext {
 
     var activeThread: ChatThread?
     
+    var threads = [ChatThread]()
+    
     init(session: URLSession = .shared) {
         self.session = session
     }

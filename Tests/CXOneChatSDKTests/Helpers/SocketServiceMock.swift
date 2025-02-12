@@ -20,6 +20,7 @@ class SocketServiceMock: SocketServiceImpl {
     
     // MARK: - Properties
     
+    var socketUrl: URL?
     var pingNumber = 0
     var messageSend = 0
     var messageSent: ((String) -> Void)?
@@ -62,5 +63,10 @@ class SocketServiceMock: SocketServiceImpl {
         
         messageSend += 1
         messageSent?(utf8string)
+    }
+    
+    override func connect(socketURL: URL) {
+        self.socketUrl = socketURL
+        super.connect(socketURL: socketURL)
     }
 }

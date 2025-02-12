@@ -65,13 +65,19 @@ class MessagesProviderTests: CXoneXCTestCase {
     }
     
     func testSendMessageNoThrow() async throws {
-        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread()))
+        let thread = ChatThreadMapper.map(MockData.getThread())
+        threadsService.threads = [thread]
+        
+        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
     }
     
-    func testSenddMessagesWithPropertiesNoThrow() async throws {
+    func testSendMessagesWithPropertiesNoThrow() async throws {
         socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
         
-        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread()))
+        let thread = ChatThreadMapper.map(MockData.getThread())
+        threadsService.threads = [thread]
+        
+        try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
     }
     
     func testSendMessageWithAttachmentsThrowsNotConnected() async {
@@ -114,11 +120,14 @@ class MessagesProviderTests: CXoneXCTestCase {
             )
         ) {
             socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
+        
+            let thread = ChatThreadMapper.map(MockData.getThread())
+            threadsService.threads = [thread]
             
             await XCTAssertAsyncThrowsError(
                 try await CXoneChat.threads.messages.send(
                     OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(MockData.attachment)]),
-                    for: ChatThreadMapper.map(MockData.getThread())
+                    for: thread
                 )
             )
         }
@@ -137,9 +146,12 @@ class MessagesProviderTests: CXoneXCTestCase {
                 throw CXoneChatError.attachmentError
             }
             
+            let thread = ChatThreadMapper.map(MockData.getThread())
+            threadsService.threads = [thread]
+            
             try await CXoneChat.threads.messages.send(
                 OutboundMessage(text: "message", attachments: [storeDataInDocuments(data, fileName: "image.jpg", mimeType: "image/jpeg")]),
-                for: ChatThreadMapper.map(MockData.getThread())
+                for: thread
             )
             
             try removeStoredFile(fileName: "image.jpg")
@@ -163,9 +175,12 @@ class MessagesProviderTests: CXoneXCTestCase {
         ) {
             socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
             
+            let thread = ChatThreadMapper.map(MockData.getThread())
+            threadsService.threads = [thread]
+            
             try await CXoneChat.threads.messages.send(
                 OutboundMessage(text: "message", attachments: [storeDataInDocuments(data, fileName: "sample_video.mov", mimeType: "video/quicktime")]),
-                for: ChatThreadMapper.map(MockData.getThread())
+                for: thread
             )
             
             try removeStoredFile(fileName: "sample_video.mov")
@@ -187,8 +202,11 @@ class MessagesProviderTests: CXoneXCTestCase {
         
         CXoneChat.connection.disconnect()
         
+        let thread = ChatThreadMapper.map(MockData.getThread())
+        threadsService.threads = [thread]
+        
         do {
-            try await CXoneChat.threads.messages.send(OutboundMessage(text: "test"), for: ChatThreadMapper.map(MockData.getThread()))
+            try await CXoneChat.threads.messages.send(OutboundMessage(text: "test"), for: thread)
             XCTFail("Should throw `notConnected`")
         } catch {
             XCTAssertEqual(error as? CXoneChatError, CXoneChatError.notConnected)

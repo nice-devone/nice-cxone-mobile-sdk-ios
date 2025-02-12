@@ -79,18 +79,23 @@ extension ContactCustomFieldsService {
     
     func updateFields(_ fields: [CustomFieldDTO], for threadId: UUID) {
         let fields = fields.filter { newField in
-            let isValueEmpty = newField.value.isEmpty
+            // Check if field exists in prechat survey configuration
+            // If not found, include the field without validation
+            guard let prechatDefinition = channelConfig.prechatSurvey?.customFields.first(where: { $0.type.ident == newField.ident }) else {
+                return true
+            }
             
-            // If the ident matches the prechat custom field ident, validate the value if it is among the options
-            // Otherwise, filter it out and don't override the custom field
-            if let prechatDefinition = channelConfig.prechatSurvey?.customFields.first(where: { $0.type.ident == newField.ident }) {
-                let isValueIdentifier = prechatDefinition.type.isValueIdentifier(newField.value)
-                
+            let isValueEmpty = newField.value.isEmpty
+            let isValueIdentifier = prechatDefinition.type.isValueIdentifier(newField.value)
+            
+            if prechatDefinition.isRequired {
                 return prechatDefinition.type.shouldCheckValue
-                    ? !isValueEmpty && isValueIdentifier
+                    ? isValueIdentifier && !isValueEmpty
                     : !isValueEmpty
             } else {
-                return !isValueEmpty
+                return prechatDefinition.type.shouldCheckValue
+                    ? isValueIdentifier
+                    : true
             }
         }
         

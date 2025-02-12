@@ -90,7 +90,7 @@ class EndpointTests: XCTestCase {
         let request = try sut?.urlRequest()
         
         XCTAssertTrue(request?.allHTTPHeaderFields?["x-sdk-platform"] == "ios")
-        XCTAssertTrue(request?.allHTTPHeaderFields?["x-sdk-version"] == CXoneChat.version)
+        XCTAssertTrue(request?.allHTTPHeaderFields?["x-sdk-version"] == CXoneChatSDKModule.version)
     }
     
     func testEndpointWithChatValue() throws {

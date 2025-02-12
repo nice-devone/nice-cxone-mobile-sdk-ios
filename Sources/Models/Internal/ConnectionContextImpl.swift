@@ -59,6 +59,8 @@ class ConnectionContextImpl: ConnectionContext {
     /// The active thread that is currently used for the `OnLoadMoreMessages` paired web socket event.
     var activeThread: ChatThread?
     
+    var threads = [ChatThread]()
+    
     var visitorId: UUID? {
         get { UserDefaultsService.shared.get(UUID.self, for: .visitorId) }
         set { UserDefaultsService.shared.set(newValue, for: .visitorId) }

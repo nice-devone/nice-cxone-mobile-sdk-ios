@@ -153,16 +153,6 @@ class AnalyticsProviderTests: CXoneXCTestCase {
             try await analyticsService.conversion(type: "sale", value: 98)
         }
     }
-
-    func testCustomVisitorEventThrows() {
-        XCTAssertThrowsError(try analyticsService.customVisitorEvent(data: .custom("data")))
-    }
-    
-    func testCustomVisitorEventNoThrow() async throws {
-        try await setUpConnection()
-        
-        XCTAssertNoThrow(try analyticsService.customVisitorEvent(data: .custom("data")))
-    }
     
     func testProactiveActionDisplayDisconnectedThrows() async throws {
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))

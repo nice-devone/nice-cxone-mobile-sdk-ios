@@ -254,7 +254,11 @@ extension AnalyticsService: AnalyticsProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Deprecated with 2.3.0. Sending `customVisitorEvent(data:)` via WebSocket is no longer supported.")
     public func customVisitorEvent(data: VisitorEventDataType) throws {
+        LogManager.warning("Sending custom visitor event via WebSocket is no longer supported.")
+        return
+        
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
         }

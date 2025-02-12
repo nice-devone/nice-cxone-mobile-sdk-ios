@@ -1,6 +1,6 @@
 # Samples
 
-The following sample code is provided to help configure and customize application integration with Digital First Omnichannel chat. The samples come from a sample app that you can get from the [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sample-ios).
+The following sample code is provided to help configure and customize application integration with Digital First Omnichannel chat. The samples come from a sample app that you can get from the [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/master/sample).
 
 
 ## Chat Provider

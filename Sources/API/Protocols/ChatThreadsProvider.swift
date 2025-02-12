@@ -74,6 +74,8 @@ public protocol ChatThreadsProvider {
     ///
     /// - Parameter customFields: The custom fields to be saved with thread creation.
     ///
+    /// - Note: This method can be used for providing regular contact custom fields (``ContactCustomFieldsProvider``), pre-chat custom fields (``PreChatSurvey``) or both.
+    /// 
     /// - Warning: If attempted on a channel that only supports a single thread, this will fail once a thread is already created.
     ///
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.

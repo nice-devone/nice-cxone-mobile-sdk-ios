@@ -140,7 +140,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 
         socket?.send(.string(message))
     }
-
+    
     /// Sends a ping through the WebSocket to ensure that the server is connected.
     @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() {
@@ -176,8 +176,8 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 // MARK: - Private methods
 
 private extension SocketServiceImpl {
-    static let pingDelay = 5.0
-    static let pingResponseTimeout = 3.0
+    static let pingDelay = 10.0
+    static let pingResponseTimeout = 5.0
 
     func startPulseTimer() -> Task<(), Never> {
         Task {

@@ -216,7 +216,6 @@ extension ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
-    @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
@@ -434,11 +433,11 @@ private extension ConnectionService {
         let socketEndpoint = SocketEndpointDTO(
             environment: connectionContext.environment,
             queryItems: [
-                URLQueryItem(name: "brand", value: connectionContext.brandId.description),
+                URLQueryItem(name: "brandId", value: connectionContext.brandId.description),
                 URLQueryItem(name: "channelId", value: connectionContext.channelId),
-                URLQueryItem(name: "applicationType", value: "native"),
-                URLQueryItem(name: "os", value: "iOS"),
-                URLQueryItem(name: "clientVersion", value: CXoneChat.version)
+                URLQueryItem(name: "visitorId", value: connectionContext.visitorId?.uuidString),
+                URLQueryItem(name: "sdkPlatform", value: "ios"),
+                URLQueryItem(name: "sdkVersion", value: CXoneChatSDKModule.version)
             ],
             method: .get
         )

@@ -30,7 +30,7 @@ extension URLRequest {
         
         httpMethod = method.rawValue
         setValue("ios", forHTTPHeaderField: Self.headerPlatform)
-        setValue(CXoneChat.version, forHTTPHeaderField: Self.headerVersion)
+        setValue(CXoneChatSDKModule.version, forHTTPHeaderField: Self.headerVersion)
         
         if let contentType {
             setValue(contentType, forHTTPHeaderField: Self.headerContentType)

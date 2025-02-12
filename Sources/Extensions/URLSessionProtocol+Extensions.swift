@@ -33,7 +33,13 @@ extension URLSessionProtocol {
         request.log(fun: fun, file: file, line: line)
         
         do {
-            return try await data(for: request)
+            let (data, response) = try await data(for: request)
+            
+            if let response = response as? HTTPURLResponse {
+                response.log(data: data, fun: fun, file: file, line: line)
+            }
+            
+            return (data, response)
         } catch {
             error.logError()
             throw error

@@ -504,6 +504,87 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 3)
     }
     
+    func testCreateWithPrechatCustomFieldsAdditionalFieldsNoThrow() async throws {
+        try await setUpConnection(
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
+                )
+            )
+        )
+        
+        let customFields = [
+            "email": "john.doe@mail.com",
+            "firstName": "John",
+            "gender": "Male",
+            "age": "",
+        ]
+        try await CXoneChat.threads.create(with: customFields)
+        
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
+        
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 4)
+    }
+    
+    func testCreateWithoutPrechatCustomFieldsAdditionalFieldsNoThrow() async throws {
+        try await setUpConnection()
+        
+        let customFields = [
+            "firstName": "John",
+            "age": "",
+        ]
+        try await CXoneChat.threads.create(with: customFields)
+        
+        guard let thread = CXoneChat.threads.get().last else {
+            throw XCTError("Unable to retrieve required thread")
+        }
+        
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 2)
+        
+        let agent = AgentMapper.map(MockData.agent)
+        XCTAssertNil(agent.inContactId)
+        XCTAssertEqual(agent.loginUsername, "")
+        XCTAssertNil(agent.emailAddress)
+    }
+    
+    func testCreateThrowsMissingPrechatCustomFields() async throws {
+        try await setUpConnection(
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
+                )
+            )
+        )
+        
+        await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create()) { error in
+            self.XCTAssertIs(error, CXoneChatError.self)
+            XCTAssertEqual(error as! CXoneChatError, .missingPreChatCustomFields)
+        }
+    }
+    
+    func testCreateWithAdditionalFieldsThrowsMissingPrechatFields() async throws {
+        try await setUpConnection(
+            channelConfiguration: MockData.getChannelConfiguration(
+                prechatSurvey: PreChatSurveyDTO(
+                    name: "Prechat Survey",
+                    customFields: [PreChatSurveyCustomFieldDTO(isRequired: true, type: .textField(MockData.emailTextCustomField))]
+                )
+            )
+        )
+        
+        let customFields = ["firstName": "John"]
+        await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create(with: customFields)) { error in
+            self.XCTAssertIs(error, CXoneChatError.self)
+            XCTAssertEqual(error as! CXoneChatError, .missingPreChatCustomFields)
+        }
+    }
+    
     func testLiveChatDoesNotFailToggleEnabled() async throws {
         currentExpectation = XCTestExpectation(description: "testLiveChatDoesNotFailToggleEnabled")
 
@@ -544,10 +625,5 @@ class ThreadsProviderTests: CXoneXCTestCase {
         XCTAssertFalse(inboxAssignee.isBotUser)
         XCTAssertFalse(inboxAssignee.isSurveyUser)
         XCTAssertEqual(inboxAssignee.publicImageUrl, "https://app-de-na1.niceincontact.com/img/user/z.png")
-        
-        let agent = AgentMapper.map(inboxAssignee)
-        XCTAssertNil(agent.inContactId)
-        XCTAssertEqual(agent.loginUsername, "")
-        XCTAssertNil(agent.emailAddress)
     }
 }

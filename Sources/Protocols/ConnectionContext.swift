@@ -66,6 +66,9 @@ protocol ConnectionContext: AnyObject {
     /// The active thread that is currently used for the `OnLoadMoreMessages` paired web socket event.
     var activeThread: ChatThread? { get set }
     
+    // FIXME: - Workaround how to handle threads before refactor of the SDK architecture (DE-114309)
+    var threads: [ChatThread] { get set }
+    
     func clear()
 }
 
