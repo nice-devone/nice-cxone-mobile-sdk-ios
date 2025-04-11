@@ -135,7 +135,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 
         socket?.send(.string(message))
     }
-    
+
     /// Sends a ping through the WebSocket to ensure that the server is connected.
     @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() {
