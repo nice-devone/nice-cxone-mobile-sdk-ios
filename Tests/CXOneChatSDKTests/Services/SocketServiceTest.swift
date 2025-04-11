@@ -24,10 +24,7 @@ final class SocketServiceTest: XCTestCase {
     lazy var session = MockURLSessionProtocol()
     lazy var webTask = MockWebSocketProtocol()
     lazy var socketMessages = PassthroughSubject<URLSessionWebSocketTask.Message, WebSocketError>()
-    lazy var socketService = SocketServiceImpl(
-        connectionContext: connectionContext,
-        session: session
-    )
+    lazy var socketService = SocketServiceImpl(connectionContext: connectionContext)
 
     override class func setUp() {
         Date.provider = DateProviderMock()

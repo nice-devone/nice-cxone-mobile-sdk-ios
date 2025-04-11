@@ -43,12 +43,6 @@ class SocketServiceMock: SocketServiceImpl {
             }
         }
     }
-
-    // MARK: - Init
-    
-    init(session: URLSession = .shared) {
-        super.init(connectionContext: ConnectionContextMock(session: session))
-    }
     
     // MARK: - Methods
     
