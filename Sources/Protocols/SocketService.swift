@@ -46,8 +46,9 @@ protocol SocketService: AnyObject {
     ///
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     func send(data: Data, shouldCheck: Bool) throws
-    
+
     /// Sends a ping through the WebSocket to ensure that the server is connected.
+    @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping()
 }
 

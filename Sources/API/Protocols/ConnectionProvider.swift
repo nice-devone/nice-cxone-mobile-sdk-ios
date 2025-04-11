@@ -127,6 +127,7 @@ public protocol ConnectionProvider {
     /// Pings the CXone chat server to ensure that a connection is established.
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() throws
     
     /// Manually executes a trigger that was defined in CXone. This can be used to test that proactive actions are displaying.
