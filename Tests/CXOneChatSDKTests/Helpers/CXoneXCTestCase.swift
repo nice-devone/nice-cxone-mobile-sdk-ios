@@ -37,7 +37,7 @@ open class CXoneXCTestCase: XCTestCase {
     }
 
     lazy var eventsService: EventsService = connectionService.eventsService
-    lazy var socketService = SocketServiceMock(session: urlSession)
+    lazy var socketService = SocketServiceMock(connectionContext: ConnectionContextMock(session: urlSession))
     lazy var CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
     lazy var configRequestHandler = accept(url(matches: ".*/\(channelId)$"), body: resource("ChannelConfiguration", type: "json"))
     lazy var urlSession: URLSession = {
@@ -71,7 +71,7 @@ open class CXoneXCTestCase: XCTestCase {
         CXoneChat.threads.customFields as! ContactCustomFieldsService
     }
     var connectionContext: ConnectionContextMock {
-        analyticsService.connectionContext as! ConnectionContextMock
+        socketService.connectionContext as! ConnectionContextMock
     }
     
     // MARK: - Lifecycle

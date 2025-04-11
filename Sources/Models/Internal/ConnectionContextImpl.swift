@@ -138,7 +138,7 @@ class ConnectionContextImpl: ConnectionContext {
         #if DEBUG
         self.session = session ?? URLSession.lenient()
         #else
-        self.session = session ?? URLSession.shared
+        self.session = session ?? URLSession.default
         #endif
         self.visitDetailsStore = visitDetailsStore
     }
@@ -148,5 +148,16 @@ class ConnectionContextImpl: ConnectionContext {
     func clear() {
         keychainService.purge()
         UserDefaultsService.purge()
+    }
+}
+
+// MARK: - Helpers
+
+private extension URLSession {
+
+    static var `default`: URLSession {
+        let config = URLSessionConfiguration.default
+        
+        return URLSession(configuration: config)
     }
 }

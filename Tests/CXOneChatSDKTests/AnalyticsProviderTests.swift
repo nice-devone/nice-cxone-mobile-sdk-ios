@@ -57,6 +57,11 @@ class AnalyticsProviderTests: CXoneXCTestCase {
         
         XCTAssertNotNil(visitDetails)
 
+        guard !events.isEmpty else {
+            XCTFail("Events should not be empty")
+            return
+        }
+        
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[0]["visitId"] as? String)
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[1]["visitId"] as? String)
 

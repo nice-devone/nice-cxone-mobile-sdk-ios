@@ -35,8 +35,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     
     /// The WebSocket for sending and receiving messages.
     private let subject = PassthroughSubject<ReceivedEvent, Never>()
-
-    private var urlSession: URLSessionProtocol
+    
     private var socket: WebSocketProtocol?
 
     private var eventTransfer: AnyCancellable?
@@ -48,6 +47,10 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     
     /// The timer for when pulse messages should be sent.
     private var pulseTimer: Task<(), Never>?
+
+    private var urlSession: URLSessionProtocol {
+        connectionContext.session
+    }
 
     var accessToken: AccessTokenDTO? {
         get { connectionContext.accessToken }
@@ -66,16 +69,8 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 
     // MARK: - Init
     
-    init(
-        connectionContext: ConnectionContext,
-        session: URLSessionProtocol? = nil
-    ) {
+    init(connectionContext: ConnectionContext) {
         self.connectionContext = connectionContext
-        #if DEBUG
-        self.urlSession = session ?? URLSession.lenient()
-        #else
-        self.urlSession = session ?? URLSession.shared
-        #endif
     }
     
     // MARK: - Methods
@@ -140,7 +135,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 
         socket?.send(.string(message))
     }
-
+    
     /// Sends a ping through the WebSocket to ensure that the server is connected.
     @available(*, deprecated, message: "Deprecated as of 2.2.0")
     func ping() {

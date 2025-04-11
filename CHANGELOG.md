@@ -1,3 +1,11 @@
+<a name="2.3.1"></a>
+# [2.3.1] - 2025-04-11
+
+## CXoneChatSDK
+
+### Fixes
+- Add chat URLSession instance instead of URLSession.shared one
+
 <a name="2.3.0"></a>
 # [2.3.0] - 2025-02-12
 

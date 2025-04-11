@@ -83,7 +83,7 @@ class ConnectionContextMock: ConnectionContext {
     
     var threads = [ChatThread]()
     
-    init(session: URLSession = .shared) {
+    init(session: URLSession) {
         self.session = session
     }
 

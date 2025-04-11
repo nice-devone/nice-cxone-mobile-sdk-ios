@@ -74,4 +74,4 @@ func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem]
 }
 ```
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Thread/ThreadViewModel.swift)..
+Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/cxone-chat-ui/Sources/Presentation/Implementation/Default/Chat/DefaultChatViewModel.swift).
