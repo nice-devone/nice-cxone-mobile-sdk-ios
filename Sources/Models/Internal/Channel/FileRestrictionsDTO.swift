@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,20 @@
 import Foundation
 
 struct FileRestrictionsDTO {
+    
+    // MARK: - Properties
+    
     let allowedFileSize: Int32
+    
     let allowedFileTypes: [AllowedFileTypeDTO]
+    
     let isAttachmentsEnabled: Bool
 }
 
+// MARK: - Decodable
+
 extension FileRestrictionsDTO: Decodable {
+    
     enum CodingKeys: CodingKey {
         case allowedFileSize
         case allowedFileTypes
@@ -30,6 +38,7 @@ extension FileRestrictionsDTO: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         guard let maxSize = Int32(try container.decode(String.self, forKey: .allowedFileSize)) else {
             throw CXoneChatError.invalidData
         }

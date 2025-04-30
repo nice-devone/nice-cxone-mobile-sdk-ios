@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -68,11 +68,16 @@ final class SocketServiceTest: XCTestCase {
 
         given(webTask)
             .send(.any, completionHandler: .any).willReturn()
+            .cancel(with: .any, reason: .any).willReturn()
             .resume().willReturn()
             .receive.willReturn(socketMessages)
 
+        XCTAssertTrue(socketService.cancellables.isEmpty)
+        
         socketService.connect(socketURL: url)
 
+        XCTAssertFalse(socketService.cancellables.isEmpty)
+        
         // should get a task from the session
         verify(session)
             .webSocketProtocol(with: .value(url)).called(1)
@@ -80,6 +85,10 @@ final class SocketServiceTest: XCTestCase {
         // and resume the task
         verify(webTask)
             .resume().called(1)
+        
+        socketService.disconnect(unexpectedly: false)
+        
+        XCTAssertTrue(socketService.cancellables.isEmpty)
     }
 
     func testDisconnect() {
@@ -101,7 +110,7 @@ final class SocketServiceTest: XCTestCase {
             .cancel(with: .value(.goingAway), reason: .value(nil)).called(1)
     }
 
-    func testSend() throws {
+    func testSend() async throws {
         let url = URL(string: "https://some.where.com/path")!
 
         given(session)
@@ -114,7 +123,7 @@ final class SocketServiceTest: XCTestCase {
 
         socketService.connect(socketURL: url)
 
-        try socketService.send(data: "some message".data(using: .utf8)!, shouldCheck: false)
+        try await socketService.send(data: "some message".data(using: .utf8)!, shouldCheck: false)
 
         verify(webTask)
             .send(

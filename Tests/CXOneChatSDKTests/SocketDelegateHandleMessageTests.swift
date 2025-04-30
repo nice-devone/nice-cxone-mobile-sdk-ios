@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -65,12 +65,20 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testNotifyAgentTypingStartedEventDTO() async throws {
         currentExpectation = XCTestExpectation(description: "testNotifyAgentTypingStartedEvent")
         
+        let thread = MockData.getThread()
+        threadsService.threads.append(thread)
+        
         let event = AgentTypingEventDTO(
             eventId: UUID(),
             eventObject: .thread,
             eventType: .senderTypingStarted,
             createdAt: Date.provide(),
-            data: AgentTypingEventDataDTO(brand: brand, channel: channel, thread: thread, user: agent)
+            data: AgentTypingEventDataDTO(
+                brand: brand,
+                channel: channel,
+                thread: ThreadDTO(idOnExternalPlatform: thread.id, threadName: thread.name),
+                user: agent
+            )
         )
         
         CXoneChat.handle(message: try encoder.encode(event).utf8string!)
@@ -81,52 +89,25 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testNotifyAgentTypingEndEventDTO() async throws {
         currentExpectation = XCTestExpectation(description: "testNotifyAgentTypingEndEvent")
         
+        let thread = MockData.getThread()
+        threadsService.threads.append(thread)
+        
         let event = AgentTypingEventDTO(
             eventId: UUID(),
             eventObject: .thread,
             eventType: .senderTypingEnded,
             createdAt: Date.provide(),
-            data: AgentTypingEventDataDTO(brand: brand, channel: channel, thread: thread, user: agent)
+            data: AgentTypingEventDataDTO(
+                brand: brand,
+                channel: channel,
+                thread: ThreadDTO(idOnExternalPlatform: thread.id, threadName: thread.name),
+                user: agent
+            )
         )
         
         CXoneChat.handle(message: try encoder.encode(event).utf8string!)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
-    private func setupMessageCreated(time: Date? = nil, replace: Bool) -> (ChatThreadDTO, MessageCreatedEventDTO) {
-        let threadId = UUID()
-        let message = MockData.getMessage(
-            threadId: threadId,
-            isSenderAgent: true,
-            createdAt: time ?? Date.provide()
-        )
-        var thread = MockData.getThread(threadId: threadId)
-
-        thread.messages = [message]
-
-        let event = MessageCreatedEventDTO(
-            eventId: UUID(),
-            eventObject: .message,
-            eventType: .messageCreated,
-            createdAt: Date.provide(),
-            data: MessageCreatedEventDataDTO(
-                brand: brand,
-                channel: channel,
-                case: contact,
-                thread: ThreadDTO(idOnExternalPlatform: threadId, threadName: nil),
-                message: MockData.getMessage(
-                    threadId: threadId,
-                    messageId: replace ? message.idOnExternalPlatform : UUID(),
-                    isSenderAgent: true
-                )
-            )
-        )
-
-        connectionContext.activeThread = (ChatThreadMapper.map(thread))
-        threadsService.threads.append(ChatThreadMapper.map(thread))
-
-        return (thread, event)
     }
 
     func testProcessMessageCreatedEventReplaces() async throws {
@@ -183,17 +164,17 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         XCTAssertEqual(2, thread.messages.count)
         XCTAssertEqual(event.data.message.idOnExternalPlatform, thread.messages.first?.id)
     }
-
-    private func setupMessageRead(time: Date? = nil, replace: Bool) -> (ChatThreadDTO, MessageReadByAgentEventDTO) {
+    
+    private func setupMessageRead(time: Date? = nil, replace: Bool) -> (ChatThread, MessageReadByAgentEventDTO) {
         let threadId = UUID()
         let message = MockData.getMessage(
             threadId: threadId,
             isSenderAgent: true,
             createdAt: time ?? Date.provide()
         )
-        var thread = MockData.getThread(threadId: threadId)
+        let thread = MockData.getThread(threadId: threadId)
 
-        thread.messages = [message]
+        thread.messages = [MessageMapper.map(message)]
 
         let event = MessageReadByAgentEventDTO(
             eventId: UUID(),
@@ -210,8 +191,7 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             )
         )
 
-        connectionContext.activeThread = (ChatThreadMapper.map(thread))
-        threadsService.threads.append(ChatThreadMapper.map(thread))
+        threadsService.threads.append(thread)
 
         return (thread, event)
     }
@@ -233,96 +213,14 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
         XCTAssertEqual(1, thread.messages.count)
         XCTAssertEqual(event.data.message.createdAt, thread.messages.first?.createdAt)
     }
-    
-    func testProcessCustomerAuthorizedEventThrowMissingAccessToken() async throws {
-        currentExpectation = XCTestExpectation(description: "testProcessCustomerAuthorizedEventThrowMissingAccessToken")
-        
-        socketService.connectionContext.channelConfig = MockData.getChannelConfiguration()
-        
-        let event = CustomerAuthorizedEventDTO(
-            eventId: UUID(),
-            postback: CustomerAuthorizedEventPostbackDTO(
-                eventType: .customerAuthorized,
-                data: CustomerAuthorizedEventPostbackDataDTO(consumerIdentity: identity, accessToken: nil)
-            )
-        )
-        
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
-        
-        await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
-    func testProcessCustomerAuthorizedEventNoThrow() async throws {
-        currentExpectation = XCTestExpectation(description: "testProcessCustomerAuthorizedEventNoThrow")
-        
-        let event = CustomerAuthorizedEventDTO(
-            eventId: UUID(),
-            postback: CustomerAuthorizedEventPostbackDTO(
-                eventType: .customerAuthorized,
-                data: CustomerAuthorizedEventPostbackDataDTO(consumerIdentity: identity, accessToken: accessToken)
-            )
-        )
-        
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
-        
-        await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
-    func testProcessCustomerReconnectEventDTO() async throws {
-        currentExpectation = XCTestExpectation(description: "testProcessCustomerReconnectEvent")
-
-        let event = GenericEventDTO(
-            eventType: .customerReconnected,
-            postback: nil,
-            error: nil,
-            internalServerError: nil
-        )
-        
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
-        
-        await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-    
-    private func setupLoadMoreMessages(time: Date? = nil, replace: Bool) -> (ChatThreadDTO, MoreMessagesLoadedEventDTO) {
-        let threadId = UUID()
-        let message = MockData.getMessage(
-            threadId: threadId,
-            isSenderAgent: true,
-            createdAt: time ?? Date.provide()
-        )
-        var thread = MockData.getThread(threadId: threadId)
-
-        thread.messages = [message]
-
-        let event = MoreMessagesLoadedEventDTO(
-            eventId: UUID(),
-            postback: MoreMessagesLoadedEventPostbackDTO(
-                eventType: .moreMessagesLoaded,
-                data: MoreMessagesLoadedEventPostbackDataDTO(
-                    messages: [
-                        MockData.getMessage(
-                            threadId: threadId,
-                            messageId: replace ? message.idOnExternalPlatform : UUID(),
-                            isSenderAgent: true
-                        )
-                    ],
-                    scrollToken: "scroll_token"
-                )
-            )
-        )
-
-        connectionContext.activeThread = (ChatThreadMapper.map(thread))
-        threadsService.threads.append(ChatThreadMapper.map(thread))
-
-        return (thread, event)
-    }
 
     func testProcessMoreMessagesEventReplacesMessages() async throws {
         currentExpectation = XCTestExpectation(description: "testProcessMoreMessagesEventNoThrow")
 
-        let (_, event) = setupLoadMoreMessages(time: Date.provide() - 1, replace: true)
+        let (thread, event) = setupLoadMoreMessages(time: Date.provide() - 1, replace: true)
 
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
+        let service = try threadsService.provider(for: thread) as? ChatThreadService
+        service!.processMoreMessagesLoaded(event)
 
         guard let actualThread = threadsService.threads.first else {
             XCTFail("thread not found")
@@ -342,9 +240,10 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessMoreMessagesEventSortsEarlierMessages() async throws {
         currentExpectation = XCTestExpectation(description: "testProcessMoreMessagesEventNoThrow")
 
-        let (_, event) = setupLoadMoreMessages(time: Date.provide() - 1, replace: false)
+        let (thread, event) = setupLoadMoreMessages(time: Date.provide() - 1, replace: false)
 
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
+        let service = try threadsService.provider(for: thread) as? ChatThreadService
+        service!.processMoreMessagesLoaded(event)
 
         guard let actualThread = threadsService.threads.first else {
             XCTFail("thread not found")
@@ -367,9 +266,10 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     func testProcessMoreMessagesEventSortsLaterMessages() async throws {
         currentExpectation = XCTestExpectation(description: "testProcessMoreMessagesEventNoThrow")
 
-        let (_, event) = setupLoadMoreMessages(time: Date.provide() + 1, replace: false)
+        let (thread, event) = setupLoadMoreMessages(time: Date.provide() + 1, replace: false)
 
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
+        let service = try threadsService.provider(for: thread) as? ChatThreadService
+        service!.processMoreMessagesLoaded(event)
 
         guard let actualThread = threadsService.threads.first else {
             XCTFail("thread not found")
@@ -388,32 +288,15 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
             actualThread.messages.first?.createdAt
         )
     }
-
-    func testTokenRefreshedEventDTO() throws {
-        let event = TokenRefreshedEventDTO(
-            eventId: UUID(),
-            postback: TokenRefreshedEventPostbackDTO(eventType: .tokenRefreshed, accessToken: accessToken)
-        )
-        
-        CXoneChat.handle(message: try encoder.encode(event).utf8string!)
-        
-        XCTAssertEqual(socketService.accessToken?.token, accessToken.token)
-    }
     
-    func testEndContactEventEncodedCorrectly() throws {
-        let expectedData = try loadBundleData(from: "EndContact", type: "json").decode() as EndContactEventDTO
+    func testProcessEventInS3DownloadAndDecodeCorrectly() async throws {
+        let requestData = try loadBundleData(from: "EventInS3+ThreadRecovered", type: "json")
+        let event = try requestData.decode() as EventInS3DTO
+        let responseData = try loadBundleData(from: "ThreadRecoveredEvent", type: "json")
         
-        guard let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7") else {
-            throw XCTError("Unable to init thread ID")
+        try await URLProtocolMock.with(handlers: accept(url(equals: event.url.absoluteString), body: string(responseData.utf8string!))) {
+            CXoneChat.handle(message: requestData.utf8string!)
         }
-        let endContactEvent = EndContactEventDTO(
-            eventType: .endContact,
-            data: EndContactEventDataDTO(thread: threadId, contact: "12345")
-        )
-        
-        XCTAssertEqual(expectedData.eventType, endContactEvent.eventType)
-        XCTAssertEqual(expectedData.data.thread, endContactEvent.data.thread)
-        XCTAssertEqual(expectedData.data.contact, endContactEvent.data.contact)
     }
     
     func testSetPositionInQueueEventDecodedCorrectly() throws {
@@ -424,14 +307,83 @@ class SocketDelegateHandleMessageTests: CXoneXCTestCase {
     }
     
     func testHandleSetPositionInQueueEvent() async throws {
-        try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isOnline: true, isLiveChat: true))
-        
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(contactId: "12345")))
+        threadsService.threads.append(MockData.getThread(contactId: "12345"))
 
         let message = try loadBundleData(from: "SetPositionInQueue", type: "json").utf8string
         
         CXoneChat.handle(message: message!)
 
         XCTAssertEqual(10, threadsService.threads.last?.positionInQueue)
+    }
+}
+
+// MARK: - Helpers
+
+private extension SocketDelegateHandleMessageTests {
+    
+    func setupMessageCreated(time: Date? = nil, replace: Bool) -> (ChatThread, MessageCreatedEventDTO) {
+        let threadId = UUID()
+        let message = MockData.getMessage(
+            threadId: threadId,
+            isSenderAgent: true,
+            createdAt: time ?? Date.provide()
+        )
+        let thread = MockData.getThread(threadId: threadId)
+        thread.messages = [MessageMapper.map(message)]
+
+        let event = MessageCreatedEventDTO(
+            eventId: UUID(),
+            eventObject: .message,
+            eventType: .messageCreated,
+            createdAt: Date.provide(),
+            data: MessageCreatedEventDataDTO(
+                brand: brand,
+                channel: channel,
+                case: contact,
+                thread: ThreadDTO(idOnExternalPlatform: threadId, threadName: nil),
+                message: MockData.getMessage(
+                    threadId: threadId,
+                    messageId: replace ? message.idOnExternalPlatform : UUID(),
+                    isSenderAgent: true
+                )
+            )
+        )
+
+        threadsService.threads.append(thread)
+
+        return (thread, event)
+    }
+    
+    func setupLoadMoreMessages(time: Date? = nil, replace: Bool) -> (ChatThread, MoreMessagesLoadedEventDTO) {
+        let threadId = UUID()
+        let message = MockData.getMessage(
+            threadId: threadId,
+            isSenderAgent: true,
+            createdAt: time ?? Date.provide()
+        )
+        let thread = MockData.getThread(threadId: threadId)
+        thread.messages = [MessageMapper.map(message)]
+
+        let event = MoreMessagesLoadedEventDTO(
+            eventId: UUID(),
+            eventType: .moreMessagesLoaded,
+            postback: MoreMessagesLoadedEventPostbackDTO(
+                eventType: .moreMessagesLoaded,
+                data: MoreMessagesLoadedEventPostbackDataDTO(
+                    messages: [
+                        MockData.getMessage(
+                            threadId: threadId,
+                            messageId: replace ? message.idOnExternalPlatform : UUID(),
+                            isSenderAgent: true
+                        )
+                    ],
+                    scrollToken: "scroll_token"
+                )
+            )
+        )
+
+        threadsService.threads.append(thread)
+
+        return (thread, event)
     }
 }

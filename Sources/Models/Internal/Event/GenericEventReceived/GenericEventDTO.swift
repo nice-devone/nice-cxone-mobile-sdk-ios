@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,40 +16,42 @@
 import Foundation
 
 /// The initial decoding of a message from the WebSocket.
-struct GenericEventDTO: Decodable, Equatable {
+struct GenericEventDTO: Equatable {
     
     // MARK: - Properties
     
     /// Event ID of this event (or original event we're responding to)
-    let eventId: LowerCaseUUID?
+    let eventId: UUID
     /// The type of the event.
     let eventType: EventType?
     /// The postback of the event.
     let postback: GenericEventPostbackDTO?
-    let error: OperationError?
-    let internalServerError: InternalServerError?
-
-    // MARK: - Init
-    
-    init(
-        eventId: LowerCaseUUID? = nil,
-        eventType: EventType?,
-        postback: GenericEventPostbackDTO?,
-        error: OperationError?,
-        internalServerError: InternalServerError?
-    ) {
-        self.eventId = eventId
-        self.eventType = eventType
-        self.postback = postback
-        self.error = error
-        self.internalServerError = internalServerError
-    }
 }
 
 // MARK: - ReceivedEvent
 
 extension GenericEventDTO: ReceivedEvent {
+    
     static let eventType: EventType? = nil
 
     var postbackEventType: EventType? { postback?.eventType }
+}
+
+// MARK: - Decodable
+
+extension GenericEventDTO: Decodable {
+    
+    enum CodingKeys: CodingKey {
+        case eventId
+        case eventType
+        case postback
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.eventId = try container.decodeUUID(forKey: .eventId)
+        self.eventType = try container.decodeIfPresent(EventType.self, forKey: .eventType)
+        self.postback = try container.decodeIfPresent(GenericEventPostbackDTO.self, forKey: .postback)
+    }
 }

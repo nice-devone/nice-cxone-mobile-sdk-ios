@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -48,21 +48,12 @@ public struct Message {
     public let authorEndUserIdentity: CustomerIdentity?
     
     /// Information about the sender of a message.
-    public var senderInfo: SenderInfo {
+    public var senderInfo: SenderInfo? {
         SenderInfo(message: self)
     }
     
     /// The delivery or read status of the message.
-    public var status: MessageStatus {
-        switch userStatistics {
-        case .some(let statistics) where statistics.readAt != nil:
-            return .seen
-        case .some:
-            return .delivered
-        case .none:
-            return .sent
-        }
-    }
+    public var status: MessageStatus
     
     // MARK: - Init
     
@@ -85,7 +76,8 @@ public struct Message {
         direction: MessageDirection,
         userStatistics: UserStatistics?,
         authorUser: Agent?,
-        authorEndUserIdentity: CustomerIdentity?
+        authorEndUserIdentity: CustomerIdentity?,
+        status: MessageStatus
     ) {
         self.id = id
         self.threadId = threadId
@@ -96,6 +88,7 @@ public struct Message {
         self.userStatistics = userStatistics
         self.authorUser = authorUser
         self.authorEndUserIdentity = authorEndUserIdentity
+        self.status = status
     }
 }
 
@@ -105,5 +98,14 @@ extension Message: Equatable {
 
     public static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.id == rhs.id
+            && lhs.threadId == rhs.threadId
+            && lhs.contentType == rhs.contentType
+            && lhs.createdAt == rhs.createdAt
+            && lhs.attachments == rhs.attachments
+            && lhs.direction == rhs.direction
+            && lhs.userStatistics == rhs.userStatistics
+            && lhs.authorUser == rhs.authorUser
+            && lhs.authorEndUserIdentity == rhs.authorEndUserIdentity
+            && lhs.status == rhs.status
     }
 }

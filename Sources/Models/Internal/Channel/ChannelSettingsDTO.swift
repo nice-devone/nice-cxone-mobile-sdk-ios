@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// Settings on a channel.
-struct ChannelSettingsDTO: Decodable {
+struct ChannelSettingsDTO {
     
     // MARK: - Properties
     
@@ -35,22 +35,35 @@ struct ChannelSettingsDTO: Decodable {
     let features: [String: Bool]
     
     // MARK: - Computed properties
-    
-    /// Indication if livechat availability is available from channel info or should be fetched from availability endpoint.
-    ///
-    /// - Enabled – availability is get from channel info
-    /// - Disabled – availability is fetched from availability endpoint
-    var isSplitChannelInfoAndAvailability: Bool {
-        isEnabled(feature: "splitChannelInfoAndAvailability")
-    }
 
-    /// Indication if  ``ChatThreadsProvider/load(with:)`` for ``ChatMode/liveChat``
+    /// Indication if  ``ChatThreadListProvider/load(with:)`` for ``ChatMode/liveChat``
     /// triggers a ``CXoneChatError/recoveringThreadFailed`` error in case of non existing thread.
     ///
     /// - Enabled – the error means some kind of issue with the thread
     /// - Disabled – the error indicates non existing thread –> soft error.
     var isRecoverLiveChatDoesNotFailEnabled: Bool {
         isEnabled(feature: "isRecoverLivechatDoesNotFailEnabled")
+    }
+}
+
+// MARK: - Decodable
+
+extension ChannelSettingsDTO: Decodable {
+    
+    enum CodingKeys: CodingKey {
+        case hasMultipleThreadsPerEndUser
+        case isProactiveChatEnabled
+        case fileRestrictions
+        case features
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.hasMultipleThreadsPerEndUser = try container.decode(Bool.self, forKey: .hasMultipleThreadsPerEndUser)
+        self.isProactiveChatEnabled = try container.decode(Bool.self, forKey: .isProactiveChatEnabled)
+        self.fileRestrictions = try container.decode(FileRestrictionsDTO.self, forKey: .fileRestrictions)
+        self.features = try container.decode([String: Bool].self, forKey: .features)
     }
 }
 

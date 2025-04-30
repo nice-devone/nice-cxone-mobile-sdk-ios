@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -14,68 +14,106 @@
 //
 
 @testable import CXoneChatSDK
+import CXoneGuideUtility
+import Mockable
 import XCTest
 
 class CXoneChatTests: XCTestCase {
-    
+
     // MARK: - Properties
-    
+
     private var currentExpectation = XCTestExpectation(description: "")
-    
+
     // MARK: - Tests
-    
+
     func testSingletonDelegateSet() {
         XCTAssertNotNil((CXoneChat.shared.connection as? ConnectionService)?.socketService.delegate)
     }
-    
+
     func testSignOutResetProperly() {
-        (CXoneChat.shared.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID(), state: .ready))
+        (CXoneChat.shared.threads as? ChatThreadListService)?.threads.append(MockData.getThread(state: .ready))
         XCTAssertFalse(CXoneChat.shared.threads.get().isEmpty)
-        
+
         CXoneChat.signOut()
-        
+
         XCTAssertTrue(CXoneChat.shared.threads.get().isEmpty)
     }
-    
-    func testConfigureLoggerProperly() {
-        CXoneChat.configureLogger(level: .trace, verbosity: .simple)
-        
-        XCTAssertTrue(LogManager.verbosity == .simple)
-        XCTAssertTrue(LogManager.level == .trace)
+
+    func testLogManagerFatal() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
+        LogManager.fatal("")
+
+        verify(logWriter)
+            .log(record: .matching { $0.level == .fatal })
+            .called(1)
     }
-    
-    func testLoggerDelegateCalled() async {
-        currentExpectation = XCTestExpectation(description: "testLoadThreadDataNoThrow")
-        currentExpectation.expectedFulfillmentCount = 4
-        
-        CXoneChat.shared.logDelegate = self
-        
+
+    func testLogManagerError() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
         LogManager.error("")
+
+        verify(logWriter)
+            .log(record: .matching { $0.level == .error })
+            .called(1)
+    }
+
+    func testLogManagerWarning() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
         LogManager.warning("")
+
+        verify(logWriter)
+            .log(record: .matching { $0.level == .warning })
+            .called(1)
+    }
+
+    func testLogManagerInfo() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
         LogManager.info("")
+
+        verify(logWriter)
+            .log(record: .matching { $0.level == .info })
+            .called(1)
+    }
+
+    func testLogManagerDebug() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
+        LogManager.debug("")
+
+        verify(logWriter)
+            .log(record: .matching { $0.level == .debug })
+            .called(1)
+    }
+
+    func testLogManagerTrace() {
+        let logWriter = MockLogWriter(policy: .relaxed)
+
+        CXoneChat.logWriter = logWriter
+        defer { CXoneChat.logWriter = nil }
+
         LogManager.trace("")
-        
-         await fulfillment(of: [currentExpectation], timeout: 1.0)
-    }
-}
 
-// MARK: - LogDelegate
-
-extension CXoneChatTests: LogDelegate {
-    
-    func logError(_ message: String) {
-        currentExpectation.fulfill()
-    }
-    
-    func logWarning(_ message: String) {
-        currentExpectation.fulfill()
-    }
-    
-    func logInfo(_ message: String) {
-        currentExpectation.fulfill()
-    }
-    
-    func logTrace(_ message: String) {
-        currentExpectation.fulfill()
+        verify(logWriter)
+            .log(record: .matching { $0.level == .trace })
+            .called(1)
     }
 }

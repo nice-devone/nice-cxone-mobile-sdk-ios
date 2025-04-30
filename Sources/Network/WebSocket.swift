@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ internal class WebSocket: NSObject {
         task.delegate = self
     }
 
+    // periphery:ignore - may be used in the future
     func resume() async {
         await withCheckedContinuation { continuation in
             waitForStart = continuation
@@ -75,6 +76,7 @@ internal class WebSocket: NSObject {
 // MARK: - WebSocketProtocol implementation
 
 extension WebSocket: WebSocketProtocol {
+    
     func send(
         _ message: URLSessionWebSocketTask.Message,
         completionHandler: @escaping ((Error?) -> Void)
@@ -98,6 +100,7 @@ extension WebSocket: WebSocketProtocol {
         }
     }
 
+    // periphery:ignore - may be used in the future
     func resume() {
         task.resume()
     }
@@ -110,6 +113,7 @@ extension WebSocket: WebSocketProtocol {
 // MARK: - URLSessionWebSocketDelegate
 
 extension WebSocket: URLSessionWebSocketDelegate {
+    
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         sessionDidOpen()
     }

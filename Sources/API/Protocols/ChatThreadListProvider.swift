@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
 //
 
 import Foundation
+import Mockable
 
 /// The provider for thread related properties and methods.
-public protocol ChatThreadsProvider {
+@Mockable
+public protocol ChatThreadListProvider {
     
     /// The dynamic pre-chat survey element with title and custom fields.
     ///
     /// To fill in the parameters of the pre-chat survey, use the ``create(with:)`` method.
     var preChatSurvey: PreChatSurvey? { get }
-    
-    /// The provider for message related properties and methods.
-    var messages: MessagesProvider { get }
     
     /// The provider for chat fields related properties and methods.
     var customFields: ContactCustomFieldsProvider { get }
@@ -62,9 +61,9 @@ public protocol ChatThreadsProvider {
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     ///
-    /// - Returns: Newly created ``ChatThread``
+    /// - Returns: ``ChatThreadProvider`` with newly created thread.
     @discardableResult
-    func create() async throws -> ChatThread
+    func create() async throws -> ChatThreadProvider
     
     /// Creates a new thread with custom fields by sending an initial message to the thread.
     ///
@@ -100,9 +99,9 @@ public protocol ChatThreadsProvider {
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     ///
-    /// - Returns: Newly created ``ChatThread``
+    /// - Returns: ``ChatThreadProvider`` with newly created thread.
     @discardableResult
-    func create(with customFields: [String: String]) async throws -> ChatThread
+    func create(with customFields: [String: String]) async throws -> ChatThreadProvider
 
     /// Loads the a thread for the customer and gets messages.
     ///
@@ -119,79 +118,23 @@ public protocol ChatThreadsProvider {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func load(with id: UUID?) throws
+    func load(with id: UUID?) async throws
     
-    /// Updates the name for a thread.
+    /// The delegate for the chat thread provider based on chat thread's unique identifier
     ///
-    /// - Parameters:
-    ///   - name: The new name for the thread.
-    ///   - id: The unique identifier of the thread to load.
+    /// - Parameter threadId: The chat thread's for which to retrieve the provider.
     ///
-    /// - Warning: Should only be used on a channel configured for multiple threads.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func updateName(_ name: String, for id: UUID) throws
+    ///
+    /// - Returns: The provider for the chat thread.
+    func provider(for threadId: UUID) throws -> any ChatThreadProvider
     
-    /// Archives a thread from the list of all threads.
+    /// The delegate for the chat thread provider based on the chat thread object.
     ///
-    /// - Parameter thread: The  thread to load.
+    /// - Parameter thread: The chat thread for which to retrieve the provider.
     ///
-    /// - Warning: Should only be used on a channel configured for multiple threads.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``OperationError`` if there is any operaton error received from the BE.
-    func archive(_ thread: ChatThread) throws
-    
-    /// Reports that the most recent message of the specified thread was read by the customer.
     ///
-    /// - Parameter thread: The  thread to load.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func markRead(_ thread: ChatThread) throws
-    
-    /// Invoke this when the customer wishes to end conversation.
-    ///
-    ///  - Parameter thread: The thread to be close.
-    ///
-    /// - Warning: Should only be used on a channel configured for live chat.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if the `contactId` has not been set properly or it was unable to unwrap it as a required type.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func endContact(_ thread: ChatThread) throws
-    
-    /// Reports that the customer has started or finished typing in the specified chat thread.
-    ///
-    /// - Parameters:
-    ///   - didStart: Indicator for start of finish typing.
-    ///   - thread: The thread where typing was started.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func reportTypingStart(_ didStart: Bool, in thread: ChatThread) throws
+    /// - Returns: The provider for the chat thread.
+    func provider(for thread: ChatThread) throws -> any ChatThreadProvider
 }

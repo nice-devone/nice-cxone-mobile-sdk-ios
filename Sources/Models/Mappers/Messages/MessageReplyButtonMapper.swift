@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,19 +20,8 @@ enum MessageReplyButtonMapper {
     static func map(from entity: MessageReplyButtonDTO) -> MessageReplyButton {
         MessageReplyButton(
             text: entity.text,
-            postback: entity.postback,
             description: entity.description,
-            iconName: entity.iconName,
-            iconUrl: entity.iconUrl,
-            iconMimeType: entity.iconMimeType
-        )
-    }
-    
-    static func map(from entity: MessageReplyButton) -> MessageReplyButtonDTO {
-        MessageReplyButtonDTO(
-            text: entity.text,
             postback: entity.postback,
-            description: entity.description,
             iconName: entity.iconName,
             iconUrl: entity.iconUrl,
             iconMimeType: entity.iconMimeType

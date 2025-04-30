@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -128,17 +128,4 @@ public protocol AnalyticsProvider {
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws
-
-    /// Reports to CXone that some event occurred with the visitor.
-    ///
-    /// This can be used to report any custom event that may not be covered by other existing methods.
-    ///
-    /// - Parameter data: Any data associated with the event.
-    ///
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    @available(*, deprecated, message: "Deprecated with 2.3.0. Sending `customVisitorEvent(data:)` via WebSocket is not supported.")
-    func customVisitorEvent(data: VisitorEventDataType) throws
 }

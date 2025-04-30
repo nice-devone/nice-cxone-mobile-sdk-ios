@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -26,19 +26,12 @@ struct MoreMessagesLoadedEventDTO: Decodable, Equatable {
 
     /// The postback of the more message loaded event.
     let postback: MoreMessagesLoadedEventPostbackDTO
-
-    // MARK: - constructors
-    
-    init(eventId: UUID, eventType: EventType? = .moreMessagesLoaded, postback: MoreMessagesLoadedEventPostbackDTO) {
-        self.eventId = eventId
-        self.eventType = eventType
-        self.postback = postback
-    }
 }
 
 // MARK: - ReceivedEvent
 
 extension MoreMessagesLoadedEventDTO: ReceivedEvent {
+    
     static let eventType: EventType? = .moreMessagesLoaded
 
     var postbackEventType: EventType? { postback.eventType }

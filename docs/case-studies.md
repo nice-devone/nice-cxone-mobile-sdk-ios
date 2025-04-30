@@ -11,3 +11,5 @@ To help you get started, here's a selection of case studies that simplify the us
 - [Customer Customer ID](cs-custom-customer-id.md)
 - [OAuth](cs-oauth.md)
 - [Logging](cs-logging.md)
+- [Core SDK Integration](core-sdk-integration.md)
+- [Thread Notifications](cs-thread-notifications.md)

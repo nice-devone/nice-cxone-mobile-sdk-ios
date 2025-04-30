@@ -1,6 +1,6 @@
 # Samples
 
-The following sample code is provided to help configure and customize application integration with Digital First Omnichannel chat. The samples come from a sample app that you can get from the [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sample-ios).
+The following sample code is provided to help configure and customize application integration with Digital First Omnichannel chat. The samples come from a sample app that you can get from the [Sample app](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/master/sample).
 
 
 ## Chat Provider
@@ -449,11 +449,9 @@ func onUserTyping() {
 
 Section with thread messages related methods. These methods allows to load additional messages and send a message.
 
-Following features are provided via `CXoneChat.shared.threads.messages` provider.
-
 ### Load More Messages
 
- `MessagesProvider.loadMore(for:)` loads another page of messages for the thread. By default, when a user loads an old thread, they see a page of 20 messages. This function loads 20 more messages if the user scrolls up and swipe down to load more.
+`ChatThreadProvider.loadMoreMessages()` loads another page of messages for the thread. By default, when a user loads an old thread, they see a page of 20 messages. This function loads 20 more messages if the user scrolls up and swipe down to load more.
 
 > Important: Should be triggered only in case thread has more messages to load!
 
@@ -467,7 +465,7 @@ func onPullToRefresh(refreshControl: UIRefreshControl) {
     ...
         
     do {
-        try CXoneChat.shared.threads.messages.loadMore(for: thread)
+        try await threadProvider.loadMoreMessages()
     } catch {
        ...
     }
@@ -476,7 +474,7 @@ func onPullToRefresh(refreshControl: UIRefreshControl) {
 
 ### Send a Message
 
-Sends the contact's message string, via `MessagesProvider.send(_:for:)` method, through the WebSocket to the thread it belongs to. It is necessary to have established connection; otherwise, it throws an error.
+Sends the contact's message string, via `ChatThreadProvider.send(_:)` method, through the WebSocket to the thread it belongs to. It is necessary to have established connection; otherwise, it throws an error.
 
 ```swift
 @MainActor
@@ -486,7 +484,7 @@ func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem]
     Task { @MainActor in
         do {
             ...
-            try await CXoneChat.shared.threads.messages.send(message, for: thread)
+            try await threadProvider.send(message)
             ...
         } catch {
             ...
@@ -523,14 +521,16 @@ let locationCustomField = contactCustomFields.first { type in
 Contact custom fields are related to the customer and specific chat case (thread). `ContactCustomFieldsProvider.set(_:for:)` stores custom fields based on thread unique identifier. This method has to be called only with established connection to the CXone service; otherwise, it throws an error.
 
 ```swift
-...
-defaultChatCoordinator.presentForm(title: "Custom Fields", customFields: entities) { [weak self] customFields in
-    ...
-    do {
-        try CXoneChat.shared.threads.customFields.set(customFields, for: thread.id)
-    } catch {
-        ...
-    }
+// Example: Setting custom fields for a thread
+let customFields: [String: String] = [
+    "location": "New York",
+    "priority": "high"
+]
+
+do {
+    try CXoneChat.shared.threads.customFields.set(customFields, for: thread.id)
+} catch {
+    // Handle error
 }
 ```
 
@@ -739,7 +739,7 @@ func onThreadUpdated(_ chatThread: ChatThread) {
 }
 ```
 
-### On Threads Updated
+### On Threads Updated
 
 Callback to be called when a threads have been loaded with metadata and ready to use. This event is fired whenever a chat threads are modified, e.g. thread archived.
 

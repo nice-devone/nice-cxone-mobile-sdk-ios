@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,24 +17,6 @@ import XCTest
 @testable import CXoneChatSDK
 
 class StringExtensionsTests: XCTestCase {
-    
-    func testDateFromIsoStringNotNil() {
-        let stringDate = "2022-03-15T11:54:51.600Z"
-        
-        XCTAssertNotNil(stringDate.iso8601withFractionalSeconds)
-    }
-    
-    func testDateFromInvalidStringReturnNil() {
-        let string = "2022/254-56"
-        
-        XCTAssertNil(string.iso8601withFractionalSeconds)
-    }
-    
-    func testDatefromEmptyStringIsNil() {
-        let string = ""
-        
-        XCTAssertNil(string.iso8601withFractionalSeconds)
-    }
 
     func testFormattedJSONNil() {
         XCTAssertNil("\"".formattedJSON)

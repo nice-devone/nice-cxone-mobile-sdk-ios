@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,6 @@ import Foundation
 
 enum MessageMapper {
     
-    static func map(_ entity: Message) throws -> MessageDTO {
-        MessageDTO(
-            idOnExternalPlatform: entity.id,
-            threadIdOnExternalPlatform: entity.threadId,
-            contentType: try MessageContentTypeMapper.map(entity.contentType),
-            createdAt: entity.createdAt,
-            attachments: entity.attachments.map(AttachmentMapper.map),
-            direction: Self.map(entity.direction),
-            userStatistics: UserStatisticsDTO(seenAt: entity.userStatistics?.seenAt, readAt: entity.userStatistics?.readAt),
-            authorUser: entity.authorUser.map(AgentMapper.map),
-            authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map)
-        )
-    }
-    
     static func map(_ entity: MessageDTO) -> Message {
         Message(
             id: entity.idOnExternalPlatform,
@@ -41,7 +27,23 @@ enum MessageMapper {
             direction: Self.map(entity.direction),
             userStatistics: UserStatistics(seenAt: entity.userStatistics.seenAt, readAt: entity.userStatistics.readAt),
             authorUser: entity.authorUser.map(AgentMapper.map),
-            authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map)
+            authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map),
+            status: Self.status(from: entity.userStatistics)
+        )
+    }
+    
+    static func map(from entity: SendMessageEventDataDTO, payload: MessagePayload, authorUser: Agent?, customer: CustomerIdentity?) -> Message {
+        Message(
+            id: entity.idOnExternalPlatform,
+            threadId: entity.thread.idOnExternalPlatform,
+            contentType: .text(payload),
+            createdAt: Date.provide(),
+            attachments: entity.attachments.map(AttachmentMapper.map),
+            direction: .toAgent,
+            userStatistics: nil,
+            authorUser: authorUser,
+            authorEndUserIdentity: customer,
+            status: .sent
         )
     }
 }
@@ -59,12 +61,14 @@ private extension MessageMapper {
         }
     }
     
-    static func map(_ direction: MessageDirection) -> MessageDirectionDTOType {
-        switch direction {
-        case .toAgent:
-            return .inbound
-        case .toClient:
-            return .outbound
+    static func status(from userStatistics: UserStatisticsDTO?) -> MessageStatus {
+        switch userStatistics {
+        case .some(let statistics) where statistics.readAt != nil:
+            return .seen
+        case .some:
+            return .delivered
+        case .none:
+            return .sent
         }
     }
 }

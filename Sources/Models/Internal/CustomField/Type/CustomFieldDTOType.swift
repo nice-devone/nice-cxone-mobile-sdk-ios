@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -35,28 +35,6 @@ enum CustomFieldDTOType: Equatable {
             return entity.ident
         case .hierarchical(let entity):
             return entity.ident
-        }
-    }
-    
-    var updatedAt: Date {
-        switch self {
-        case .textField(let entity):
-            return entity.updatedAt
-        case .selector(let entity):
-            return entity.updatedAt
-        case .hierarchical(let entity):
-            return entity.updatedAt
-        }
-    }
-    
-    var value: String? {
-        switch self {
-        case .textField(let entity):
-            return entity.value
-        case .selector(let entity):
-            return entity.value
-        case .hierarchical(let entity):
-            return entity.value
         }
     }
     

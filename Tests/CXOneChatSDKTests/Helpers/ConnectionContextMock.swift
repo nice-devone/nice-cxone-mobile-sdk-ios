@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -78,10 +78,6 @@ class ConnectionContextMock: ConnectionContext {
 
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
     var accessToken: AccessTokenDTO?
-
-    var activeThread: ChatThread?
-    
-    var threads = [ChatThread]()
     
     init(session: URLSession) {
         self.session = session

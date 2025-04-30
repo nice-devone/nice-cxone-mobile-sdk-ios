@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,19 +16,26 @@
 import Combine
 import Foundation
 
-class ChatThreadsService {
+class ChatThreadListService {
 
+    // MARK: - Sub objects
+    
+    struct WeakContainer<Object: AnyObject> {
+        weak var object: Object?
+    }
+    
     // MARK: - Properties
 
     let socketService: SocketService
     let eventsService: EventsService
-    let customerFields: CustomerCustomFieldsService?
-
-    var threads: [ChatThread] {
-        get { connectionContext.threads }
-        set { connectionContext.threads = newValue }
-    }
-
+    let customerCustomFields: CustomerCustomFieldsProvider
+    let welcomeMessageManager: WelcomeMessageManager
+    
+    var threads = [ChatThread]()
+    /// The array is used to store the providers of the threads that are currently active.
+    /// The providers are stored as weak references to prevent retain cycles when the thread is deallocated.
+    var threadProviders = [WeakContainer<ChatThreadService>]()
+    
     let delegate: CXoneChatDelegate
 
     private var persistedSetPositionInQueueEvent: SetPositionInQueueEventDTO?
@@ -36,43 +43,47 @@ class ChatThreadsService {
     private var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
-    private var contactCustomFields: ContactCustomFieldsService? {
+    private var contactCustomFieldsService: ContactCustomFieldsService? {
         customFields as? ContactCustomFieldsService
+    }
+    private var customerCustomFieldsService: CustomerCustomFieldsService? {
+        customerCustomFields as? CustomerCustomFieldsService
     }
 
     // MARK: - Protocol Properties
 
-    let messages: MessagesProvider
     var customFields: ContactCustomFieldsProvider
+    
     var events: AnyPublisher<any ReceivedEvent, Never> {
         socketService.events
     }
-    var cancellables = [AnyCancellable]()
+    var cancellables: [AnyCancellable] {
+        get { socketService.cancellables }
+        set { socketService.cancellables = newValue }
+    }
 
     // MARK: - Init
 
     init(
-        messagesProvider: MessagesProvider,
-        contactFields: ContactCustomFieldsProvider,
-        customerFields: CustomerCustomFieldsProvider,
+        contactCustomFields: ContactCustomFieldsProvider,
+        customerCustomFields: CustomerCustomFieldsProvider,
         socketService: SocketService,
         eventsService: EventsService,
+        welcomeMessageManager: WelcomeMessageManager,
         delegate: CXoneChatDelegate
     ) {
-        self.messages = messagesProvider
-        self.customFields = contactFields
-        self.customerFields = customerFields as? CustomerCustomFieldsService
+        self.customFields = contactCustomFields
+        self.customerCustomFields = customerCustomFields
         self.socketService = socketService
         self.eventsService = eventsService
+        self.welcomeMessageManager = welcomeMessageManager
         self.delegate = delegate
-
-        addListeners()
     }
 }
 
-// MARK: - ChatThreadsProvider Implementation
+// MARK: - ChatThreadListProvider Implementation
 
-extension ChatThreadsService: ChatThreadsProvider {
+extension ChatThreadListService: ChatThreadListProvider {
 
     var preChatSurvey: PreChatSurvey? {
         guard let prechat = connectionContext.channelConfig.prechatSurvey else {
@@ -112,7 +123,7 @@ extension ChatThreadsService: ChatThreadsProvider {
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @discardableResult
-    func create() async throws -> ChatThread {
+    func create() async throws -> ChatThreadProvider {
         try await create(with: [:])
     }
     
@@ -137,7 +148,7 @@ extension ChatThreadsService: ChatThreadsProvider {
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @discardableResult
-    func create(with customFields: [String: String]) async throws -> ChatThread {
+    func create(with customFields: [String: String]) async throws -> ChatThreadProvider {
         LogManager.trace("Creating a new thread")
 
         try socketService.checkForConnection()
@@ -153,18 +164,27 @@ extension ChatThreadsService: ChatThreadsProvider {
         
         let thread = ChatThread(id: UUID.provide(), state: .pending)
         
-        if !customFields.isEmpty, let service = self.customFields as? ContactCustomFieldsService {
+        if !customFields.isEmpty {
             let mappedCustomFields = customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date.provide()) }
             
-            service.updateFields(mappedCustomFields, for: thread.id)
+            contactCustomFieldsService?.updateFields(mappedCustomFields, for: thread.id)
         }
         
-        if !allPrechatCustomFieldsFilled(customFields) {
+        if !allPrechatCustomFieldsFilled(for: thread.id) {
             throw CXoneChatError.missingPreChatCustomFields
         }
         
         threads.append(thread)
-        connectionContext.activeThread = thread
+        
+        let provider = try provider(for: thread)
+        
+        if let service = provider as? ChatThreadService, let message = UserDefaultsService.shared.get(String.self, for: .welcomeMessage) {
+            thread.merge(messages: [try service.getParsedWelcomeMessage(message)])
+        }
+        
+        if let message = UserDefaultsService.shared.get(String.self, for: .welcomeMessage), let threadService = provider as? ChatThreadService {
+            try threadService.handleWelcomeMessage(message)
+        }
         
         connectionContext.chatState = .ready
         
@@ -177,13 +197,13 @@ extension ChatThreadsService: ChatThreadsProvider {
             UserDefaultsService.shared.set(thread.id, for: .cachedThreadIdOnExternalPlatform)
         }
 
-        if connectionContext.chatMode == .liveChat, let service = messages as? MessagesService {
-            try await service.sendBeginLiveChatConversation(for: thread)
+        if connectionContext.chatMode == .liveChat, let threadService = provider as? ChatThreadService {
+            try await threadService.sendBeginLiveChatConversation()
         }
 
         delegate.onThreadUpdated(thread)
 
-        return thread
+        return provider
     }
     
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
@@ -192,238 +212,65 @@ extension ChatThreadsService: ChatThreadsProvider {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func load(with threadId: UUID?) throws {
+    func load(with threadId: UUID?) async throws {
         try socketService.checkForConnection()
 
-        try recoverThread(threadId: threadId)
+        try await recoverThread(threadId: threadId)
     }
     
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func updateName(_ name: String, for id: UUID) throws {
-        LogManager.trace("Updating the name for a thread")
-
-        try socketService.checkForConnection()
-
-        guard connectionContext.channelConfig.settings.hasMultipleThreadsPerEndUser else {
-            throw CXoneChatError.unsupportedChannelConfig
-        }
-        guard let index = threads.index(of: id) else {
+    func provider(for threadId: UUID) throws -> any ChatThreadProvider {
+        guard let thread = threads.first(where: { $0.id == threadId }) else {
             throw CXoneChatError.invalidThread
         }
-        guard threads[index].state != .closed else {
-            throw CXoneChatError.illegalThreadState
-        }
         
-        threads[index].name = name
-        
-        if threads[index].state == .ready {
-            let data = try eventsService.create(
-                .updateThread,
-                with: .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: id, threadName: name)))
-            )
-            
-            try socketService.send(data: data)
-        } else {
-            LogManager.info("Thread does not contain any messages. Skipping message sending")
-        }
-
-        delegate.onThreadUpdated(threads[index])
+        return try provider(for: thread)
     }
     
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``OperationError`` if there is any operaton error received from the BE.
-    func archive(_ thread: ChatThread) throws { // swiftlint:disable:this function_body_length
-        LogManager.trace("Archiving thread")
-        
-        try socketService.checkForConnection()
-        
-        guard connectionContext.channelConfig.settings.hasMultipleThreadsPerEndUser else {
-            throw CXoneChatError.unsupportedChannelConfig
-        }
-        guard let index = threads.index(of: thread.id) else {
+    func provider(for thread: ChatThread) throws -> any ChatThreadProvider {
+        guard threads.contains(where: { $0.id == thread.id }) else {
             throw CXoneChatError.invalidThread
         }
-        guard threads[index].state != .closed else {
-            throw CXoneChatError.illegalChatState
+        
+        if let provider = threadProviders.first(where: { $0.object?.chatThread.id == thread.id })?.object {
+            return provider
         }
         
-        if thread.state.isLoaded {
-            LogManager.trace("Thread exists in BE - Archive via socket and wait for response")
-            let event = try eventsService.create(
-                event: .archiveThread,
-                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: thread.id, threadName: thread.name)))
-            )
-            
-            Task { [self] in
-                var cancels = [AnyCancellable]()
-
-                do {
-                    try await withCheckedThrowingContinuation { continuation in
-                        events
-                            .with(type: .threadArchived, as: GenericEventDTO.self)
-                            .sink { event in
-                                if let eventId = event.eventId, eventId == event.eventId {
-                                    LogManager.trace("Thread Archived: \(thread.id)")
-                                    continuation.resume()
-                                }
-                            }
-                            .store(in: &cancels)
-
-                        events
-                            .with(type: OperationError.self)
-                            .sink { error in
-                                if error.transactionId == event.eventId {
-                                    continuation.resume(throwing: error)
-                                }
-                            }
-                            .store(in: &cancels)
-
-                        do {
-                            try socketService.send(data: try eventsService.serialize(event: event))
-                        } catch {
-                            continuation.resume(throwing: error)
-                        }
-                    }
-
-                    guard let index = threads.index(of: thread.id) else {
-                        throw CXoneChatError.invalidThread
-                    }
-
-                    threads[index].state = .closed
-                } catch {
-                    LogManager.error("Thread Archive Failed: \(thread.id): \(error)")
-                    delegate.onError(error)
-                }
-                delegate.onThreadUpdated(threads[index])
-            }
-        } else {
-            LogManager.trace("Thread does not exist in BE - archive locally and immediately notify host application")
-            
-            threads[index].state = .closed
-            
-            delegate.onThreadUpdated(threads[index])
-        }
-    }
-    
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if the `contactId` has not been set properly or it was unable to unwrap it as a required type.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func endContact(_ thread: ChatThread) throws {
-        LogManager.trace("Sending EndContactEvent")
-        
-        try socketService.checkForConnection()
-        
-        guard connectionContext.chatMode == .liveChat else {
-            throw CXoneChatError.illegalChatState
-        }
-        guard thread.state != .closed else {
-            LogManager.info("Conversation has been already closed -> ignoring this request")
-            
-            delegate.onThreadUpdated(thread)
-            return
-        }
-        guard let contactId = thread.contactId else {
-            throw CXoneChatError.missingParameter("contactId")
-        }
-        
-        connectionContext.chatState = .closed
-        
-        connectionContext.activeThread = thread
-        
-        let data = try eventsService.create(.endContact, with: .endContact(EndContactEventDataDTO(thread: thread.id, contact: contactId)))
-
-        try socketService.send(data: data)
-    }
-    
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func markRead(_ thread: ChatThread) throws {
-        LogManager.trace("Marking thread as read")
-        
-        try socketService.checkForConnection()
-        
-        connectionContext.activeThread = thread
-        
-        guard thread.state != .closed else {
-            return
-        }
-        guard ![.pending, .closed].contains(thread.state) else {
-            LogManager.info("Trying to mark read thread that has been created locally or was archived")
-            return
-        }
-        
-        let data = try eventsService.create(
-            .messageSeenByCustomer,
-            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: thread.id, threadName: thread.name)))
+        let provider = ChatThreadService(
+            chatThread: thread,
+            contactFieldsProvider: customFields,
+            customerFieldsProvider: customerCustomFields,
+            socketService: socketService,
+            eventsService: eventsService,
+            welcomeMessageManager: welcomeMessageManager,
+            delegate: delegate
         )
         
-        try socketService.send(data: data)
-    }
-    
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func reportTypingStart(_ didStart: Bool, in thread: ChatThread) throws {
-        LogManager.trace("Reporting user start typing")
-
-        try socketService.checkForConnection()
-
-        guard thread.state != .closed else {
-            throw CXoneChatError.illegalChatState
-        }
-
-        connectionContext.activeThread = thread
+        self.threadProviders.append(WeakContainer(object: provider))
         
-        let data = try eventsService.create(
-            didStart ? .senderTypingStarted : .senderTypingEnded,
-            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: thread.id, threadName: thread.name)))
-        )
-        
-        try socketService.send(data: data)
+        return provider
     }
 }
 
 // MARK: - Internal Methods
 
-extension ChatThreadsService {
+extension ChatThreadListService {
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func handleForCurrentChatMode(_ mode: ChatMode) throws {
+    func handleForCurrentChatMode(_ mode: ChatMode) async throws {
         switch mode {
         case .singlethread, .liveChat:
             let cachedThreadId: UUID? = UserDefaultsService.shared.get(UUID.self, for: .cachedThreadIdOnExternalPlatform)
 
-            try recoverThread(threadId: cachedThreadId)
+            try await recoverThread(threadId: cachedThreadId)
         case .multithread:
-            try fetchThreadList()
+            try await fetchThreadList()
         }
     }
 
@@ -431,36 +278,39 @@ extension ChatThreadsService {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func fetchThreadList() throws {
-        guard connectionContext.chatMode == .multithread || threads.isEmpty else {
+    func fetchThreadList() async throws {
+        guard connectionContext.chatMode == .multithread else {
             throw CXoneChatError.unsupportedChannelConfig
         }
 
         LogManager.trace("Loading all of the threads for the current customer")
 
-        let data = try eventsService.create(.fetchThreadList)
+        let event = try eventsService.create(event: .fetchThreadList)
 
-        try socketService.send(data: data)
+        let response = try await events.sink(
+            type: .threadListFetched,
+            as: GenericEventDTO.self,
+            origin: event,
+            socketService: socketService,
+            eventsService: eventsService,
+            cancellables: &cancellables
+        )
+        
+        try await processThreadListFetchedEvent(response)
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func recoverThread(threadId: UUID?) throws {
+    func recoverThread(threadId: UUID?) async throws {
         LogManager.trace("Loading the a thread for the customer and gets messages")
 
         let validChatThreadStates: [ChatThreadState] = connectionContext.chatMode == .liveChat ? [.pending] : [.pending, .closed]
 
         if let threadId, let thread = threads.getThread(with: threadId), validChatThreadStates.contains(thread.state) {
             LogManager.info("Thread has been created locally or is archived -> no need to recover it")
-
-            if connectionContext.chatMode != .multithread {
-                LogManager.info("Set thread as active for `.singlethread` or `.liveChat` channel")
-
-                connectionContext.activeThread = thread
-            }
 
             connectionContext.chatState = .ready
             
@@ -470,117 +320,125 @@ extension ChatThreadsService {
         }
 
         let dataType = threadId.map { threadId -> EventDataType in
-            if connectionContext.chatMode != .multithread, let thread = threads.getThread(with: threadId) {
-                LogManager.info("Set thread as active for `.singlethread` or `.liveChat` channel")
-
-                connectionContext.activeThread = thread
-            }
-
-            return .loadThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: threadId, threadName: nil)))
+            let eventData = ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: threadId, threadName: nil))
+            
+            return connectionContext.chatMode == .liveChat ? .loadLiveChatData(eventData) : .loadThreadData(eventData)
         }
-        let data = try eventsService.create(connectionContext.chatMode == .liveChat ? .recoverLiveChat : .recoverThread, with: dataType)
-
-        try socketService.send(data: data)
+        
+        if connectionContext.chatMode == .liveChat {
+            try await recoverLivechatThread(eventDataType: dataType)
+        } else {
+            try await recoverMessagingThread(eventDataType: dataType)
+        }
     }
 
+    func recoverMessagingThread(eventDataType: EventDataType?) async throws {
+        let event = try eventsService.create(event: .recoverThread, with: eventDataType)
+        
+        do {
+            let response = try await events.sink(
+                type: .threadRecovered,
+                as: ThreadRecoveredEventDTO.self,
+                origin: event,
+                socketService: socketService,
+                eventsService: eventsService,
+                cancellables: &cancellables
+            )
+            
+            try processThreadRecoveredEvent(response)
+        } catch {
+            if let error = error as? OperationError, error.errorCode == .recoveringThreadFailed {
+                try await processRecoveringThreadFailedError(error)
+            } else {
+                throw error
+            }
+        }
+    }
+    
+    func recoverLivechatThread(eventDataType: EventDataType?) async throws {
+        let event = try eventsService.create(event: .recoverLiveChat, with: eventDataType)
+        
+        do {
+            let response = try await events.sink(
+                type: .liveChatRecovered,
+                as: LiveChatRecoveredDTO.self,
+                origin: event,
+                socketService: socketService,
+                eventsService: eventsService,
+                cancellables: &cancellables
+            )
+            
+            processLiveChatRecoveredEvent(response)
+        } catch {
+            if let error = error as? OperationError, error.errorCode == .recoveringLivechatFailed {
+                try await processRecoveringThreadFailedError(error)
+            } else {
+                throw error
+            }
+        }
+    }
+    
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func loadInfo(for threadId: UUID) throws {
+    func loadInfo(for threadId: UUID) async throws {
         guard let thread = threads.getThread(with: threadId) else {
             throw CXoneChatError.invalidThread
         }
         guard thread.state != .pending else {
             LogManager.info("Loads information about the thread is available only for threads existing in the backend")
-            // There is not way to optain information if the scene is chat list or single conversation, so it is necessary to notify both delegate methods
-            delegate.onThreadsUpdated(threads)
-            delegate.onThreadUpdated(thread)
             return
         }
 
         LogManager.trace("Loads information about the thread")
 
-        let data = try eventsService.create(
-            .loadThreadMetadata,
+        let event = try eventsService.create(
+            event: .loadThreadMetadata,
             with: .loadThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: threadId, threadName: nil)))
         )
 
-        try socketService.send(data: data)
-    }
-
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the provided ID for the thread was invalid, so the action could not be performed.
-    func handleWelcomeMessage(_ message: String) throws {
-        UserDefaultsService.shared.set(message, for: .welcomeMessage)
-
-        guard let activeThread = connectionContext.activeThread, activeThread.state == .pending else {
-            // No available thread for handling welcome message or
-            // no need to handle welcome message for thread that exists on the BE side -> first message should be the welcome message
-            return
-        }
-        guard activeThread.messages.isEmpty else {
-            // Thread already contains some messages -> no need to append welcome message because it has been already added
-            return
-        }
-        guard let index = threads.index(of: activeThread.id) else {
-            throw CXoneChatError.invalidThread
-        }
-        guard let service = messages as? MessagesService else {
-            throw CXoneChatError.invalidParameter("messagesService")
-        }
-
-        threads[index].merge(messages: [try service.getParsedWelcomeMessage(message, for: activeThread)])
-
-        // Override active thread with the one with updated message list of a welcome message
-        connectionContext.activeThread = threads[index]
+        let response = try await events.sink(
+            type: .threadMetadataLoaded,
+            as: ThreadMetadataLoadedEventDTO.self,
+            origin: event,
+            socketService: socketService,
+            eventsService: eventsService,
+            cancellables: &cancellables
+        )
+        
+        try processThreadMetadataLoadedEvent(response)
     }
 }
 
 // MARK: - EventReceiver
 
-extension ChatThreadsService: EventReceiver {
+extension ChatThreadListService: EventReceiver {
     
     func addListeners() {
-        addListener(for: .senderTypingStarted, with: processAgentTypingEvent(_:))
-        addListener(for: .senderTypingEnded, with: processAgentTypingEvent(_:))
-        addListener(processMessageCreatedEvent(_:))
-        addListener(processThreadRecoveredEvent(_:))
-        addListener(processMessageReadChangeEvent(_:))
-        addListener(processContactInboxAssigneeChangedEvent(_:))
-        addListener(processMoreMessagesLoaded(_:))
-        addListener(for: .threadListFetched, with: processThreadListFetchedEvent(_:))
-        addListener(processThreadMetadataLoadedEvent(_:))
-        addListener(processCaseStatusChangedEvent(_:))
-        addListener(processSetPositionInQueueEvent(_:))
-        addListener(processLiveChatRecoveredEvent(_:))
-        addListener(processOperationError(_:))
+        addListener(for: .senderTypingStarted, with: processAgentTypingEvent)
+        addListener(for: .senderTypingEnded, with: processAgentTypingEvent)
+        addListener(processMessageReadChangeEvent)
+        addListener(processContactInboxAssigneeChangedEvent)
+        addListener(processCaseStatusChangedEvent)
+        addListener(processSetPositionInQueueEvent)
+        addListener(processMessageCreatedEvent)
+        addListener(processProactiveAction)
     }
 
     func clearStoredData() {
         LogManager.info("Removing stored data for chat threads service")
 
         threads.removeAll()
+        threadProviders.removeAll()
 
-        contactCustomFields?.clearStoredData()
+        contactCustomFieldsService?.clearStoredData()
     }
 }
 
 // MARK: - Socket Methods
 
-extension ChatThreadsService {
-    
-    func processOperationError(_ event: OperationError) {
-        #warning("DE-114311 - takes recoveringThreadFailed out of this list")
-        #warning("DE-114310 - takes recoveringLiveChatFailed out of this list")
-        switch event.errorCode {
-        case .recoveringThreadFailed, .recoveringLiveChatFailed:
-            processRecoveringThreadFailedError(event)
-        default:
-            break
-        }
-    }
+extension ChatThreadListService {
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processThreadRecoveredEvent(_ event: ThreadRecoveredEventDTO) throws {
@@ -588,27 +446,24 @@ extension ChatThreadsService {
         
         socketService.connectionContext.contactId = event.postback.data.consumerContact.id
         
-        contactCustomFields?.updateFields(
+        contactCustomFieldsService?.updateFields(
             event.postback.data.consumerContact.customFields,
             for: event.postback.data.thread.idOnExternalPlatform
         )
-        customerFields?.updateFields(event.postback.data.customerCustomFields)
+        customerCustomFieldsService?.updateFields(event.postback.data.customerCustomFields)
         
-        if !threads.contains(where: { $0.id == event.postback.data.thread.idOnExternalPlatform }) {
-            threads.append(
-                ChatThread(
-                    id: event.postback.data.thread.idOnExternalPlatform,
-                    state: event.postback.data.thread.canAddMoreMessages ? .ready : .closed
-                )
+        let thread = threads.getThread(with: event.postback.data.thread.idOnExternalPlatform) ?? {
+            let newThread = ChatThread(
+                id: event.postback.data.thread.idOnExternalPlatform,
+                state: event.postback.data.thread.canAddMoreMessages ? .ready : .closed
             )
-        }
+            
+            threads.append(newThread)
+            
+            return newThread
+        }()
         
-        let thread = try threads.updateAndGetThread(with: event)
-        
-        if connectionContext.activeThread?.id == thread.id {
-            // Update the metadata of the active thread if the event has updated it
-            connectionContext.activeThread = thread
-        }
+        thread.updated(from: event.postback.data)
         
         connectionContext.chatState = .ready
 
@@ -617,7 +472,9 @@ extension ChatThreadsService {
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    func processLiveChatRecoveredEvent(_ event: LiveChatRecoveredDTO) throws {
+    func processLiveChatRecoveredEvent(_ event: LiveChatRecoveredDTO) {
+        LogManager.trace("Processing thread recovered with UUID - \(String(describing: event.postback.data?.thread.idOnExternalPlatform))")
+        
         guard let data = event.postback.data, data.contact.status != .closed else {
             LogManager.trace(
                 event.postback.data == nil
@@ -625,25 +482,33 @@ extension ChatThreadsService {
                     : "Received thread has been closed -> ignore it and proceed to create a thread"
             )
         
+            // Make sure that the stored thread is also in correct state
+            threads.first?.state = .closed
+            
             connectionContext.chatState = .ready
             
             delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
             return
         }
         
-        LogManager.trace("Processing thread recovered with UUID - \(data.thread.idOnExternalPlatform)")
-        
         socketService.connectionContext.contactId = data.contact.id
         
-        contactCustomFields?.updateFields(data.contact.customFields, for: data.thread.idOnExternalPlatform)
-        customerFields?.updateFields(data.customerCustomFields)
+        contactCustomFieldsService?.updateFields(data.contact.customFields, for: data.thread.idOnExternalPlatform)
+        customerCustomFieldsService?.updateFields(data.customerCustomFields)
         
-        if !threads.contains(where: { $0.id == data.thread.idOnExternalPlatform }) {
-            threads.append(ChatThread(id: data.thread.idOnExternalPlatform, state: .ready))
-        }
+        let thread = threads.getThread(with: data.thread.idOnExternalPlatform) ?? {
+            let newThread = ChatThread(
+                id: data.thread.idOnExternalPlatform,
+                state: data.thread.canAddMoreMessages ? .ready : .closed
+            )
+            
+            threads.append(newThread)
+            
+            return newThread
+        }()
         
-        let thread = try threads.updateAndGetThread(with: data)
-        connectionContext.activeThread = thread
+        thread.updated(from: data)
+        
         connectionContext.chatState = .ready
 
         delegate.onThreadUpdated(thread)
@@ -652,10 +517,10 @@ extension ChatThreadsService {
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func processThreadListFetchedEvent(_ event: GenericEventDTO) throws {
+    func processThreadListFetchedEvent(_ event: GenericEventDTO) async throws {
         LogManager.trace("Processing thread list fetched")
         
         // Store threads that has been created locally but not yet on the BE so they are not overriden with the BE threads
@@ -663,16 +528,30 @@ extension ChatThreadsService {
         threads = event.postback?.threads?.map(ChatThreadMapper.map) ?? []
         threads.append(contentsOf: additionalThreads)
         
-        connectionContext.chatState = .ready
-        delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        guard !threads.isEmpty else {
+            LogManager.info("There are no threads for loading their metadata - setting chat state to `.ready`")
+            
+            connectionContext.chatState = .ready
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onThreadsUpdated(threads)
+            return
+        }
         
-        try threads.forEach { thread in
-            if thread.id == connectionContext.activeThread?.id {
-                LogManager.info("Fetched thread is the active one - recovering it directly instaed of loading its info and then calling recover")
-                
-                try recoverThread(threadId: thread.id)
-            } else {
-                try loadInfo(for: thread.id)
+        let filteredThreads = threads.filter { $0.state != .pending }
+        
+        if filteredThreads.isEmpty {
+            connectionContext.chatState = .ready
+            
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            delegate.onThreadsUpdated(threads)
+            
+            // It is necessary notify also the only one thread in the array for singlethread and livechat modes
+            if let thread = threads.first {
+                delegate.onThreadUpdated(thread)
+            }
+        } else {
+            for thread in filteredThreads {
+                try await loadInfo(for: thread.id)
             }
         }
     }
@@ -695,38 +574,10 @@ extension ChatThreadsService {
         // There can be more threads and one of them could be locally created so it is necessary to invoke `onThreadsUpdated(_:)`
         // even for thread in `.pending` state.
         if threads.allSatisfy({ $0.state == .pending || $0.state.isLoaded }) {
+            connectionContext.chatState = .ready
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            
             delegate.onThreadsUpdated(threads)
-        }
-    }
-    
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the message services is not correctly registered.
-    func processMoreMessagesLoaded(_ event: MoreMessagesLoadedEventDTO) throws {
-        LogManager.trace("Processing more messages")
-        
-        guard let activeThread = connectionContext.activeThread, let index = threads.index(of: activeThread.id) else {
-            throw CXoneChatError.invalidThread
-        }
-            
-        if event.postback.data.messages.isEmpty {
-            threads[index].scrollToken.removeAll()
-            connectionContext.activeThread?.scrollToken.removeAll()
-            
-            delegate.onThreadUpdated(threads[index])
-        } else {
-            guard let messagesService = messages as? MessagesService else {
-                throw CXoneChatError.invalidParameter("messagesService")
-            }
-            
-            let messages = event.postback.data.messages
-                .filter { !messagesService.shouldIgnoreMessage($0) }
-                .map(MessageMapper.map)
-
-            threads[index].merge(messages: messages)
-            threads[index].scrollToken = event.postback.data.scrollToken
-            connectionContext.activeThread = threads[index]
-            
-            delegate.onThreadUpdated(threads[index])
         }
     }
     
@@ -739,59 +590,62 @@ extension ChatThreadsService {
         }
 
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
-        if let service = messages as? MessagesService, !service.shouldIgnoreMessage(event.data.message) {
-            threads[index].merge(messages: [MessageMapper.map(event.data.message)])
-            
-            if connectionContext.activeThread?.id == threads[index].id {
-                // Update the metadata of the active thread if the event has updated it
-                connectionContext.activeThread = threads[index]
-            }
-            
-            delegate.onThreadUpdated(threads[index])
+        guard let service = try provider(for: threads[index]) as? ChatThreadService, !service.shouldIgnoreMessage(event.data.message) else {
+            return
         }
+        
+        threads[index].merge(messages: [MessageMapper.map(event.data.message)])
+            
+        delegate.onThreadUpdated(threads[index])
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processContactInboxAssigneeChangedEvent(_ event: ContactInboxAssigneeChangedEventDTO) throws {
         LogManager.trace("Processing thread assignee has changed")
         
-        if connectionContext.chatMode == .liveChat, event.data.case.threadIdOnExternalPlatform != connectionContext.activeThread?.id {
+        if connectionContext.chatMode == .liveChat, threads.getThread(with: event.data.case.threadIdOnExternalPlatform) == nil {
             LogManager.info("Event received for a thread other than the active thread")
             return
         }
         
-        guard let index = threads.index(of: event.data.case.threadIdOnExternalPlatform) else {
+        guard let thread = threads.getThread(with: event.data.case.threadIdOnExternalPlatform) else {
             throw CXoneChatError.invalidThread
         }
         
         let agent = event.data.inboxAssignee.map(AgentMapper.map)
-        threads[index].assignedAgent = agent
-        threads[index].lastAssignedAgent = event.data.previousInboxAssignee.map(AgentMapper.map)
-        threads[index].positionInQueue = nil
+        thread.assignedAgent = agent
+        thread.lastAssignedAgent = event.data.previousInboxAssignee.map(AgentMapper.map)
+        thread.positionInQueue = nil
         
         // It is not necessary to change thread state based on assignee change event for messaging channel configuration
         if connectionContext.chatMode == .liveChat {
-            threads[index].state = event.data.case.status == .closed ? .closed : .ready
+            // If event indicates the thread is closed, update the state
+            // But don't change state from closed to anything else
+            if event.data.case.status == .closed {
+                thread.state = .closed
+            } else if thread.state != .closed {
+                thread.state = .ready
+            }
         }
         
-        if connectionContext.activeThread?.id == threads[index].id {
-            // Update the metadata of the active thread if the event has updated it
-            connectionContext.activeThread = threads[index]
-        }
-        
-        delegate.onThreadUpdated(threads[index])
+        delegate.onThreadUpdated(thread)
     }
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func processMessageCreatedEvent(_ event: MessageCreatedEventDTO) throws {
         LogManager.trace("Processing message created")
         
-        guard let index = threads.index(of: event.data.thread.idOnExternalPlatform) else {
+        guard let thread = threads.getThread(with: event.data.thread.idOnExternalPlatform) else {
             throw CXoneChatError.invalidThread
         }
         
         connectionContext.contactId = event.data.case.id
-        threads[index].contactId = event.data.case.id
+        thread.contactId = event.data.case.id
 
         if persistedSetPositionInQueueEvent?.data.consumerContact == event.data.case.id, let persistedSetPositionInQueueEvent {
             self.persistedSetPositionInQueueEvent = nil
@@ -800,38 +654,20 @@ extension ChatThreadsService {
         }
         
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
-        guard let service = messages as? MessagesService, !service.shouldIgnoreMessage(event.data.message) else {
+        guard let service = try provider(for: thread) as? ChatThreadService, !service.shouldIgnoreMessage(event.data.message) else {
             LogManager.info("Ignoring incomming message from BE - it's content is a special one like begin liveChat conversation or welcome message")
             return
         }
         
         let message = MessageMapper.map(event.data.message)
         
-        threads[index].merge(messages: [message])
+        thread.merge(messages: [message])
 
-        if threads[index].state != .ready {
-            threads[index].state = .ready
+        if thread.state != .ready && thread.state != .closed {
+            thread.state = .ready
         }
         
-        if connectionContext.activeThread?.id == threads[index].id {
-            // Update the metadata of the active thread if the event has updated it
-            connectionContext.activeThread = threads[index]
-        }
-        
-        delegate.onThreadUpdated(threads[index])
-    }
-    
-    func processAgentTypingEvent(_ event: AgentTypingEventDTO) {
-        let isTyping = event.eventType == .senderTypingStarted
-
-        guard event.data.user != nil else {
-            LogManager.info("Received typing event for unassigned agent")
-            return
-        }
-        
-        LogManager.trace("Processing agent typing did \(isTyping ? "started" : "ended")")
-        
-        delegate.onAgentTyping(isTyping, threadId: event.data.thread.idOnExternalPlatform)
+        delegate.onThreadUpdated(thread)
     }
     
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
@@ -854,30 +690,27 @@ extension ChatThreadsService {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
-    func processRecoveringThreadFailedError(_ error: Error) {
-        LogManager.error(error.localizedDescription)
-        
+    func processRecoveringThreadFailedError(_ error: Error) async throws {
         if connectionContext.chatMode == .liveChat, connectionContext.channelConfig.settings.isRecoverLiveChatDoesNotFailEnabled {
-            delegate.onError(error)
+            LogManager.error("Feature toggle isRecoverLiveChatDoesNotFailEnabled is enabled but recovering thread failed: \( error.localizedDescription)")
+            
+            throw error
         } else if connectionContext.chatMode != .multithread, let thread = threads.first(where: { $0.state == .pending }) {
-            // Trying to recover thread that has been created locally so BE does not know about it
+            LogManager.info("Trying to recover thread that has been created locally so BE does not know about it. Error: \(error.localizedDescription)")
+            
             connectionContext.chatState = .ready
             
             delegate.onThreadUpdated(thread)
         } else if connectionContext.channelConfig.prechatSurvey != nil {
-            // Channel Configuration contains pre-chat which has to be filled-in. Notify about ready chat
+            LogManager.info("Channel Configuration contains pre-chat which has to be filled-in. Notify about ready chat. Error: \(error.localizedDescription)")
+            
             connectionContext.chatState = .ready
             
             delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } else {
-            // No thread available and no form needs to be filled-in -> automatically create a new one
-            Task {
-                do {
-                    try await create()
-                } catch {
-                    delegate.onError(error)
-                }
-            }
+            LogManager.info("No thread available and no form needs to be filled-in -> automatically create a new one. Error: \(error.localizedDescription)")
+            
+            try await create()
         }
     }
     
@@ -892,11 +725,6 @@ extension ChatThreadsService {
         if connectionContext.chatMode == .liveChat, event.data.case.status == .closed {
             threads[index].state = .closed
             threads[index].positionInQueue = nil
-        }
-        
-        if connectionContext.activeThread?.id == threads[index].id {
-            // Update the metadata of the active thread if the event has updated it
-            connectionContext.activeThread = threads[index]
         }
         
         delegate.onThreadUpdated(threads[index])
@@ -918,23 +746,85 @@ extension ChatThreadsService {
         }
 
         threads[index].positionInQueue = event.data.positionInQueue
-        connectionContext.activeThread = threads[index]
 
         delegate.onThreadUpdated(threads[index])
+    }
+    
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the provided ID for the thread was invalid, so the action could not be performed.
+    func processProactiveAction(_ event: ProactiveActionEventDTO) throws {
+        LogManager.trace("Processing proactive action")
+        
+        switch event.data.actionType {
+        case .welcomeMessage:
+            LogManager.trace("Processing proactive action of type welcome message")
+            
+            guard let message = event.data.data?.content.bodyText else {
+                throw CXoneChatError.invalidData
+            }
+            
+            if let fields = event.data.data?.customFields {
+                customerCustomFieldsService?.updateFields(fields)
+            }
+            
+            UserDefaultsService.shared.set(message, for: .welcomeMessage)
+        case .customPopupBox:
+            LogManager.trace("Ignoring proactive action of type custom popup box")
+            //
+            //            guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            //                throw CXoneChatError.invalidData
+            //            }
+            //
+            //            let data = dict["data"] as? [String: Any]
+            //            let proactiveAction = data?["proactiveAction"] as? [String: Any]
+            //            let action = proactiveAction?["action"] as? [String: Any]
+            //            let actionData = action?["data"] as? [String: Any]
+            //            let content = actionData?["content"] as? [String: Any]
+            //            let variables = content?["variables"] as? [String: Any]
+            //
+            //            guard let actionId = action?["actionId"] as? String else {
+            //                throw CXoneChatError.missingParameter("actionId")
+            //            }
+            //            guard let variables, !variables.isEmpty else {
+            //                throw CXoneChatError.missingParameter("variables")
+            //            }
+            //
+            //            let id = UUID(uuidString: actionId) ?? UUID()
+            //
+            //            delegate.onProactivePopupAction(data: variables, actionId: id)
+        }
+    }
+    
+    func processAgentTypingEvent(_ event: AgentTypingEventDTO) {
+        let isTyping = event.eventType == .senderTypingStarted
+
+        guard let agent = event.data.user else {
+            LogManager.info("Received typing event for unassigned agent")
+            return
+        }
+        
+        LogManager.trace("Processing agent typing did \(isTyping ? "started" : "ended")")
+        
+        guard let thread = threads.first(where: { $0.id == event.data.thread.idOnExternalPlatform }) else {
+            LogManager.warning("Agent typing in unknown thread")
+            return
+        }
+        
+        delegate.onAgentTyping(isTyping, agent: AgentMapper.map(agent), threadId: thread.id)
     }
 }
 
 // MARK: - Private methods
 
-private extension ChatThreadsService {
+private extension ChatThreadListService {
     
-    func allPrechatCustomFieldsFilled(_ customFields: [String: String]?) -> Bool {
+    func allPrechatCustomFieldsFilled(for threadId: UUID) -> Bool {
         guard let prechatSurveyCustomFields = connectionContext.channelConfig.prechatSurvey?.customFields else {
             return true
         }
-        guard let customFields else {
-            return false
-        }
+        
+        let customFields = customFields.get(for: threadId)
         
         let preChatIdents = prechatSurveyCustomFields
             .compactMap { entity -> String? in
@@ -960,42 +850,6 @@ private extension ChatThreadsService {
 }
 
 // MARK: - Helpers
-
-private extension [ChatThread] {
-    
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    mutating func updateAndGetThread(with eventData: ThreadRecoveredEventDTO) throws -> ChatThread {
-        guard let index = index(of: eventData.postback.data.thread.idOnExternalPlatform) else {
-            throw CXoneChatError.invalidThread
-        }
-        
-        self[index] = self[index].updated(from: eventData.postback.data)
-        
-        return self[index]
-    }
-    
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    mutating func updateAndGetThread(with data: LiveChatRecoveredPostbackDataDTO) throws -> ChatThread {
-        guard let index = index(of: data.thread.idOnExternalPlatform) else {
-            throw CXoneChatError.invalidThread
-        }
-        
-        self[index] = self[index].updated(from: data)
-        
-        return self[index]
-    }
-}
-
-private extension MessageContentType {
-    
-    var text: String? {
-        guard case .text(let payload) = self else {
-            return nil
-        }
-        
-        return payload.text
-    }
-}
 
 extension Array where Element: Hashable {
     

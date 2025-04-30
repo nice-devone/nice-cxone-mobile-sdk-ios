@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -50,17 +50,6 @@ extension Array where Element == ChatThread {
         self.first { $0.id == threadId }
     }
     
-    /// Returns `UUID` based on given thread ID.
-    /// - Parameter threadId: The unique id of the thread.
-    /// - Returns: `UUID` of found thread, if it exists.
-    func getId(of threadId: UUID) -> UUID? {
-        guard let id = self.first(where: { $0.id == threadId })?.id else {
-            return nil
-        }
-        
-        return id
-    }
-    
     /// Returns Index of thread based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
     /// - Returns: Index of found thread.
@@ -92,8 +81,12 @@ extension Array where Element == CustomFieldDTO {
 // MARK: - Array + AnyCancellable
 
 extension Array where Element: AnyCancellable {
+
     mutating func cancel() {
-        forEach { $0.cancel() }
+        forEach {
+            $0.cancel()
+        }
+        
         removeAll()
     }
 }

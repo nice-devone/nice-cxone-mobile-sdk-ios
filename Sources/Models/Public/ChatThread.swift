@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// All information about a chat thread as well as the messages for the thread.
-public struct ChatThread: Identifiable {
+public class ChatThread: Identifiable {
 
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
     public let id: UUID
@@ -25,7 +25,7 @@ public struct ChatThread: Identifiable {
     public var name: String?
     
     /// The list of messages on the thread.
-    public var messages = [Message]()
+    public var messages: [Message]
 
     /// The agent assigned in the thread.
     public var assignedAgent: Agent?
@@ -39,7 +39,7 @@ public struct ChatThread: Identifiable {
     var contactId: String?
     
     /// The token for the scroll position used to load more messages.
-    public var scrollToken: String = ""
+    public var scrollToken: String
     
     /// The thread state
     public var state: ChatThreadState
@@ -51,13 +51,37 @@ public struct ChatThread: Identifiable {
 
     /// The position in the queue
     public var positionInQueue: Int?
+    
+    // MARK: - Init
+    
+    init(
+        id: UUID,
+        state: ChatThreadState,
+        name: String? = nil,
+        messages: [Message] = [],
+        assignedAgent: Agent? = nil,
+        lastAssignedAgent: Agent? = nil,
+        contactId: String? = nil,
+        scrollToken: String = "",
+        positionInQueue: Int? = nil
+    ) {
+        self.id = id
+        self.state = state
+        self.name = name
+        self.messages = messages
+        self.assignedAgent = assignedAgent
+        self.lastAssignedAgent = lastAssignedAgent
+        self.contactId = contactId
+        self.scrollToken = scrollToken
+        self.positionInQueue = positionInQueue
+    }
 }
 
 // MARK: - Helpers
 
 extension ChatThread {
     
-    mutating func merge(messages inserted: [Message]) {
+    func merge(messages inserted: [Message]) {
         inserted.forEach { message in
             if let index = index(of: message) {
                 messages[index] = message
@@ -74,7 +98,7 @@ extension ChatThread {
         }
     }
     
-    func updated(from data: ThreadRecoveredEventPostbackDataDTO) -> ChatThread {
+    func updated(from data: ThreadRecoveredEventPostbackDataDTO) {
         updated(
             messages: data.messages,
             inboxAssignee: data.inboxAssignee.map(AgentMapper.map),
@@ -86,17 +110,17 @@ extension ChatThread {
         )
     }
     
-    func updated(from data: LiveChatRecoveredPostbackDataDTO) -> ChatThread {
+    func updated(from data: LiveChatRecoveredPostbackDataDTO) {
         let filteredMessages = data.messages.filter { message in
             guard case .text(let payload) = message.contentType else {
                 return true
             }
             
             // Do not append content of `beginLiveChatConversationMessage`
-            return payload.text != MessagesService.beginLiveChatConversationMessage
+            return payload.text != ChatThreadService.beginLiveChatConversationMessage
         }
         
-        return updated(
+        updated(
             messages: filteredMessages,
             inboxAssignee: data.inboxAssignee.map(AgentMapper.map),
             previousInboxAssignee: data.previousInboxAssignee.map(AgentMapper.map),
@@ -118,23 +142,17 @@ extension ChatThread {
         scrollToken: String? = nil,
         state: ChatThreadState? = nil,
         positionInQueue: Int? = nil
-    ) -> ChatThread {
-        var newThread = ChatThread(
-            id: self.id,
-            name: name ?? self.name,
-            messages: self.messages,
-            assignedAgent: inboxAssignee ?? self.assignedAgent,
-            lastAssignedAgent: previousInboxAssignee ?? self.lastAssignedAgent,
-            contactId: contactId ?? self.contactId,
-            scrollToken: scrollToken ?? self.scrollToken,
-            state: state ?? self.state,
-            positionInQueue: positionInQueue ?? self.positionInQueue
-        )
+    ) {
+        self.state = state ?? self.state
+        self.name = name ?? self.name
+        self.assignedAgent = inboxAssignee ?? self.assignedAgent
+        self.lastAssignedAgent = previousInboxAssignee ?? self.lastAssignedAgent
+        self.contactId = contactId ?? self.contactId
+        self.scrollToken = scrollToken ?? self.scrollToken
+        self.positionInQueue = positionInQueue ?? self.positionInQueue
         
         if let messages {
-            newThread.merge(messages: messages.map(MessageMapper.map))
+            self.merge(messages: messages.map(MessageMapper.map))
         }
-        
-        return newThread
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -37,16 +37,16 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testThreadUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.socketDelegateManager.onThreadUpdated(ChatThreadMapper.map(MockData.getThread()))
-        
+        CXoneChat.socketDelegateManager.onThreadUpdated(MockData.getThread())
+
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
     func testThreadsUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.socketDelegateManager.onThreadsUpdated([ChatThreadMapper.map(MockData.getThread())])
-        
+        CXoneChat.socketDelegateManager.onThreadsUpdated([MockData.getThread()])
+
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
@@ -66,10 +66,10 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testOnAgentTypingDefaultImplementationCalled() async {
+    func testOnAgentTypingInvokesDefaultImplementation() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.socketDelegateManager.onAgentTyping(true, threadId: UUID())
+        CXoneChat.socketDelegateManager.onAgentTyping(true, agent: AgentMapper.map(MockData.agent), threadId: UUID())
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
