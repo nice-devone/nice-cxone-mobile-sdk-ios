@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -25,26 +25,6 @@ struct CustomFieldDTO: Equatable {
     var value: String
     
     var updatedAt: Date
-
-    // MARK: - Init
-
-    /// - Parameters:
-    ///   - ident: The key of the custom field data.
-    ///   - value: The actual value of the custom field.
-    ///   - updatedAt: The timestamp of the value when the value has been created/updated.
-    init(ident: String, value: String, updatedAt: Date) {
-        self.ident = ident
-        self.value = value
-        self.updatedAt = updatedAt
-    }
-    
-    init?(from type: CustomFieldDTOType) {
-        guard let value = type.value, !value.isEmpty else {
-            return nil
-        }
-        
-        self = CustomFieldDTO(ident: type.ident, value: value, updatedAt: type.updatedAt)
-    }
 }
 
 // MARK: - Codable

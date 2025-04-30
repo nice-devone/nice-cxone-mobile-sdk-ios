@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -23,21 +23,7 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testOperationError() throws {
-        // Can't use checkParsing here because the actual forwarded event isn't the
-        // same as the parsed event.
-        let data = try loadBundleData(from: "OperationError", type: "json")
-        let expect = try JSONDecoder().decode(GenericEventDTO.self, from: data)
-
-        let actual = data.toReceivedEvent()
-
-        XCTAssertEqual(
-            actual as? OperationError,
-            expect.error
-        )
-    }
-
-    func testInternalServerError() throws {
-        #warning("TBD: Test Internal Server Error deserialization")
+        try checkParsing(from: "OperationError", type: OperationError.self)
     }
 
     func testEventInS3() throws {
@@ -45,19 +31,13 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testAgentTypingStarted() throws {
-        let event = try checkParsing(
-            from: "AgentTypingStarted",
-            type: AgentTypingEventDTO.self
-        )
+        let event = try checkParsing(from: "AgentTypingStarted", type: AgentTypingEventDTO.self)
 
         XCTAssertEqual(event?.agentTyping, true)
     }
 
     func testAgentTypingEnded() throws {
-        let event = try checkParsing(
-            from: "AgentTypingEnded",
-            type: AgentTypingEventDTO.self
-        )
+        let event = try checkParsing(from: "AgentTypingEnded", type: AgentTypingEventDTO.self)
 
         XCTAssertEqual(event?.agentTyping, false)
     }
@@ -79,10 +59,7 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testContactInboxAssigneeChanged() throws {
-        try checkParsing(
-            from: "CaseInboxAssigneeChanged",
-            type: ContactInboxAssigneeChangedEventDTO.self
-        )
+        try checkParsing(from: "CaseInboxAssigneeChanged", type: ContactInboxAssigneeChangedEventDTO.self)
     }
 
     func testThreadListFetched() throws {
@@ -96,7 +73,12 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testCustomerReconnected() throws {
-        #warning("Implement CustomerReconnected parsing test")
+        let data = try loadBundleData(from: "CustomerReconnectedEvent", type: "json")
+        let expect = try JSONDecoder().decode(GenericEventDTO.self, from: data)
+
+        let actual = data.toReceivedEvent()
+
+        XCTAssertEqual(actual as? GenericEventDTO, expect)
     }
 
     func testMoreMessagesLoaded() throws {
@@ -108,21 +90,22 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testTokenRefreshed() throws {
-        #warning("Implement TokenRefreshed parsing test")
+        let data = try loadBundleData(from: "TokenRefreshed", type: "json")
+        let expect = try JSONDecoder().decode(TokenRefreshedEventDTO.self, from: data)
+
+        let actual = data.toReceivedEvent() as? TokenRefreshedEventDTO
+
+        XCTAssertEqual(actual?.eventId, expect.eventId)
+        XCTAssertEqual(actual?.postback.accessToken.token, expect.postback.accessToken.token)
+        XCTAssertEqual(actual?.postback.accessToken.expiresIn, expect.postback.accessToken.expiresIn)
     }
 
     func testMetadataLoaded() throws {
-        try checkParsing(
-            from: "ThreadMetadataLoadedEvent",
-            type: ThreadMetadataLoadedEventDTO.self
-        )
+        try checkParsing(from: "ThreadMetadataLoadedEvent", type: ThreadMetadataLoadedEventDTO.self)
     }
 
     func testFireProactiveAction() throws {
-        try checkParsing(
-            from: "FireProactiveAction+WelcomeMessage",
-            type: ProactiveActionEventDTO.self
-        )
+        try checkParsing(from: "FireProactiveAction+WelcomeMessage", type: ProactiveActionEventDTO.self)
     }
 
     func testCaseStatusChanged() throws {
@@ -134,7 +117,7 @@ final class ReceivedEventTests: XCTestCase {
     }
 
     func testLiveChatRestored() throws {
-        #warning("Implement LiveChatRecovered parsing test")
+        try checkParsing(from: "LivechatRecoveredEvent", type: LiveChatRecoveredDTO.self)
     }
 }
 

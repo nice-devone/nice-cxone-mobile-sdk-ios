@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import Foundation
 /// It is a URL link with an image preview and a defined title.
 ///
 /// The customer is able to click on it to be forwarded to the particular page.
-public struct MessageRichLink {
+public struct MessageRichLink: Equatable {
     
     /// Title of the Rich Link in the conversation
     public let title: String

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 
 import Foundation
 
-struct ServerError: LocalizedError, Codable, Equatable {
+struct ServerError: LocalizedError {
 
-    var eventType: EventType? { nil }
+    // MARK: - Properties
 
     let message: String
 
@@ -28,10 +28,53 @@ struct ServerError: LocalizedError, Codable, Equatable {
     var errorDescription: String? { message }
 }
 
+// MARK: - Equatable
+
+extension ServerError: Equatable {
+    
+    static func == (lhs: ServerError, rhs: ServerError) -> Bool {
+        lhs.message == rhs.message
+            && lhs.connectionId == rhs.connectionId
+            && lhs.requestId == rhs.requestId
+    }
+}
+
 // MARK: - ReceivedEvent
 
 extension ServerError: ReceivedEvent {
     static let eventType: EventType? = nil
 
+    /// - Warning: The value is initialized locally so it does not refer to the server one
+    var eventId: UUID { UUID.provide() }
+    var eventType: EventType? { nil }
     var postbackEventType: EventType? { nil }
+}
+
+// MARK: - Codable
+
+extension ServerError: Codable {
+    
+    enum CodingKeys: CodingKey {
+        case eventId
+        case message
+        case connectionId
+        case requestId
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.message = try container.decode(String.self, forKey: .message)
+        self.connectionId = try container.decode(UUID.self, forKey: .connectionId)
+        self.requestId = try container.decode(UUID.self, forKey: .requestId)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.eventId, forKey: .eventId)
+        try container.encode(self.message, forKey: .message)
+        try container.encode(self.connectionId, forKey: .connectionId)
+        try container.encode(self.requestId, forKey: .requestId)
+    }
 }

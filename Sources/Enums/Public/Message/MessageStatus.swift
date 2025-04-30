@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import Foundation
 /// This enum is designed for categorizing the status of chat messages,
 /// providing information about whether a message has been sent, delivered, or seen by the recipient.
 /// It is valuable for tracking and displaying the communication status in messaging and chat applications.
-public enum MessageStatus {
+public enum MessageStatus: Comparable {
     
     /// Indicates that the message has been sent but not yet delivered.
     case sent
@@ -30,4 +30,7 @@ public enum MessageStatus {
     
     /// Indicates that the message has been seen or read by the recipient.
     case seen
+    
+    /// Indicates that the message has not been sent properly.
+    case failed
 }

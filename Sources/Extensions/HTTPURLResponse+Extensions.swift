@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import Foundation
 
 extension HTTPURLResponse {
     
-    func log(data: Data?, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
+    func log(data: Data?, file: StaticString = #file, line: UInt = #line) {
         guard let urlString = url?.absoluteString else {
             return
         }
@@ -36,6 +36,6 @@ extension HTTPURLResponse {
             output += "Body: \(formattedJSON)\n"
         }
         
-        LogManager.info(output, fun: fun, file: file, line: line)
+        LogManager.info(output, file: file, line: line)
     }
 }

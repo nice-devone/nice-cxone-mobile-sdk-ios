@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ extension URLRequest {
     
     // MARK: - Methods
     
-    func log(fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
+    func log(file: StaticString = #file, line: UInt = #line) {
         guard let urlString = url?.absoluteString else {
             return
         }
@@ -63,7 +63,7 @@ extension URLRequest {
             output += "Body: \(formattedJSON)\n"
         }
         
-        LogManager.info(output, fun: fun, file: file, line: line)
+        LogManager.info(output, file: file, line: line)
     }
 }
 

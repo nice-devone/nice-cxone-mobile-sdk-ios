@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -34,11 +34,7 @@ class KeychainService: KeychainSwift {
             delete($0.rawValue)
         }
     }
-    
-    func delete(_ key: Keys) {
-        delete(key.rawValue)
-    }
-    
+
     @discardableResult
     func set<T: Encodable>(_ obj: T, for key: Keys) -> Bool {
         set(obj, for: key.rawValue)

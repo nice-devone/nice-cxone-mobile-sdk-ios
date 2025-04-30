@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -382,86 +382,6 @@ class ModelDecoderEncoderTests: XCTestCase {
         try testCases.forEach { element in
             XCTAssertNoThrow(try encoder.encode(element))
         }
-    }
-    
-    // MARK: - StoreVisitorEventDataType
-    
-    func testStoreVisitorEventDataTypeEncodeNoThrow() throws {
-        let testCases: [EventDataType] = [
-            .storeVisitorPayload(
-                VisitorDTO(
-                    customerIdentity: nil,
-                    browserFingerprint: DeviceFingerprintDTO(),
-                    journey: JourneyDTO(url: "url", utm: UTMDTO(source: "source", medium: "medium", campaign: "campaign", term: "term", content: "content")),
-                    customVariables: nil
-                )
-            ),
-            .visitorEvent(
-                VisitorsEventsDTO(
-                    visitorEvents: [
-                        VisitorEventDTO(
-                            id: LowerCaseUUID(),
-                            type: .custom,
-                            createdAtWithMilliseconds: dateProvider.now.iso8601withFractionalSeconds,
-                            data: nil
-                        )
-                    ]
-                )
-            )
-        ]
-        
-        try testCases.forEach { element in
-            XCTAssertNoThrow(try encoder.encode(element))
-        }
-    }
-    
-    // MARK: - VisitorEventDataType
-    
-    func testVisitorEventDataTypeEncodeNoThrow() throws {
-        let testCases: [VisitorEventDataType] = [.custom("custom")]
-        
-        try testCases.forEach { element in
-            XCTAssertNoThrow(try encoder.encode(element))
-        }
-    }
-    
-    // MARK: - StoreVisitorEventsPayloadDTO
-    
-    func testStoreVisitorEventsPayloadDTOEncodeCorrectly() throws {
-        let data = try loadBundleData(from: "StoreVisitorEventsPayloadDTO", type: "json")
-
-        let visitorId = UUID(uuidString: "c80f620c-7825-4695-aadd-cdfeb0bb7376")!
-        let eventId = UUID(uuidString: "5812e395-89d0-4680-a142-3f3d32b65bf0")!
-        
-        let entity = StoreVisitorEventsPayloadDTO(
-            eventType: .storeVisitorEvents,
-            brand: BrandDTO(id: 0),
-            visitorId: LowerCaseUUID(uuid: visitorId),
-            id: LowerCaseUUID(uuid: eventId),
-            data: .storeVisitorPayload(VisitorDTO(customerIdentity: nil, browserFingerprint: DeviceFingerprintDTO(), journey: nil, customVariables: nil)),
-            channel: ChannelIdentifierDTO(id: "channelId")
-        )
-        
-        guard let expectation = String(data: data, encoding: .utf8),
-              let encoded = String(data: try encoder.encode(entity), encoding: .utf8)
-        else {
-            throw XCTError("Could not get Strings from Data entities.")
-        }
-        
-        XCTAssertTrue(expectation.contains("destination"))
-        XCTAssertTrue(expectation.contains("5812e395-89d0-4680-a142-3f3d32b65bf0"))
-        XCTAssertTrue(encoded.contains("destination"))
-        XCTAssertTrue(encoded.contains("5812e395-89d0-4680-a142-3f3d32b65bf0"))
-        
-        XCTAssertTrue(expectation.contains("eventType"))
-        XCTAssertTrue(expectation.contains("StoreVisitorEvents"))
-        XCTAssertTrue(encoded.contains("eventType"))
-        XCTAssertTrue(encoded.contains("StoreVisitorEvents"))
-        
-        XCTAssertTrue(expectation.contains("visitor"))
-        XCTAssertTrue(expectation.contains("c80f620c-7825-4695-aadd-cdfeb0bb7376"))
-        XCTAssertTrue(encoded.contains("visitor"))
-        XCTAssertTrue(encoded.contains("c80f620c-7825-4695-aadd-cdfeb0bb7376"))
     }
     
     func testThreadRecoveredEventDecodeCorrectly() throws {

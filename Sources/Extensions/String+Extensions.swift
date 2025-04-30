@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -36,14 +36,6 @@ extension String {
     }
     
     // MARK: - Methods
-    
-    func substring(from: String) -> String? {
-        guard let range = self.range(of: from) else {
-            return nil
-        }
-        
-        return String(self[range.upperBound...])
-    }
     
     func substring(to: String) -> String? {
         guard let range = self.range(of: to) else {

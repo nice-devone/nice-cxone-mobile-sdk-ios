@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
 
 import Foundation
 
-struct OperationError: Codable, LocalizedError, Equatable {
+struct OperationError: LocalizedError {
 
-    var eventType: EventType? { nil }
+    // MARK: - Properties
 
+    let eventId: UUID
+    
     let errorCode: ErrorCode
 
     let transactionId: LowerCaseUUID
@@ -36,10 +38,59 @@ struct OperationError: Codable, LocalizedError, Equatable {
     }
 }
 
+// MARK: - Equatable
+
+extension OperationError: Equatable {
+    
+    static func == (lhs: OperationError, rhs: OperationError) -> Bool {
+        lhs.errorCode == rhs.errorCode
+            && lhs.transactionId == rhs.transactionId
+            && lhs.errorMessage == rhs.errorMessage
+    }
+}
+
 // MARK: - ReceivedEvent
 
 extension OperationError: ReceivedEvent {
     static let eventType: EventType? = nil
 
     var postbackEventType: EventType? { nil }
+    var postbackErrorCode: ErrorCode? { errorCode }
+    var eventType: EventType? { nil }
+}
+
+// MARK: - Codable
+
+extension OperationError: Codable {
+    
+    enum CodingKeys: CodingKey {
+        case eventId
+        case error
+    }
+    
+    enum ErrorKeys: CodingKey {
+        case errorCode
+        case transactionId
+        case errorMessage
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.eventId = try container.decodeUUIDIfPresent(forKey: .eventId) ?? UUID.provide()
+        
+        let errorContainer = try container.nestedContainer(keyedBy: ErrorKeys.self, forKey: .error)
+        self.errorCode = try errorContainer.decode(ErrorCode.self, forKey: .errorCode)
+        self.transactionId = try errorContainer.decode(LowerCaseUUID.self, forKey: .transactionId)
+        self.errorMessage = try errorContainer.decode(String.self, forKey: .errorMessage)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.eventId, forKey: .eventId)
+        
+        var errorContainer = container.nestedContainer(keyedBy: ErrorKeys.self, forKey: .error)
+        try errorContainer.encode(self.errorCode, forKey: .errorCode)
+        try errorContainer.encode(self.transactionId, forKey: .transactionId)
+        try errorContainer.encode(self.errorMessage, forKey: .errorMessage)
+    }
 }

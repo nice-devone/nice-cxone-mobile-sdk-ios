@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -25,14 +25,6 @@ struct ThreadRecoveredEventDTO: Decodable, Equatable {
 
     /// The postback of the thread recovered event.
     let postback: ThreadRecoveredEventPostbackDTO
-
-    // MARK: - constructor
-
-    init(eventType: EventType? = .threadRecovered, eventId: UUID, postback: ThreadRecoveredEventPostbackDTO) {
-        self.eventType = eventType
-        self.eventId = eventId
-        self.postback = postback
-    }
 }
 
 // MARK: - ReceivedEvent

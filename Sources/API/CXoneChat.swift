@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
 //
 
 import Combine
+import CXoneGuideUtility
 import Foundation
 
 /// The implementation of the interface for interacting with chat features of the CXone platform.
-public class CXoneChat: ChatProvider, EventReceiver {
+public class CXoneChat: ChatProvider {
 
     // MARK: - Static properties
-
-    /// The current marketing version of the CXone chat SDK
-    @available(*, deprecated, message: "Deprecated with 2.2.0. Please use version property of CXoneChatSDKModule.")
-    public static var version: String = "2.3.0"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
@@ -34,23 +31,10 @@ public class CXoneChat: ChatProvider, EventReceiver {
     
     // MARK: - Public properties
     
-    /// The handler for the chat events.
-    @available(*, deprecated, message: "Deprecated with 2.2.0 Please use add(delegate:)")
-    public weak var delegate: CXoneChatDelegate? {
-        willSet {
-            if let delegate = delegate {
-                remove(delegate: delegate)
-            }
-            if let delegate = newValue {
-                add(delegate: delegate)
-            }
-        }
-    }
-    
     /// The handler for the logs occured in CXoneChat.
-    public weak var logDelegate: LogDelegate? {
-        get { LogManager.delegate }
-        set { LogManager.delegate = newValue }
+    public static var logWriter: LogWriter? {
+        get { LogManager.instance }
+        set { LogManager.instance = newValue }
     }
     
     /// Current chat state of the SDK
@@ -75,26 +59,24 @@ public class CXoneChat: ChatProvider, EventReceiver {
     /// The provider for customer chat fields related properties and methods.
     public let customerCustomFields: CustomerCustomFieldsProvider
     /// The provider for thread related properties and methods.
-    public let threads: ChatThreadsProvider
+    public let threads: ChatThreadListProvider
     /// The provider for report related properties and methods.
     public let analytics: AnalyticsProvider
-    /// The connection context
-    private let connectionContext: ConnectionContext
 
     // MARK: - Internal properties
     
-    let socketDelegateManager: SocketDelegateManager
     let socketService: SocketService
 
+    var connectionContext: ConnectionContext {
+        resolver.connectionContext
+    }
+    var socketDelegateManager: SocketDelegateManager {
+        resolver.socketDelegateManager
+    }
+    
     // MARK: - Private properties
     
     private let resolver: DependencyManager
-    
-    // MARK: - EventReceiver properties
-
-    var events: AnyPublisher<any ReceivedEvent, Never> { socketService.events }
-
-    var cancellables = [AnyCancellable]()
 
     // MARK: - Init
 
@@ -102,19 +84,11 @@ public class CXoneChat: ChatProvider, EventReceiver {
         self.socketService = socketService
 
         self.resolver = DependencyManager(socketService: socketService)
-        self.socketDelegateManager = resolver.resolve()
         self.connection = resolver.resolve()
         self.customer = resolver.resolve()
         self.customerCustomFields = resolver.resolve()
         self.threads = resolver.resolve()
         self.analytics = resolver.resolve()
-        self.connectionContext = resolver.connectionContext
-
-        addListeners()
-    }
-    
-    func addListeners() {
-        addListener(onOperationError(_:))
     }
 
     /// Add a ``CXoneChatDelegate``
@@ -134,20 +108,6 @@ public class CXoneChat: ChatProvider, EventReceiver {
         socketDelegateManager.remove(delegate: delegate)
     }
 
-    private func onOperationError(_ error: OperationError) {
-        switch error.errorCode {
-        case .recoveringThreadFailed,
-                .recoveringLiveChatFailed,
-                .customerReconnectFailed:
-            // these are handled elsewhere
-            break
-        case .tokenRefreshFailed:
-            socketDelegateManager.onTokenRefreshFailed()
-        default:
-            socketDelegateManager.onError(error)
-        }
-    }
-
     // MARK: - Static methods
     
     /// Signs the customer out and disconnects from the CXone service.
@@ -161,17 +121,8 @@ public class CXoneChat: ChatProvider, EventReceiver {
         
         shared = CXoneChat(
             socketService: SocketServiceImpl(
-                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), session: .shared)
+                connectionContext: ConnectionContextImpl(keychainService: KeychainService())
             )
         )
-    }
-    
-    /// Configures internal logger to be able to detect errors, warnings or even trace chat flow.
-    ///
-    /// - Parameters:
-    ///    - level: Specifies level of records to be presented in the console. Lower levels are ignored.
-    ///    - verbository: Specifies verbosity of information in the log record.
-    public static func configureLogger(level: LogManager.Level, verbosity: LogManager.Verbosity) {
-        LogManager.configure(level: level, verbosity: verbosity)
     }
 }

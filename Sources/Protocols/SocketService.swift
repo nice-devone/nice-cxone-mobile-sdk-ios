@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import Mockable
 
 @Mockable
 protocol SocketService: AnyObject {
+    
+    var delegateManager: SocketDelegateManager { get }
+    
     var connectionContext: ConnectionContext { get }
 
     var events: AnyPublisher<any ReceivedEvent, Never> { get }
@@ -27,6 +30,8 @@ protocol SocketService: AnyObject {
 
     var accessToken: AccessTokenDTO? { get set }
 
+    var cancellables: [AnyCancellable] { get set }
+    
     /// Opens a new WebSocket connection using the specified URL.
     /// 
     /// - Parameter socketURL: The URL for the location of the WebSocket.
@@ -45,11 +50,7 @@ protocol SocketService: AnyObject {
     ///   - shouldCheck: Whether to check for an expired access token.
     ///
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    func send(data: Data, shouldCheck: Bool) throws
-
-    /// Sends a ping through the WebSocket to ensure that the server is connected.
-    @available(*, deprecated, message: "Deprecated as of 2.2.0")
-    func ping()
+    func send(data: Data, shouldCheck: Bool) async throws
 }
 
 extension SocketService {
@@ -61,7 +62,7 @@ extension SocketService {
     ///   - shouldCheck: Whether to check for an expired access token.
     ///
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    func send(data: Data) throws {
-        try send(data: data, shouldCheck: true)
+    func send(data: Data) async throws {
+        try await send(data: data, shouldCheck: true)
     }
 }

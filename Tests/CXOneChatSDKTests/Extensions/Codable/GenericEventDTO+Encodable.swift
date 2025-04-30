@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,21 +15,13 @@
 
 @testable import CXoneChatSDK
 
-extension GenericEventDTO: Encodable {
-    
-    enum CodingKeys: CodingKey {
-        case eventType
-        case postback
-        case error
-        case internalServerError
-    }
+extension GenericEventDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(eventId, forKey: .eventId)
         try container.encodeIfPresent(eventType, forKey: .eventType)
-        try container.encodeIfPresent(postback, forKey: .error)
-        try container.encodeIfPresent(internalServerError, forKey: .postback)
-        try container.encodeIfPresent(error, forKey: .internalServerError)
+        try container.encodeIfPresent(postback, forKey: .postback)
     }
 }

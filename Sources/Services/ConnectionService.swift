@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ class ConnectionService {
     // MARK: - Properties
     
     let delegate: CXoneChatDelegate
-
     var socketService: SocketService
     var eventsService: EventsService
     var customerService: CustomerService?
-    var threadsService: ChatThreadsService?
+    var threadsService: ChatThreadListService?
     var customerFieldsService: CustomerCustomFieldsService?
+    var registerListeners: (() -> Void)?
     
     var connectionContext: ConnectionContext {
         socketService.connectionContext
@@ -34,32 +34,35 @@ class ConnectionService {
     
     // MARK: - Protocol Properties
     
+    var events: AnyPublisher<any ReceivedEvent, Never> {
+        socketService.events
+    }
+    var cancellables: [AnyCancellable] {
+        get { socketService.cancellables }
+        set { socketService.cancellables = newValue }
+    }
     var channelConfiguration: ChannelConfiguration {
         ChannelConfigurationMapper.map(connectionContext.channelConfig)
     }
-    var cancellables = [AnyCancellable]()
-    var events: AnyPublisher<any ReceivedEvent, Never> { socketService.events }
-
+    
     // MARK: - Init
     
     init(
         customer: CustomerProvider,
-        threads: ChatThreadsProvider,
+        threads: ChatThreadListProvider,
         customerFields: CustomerCustomFieldsProvider,
         socketService: SocketService,
         eventsService: EventsService,
         delegate: CXoneChatDelegate
     ) {
         self.customerService = customer as? CustomerService
-        self.threadsService = threads as? ChatThreadsService
+        self.threadsService = threads as? ChatThreadListService
         self.customerFieldsService = customerFields as? CustomerCustomFieldsService
         self.socketService = socketService
         self.eventsService = eventsService
         self.delegate = delegate
 
         socketService.delegate = self
-
-        addListeners()
     }
 }
 
@@ -101,7 +104,7 @@ extension ConnectionService: ConnectionProvider {
         return ChannelConfigurationMapper.map(try await getChannelConfiguration(url: url))
     }
     
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -127,7 +130,7 @@ extension ConnectionService: ConnectionProvider {
         try await prepare(brandId: brandId, channelId: channelId)
     }
     
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -153,7 +156,7 @@ extension ConnectionService: ConnectionProvider {
         try await prepare(brandId: brandId, channelId: channelId)
     }
     
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
@@ -190,7 +193,17 @@ extension ConnectionService: ConnectionProvider {
             do {
                 try connectToSocket()
                 
-                try checkForAuthorization()
+                // Setup websocket event listeners
+                if let registerListeners {
+                    registerListeners()
+                } else {
+                    LogManager.error("Unable to register listeners for the socket events")
+                    
+                    socketService.disconnect(unexpectedly: true)
+                    return
+                }
+                
+                try await checkForAuthorization()
             } catch {
                 socketService.disconnect(unexpectedly: true)
                 
@@ -215,19 +228,7 @@ extension ConnectionService: ConnectionProvider {
         }
     }
     
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
-    @available(*, deprecated, message: "Deprecated as of 2.2.0")
-    func ping() throws {
-        guard connectionContext.chatState.isChatAvailable else {
-            throw CXoneChatError.illegalChatState
-        }
-        
-        LogManager.trace("Pinging the CXone chat server to ensure that a connection is established")
-
-        socketService.ping()
-    }
-    
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
@@ -235,7 +236,7 @@ extension ConnectionService: ConnectionProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
-    func executeTrigger(_ triggerId: UUID) throws {
+    func executeTrigger(_ triggerId: UUID) async throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
         }
@@ -263,7 +264,7 @@ extension ConnectionService: ConnectionProvider {
 
         let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID.provide(), payload: payload))
 
-        try socketService.send(data: data)
+        try await socketService.send(data: data)
     }
 }
 
@@ -272,9 +273,25 @@ extension ConnectionService: ConnectionProvider {
 extension ConnectionService: EventReceiver {
     
     func addListeners() {
-        addListener(saveAccessToken(_:))
-        addListener(processProactiveAction(_:))
-        addListener(onOperationError(_:))
+        addListener(onOperationError)
+    }
+    
+    func onOperationError(_ error: OperationError) {
+        switch error.errorCode {
+        case .customerReconnectFailed:
+            Task {
+                do {
+                    try await refreshToken()
+                } catch {
+                    error.logError()
+                    
+                    delegate.onError(error)
+                }
+            }
+        default:
+            // Other errors are handled in the SocketService
+            break
+        }
     }
 }
 
@@ -288,68 +305,6 @@ extension ConnectionService {
         socketService.disconnect(unexpectedly: false)
         
         connectionContext.clear()
-    }
-}
-
-// MARK: - Websocket Methods
-
-extension ConnectionService {
-    
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    func processProactiveAction(_ event: ProactiveActionEventDTO) throws {
-        LogManager.trace("Processing proactive action")
-        
-        switch event.data.actionType {
-        case .welcomeMessage:
-            LogManager.trace("Processing proactive action of type welcome message")
-            
-            guard let messageData = event.data.data?.content.bodyText else {
-                throw CXoneChatError.invalidData
-            }
-            
-            if let fields = event.data.data?.customFields {
-                customerFieldsService?.updateFields(fields)
-            }
-            
-            try threadsService?.handleWelcomeMessage(messageData)
-            
-            if let activeThread = connectionContext.activeThread {
-                delegate.onThreadUpdated(activeThread)
-            }
-        case .customPopupBox:
-            LogManager.trace("Ignoring proactive action of type custom popup box")
-//
-//            guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-//                throw CXoneChatError.invalidData
-//            }
-//            
-//            let data = dict["data"] as? [String: Any]
-//            let proactiveAction = data?["proactiveAction"] as? [String: Any]
-//            let action = proactiveAction?["action"] as? [String: Any]
-//            let actionData = action?["data"] as? [String: Any]
-//            let content = actionData?["content"] as? [String: Any]
-//            let variables = content?["variables"] as? [String: Any]
-//            
-//            guard let actionId = action?["actionId"] as? String else {
-//                throw CXoneChatError.missingParameter("actionId")
-//            }
-//            guard let variables, !variables.isEmpty else {
-//                throw CXoneChatError.missingParameter("variables")
-//            }
-//            
-//            let id = UUID(uuidString: actionId) ?? UUID()
-//            
-//            delegate.onProactivePopupAction(data: variables, actionId: id)
-        }
-	}
-
-    func onOperationError(_ error: OperationError) {
-        switch error.errorCode {
-        case .customerReconnectFailed:
-            refreshToken()
-        default:
-            break
-        }
     }
 }
 
@@ -453,26 +408,32 @@ private extension ConnectionService {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func checkForAuthorization() throws {
+    func checkForAuthorization() async throws {
         LogManager.trace("Checking authorization")
         
         if connectionContext.channelConfig.isAuthorizationEnabled {
-            try reconnectCustomer()
+            try await reconnectCustomer()
         } else {
-            try authorizeCustomer()
+            try await authorizeCustomer()
         }
     }
     
-    /// Authorizes a new customer to communicate through the WebSocket.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func authorizeCustomer() throws {
+    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func authorizeCustomer() async throws {
         LogManager.trace("Authorizing customer")
         
-        let data = try eventsService.create(
-            .authorizeCustomer,
+        let event = try eventsService.create(
+            event: .authorizeCustomer,
             with: .authorizeCustomerData(
                 AuthorizeCustomerEventDataDTO(
                     authorizationCode: connectionContext.authorizationCode,
@@ -481,24 +442,46 @@ private extension ConnectionService {
             )
         )
         
-        try socketService.send(data: data, shouldCheck: false)
+        let response = try await events.sink(
+            type: .customerAuthorized,
+            as: CustomerAuthorizedEventDTO.self,
+            origin: event,
+            socketService: socketService,
+            eventsService: eventsService,
+            cancellables: &cancellables
+        )
+        
+        try await customerService?.processCustomerAuthorizedEvent(response)
     }
     
-    /// Reconnects a returning customer to communicate through the WebSocket.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
+    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func reconnectCustomer() throws {
+    func reconnectCustomer() async throws {
         LogManager.trace("Reconnecting customer")
         
         guard let token = socketService.accessToken?.token else {
             throw CXoneChatError.missingAccessToken
         }
         
-        let data = try eventsService.create(.reconnectCustomer, with: .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: token)))
+        let event = try eventsService.create(
+            event: .reconnectCustomer,
+            with: .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: token))
+        )
         
-        try socketService.send(data: data)
+        try await events.sink(
+            type: .customerReconnected,
+            as: GenericEventDTO.self,
+            origin: event,
+            socketService: socketService,
+            eventsService: eventsService,
+            cancellables: &cancellables
+        )
+        
+        try await customerService?.processCustomerReconnectedEvent()
     }
     
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -602,26 +585,29 @@ extension ConnectionService: SocketDelegate {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func refreshToken() {
-        do {
-            LogManager.trace("Refreshing a token")
+    func refreshToken() async throws {
+        LogManager.trace("Refreshing a token")
 
-            guard let token = socketService.accessToken?.token else {
-                throw CXoneChatError.missingAccessToken
-            }
-
-            let data = try eventsService.create(.refreshToken, with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: token)))
-            
-            try socketService.send(data: data, shouldCheck: false)
-        } catch {
-            error.logError()
-            delegate.onError(error)
+        guard let token = socketService.accessToken?.token else {
+            throw CXoneChatError.missingAccessToken
         }
-    }
-    
-    func saveAccessToken(_ decode: TokenRefreshedEventDTO?) {
+
+        let event = try eventsService.create(
+            event: .refreshToken,
+            with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: token))
+        )
+        
+        let response = try await events.sink(
+            type: .tokenRefreshed,
+            as: TokenRefreshedEventDTO.self,
+            origin: event,
+            socketService: socketService,
+            eventsService: eventsService,
+            cancellables: &cancellables
+        )
+        
         LogManager.trace("Saving a access token")
         
-        socketService.accessToken = decode?.postback.accessToken
+        socketService.accessToken = response.postback.accessToken
     }
 }

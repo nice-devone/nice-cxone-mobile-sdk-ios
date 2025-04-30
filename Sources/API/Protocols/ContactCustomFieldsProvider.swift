@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -29,14 +29,21 @@ public protocol ContactCustomFieldsProvider {
     
     /// Sets custom fields to be saved on a contact (specific thread).
     ///
+    /// This method sets custom field(s) for a specific thread.
+    ///
     /// - Parameters:
     ///   - customFields: The custom fields to be saved.
     ///   - threadId: The unique identifier of the thread for the custom fields.
-    ///   
+    ///
+    /// - Note: Can be used to provide additional custom field(s) to the chat thread that are not part of the pre-chat survey.
+    ///
+    /// - Important: Additional custom field(s) must be defined in the channel configuration.
+    ///     Otherwise, the custom field(s) will cause the conversation initialization to fail.
+    ///
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func set(_ customFields: [String: String], for threadId: UUID) throws
+    func set(_ customFields: [String: String], for threadId: UUID) async throws
 }

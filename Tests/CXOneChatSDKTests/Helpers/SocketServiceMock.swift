@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -43,14 +43,16 @@ class SocketServiceMock: SocketServiceImpl {
             }
         }
     }
+
+    // MARK: - Init
+    
+    init(session: URLSession) {
+        super.init(connectionContext: ConnectionContextMock(session: session))
+    }
     
     // MARK: - Methods
     
-    override func ping() {
-        pingNumber += 1
-    }
-    
-    override func send(data: Data, shouldCheck: Bool = true) throws {
+    override func send(data: Data, shouldCheck: Bool = true) async throws {
         guard let utf8string = data.utf8string else {
             throw CXoneChatError.missingParameter("utf8string")
         }

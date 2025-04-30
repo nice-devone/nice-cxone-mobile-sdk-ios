@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ class SocketDelegateManager {
     private var delegates = [Reference]()
 
     func add(delegate: CXoneChatDelegate) {
-        LogManager.trace("Add a delegate")
+        LogManager.trace("Add a delegate - \(String(describing: delegate))")
         
         delegates.append(delegate)
     }
 
     func remove(delegate: CXoneChatDelegate) {
-        LogManager.trace("Remove a delegate")
+        LogManager.trace("Remove a delegate - \(String(describing: delegate))")
         
         delegates.remove(delegate)
     }
@@ -105,9 +105,9 @@ extension SocketDelegateManager: CXoneChatDelegate {
     func onCustomEventMessage(_ messageData: Data) { 
         delegates.forEach { $0.onCustomEventMessage(messageData) }
     }
-
-    func onAgentTyping(_ isTyping: Bool, threadId: UUID) { 
-        delegates.forEach { $0.onAgentTyping(isTyping, threadId: threadId) }
+    
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) {
+        delegates.forEach { $0.onAgentTyping(isTyping, agent: agent, threadId: threadId) }
     }
 
     func onContactCustomFieldsSet() { 

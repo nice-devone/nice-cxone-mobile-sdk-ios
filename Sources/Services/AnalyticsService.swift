@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,7 @@ class AnalyticsService {
     var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
-    var visitId: UUID? {
-        connectionContext.visitId
-    }
-    
+
     // MARK: - Init
 
     init(socketService: SocketService) {
@@ -58,7 +55,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - title: The title or description of the page that was viewed.
     ///   - url: A URL uniquely identifying the page.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
@@ -101,7 +98,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - title: The title or description of the page that was left.
     ///   - url: A URL uniquely identifying the page.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -136,7 +133,7 @@ extension AnalyticsService: AnalyticsProvider {
 
     /// Reports to CXone that the chat window/view has been opened by the visitor.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -162,7 +159,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - type: The type of conversion. Can be any value.
     ///   - value: The value associated with the conversion (for example, unit amount). Can be any number.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -192,7 +189,7 @@ extension AnalyticsService: AnalyticsProvider {
     /// Reports to CXone that a proactive action was displayed to the visitor.
     /// - Parameter data: The proactive action that was displayed.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -229,7 +226,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///
     /// - Parameter data: The proactive action that was successful or fails.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -246,36 +243,6 @@ extension AnalyticsService: AnalyticsProvider {
             data: data,
             date: Date.provide()
         )
-    }
-    
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Deprecated with 2.3.0. Sending `customVisitorEvent(data:)` via WebSocket is no longer supported.")
-    public func customVisitorEvent(data: VisitorEventDataType) throws {
-        LogManager.warning("Sending custom visitor event via WebSocket is no longer supported.")
-        return
-        
-        guard connectionContext.chatState.isChatAvailable else {
-            throw CXoneChatError.illegalChatState
-        }
-        
-        LogManager.trace("Reporting custom visitor event occurred.")
-
-        try socketService.checkForConnection()
-
-        let data = try jsonEncoder.encode(
-            StoreVisitorEventsDTO(
-                action: .chatWindowEvent,
-                eventId: UUID.provide(),
-                payload: getVisitorEventsPayload(eventType: .custom, data: data)
-            )
-        )
-
-        try socketService.send(data: data)
     }
 }
 
@@ -368,7 +335,6 @@ private extension AnalyticsService {
         _ type: AnalyticsEventType,
         date: Date,
         data: Encodable = [String: String](),
-        fun: StaticString = #function,
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
@@ -383,7 +349,7 @@ private extension AnalyticsService {
             data: data
         )
 
-        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorId, fun: fun, file: file, line: line)
+        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorId, file: file, line: line)
     }
 
     /// Post an event to the web-analytics service with specified brand and visitor ids.
@@ -392,7 +358,6 @@ private extension AnalyticsService {
     ///    - event: event to send
     ///    - brandId: brand to target
     ///    - visitorId: visitorId to target
-    ///    - fun: function name for logging purpose
     ///    - file: file name for logging purpose
     ///    - line: line number for logging purpose
     ///
@@ -406,7 +371,6 @@ private extension AnalyticsService {
         event: AnalyticsEventDTO,
         brandId: Int,
         visitorId: UUID,
-        fun: StaticString = #function,
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
@@ -415,41 +379,9 @@ private extension AnalyticsService {
         }
 
         var request = URLRequest(url: url, method: .post, contentType: "application/json")
-        request.httpBody = try JSONEncoder().encode(event)
+        request.httpBody = try jsonEncoder.encode(event)
 
-        try await connectionContext.session.fetch(for: request, fun: fun, file: file, line: line)
+        try await connectionContext.session.fetch(for: request, file: file, line: line)
     }
 
-}
-
-// MARK: - Private Custom Visitor Event implementation details
-
-private extension AnalyticsService {
-
-    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
-    func getVisitorEventsPayload(eventType: EventType, data: VisitorEventDataType?) throws -> StoreVisitorEventsPayloadDTO {
-        guard let visitorId = visitorId else {
-            throw CXoneChatError.customerVisitorAssociationFailure
-        }
-        
-        return StoreVisitorEventsPayloadDTO(
-            eventType: .storeVisitorEvents,
-            brand: BrandDTO(id: connectionContext.brandId),
-            visitorId: LowerCaseUUID(uuid: visitorId),
-            id: LowerCaseUUID(uuid: connectionContext.destinationId),
-            data: .visitorEvent(
-                VisitorsEventsDTO(
-                    visitorEvents: [
-                        VisitorEventDTO(
-                            id: LowerCaseUUID(uuid: UUID.provide()),
-                            type: eventType,
-                            createdAtWithMilliseconds: Date.provide().iso8601withFractionalSeconds,
-                            data: data
-                        )
-                    ]
-                )
-            ),
-            channel: ChannelIdentifierDTO(id: connectionContext.channelId)
-        )
-    }
 }

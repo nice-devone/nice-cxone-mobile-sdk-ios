@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -39,38 +39,13 @@ enum CustomFieldTypeMapper {
             )
         }
     }
-    
-    static func map(from entity: CustomFieldType) -> CustomFieldDTOType {
-        switch entity {
-        case .textField(let entity):
-            return .textField(
-                CustomFieldTextFieldDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: entity.updatedAt, isEmail: entity.isEmail)
-            )
-        case .selector(let entity):
-            return .selector(
-                CustomFieldSelectorDTO(ident: entity.ident, label: entity.label, value: entity.value, updatedAt: entity.updatedAt, options: entity.options)
-            )
-        case .hierarchical(let entity):
-            return .hierarchical(
-                CustomFieldHierarchicalDTO(
-                    ident: entity.ident,
-                    label: entity.label,
-                    value: entity.value,
-                    updatedAt: entity.updatedAt,
-                    nodes: entity.nodes.map(CustomFieldHierarchicalNodeDTO.map)
-                )
-            )
-        }
-    }
 }
+
+// MARK: - Helpers
 
 private extension CustomFieldHierarchicalNodeDTO {
     
     static func map(from entity: CustomFieldHierarchicalNodeDTO) -> CustomFieldHierarchicalNode {
         CustomFieldHierarchicalNode(value: entity.key, label: entity.value, children: entity.children.map(Self.map))
-    }
-    
-    static func map(from entity: CustomFieldHierarchicalNode) -> CustomFieldHierarchicalNodeDTO {
-        CustomFieldHierarchicalNodeDTO(key: entity.value, value: entity.label, children: entity.children.map(Self.map))
     }
 }

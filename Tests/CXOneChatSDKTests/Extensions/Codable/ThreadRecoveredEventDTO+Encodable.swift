@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ThreadRecoveredEventDTO: Encodable {
+extension ThreadRecoveredEventDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventId
@@ -32,7 +32,7 @@ extension ThreadRecoveredEventDTO: Encodable {
 
 // MARK: - ThreadRecoveredEventPostbackDTO
 
-extension ThreadRecoveredEventPostbackDTO: Encodable {
+extension ThreadRecoveredEventPostbackDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventType
@@ -49,7 +49,7 @@ extension ThreadRecoveredEventPostbackDTO: Encodable {
 
 // MARK: - ThreadRecoveredEventPostbackDTO
 
-extension ThreadRecoveredEventPostbackDataDTO: Encodable {
+extension ThreadRecoveredEventPostbackDataDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

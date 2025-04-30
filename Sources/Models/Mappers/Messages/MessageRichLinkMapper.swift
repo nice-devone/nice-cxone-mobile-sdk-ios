@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,5 @@ enum MessageRichLinkMapper {
     
     static func map(from entity: MessageRichLinkDTO) -> MessageRichLink {
         MessageRichLink(title: entity.title, url: entity.url, fileName: entity.fileName, fileUrl: entity.fileUrl, mimeType: entity.mimeType)
-    }
-    
-    static func map(from entity: MessageRichLink) -> MessageRichLinkDTO {
-        MessageRichLinkDTO(title: entity.title, url: entity.url, fileName: entity.fileName, fileUrl: entity.fileUrl, mimeType: entity.mimeType)
     }
 }

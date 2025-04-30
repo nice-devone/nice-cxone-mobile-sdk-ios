@@ -1,0 +1,13 @@
+{
+    "eventId": "52E519A4-60FD-4A40-9EF8-19E051A02AAB",
+    "eventType": "TokenRefreshed",
+    "postback": {
+        "eventType": "TokenRefreshed",
+        "data": {
+            "accessToken": {
+                "token": "Atza|IwEBIEbr7kCPD3c8LxQGpJCVvt8bptVvxktOLZ2Jwx03swZprmw1nwBeu-hlONwIUHtyIZKK41shh1NpgyksgtY8obSdocNiIfJZ54d94ysmSHmvCrHylFJvSCSrZikWHXeTK2G5vyyWlIheRkmewPDh84NdNJEoSHbFsH8CPOCr3B4ZgeJ1HUH4FpxpkscuswRdPSiXcg3w1C8uyCvKkpJldZRxeOi3zETrp0tM-cawcnxobR0qwUf83Yo9GIoAln74PkC33u3Cv4BgWjODeoE3hR_Q_l1LjaeqGiodBE6R9D28344FiMoQwvR5GmmUPDmmabTPhzzEbMgRxAxOCi1sbvDskMKlDNqPYESvgcDDKiLiGVilp99zEVdInY6j4uEyXYo_imqCiZVqDhBJTe1UY-PF2Zp4bySmNoovkXoX-sW3phaM1ffx3A5BCziaflf086m6TqNMzzSQT6N26M-5PDmmcK1bkf46q69TN02TqbIv2w",
+                "expiresIn": 3600
+            }
+        }
+    }
+}

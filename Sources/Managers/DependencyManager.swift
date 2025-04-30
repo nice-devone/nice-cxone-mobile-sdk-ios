@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ class DependencyManager {
     private var customer: CustomerProvider?
     private var customerFields: CustomerCustomFieldsProvider?
     private var contactFields: ContactCustomFieldsProvider?
-    private var threads: ChatThreadsProvider?
-    private var messages: MessagesProvider?
+    private var threads: ChatThreadListProvider?
     private var analytics: AnalyticsProvider?
     
-    private var socketDelegateManager: SocketDelegateManager?
-
     // MARK: - Properties
-
+    
+    var socketDelegateManager: SocketDelegateManager {
+        socketService.delegateManager
+    }
     var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
@@ -60,8 +60,9 @@ class DependencyManager {
             customerFields: resolve(),
             socketService: socketService,
             eventsService: eventsService,
-            delegate: resolve()
+            delegate: socketDelegateManager
         )
+        provider.registerListeners = self.registerListeners
         self.connection = provider
         
         return provider
@@ -75,7 +76,7 @@ class DependencyManager {
         let provider = CustomerService(
             socketService: socketService,
             threads: resolve(),
-            delegate: resolve()
+            delegate: socketDelegateManager
         )
         self.customer = provider
         
@@ -110,36 +111,18 @@ class DependencyManager {
         return provider
     }
     
-    func resolve() -> MessagesProvider {
-        if let provider = messages {
-            return provider
-        }
-
-        let provider = MessagesService(
-            contactFieldsProvider: resolve(),
-            customerFieldsProvider: resolve(),
-            socketService: socketService,
-            eventsService: eventsService,
-            welcomeMessageManager: welcomeMessageManager,
-            delegate: resolve()
-        )
-        self.messages = provider
-        
-        return provider
-    }
-    
-    func resolve() -> ChatThreadsProvider {
+    func resolve() -> ChatThreadListProvider {
         if let provider = threads {
             return provider
         }
         
-        let provider = ChatThreadsService(
-            messagesProvider: resolve(),
-            contactFields: resolve(),
-            customerFields: resolve(),
+        let provider = ChatThreadListService(
+            contactCustomFields: resolve(),
+            customerCustomFields: resolve(),
             socketService: socketService,
             eventsService: eventsService,
-            delegate: resolve()
+            welcomeMessageManager: welcomeMessageManager,
+            delegate: socketDelegateManager
         )
         self.threads = provider
         
@@ -156,15 +139,19 @@ class DependencyManager {
         
         return provider
     }
+}
+
+// MARK: - Private methods
+
+private extension DependencyManager {
     
-    func resolve() -> SocketDelegateManager {
-        if let manager = socketDelegateManager {
-            return manager
-        }
+    func registerListeners() {
+        // Register listeners for thread list service
+        let connection: ConnectionProvider = resolve()
+        (connection as? ConnectionService)?.addListeners()
         
-        let manager = SocketDelegateManager()
-        self.socketDelegateManager = manager
-        
-        return manager
+        // Register listeners for thread list service
+        let threads: ChatThreadListProvider = resolve()
+        (threads as? ChatThreadListService)?.addListeners()
     }
 }

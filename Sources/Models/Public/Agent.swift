@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,22 +16,10 @@
 import Foundation
 
 /// Represents all info about an agent.
-public struct Agent {
+public struct Agent: Equatable {
     
     /// The id of the agent.
     public let id: Int
-
-    /// The id of the agent in the inContact (CXone) system.
-    @available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")
-    public let inContactId: String?
-
-    /// The email address of the agent.
-    @available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")
-    public let emailAddress: String?
-
-    /// The username of the agent used to log in.
-    @available(*, deprecated, message: "The field is no longer accessible. It will always return an empty string and it will be removed in a future release.")
-    public let loginUsername: String
 
     /// The first name of the agent.
     public let firstName: String

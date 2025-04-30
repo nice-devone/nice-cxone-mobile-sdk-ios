@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ import Mockable
 @Mockable
 protocol ConnectionContext: AnyObject {
     
-    var keychainService: KeychainService { get set }
+    // periphery:ignore - false positive
+    var keychainService: KeychainService { get }
     
     /// The token of the device for push notifications.
     var deviceToken: String? { get set }
@@ -61,13 +62,6 @@ protocol ConnectionContext: AnyObject {
     
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
     var accessToken: AccessTokenDTO? { get set }
-    
-    // FIXME: - Workaround how to handle pair events before implementation of eventId pairing mechanism (DE-81132)
-    /// The active thread that is currently used for the `OnLoadMoreMessages` paired web socket event.
-    var activeThread: ChatThread? { get set }
-    
-    // FIXME: - Workaround how to handle threads before refactor of the SDK architecture (DE-114309)
-    var threads: [ChatThread] { get set }
     
     func clear()
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -45,22 +45,14 @@ extension LowerCaseUUID: Codable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
+        
         try container.encode(self.uuid.uuidString.lowercased())
     }
 }
 
 extension UUID {
+    
     var asLowerCaseUUID: LowerCaseUUID {
         LowerCaseUUID(uuid: self)
-    }
-}
-
-extension LowerCaseUUID {
-    static func == (lhs: UUID, rhs: LowerCaseUUID) -> Bool {
-        lhs == rhs.uuid
-    }
-
-    static func == (lhs: LowerCaseUUID, rhs: UUID) -> Bool {
-        lhs.uuid == rhs
     }
 }
