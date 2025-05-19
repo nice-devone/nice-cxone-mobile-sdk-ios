@@ -1,3 +1,9 @@
+<a name="2.3.2"></a>
+# [2.3.2] - 2025-05-19
+
+### Fixes
+- Fix OAuth connection flow
+
 <a name="2.3.1"></a>
 # [2.3.1] - 2025-04-11
 
