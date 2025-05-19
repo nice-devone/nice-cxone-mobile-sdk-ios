@@ -457,7 +457,7 @@ private extension ConnectionService {
     func checkForAuthorization() throws {
         LogManager.trace("Checking authorization")
         
-        if connectionContext.channelConfig.isAuthorizationEnabled {
+        if connectionContext.accessToken != nil {
             try reconnectCustomer()
         } else {
             try authorizeCustomer()
