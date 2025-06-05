@@ -150,7 +150,7 @@ CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
 
 ## Sample Code
 
-For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/sample) and the [UI Module](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/cxone-chat-ui).
+For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) and the [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
 
 ## Related Resources
 

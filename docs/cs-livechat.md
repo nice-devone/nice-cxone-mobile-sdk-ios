@@ -121,8 +121,8 @@ try await CXoneChat.shared.connection.prepare(
 
 For a complete implementation reference, see:
 
-- [Sample Application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/sample)
-- [UI Module](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/cxone-chat-ui)
+- [Sample Application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios)
+- [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios)
 
 ## Need a Custom UI?
 

@@ -289,8 +289,6 @@ Analytics events can trigger automations in CXone:
 3. **Proactive Chat**: Triggered by specific visitor events
 4. **Re-engagement**: Based on conversion patterns
 
-For more details on setting up automations, see the [CXone WorkFlow Automation documentation](https://help.nice-incontact.com/content/acd/digital/chat/workflowautomation.htm).
-
 ## Sample Implementation
 
-For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/Sources/Utilities/Manager/AnalyticsReporter.swift).
+For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Utilities/Manager/AnalyticsReporter.swift).

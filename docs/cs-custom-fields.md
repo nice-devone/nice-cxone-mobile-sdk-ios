@@ -123,7 +123,7 @@ CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
 
 ## Sample Code
 
-For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/sample) which demonstrates handling both contact and customer custom fields.
+For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) which demonstrates handling both contact and customer custom fields.
 
 ## Related Resources
 
