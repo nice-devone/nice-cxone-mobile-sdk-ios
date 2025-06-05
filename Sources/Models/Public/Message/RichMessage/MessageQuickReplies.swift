@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import Foundation
 ///
 /// When a quick reply is tapped, the buttons are dismissed,
 ///  and the title of the tapped button is posted to the conversation as a message.
-public struct MessageQuickReplies {
+public struct MessageQuickReplies: Equatable {
     
     /// Title of the Quick Replies in the conversation
     public let title: String

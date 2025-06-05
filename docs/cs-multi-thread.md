@@ -1,216 +1,171 @@
-# Case Study: Multi Thread
+# Case Study: Multi Thread Chat
 
-The Mobile SDK has support for asynchronous (single-thread, multi-thread) and live chat channel configuration. In case of multi-thread, there are no features limitations.
+## Overview
 
-The SDK is using state-based architecture and it tries to handle automatically as much stuff as possible. For example, it automatically tries to load threads after the connection was established. However, otherwise from the single-threaded channel configuration, there is no automatic thread creation to be able to present empty chat thread list. 
+The CXone Mobile SDK supports multi-thread chat configurations, where customers can create and manage multiple conversation threads simultaneously. This case study demonstrates how to implement a multi-thread chat experience using the core SDK module.
 
+> **Note:** This guide focuses on implementations using only the core SDK module without the UI module. Developers using the pre-built UI components will have many of these steps handled automatically by the UI layer.
 
-## Example
+## Key Concepts
 
-This example uses some parts of the example application and is an abbreviated snippet to demonstrate this functionality. The full implementation can be found in the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) and [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios) repositories. However, some parts are edited just to demonstrate the ability to handle single thread configuration. Note that sample application handles all channel configuration so snippets come from different files. Host application will be focused on a single channel configuration (single-threaded, multi-threaded or live chat) so implementation is much simplier.
+In multi-thread configurations:
+- Multiple conversation threads can exist simultaneously 
+- Users can create new threads for different topics
+- All thread management features are fully available
+- Thread list management is required
 
-For multi-threaded channel configuration, it is recommended to do following steps:
+## Implementation Steps
 
-- (1) Prepare usage of the CXoneChatSDK via `ConnectionProvider.prepare(environment:brandId:channelId)` method
-  - the SDK uses state-based architecture so it is necessary to set the SDK to the correct state so web socket connection may be established
-- (2) Subscribe to CXone Chat SDK delegate methods
-  - Otherwise you will not be able to receive information about the established connection and continue.
-- (3) Connect to the CXone services via `ConnectionProvider.connect()` method
-- (4) Register `onChatUpdated(_:mode:)`, `onThreadsUpdated(_:)` and `onThreadUpdated(_:)` delegate methods in the chat thread list scene manager
-  - `onChatUpdated(_:mode:)` method allows you to track updates to chat state, such as connecting or connected state for logging or other purposes.  The `ready` state indicates the chat is ready for usage. This state is triggered from the SDK in case there is no thread available for usage.
-  - `onThreadsUpdated(_:)` method is triggered when chat threads changed.
-  - `onThreadUpdated(_:)` method is triggered when thread was updated and also when a new one was created.
-- (5) Fill-up the table with loaded threads or show empty thread list
-- (6) Implement interaction with the chat thread list row to open chat communication with an agent
-- (7) Register `onChatUpdated(_:mode:)` abd `onThreadUpdated(_:)` delegate methods in the chat transcript scene
-  - `onChatUpdated(_:mode:)` method allows you to track chat state updates, such as connecting or connected state for logging purposes. For this channel configuration, it is mandatory to disconnect when the application enters background and reconnect when returning to the foreground. It is necessary to trigger reload of the chat thread with the `ChatThreadProvider.load(with:)` method. 
-  - `onThreadUpdated(_:)` method receives all thread updates, such as new message, assigned agent, updated name, etc.
-- (8) Append subscription for CXone Chat SDK delegate methods
-- (9) Handle chat transcript UI with loaded thread data
+### 1. Initialize the SDK
 
-
-> Important: To see logged warnings/errors you need to configure the SDK logger. This can be done using the `configureLogger(level:verbosity:)` method available in `CXoneChat`.
-
-### Prepare usage of the CXoneChatSDK - `LoginViewModel.swift`
-
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Presentation/Views/Login/LoginViewModel.swift).
+Start by preparing the SDK with your environment configuration:
 
 ```swift
-class LoginViewModel: AnalyticsReporter, ObservableObject {
-    
-    ...
-    
-    // MARK: - Methods
-
-    override func onAppear() {
-        ...
-        prepareAndFetchConfiguration()
-        ...
-    }
-    ...
-}
-
-...
-
-// MARK: - Private methods
-
-private extension LoginViewModel {
-    
-    func prepareAndFetchConfiguration() {
-        ...
-        
-        Task { @MainActor in
-            do {
-                if let env = configuration.environment {
-                    try await CXoneChat.shared.connection.prepare(environment: env, brandId: configuration.brandId, channelId: configuration.channelId) // (1)
-                } else {
-                    ...
-                }
-
-                ...
-            } catch {
-                ...
-            }
-        }
-    }
-}
-### 
+try await CXoneChat.shared.connection.prepare(
+    environment: env,
+    brandId: configuration.brandId,
+    channelId: configuration.channelId
+)
 ```
 
-### Handle connection - `ChatContainerViewModel.swift`
+### 2. Connect to CXone Services
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Container/ChatContainerViewModel.swift).
+Establish a connection to CXone services:
 
 ```swift
-class ChatContainerViewModel: ObservableObject {
+try await CXoneChat.shared.connection.connect()
+```
 
-    ...
-    
-    // MARK: - Methods
-    
-    func onAppear() {
-        LogManager.trace("View did appear")
+### 3. Set Up Delegates
 
-        chatProvider.add(delegate: self) // (2)
-        
-        Task {
-            do {
-                try await CXoneChat.shared.connection.connect() // (3)
-            } catch {
-                ...
-            }
-        }
+Register as a delegate to receive SDK updates:
+
+```swift
+CXoneChat.shared.add(delegate: self)
+```
+
+### 4. Implement Thread List Management
+
+Implement the delegate methods to handle thread list updates:
+
+```swift
+// Track chat state changes
+func onChatUpdated(_ state: ChatState, mode: ChatMode) {
+    switch state {
+    case .ready:
+        // Chat is ready - show thread list or empty state
+    default:
+        // Handle other states
     }
-    ...
 }
 
-...
+// Handle updates to the thread list
+func onThreadsUpdated(_ chatThreads: [ChatThread]) {
+    // Update UI with the latest threads
+    updateThreadList(chatThreads)
+}
+```
 
-// MARK: - CXoneChatDelegate
+### 5. Creating New Threads
 
-extension ChatContainerViewModel: CXoneChatDelegate {
-    
-    func onChatUpdated(_ chatState: ChatState, mode: ChatMode) { // (4)
-        ...
-        switch chatState {
-        case .connecting:
-            ...
-        case .connected:
-            ...
-        case .offline:
-            ...
-        case .ready:
-            startChat()
-        default:
-            ...
-        }
+Implement thread creation functionality:
 
-    }
-    
-    private func startChat() {
-        ...
-        switch chatProvider.mode {
-        case .multithread:
-            if let uuid = threadToOpen, let thread = chatProvider.threads.get().first(where: { $0.id == uuid }) {
-                show(thread: thread, onBack: showThreadList)
+```swift
+func createNewThread(with customFields: [String: String]? = nil) {
+    Task {
+        do {
+            if let customFields {
+                // Create thread with pre-chat survey fields
+                let threadProvider = try await CXoneChat.shared.threads.create(with: customFields)
+                // Handle the newly created thread
             } else {
-                showThreadList()
+                // Create thread without pre-chat
+                let threadProvider = try await CXoneChat.shared.threads.create()
+                // Handle the newly created thread
             }
-            ...
-        case .singlethread, .liveChat:
-            ...
+        } catch {
+            // Handle error
         }
     }
 }
-``` 
+```
 
-### Thread list - `ThreadListViewModel.swift`
+### 6. Thread Selection and Loading
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/ThreadList/ThreadListViewModel.swift).
+When a user selects a thread from the list, load its full content:
 
 ```swift
-...
-// MARK: - Actions
-
-extension ThreadListViewModel {
-    
-    func onAppear() {
-        ...
-        chatProvider.add(delegate: self) // (2)
-        
-        updateCurrentThreads() // (5)
-    }
-    ...
-    func onThreadTapped(_ thread: ChatThread) { // (6)
-        LogManager.trace("Opening chat window")
-        
-        containerViewModel?.show(thread: thread) { [weak containerViewModel] in
-            ...
+func onThreadSelected(_ thread: ChatThread) {
+    Task {
+        do {
+            // Navigate to thread view and display messages
+            showThreadView(thread)
+        } catch {
+            // Handle error
         }
     }
-    ...
 }
-...
-// MARK: - CXoneChatDelegate
+```
 
-extension ThreadListViewModel: CXoneChatDelegate {
-    ...
-    func onThreadUpdated(_ thread: ChatThread) {
-		... // (5)
-    }
-    
-    func onThreadsUpdated(_ chatThreads: [ChatThread]) {
-		... // (5)
-    }
+### 7. Thread View Implementation
+
+In the thread view, implement the necessary delegate method:
+
+```swift
+func onThreadUpdated(_ chatThread: ChatThread) {
+    // Update UI with the latest thread data
     ...
 }
 ```
 
-### Handle chat transcript UI with loaded thread data - `ThreadViewModel.swift`
+## Handling App State Changes
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Thread/ThreadViewModel.swift).
+For optimal performance in multi-thread configurations:
 
 ```swift
-...
-// MARK: - Methods
-
-extension ThreadViewModel {
-    
-    func onAppear() {
-        ...
-        containerViewModel?.chatProvider.add(delegate: self) // (8)
-        ...
+// When app enters foreground
+func applicationWillEnterForeground() {
+    Task {
+        try await CXoneChat.shared.connection.connect()
     }
-    ...
 }
-...
-// MARK: - CXoneChatDelegate
 
-extension ThreadViewModel: CXoneChatDelegate {
-    ...
-    func onThreadUpdated(_ updatedThread: ChatThread) { // (7)
-        ... // (9)
-    }
-    ...
+// When app enters background
+func applicationDidEnterBackground() {
+    CXoneChat.shared.connection.disconnect()
 }
-``` 
+```
+
+## Best Practices
+
+1. **Thread List Management**: Keep the thread list up-to-date by responding to `onThreadsUpdated` events
+2. **Thread Creation**: Check for pre-chat requirements before creating new threads
+3. **Thread Selection**: Load thread details when a user selects a thread from the list
+4. **Connection Management**: Connect only when needed and disconnect when the app is in the background
+5. **Logging**: Configure the SDK logger to track issues and state changes
+
+```swift
+CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
+```
+
+## Sample Code
+
+For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) and the [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
+
+## Related Resources
+
+- [Core SDK Integration](core-sdk-integration.md)
+- [Custom Fields](cs-custom-fields.md)
+- [Logging](cs-logging.md)
+
+## Core SDK vs UI Module
+
+This guide details the implementation using only the core SDK module, which requires manual handling of connections, state management, and UI rendering. If you're using the CXone UI module, many of these low-level implementation details are handled automatically by the pre-built components.
+
+When using the UI module:
+- Thread list UI is provided out-of-the-box
+- Thread creation and selection is handled automatically
+- Connection management is handled internally
+- State changes are managed by the UI components
+
+For UI module integration, refer to the [Core SDK Integration](core-sdk-integration.md) guide which demonstrates using the ChatCoordinator to leverage the pre-built UI components.

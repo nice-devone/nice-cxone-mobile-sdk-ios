@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -68,18 +68,18 @@ enum MockData {
         options: ["gender-male": "Male", "gender-female": "Female"]
     )
     
-    static let attachment = AttachmentUploadDTO(
-        attachmentData: "attachment".data(using: .utf8)!,
+    static let attachment = ContentDescriptor(
+        data: "attachment".data(using: .utf8)!,
         mimeType: "image/jpg",
         fileName: "file",
         friendlyName: "friendly"
     )
-
     
     // MARK: - Methods
     
     static func getChannelConfiguration(
         isMultithread: Bool = false,
+        isAuthorizationEnabled: Bool = false,
         prechatSurvey: PreChatSurveyDTO? = nil,
         fileRestrictions: FileRestrictionsDTO = FileRestrictionsDTO(
             allowedFileSize: 40,
@@ -97,7 +97,7 @@ enum MockData {
                 fileRestrictions: fileRestrictions,
                 features: features
             ),
-            isAuthorizationEnabled: false,
+            isAuthorizationEnabled: isAuthorizationEnabled,
             prechatSurvey: prechatSurvey,
             liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: isLiveChat, isOnline: isOnline, expires: .distantFuture)
         )
@@ -107,17 +107,18 @@ enum MockData {
         threadId: UUID = UUID(),
         scrollToken: String = UUID().uuidString,
         withMessages: Bool = true,
-        contactId: String = UUID().uuidString
-    ) -> ChatThreadDTO {
-        ChatThreadDTO(
-            idOnExternalPlatform: threadId,
-            threadName: MockData.agent.fullName,
-            messages: withMessages ? [getMessage(threadId: threadId, isSenderAgent: false)] : [],
-            inboxAssignee: MockData.agent,
-            previousInboxAssignee: nil,
+        contactId: String = UUID().uuidString,
+        state: ChatThreadState = .ready
+    ) -> ChatThread {
+        ChatThread(
+            id: threadId,
+            state: state,
+            name: "Thread Name",
+            messages: withMessages ? [MessageMapper.map(getMessage(threadId: threadId, isSenderAgent: false))] : [],
+            assignedAgent: AgentMapper.map(MockData.agent),
+            lastAssignedAgent: nil,
             contactId: contactId,
-            scrollToken: scrollToken,
-            state: .ready
+            scrollToken: scrollToken
         )
     }
     
@@ -137,6 +138,106 @@ enum MockData {
             userStatistics: UserStatisticsDTO(seenAt: nil, readAt: nil),
             authorUser: isSenderAgent ? agent : nil,
             authorEndUserIdentity: isSenderAgent ? nil : customerIdentity
+        )
+    }
+    
+    static func getCustomerAuthorizedEvent(eventId: UUID) -> CustomerAuthorizedEventDTO {
+        CustomerAuthorizedEventDTO(
+            eventId: eventId,
+            eventType: .customerAuthorized,
+            postback: CustomerAuthorizedEventPostbackDTO(
+                eventType: .customerAuthorized,
+                data: CustomerAuthorizedEventPostbackDataDTO(
+                    consumerIdentity: CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString),
+                    accessToken: nil
+                )
+            )
+        )
+    }
+    
+    static func getThreadRecoveredEvent(eventId: UUID, channelId: String) -> ThreadRecoveredEventDTO {
+        ThreadRecoveredEventDTO(
+            eventType: .threadRecovered,
+            eventId: eventId,
+            postback: ThreadRecoveredEventPostbackDTO(
+                eventType: .threadRecovered,
+                data: ThreadRecoveredEventPostbackDataDTO(
+                    consumerContact: ContactDTO(
+                        id: "",
+                        threadIdOnExternalPlatform: UUID.provide(),
+                        status: .open,
+                        createdAt: Date.provide(),
+                        customFields: []
+                    ),
+                    messages: [],
+                    inboxAssignee: nil,
+                    thread: ReceivedThreadDataDTO(
+                        idOnExternalPlatform: UUID.provide(),
+                        channelId: channelId,
+                        threadName: "",
+                        canAddMoreMessages: true
+                    ),
+                    messagesScrollToken: "",
+                    customerCustomFields: []
+                )
+            )
+        )
+    }
+    
+    static func getLivechatRecoveredEvent(eventId: UUID, channelId: String, contactStatus: ContactStatus = .open) -> LiveChatRecoveredDTO {
+        LiveChatRecoveredDTO(
+            eventId: eventId,
+            eventType: .liveChatRecovered,
+            postback: LiveChatRecoveredPostbackDTO(
+                eventType: .liveChatRecovered,
+                data: LiveChatRecoveredPostbackDataDTO(
+                    contact: ContactDTO(
+                        id: "",
+                        threadIdOnExternalPlatform: UUID.provide(),
+                        status: contactStatus,
+                        createdAt: Date.provide(),
+                        customFields: []
+                    ),
+                    inboxAssignee: Self.agent,
+                    previousInboxAssignee: nil,
+                    messages: [getMessage(threadId: eventId, messageId: eventId, isSenderAgent: false, createdAt: dateProvider.now)],
+                    messagesScrollToken: "",
+                    thread: ReceivedThreadDataDTO(
+                        idOnExternalPlatform: eventId,
+                        channelId: channelId,
+                        threadName: "",
+                        canAddMoreMessages: true
+                    ),
+                    customerCustomFields: []
+                )
+            )
+        )
+    }
+    
+    static func getThreadListFetchedEvent(eventId: UUID, channelId: String) -> GenericEventDTO {
+        GenericEventDTO(
+            eventId: eventId,
+            eventType: .threadListFetched,
+            postback: GenericEventPostbackDTO(
+                eventType: .threadListFetched,
+                threads: [
+                    ReceivedThreadDataDTO(idOnExternalPlatform: eventId, channelId: channelId, threadName: "", canAddMoreMessages: true)
+                ]
+            )
+        )
+    }
+    
+    static func getThreadMetadataLoadedEvent(eventId: UUID) -> ThreadMetadataLoadedEventDTO {
+        ThreadMetadataLoadedEventDTO(
+            eventId: eventId,
+            eventType: .threadMetadataLoaded,
+            postback: ThreadMetadataLoadedEventPostbackDTO(
+                eventType: .threadMetadataLoaded,
+                data: ThreadMetadataLoadedEventPostbackDataDTO(
+                    ownerAssignee: nil,
+                    lastMessage: getMessage(threadId: eventId, messageId: eventId, isSenderAgent: false, createdAt: dateProvider.now)
+                )
+            )
         )
     }
 }

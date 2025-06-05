@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     func testSetVisitorId() async throws {
         XCTAssertNil(analyticsService.visitorId)
         
-        try await setUpConnection()
+        connectionContext.visitorId = UUID()
         
         XCTAssertNotNil(analyticsService.visitorId)
     }
@@ -47,21 +47,18 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testViewPageNoVisitCreatesVisit() async throws {
-        try await setUpConnection()
-        
         visitDetails = nil
 
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
+        
         let events = try await verify(sends: visit(), pageView(title: "page", url: "url")) {
             try await analyticsService.viewPage(title: "page", url: "url")
         }
         
         XCTAssertNotNil(visitDetails)
 
-        guard !events.isEmpty else {
-            XCTFail("Events should not be empty")
-            return
-        }
-        
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[0]["visitId"] as? String)
         XCTAssertEqual(visitDetails?.visitId.uuidString, events[1]["visitId"] as? String)
 
@@ -69,7 +66,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testViewPageStaleVisitCreatesVisit() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         let oldUUID = UUID()
         visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: Date.provide()))
@@ -84,7 +83,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testViewPageCurrentVisitJustUpdatesExpires() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         let oldUUID = UUID()
         visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: 1, since: Date.provide()))
@@ -105,7 +106,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testViewPageEndedStaleVisitCreatesVisit() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         let oldUUID = UUID()
         visitDetails = CurrentVisitDetails(visitId: oldUUID, expires: Date(timeInterval: -1, since: Date.provide()))
@@ -130,7 +133,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testChatWindowOpen() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -150,7 +155,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testConversion() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -170,7 +177,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionDisplay() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -190,7 +199,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionClicked() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -210,7 +221,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionSuccess() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -230,7 +243,9 @@ class AnalyticsProviderTests: CXoneXCTestCase {
     }
 
     func testProactiveActionFailure() async throws {
-        try await setUpConnection()
+        connectionContext.chatState = .prepared
+        connectionContext.visitorId = UUID()
+        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
         
         visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date(timeInterval: 1, since: Date.provide()))
 
@@ -241,26 +256,6 @@ class AnalyticsProviderTests: CXoneXCTestCase {
 
     func testProactiveActionFailureThrows() async throws {
         await XCTAssertAsyncThrowsError(try await analyticsService.proactiveActionSuccess(false, data: proactiveDetails))
-    }
-    
-    func testTypingStartStartThrows() {
-        XCTAssertThrowsError(try CXoneChat.threads.reportTypingStart(true, in: ChatThreadMapper.map(MockData.getThread())))
-    }
-    
-    func testTypingStartStartNoThrow() async throws {
-        try await setUpConnection()
-        
-        XCTAssertNoThrow(try CXoneChat.threads.reportTypingStart(true, in: ChatThreadMapper.map(MockData.getThread())))
-    }
-    
-    func testTypingStartEndThrows() {
-        XCTAssertThrowsError(try CXoneChat.threads.reportTypingStart(false, in: ChatThreadMapper.map(MockData.getThread())))
-    }
-    
-    func testTypingStartEndNoThrow() async throws {
-        try await setUpConnection()
-        
-        XCTAssertNoThrow(try CXoneChat.threads.reportTypingStart(false, in: ChatThreadMapper.map(MockData.getThread())))
     }
 }
 

@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "F45D76FB-266B-452A-8020-FF435C1AD414",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CXoneChatSDKTests",
+        "name" : "CXoneChatSDKTests"
+      }
+    }
+  ],
+  "version" : 1
+}

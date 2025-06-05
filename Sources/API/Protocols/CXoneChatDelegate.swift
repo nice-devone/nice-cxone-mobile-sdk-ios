@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -47,11 +47,13 @@ public protocol CXoneChatDelegate: AnyObject {
     /// - Parameter messageData: The data of the custom plugin message.
     func onCustomEventMessage(_ messageData: Data)
     
-    /// Callback to be called when the agent has stopped typing.
+    /// Notifies when an agent starts or stops typing in a specific chat thread.
     ///
-    /// - Parameter isTyping: An agent has started or ended typing.
-    /// - Parameter threadId: The unique identifier of thread where typing state changed.
-    func onAgentTyping(_ isTyping: Bool, threadId: UUID)
+    /// - Parameters:
+    ///   - isTyping: A `Bool` indicating whether the agent is typing (`true`) or has stopped typing (`false`).
+    ///   - agent: An instance of the `Agent` class representing the agent sending the typing status.
+    ///   - threadId: A `UUID` identifying the chat thread associated with the typing event.
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID)
     
     /// Callback to be called when the custom fields are set for a contact.
     func onContactCustomFieldsSet()
@@ -79,15 +81,17 @@ public protocol CXoneChatDelegate: AnyObject {
 
 public extension CXoneChatDelegate {
     
+    // swiftlint:disable missing_docs
     func onUnexpectedDisconnect() { }
     func onChatUpdated(_ state: ChatState, mode: ChatMode) { }
     func onThreadUpdated(_ chatThread: ChatThread) { }
     func onThreadsUpdated(_ chatThreads: [ChatThread]) { }
     func onCustomEventMessage(_ messageData: Data) { }
-    func onAgentTyping(_ isTyping: Bool, threadId: UUID) { }
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) { }
     func onContactCustomFieldsSet() { }
     func onCustomerCustomFieldsSet() { }
     func onError(_ error: Error) { }
     func onTokenRefreshFailed() { }
     func onProactivePopupAction(data: [String: Any], actionId: UUID) { }
+    // swiftlint:enable missing_docs
 }

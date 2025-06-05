@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
 //
 
 import Foundation
+import Mockable
 
 /// The provider for customer related properties and methods.
+@Mockable
 public protocol CustomerProvider {
     
     /// The customer currently using the app.
@@ -32,25 +34,7 @@ public protocol CustomerProvider {
     ///
     /// - Warning: This method must be called before SDK initialization via ``ConnectionProvider/prepare(environment:brandId:channelId:)``.
     ///
-    /// - Parameter customer: The customer. Might be `nil`.
-    ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat is already initialized.
-    @available(*, deprecated, message: """
-The method uses a shorthand unnamed parameter, which can obscure the meaning of the method for developers unfamiliar with the code.
- Please update your usage to the new method `set(customer:)`.
-""")
-    func set(_ customer: CustomerIdentity?) throws
-    
-    /// Sets the customer currently using the app.
-    ///
-    /// If you set your customer ID, you must ensure that it is unique and that it is not used by any other customer.
-    ///
-    /// - Note: Setting your own Customer ID may result in security vulnerabilities.
-    /// It is recommended to use the customer ID provided by the SDK. If you want to update the customer name, use the ``setName(firstName:lastName:)`` method.
-    ///
-    /// - Warning: This method must be called before SDK initialization via ``ConnectionProvider/prepare(environment:brandId:channelId:)``.
-    ///
-    /// - Parameter customer: The customer. Might be `nil`.
+    /// - Parameter customer: The customer identity. Can be `nil`.
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the chat is already initialized.
     func set(customer: CustomerIdentity?) throws

@@ -1,0 +1,95 @@
+#
+# Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
+#
+# Licensed under the NICE License;
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/LICENSE
+#
+# TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
+# AN “AS IS” BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+# OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
+#
+
+custom_rules:
+  implicit_init:
+    regex: "\\W\\.init\\("
+    message: "Don't use implicit init. Use explicit initializer of the object."
+
+disabled_rules: # rule identifiers to exclude from running
+  - nesting
+  - trailing_whitespace
+  - cyclomatic_complexity
+
+opt_in_rules: # some rules are only opt-in
+  - identifier_name
+  - function_parameter_count
+  - control_statement
+  - empty_count
+  - trailing_newline
+  - colon
+  - comma
+  - conditional_returns_on_newline
+  - trailing_closure
+  - implicit_return
+  - strict_fileprivate
+  - force_try
+  - force_unwrapping
+  - custom_rules
+  - sorted_imports
+  - file_header
+  - missing_docs
+included: # paths to include during linting. `--path` is ignored if present.
+  - Sources
+
+force_unwrapping:
+  severity: error
+ 
+force_try:
+  severity: error
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 800
+  ignore_comment_only_lines: true
+  
+line_length:
+  warning: 160
+  error: 200
+  
+large_tuple:
+   warning: 3
+   error: 4
+
+identifier_name:
+  min_length: 3
+  max_length:
+    warning: 40
+    error: 45
+  excluded: 
+    - id
+    - to
+reporter: "xcode"
+
+file_header:
+  required_pattern: |
+                    \/\/
+                    \/\/ Copyright \(c\) 2021-2025. NICE Ltd. All rights reserved.
+                    \/\/
+                    \/\/ Licensed under the NICE License\;
+                    \/\/ you may not use this file except in compliance with the License.
+                    \/\/ You may obtain a copy of the License at
+                    \/\/
+                    \/\/    https:\/\/github.com\/nice-devone\/nice-cxone-mobile-sdk-ios\/blob\/main\/LICENSE
+                    \/\/
+                    \/\/ TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
+                    \/\/ AN \“AS IS\” BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+                    \/\/ OR IMPLIED, INCLUDING \(WITHOUT LIMITATION\) WARRANTIES OF MERCHANTABILITY,
+                    \/\/ FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
+                    \/\/

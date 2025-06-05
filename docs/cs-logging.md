@@ -1,105 +1,261 @@
 # Case Study: Logging
 
-In any robust software system, effective logging and error management is critical for smooth operations and troubleshooting. The CXoneChatSDK introduces a customizable LogManager to provide centralized logging capabilities, helping developers manage errors, warnings, and informational messages during chat operations. This case study illustrates how the LogManager was integrated and configured to streamline error handling, improve monitoring, and enhance debugging in an iOS chat application.
+The CXone Mobile SDK provides a flexible and powerful logging system built on the `CXoneGuideUtility` library. This case study illustrates how to implement effective logging in your application using the SDK's built-in logging capabilities, demonstrating configuration, customization, and integration strategies.
 
+## Overview
 
-## Problem Statement
+Effective logging is essential for troubleshooting issues, monitoring application behavior, and providing a clear audit trail of events. The CXone Mobile SDK's logging system allows developers to:
 
-During the development of the CXoneChatSDK-based chat module, developers faced several challenges:
+1. Configure log levels to control verbosity
+2. Direct logs to multiple destinations (console, file, crash reporting services)
+3. Format log messages with different levels of detail
+4. Filter logs by category or level
+5. Integrate with existing application logging systems
 
-1. Inconsistent Error Reporting: Critical errors were not logged systematically.
-2. High Debugging Time: Lack of proper logs made it difficult to trace issues across chat sessions.
-3. Information Overload: Raw, unfiltered logs increased noise in the development environment, making it hard to distinguish critical issues from minor events.
+## The Logging Architecture
 
-The solution needed to provide:
+The CXone Mobile SDK uses a modular logging architecture based on these key components:
 
-- Flexible log filtering by severity.
-- Configurable verbosity for different stages of development.
-- Seamless integration with the host application’s logging system.
+### LogWriter Protocol
 
-### Solution
-
-The LogManager from the CXoneChatSDK was implemented to address these challenges. It introduces logging levels, verbosity settings, and a protocol-based approach to forward logs to the host application. The key features include:
-
-1. Log Levels:
-  - trace: Logs everything (for in-depth debugging).
-  - info: Logs general chat flow events.
-  - warning: Logs non-critical issues.
-  - error: Logs only critical errors.
-
-2. Verbosity Options:
-  - simple: Logs only the timestamp and message.
-  - medium: Adds function name to the log entry.
-  - full: Logs file name, line number, and function name, useful for detailed analysis.
-  
-3. Delegate-Based Log Handling:
-Log messages are forwarded to the host application using the LogDelegate protocol, allowing custom processing of logs on the application side.
-
-
-## Implementation
-
-1. Configuring the LogManager
-
-The LogManager was configured based on the environment (development or production) to control the level and verbosity of logs:
+The `LogWriter` protocol is the foundation of the logging system, providing methods to write log records:
 
 ```swift
-LogManager.configure(level: .warning, verbosity: .medium)
+public protocol LogWriter {
+    func log(record: LogRecord)
+}
 ```
 
-This setup ensures that only warnings and errors are logged in production, reducing noise, while detailed logs (e.g., trace) are available during development.
+The SDK includes several implementations:
 
-2. Forwarding Logs to the Host Application
+- `PrintLogWriter`: Outputs logs to the console
+- `FileLogWriter`: Writes logs to a file
+- `SystemLogWriter`: Sends logs to the system's os.Logger
+- `ForkLogWriter`: Distributes logs to multiple LogWriters
 
-The host application conforms to the LogDelegate protocol to handle logs:
+### LogLevel
+
+The `LogLevel` enum defines the severity of log messages, in ascending order of importance:
 
 ```swift
-class ChatLogger: LogDelegate {
+public enum LogLevel: String, Sendable, CaseIterable, Equatable {
+    case trace   // Most detailed level for tracing execution flow
+    case debug   // Debugging information
+    case info    // General informational messages
+    case warning // Potential issues
+    case error   // Error conditions
+    case fatal   // Critical unrecoverable errors
+}
+```
 
-    func logError(_ message: String) {
-        print("❌ ERROR: \(message)")
+### LogRecord
+
+A `LogRecord` encapsulates all information about a log entry, including:
+
+- The message text
+- Log level
+- Category (optional)
+- Source file, line number, and timestamp
+- Formatted message (after applying LogFormatter)
+
+### StaticLogger Protocol
+
+The `StaticLogger` protocol provides convenient static methods for logging:
+
+```swift
+public protocol StaticLogger {
+    static var instance: LogWriter? { get }
+    static var category: String? { get }
+}
+```
+
+Implementations include:
+- `LogManager` in the CXone SDK (category: "CORE")
+- `LogManager` in the CXone UI library (category: "UI")
+
+## Implementing Logging in Your Application
+
+### 1. Configure the SDK's LogWriter
+
+The SDK's logging system can be configured by setting the `CXoneChat.logWriter` property:
+
+```swift
+// Use a simple console logger
+CXoneChat.logWriter = PrintLogWriter()
+
+// Or configure a more complex setup with filtering and multiple destinations
+CXoneChat.logWriter = ForkLogWriter(
+    PrintLogWriter().format(.simple),
+    FileLogWriter(path: logFileURL).format(.full)
+).filter(minLevel: .warning)
+```
+
+### 2. Create Your Own Logger Implementation
+
+You can create your own implementation of the `StaticLogger` protocol:
+
+```swift
+class Log: StaticLogger {
+    nonisolated(unsafe) public static var instance: LogWriter? = PrintLogWriter()
+    public static let category: String? = "Application"
+    
+    // Additional utility methods as needed
+}
+```
+
+### 3. Configure Multiple Log Destinations
+
+The sample application demonstrates how to configure multiple log destinations:
+
+```swift
+class func configure(
+    format: LogFormatter = .full,
+    isPrintEnabled: Bool = true,
+    isWriteToFileEnabled: Bool = false,
+    isCrashlyticsEnabled: Bool = false,
+    isSystemEnabled: Bool = false
+) {
+    var loggers = [any LogWriter]()
+
+    if isPrintEnabled {
+        loggers.append(PrintLogWriter())
     }
     
-    func logWarning(_ message: String) {
-        print("⚠️ WARNING: \(message)")
+    if isWriteToFileEnabled, let url = getCurrentLogUrl() {
+        loggers.append(FileLogWriter(path: url))
     }
 
-    func logInfo(_ message: String) {
-        print("ℹ️ INFO: \(message)")
+    if isCrashlyticsEnabled {
+        loggers.append(CrashlyticsLogWriter())
     }
 
-    func logTrace(_ message: String) {
-        print("❇️ TRACE: \(message)")
+    if isSystemEnabled {
+        loggers.append(SystemLogWriter(logger: Logger(
+            subsystem: Bundle.main.bundleIdentifier!,
+            category: "Application"
+        )))
     }
+
+    let instance = loggers.isEmpty ? nil : ForkLogWriter(loggers: loggers).format(format)
+
+    Self.instance = instance
+    CXoneChat.logWriter = instance
+    CXoneChatUI.LogManager.instance = instance
+}
+```
+
+### 4. Log Message Formatting
+
+The SDK supports three formatting styles through the `LogFormatter` class:
+
+- `.simple`: Level, category, and message only
+- `.medium`: Adds timestamp
+- `.full`: Adds file name and line number
+
+```swift
+// Format logs with full details
+let logger = PrintLogWriter().format(.full)
+```
+
+### 5. Using the Logger
+
+Once configured, you can log messages at various levels:
+
+```swift
+// Basic logging
+Log.trace("Starting connection process")
+Log.info("User successfully connected")
+Log.warning("Response timeout, retrying")
+Log.error("Connection failed: \(error.localizedDescription)")
+
+// Error extension utility
+error.logError("Connection attempt")
+
+// Scope tracking with automatic entry/exit logging
+Log.scope {
+    // Code to be executed with automatic entry/exit logging
+    performComplexOperation()
 }
 
-// Set the logger as the delegate
-LogManager.delegate = ChatLogger()
+// Timing block execution
+Log.time {
+    // Code to be executed with timing
+    performExpensiveOperation()
+}
 ```
 
-3. Logging Messages During Chat Operations
+## Advanced Usage Examples
 
-Here are examples of how various log levels were used during different chat events:
-
-- Error Logging (Network Failure):
+### Filtering Logs by Category
 
 ```swift
-LogManager.error("Failed to connect to chat server.")
+// Only log messages with specific categories
+let logger = PrintLogWriter().filter { record in
+    record.category == "Network" || record.category == "Authentication"
+}
+
+// Only log messages at warning level or higher
+let logger = PrintLogWriter().filter(minLevel: .warning)
+
+// Filter by specific categories
+let logger = PrintLogWriter().filter(categories: "Network", "Authentication")
 ```
 
-- Warning Logging (Retry Mechanism):
+### Writing Logs to a File for Debugging
 
 ```swift
-LogManager.warning("Retrying connection...")
+// Define a log file URL
+let logDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+let logFileURL = logDirectory.appendingPathComponent("app.log")
+
+// Configure a file writer
+let fileWriter = FileLogWriter(path: logFileURL).format(.full)
+
+// Set as the SDK's logger
+CXoneChat.logWriter = fileWriter
 ```
 
-- Info Logging (User Joined Chat):
+### Creating a Log Share Feature
 
 ```swift
-LogManager.info("User successfully joined the chat.")
+func shareLogFiles() throws -> UIActivityViewController {
+    let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    let logsUrl = documentDirectory.appendingPathComponent("Logs")
+    let filePaths = try FileManager.default.contentsOfDirectory(at: logsUrl, includingPropertiesForKeys: nil)
+    
+    return UIActivityViewController(activityItems: filePaths, applicationActivities: nil)
+}
 ```
 
-- Trace Logging (Detailed Debugging):
+## Best Practices
 
-```swift
-LogManager.trace("Chat message sent: \(message)")
-```
+1. **Appropriate Log Levels**: Use the appropriate log level for each message:
+   - `trace` for detailed flow information
+   - `debug` for development-time diagnostics
+   - `info` for notable but normal events
+   - `warning` for non-critical issues
+   - `error` for failures requiring attention
+   - `fatal` for catastrophic failures
+
+2. **Performance Considerations**: 
+   - In production builds, filter logs to reduce overhead
+   - File writing is done using `Task { @MainActor in }` to ensure thread safety
+   - Be cautious with logging sensitive information
+   - For expensive computations, use conditional compilation:
+     ```swift
+     #if DEBUG
+     Log.trace("Complex data: \(expensiveComputation())")
+     #endif
+     ```
+
+3. **Log Rotation**:
+   - Implement log rotation to prevent excessive disk usage
+   - Delete old logs periodically
+
+4. **Context-Rich Messages**:
+   - Include relevant context in log messages
+   - For errors, include the operation being performed and relevant IDs
+
+## Conclusion
+
+The CXone Mobile SDK's logging system provides a flexible foundation for comprehensive application logging. By leveraging its modular architecture, you can create a tailored logging solution that addresses your specific debugging, monitoring, and diagnostic needs across development and production environments.

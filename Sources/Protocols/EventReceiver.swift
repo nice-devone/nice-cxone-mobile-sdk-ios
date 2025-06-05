@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ import Combine
 import Foundation
 
 protocol EventReceiver: AnyObject {
+    
     var events: AnyPublisher<ReceivedEvent, Never> { get }
     var cancellables: [AnyCancellable] { get set }
 }
 
 extension EventReceiver {
+    
     func addListener<Type: ReceivedEvent>(
         for type: EventType,
         file: StaticString = #file,

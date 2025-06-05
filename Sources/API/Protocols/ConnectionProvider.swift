@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
 //
 
 import Foundation
+import Mockable
 
 /// The provider for connection related properties and methods.
+@Mockable
 public protocol ConnectionProvider {
     
     /// The current channel configuration for currently connected CXone session.
@@ -67,7 +69,7 @@ public protocol ConnectionProvider {
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -90,7 +92,7 @@ public protocol ConnectionProvider {
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -110,7 +112,7 @@ public protocol ConnectionProvider {
     /// - Precondition: Either ``prepare(environment:brandId:channelId:)`` or ``prepare(chatURL:socketURL:brandId:channelId:)`` method
     /// must be called before this method.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
@@ -124,17 +126,11 @@ public protocol ConnectionProvider {
     /// Disconnects from the CXone service and keeps the customer signed in.
     func disconnect()
     
-    /// Pings the CXone chat server to ensure that a connection is established.
-    ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
-    @available(*, deprecated, message: "Deprecated as of 2.2.0")
-    func ping() throws
-    
     /// Manually executes a trigger that was defined in CXone. This can be used to test that proactive actions are displaying.
     ///
     /// - Parameter triggerId: The id of the trigger to manually execute.
     /// 
-    /// - Throws: ``CXoneChatError/illegalChatState`` if it was unable to trigger the required method because the SDK is not in the required state
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
@@ -142,5 +138,5 @@ public protocol ConnectionProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
-    func executeTrigger(_ triggerId: UUID) throws
+    func executeTrigger(_ triggerId: UUID) async throws
 }

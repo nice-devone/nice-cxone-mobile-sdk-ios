@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -40,11 +40,6 @@ struct AgentDTO: Equatable {
 
     /// The URL for the profile photo of the agent.
     let publicImageUrl: String
-
-    /// The full name of the agent (readonly).
-    var fullName: String {
-        "\(firstName) \(surname)"
-    }
 }
 
 // MARK: - Codable

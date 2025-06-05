@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -24,19 +24,12 @@ struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
     let eventType: EventType?
 
     let postback: ThreadMetadataLoadedEventPostbackDTO
-
-    // MARK: - constructor
-
-    init(eventId: UUID, eventType: EventType? = .threadMetadataLoaded, postback: ThreadMetadataLoadedEventPostbackDTO) {
-        self.eventId = eventId
-        self.eventType = eventType
-        self.postback = postback
-    }
 }
 
 // MARK: - ReceivedEvent
 
 extension ThreadMetadataLoadedEventDTO: ReceivedEvent {
+    
     static let eventType: EventType? = .threadMetadataLoaded
 
     var postbackEventType: EventType? { postback.eventType }

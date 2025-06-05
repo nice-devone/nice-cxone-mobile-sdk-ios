@@ -1,191 +1,129 @@
 # Case Study: Live Chat
 
-The Mobile SDK has support for asynchronous (single-thread, multi-thread) and live chat channel configuration. In case of live chat, the whole behavior is different. The chat availability is based on the availability of agents, akin to business hours.
-The SDK indicates no agent is available with an `.offline` chat state.  In this case, no web socket connection is established. However, it is still possible to use analytics events, as they are not web socket-based.
+> **Quick Start**: To add live chat to your app using the UI module, call `prepare()` after user authentication, then use `ChatCoordinator.start()` for UIKit or `ChatCoordinator.content()` for SwiftUI when the user wants to chat. The UI module handles everything else automatically.
 
-When the chat is available, the SDK first attempts to load any previously created thread to continue the conversation. If no thread is available, the SDK automatically creates one and assigns a user to the queue.
+## What is Live Chat?
 
-> Important: The live chat configuration also has some feature limitations, similar to the single-thread configuration. For example, updating the thread name or archiving the thread is prohibited.
+The Mobile SDK supports asynchronous (single-thread, multi-thread) and live chat channel configurations. In live chat mode:
 
-The SDK employs a state-based architecture and handles many operations automatically. For instance, it attempts to load a thread after establishing a connection and, if no thread is available and no pre-chat form is needed, it creates a thread for immediate use. Thus, there is no need to manually call `load(with:)` to recover a previously created thread or create a new one if none is available and no pre-chat form is necessary.
+- Chat availability depends on agent availability (like business hours)
+- When no agents are available, the SDK enters an `.offline` state
+- Analytics events still work in offline state (they don't require a web socket)
+- The SDK automatically loads or creates threads when no pre-chat form is required
+- If a pre-chat form is configured, the integrator must handle it and trigger thread creation manually
+- Some features (like thread name updates) are not available
 
-> Important: If the channel is configured with a pre-chat survey, the SDK does not automatically create the thread, and the UI must manage this.
+## UI Module Integration (Recommended)
 
+The UI module provides a complete, ready-to-use chat interface with all functionality built-in. This is the recommended approach for most integrators.
 
-## Example
+### Step 1: Prepare the SDK
 
-This example uses some parts of the example application and is an abbreviated snippet to demonstrate this functionality. The full implementation can be found in the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) and [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios) repositories. However, some parts are edited just to demonstrate the ability to handle single thread configuration.
-Note that sample application handles all channel configuration so snippets come from different files. Host application will be focused on a single channel configuration (single-threaded, multi-threaded or live chat) so implementation is much simplier.
-
-For live chat channel configuration, it is recommended to do following steps:
-
-1. Prepare usage of the CXoneChatSDK via `ConnectionProvider.prepare(environment:brandId:channelId)` method
-  - the SDK uses state-based architecture so it is necessary to set the SDK to the correct state before the web socket connection may be established
-2. Subscribe to CXone Chat SDK delegate methods
-  - Otherwise you will not be able to receive information about the established connection and continue.
-3. Connect to the CXone services via `ConnectionProvider.connect()` method
-4. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods
-  - `onChatUpdated(_:mode:)` method allows to track chat state updates, such as connecting or connected state for logging purposes but required state is a `.ready` state. It indicates the chat is ready for usage. This state is received from the SDK in case there is no thread available for usage and it is necessary to complete the pre-chat. Also, for live chat channel configuration, it is necessary to handle `.offline` state.
-  - `onThreadUpdated(_:)` method receives every thread update and also when new thread is created.
-5. Handle chat transcript UI with loaded thread data
-6. Handle end conversation from a customer/an agent perspective
-  - From a customer perspective, the UI should allow trigger `endContact(_:)` SDK API method.
-  - From an agent perspective, the `onThreadUpdated(_:)` SDK API method is triggered with chat thread state updated to `.closed`. The chat should have message sending disabled and an overlay of future steps will be displayed.
-
-> Important: To see logged warnings/errors you need to configure the SDK logger. This can be done using the `configureLogger(level:verbosity:)` method available in `CXoneChat`.
-
-### Prepare usage of the CXoneChatSDK - `LoginViewModel.swift`
-
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Presentation/Views/Login/LoginViewModel.swift).
+Call this method after user authentication:
 
 ```swift
-class LoginViewModel: AnalyticsReporter, ObservableObject {
-    
-    ...
-    
-    // MARK: - Methods
+// Call early in your app lifecycle (e.g., after login)
+try await CXoneChat.shared.connection.prepare(
+    environment: yourEnvironment, 
+    brandId: yourBrandId, 
+    channelId: yourChannelId
+)
 
-    override func onAppear() {
-        ...
-        prepareAndFetchConfiguration()
-        ...
-    }
-    ...
+// Set user identity if available
+try CXoneChat.shared.customer.set(
+    customer: CustomerIdentity(
+        id: userProfile.id,
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName
+    )
+)
+```
+
+### Step 2: Show the Chat UI
+
+The UI module supports both UIKit and SwiftUI integration. Choose the approach that matches your app:
+
+#### UIKit Integration
+
+```swift
+// Create a coordinator (can be stored as a property)
+let chatCoordinator = ChatCoordinator()
+
+// UIKit integration - present the chat UI from a view controller
+func showChatUI() {
+    chatCoordinator.start(
+        threadId: nil,  // For a new conversation
+        in: navigationController,       // Your UINavigationController
+        presentModally: true, 
+        onFinish: {
+            // Handle chat completion
+        }
+    )
 }
-...
+```
 
-// MARK: - Private methods
+#### SwiftUI Integration
 
-private extension LoginViewModel {
+```swift
+// In your SwiftUI view
+struct ContentView: View {
+    // Create a coordinator
+    let chatCoordinator = ChatCoordinator()
     
-    func prepareAndFetchConfiguration() {
-        ...
-        
-        Task { @MainActor in
-            do {
-                if let env = configuration.environment {
-                    try await CXoneChat.shared.connection.prepare(environment: env, brandId: configuration.brandId, channelId: configuration.channelId) // (1)
-                } else {
-                    ...
+    // State to control sheet presentation
+    @State private var showingChat = false
+    
+    var body: some View {
+        Button("Start Chat") {
+            showingChat = true
+        }
+        .sheet(isPresented: $showingChat) {
+            // Get chat content view from coordinator
+            chatCoordinator.content(
+                threadId: nil,
+                presentModally: true,
+                onFinish: {
+                    showingChat = false
                 }
-
-                ...
-            } catch {
-                ...
-            }
+            )
         }
     }
 }
 ```
 
-### Handle Connection - `ChatContainerViewModel.swift`
+**That's it!** The UI module automatically handles live chat specifics including agent availability checks and offline state management.
 
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Container/ChatContainerViewModel.swift).
+### User Session Management
 
-```swift
-class ChatContainerViewModel: ObservableObject {
-
-    ...
-    
-    // MARK: - Methods
-    
-    func onAppear() {
-        LogManager.trace("View did appear")
-
-        chatProvider.add(delegate: self) // (2)
-        
-        Task {
-            do {
-                try await CXoneChat.shared.connection.connect() // (3)
-            } catch {
-                ...
-            }
-        }
-    }
-    ...
-}
-
-...
-
-// MARK: - CXoneChatDelegate
-
-extension ChatContainerViewModel: CXoneChatDelegate {
-    
-    func onChatUpdated(_ chatState: ChatState, mode: ChatMode) { // (4)
-        ...
-        switch chatState {
-        case .connecting:
-            ...
-        case .connected:
-            ...
-        case .offline:
-            ...
-        case .ready:
-            startChat()
-        default:
-            ...
-        }
-
-    }
-    
-    private func startChat() {
-        ...
-        switch chatProvider.mode {
-        case .multithread:
-            ...
-        case .singlethread, .liveChat:
-            if let thread = chatProvider.threads.get().first, thread.state != .closed {
-                show(thread: thread)
-            } else {
-                createThread(onCancel: onDismiss) { [weak self] thread in
-                    self?.show(thread: thread)
-                }
-            }
-        }
-    }
-}
-``` 
-
-### Handle Thread - `ThreadViewModel.swift`
-
-Full source code available [here](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/Sources/Presentation/Thread/ThreadViewModel.swift).
+When users log in or out of your app, you need to manage the SDK state:
 
 ```swift
-...
-// MARK: - Methods
+// When user logs out:
+CXoneChat.signOut()
 
-extension ThreadViewModel {
-    
-    func onAppear() {
-        ...
-        containerViewModel?.chatProvider.add(delegate: self) // (2)
-        ...
-    }
-    ...
-}
-...
-// MARK: - CXoneChatDelegate
-
-extension ThreadViewModel: CXoneChatDelegate {
-    ...
-    func onThreadUpdated(_ updatedThread: ChatThread) { // (4)
-        ...
-        Task { @MainActor in
-            if thread.id != updatedThread.id {
-                ...
-            } else {
-                ... // (5)
-                if !isEndConversationVisible, chatProvider.mode == .liveChat, updatedThread.state == .closed { // (6)
-                    if updatedThread.state != thread.state {
-                        isEndConversationVisible = true
-                    } else if updatedThread.assignedAgent == nil, thread.assignedAgent != nil {
-                        isEndConversationVisible = false
-                    }
-                }
-                ...
-            }
-        }
-    }
-    ...
-}
+// When a different user logs in:
+// Update customer identity before prepare() - no need to sign out
+try CXoneChat.shared.customer.set(customer: CustomerIdentity(
+    id: newUserProfile.id,
+    firstName: newUserProfile.firstName,
+    lastName: newUserProfile.lastName
+))
+try await CXoneChat.shared.connection.prepare(
+    environment: yourEnvironment,
+    brandId: yourBrandId,
+    channelId: yourChannelId
+)
 ```
+
+> **Note**: `signOut()` is intended for changing environments and should not be used in production. For switching between users, simply update the customer identity before calling `prepare()`.
+
+## Sample Implementation
+
+For a complete implementation reference, see:
+
+- [Sample Application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios)
+- [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios)
+
+## Need a Custom UI?
+
+If you need to build your own custom UI without using the UI module, please check our [Core SDK Integration Guide](core-sdk-integration.md) for details on implementing the delegate methods, connecting manually, and handling all states yourself.

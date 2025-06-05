@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     
     // MARK: - Properties
     
+    let delegateManager = SocketDelegateManager()
     let connectionContext: ConnectionContext
     
     var delegate: SocketDelegate?
@@ -30,17 +31,12 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
         connectionContext.chatState.isChatAvailable && socket != nil
     }
     
-    /// An operation queue for scheduling the delegate calls and completion handlers.
-    private var operationQueue = OperationQueue()
-    
     /// The WebSocket for sending and receiving messages.
     private let subject = PassthroughSubject<ReceivedEvent, Never>()
-    
+
     private var socket: WebSocketProtocol?
 
     private var eventTransfer: AnyCancellable?
-
-    private let semaphore = DispatchSemaphore(value: 0)
     
     /// Whether a pong was received for the heartbeat message.
     private var pongReceived = false
@@ -48,15 +44,13 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     /// The timer for when pulse messages should be sent.
     private var pulseTimer: Task<(), Never>?
 
-    private var urlSession: URLSessionProtocol {
+    var urlSession: URLSessionProtocol {
         connectionContext.session
     }
-
     var accessToken: AccessTokenDTO? {
         get { connectionContext.accessToken }
         set {
             connectionContext.accessToken = newValue
-            semaphore.signal()
         }
     }
     
@@ -103,6 +97,8 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     func disconnect(unexpectedly: Bool) {
         delegate?.didCloseConnection(unexpectedly: unexpectedly)
 
+        cancellables.cancel()
+        
         socket?.cancel(with: .goingAway, reason: nil)
         socket = nil
 
@@ -119,7 +115,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     ///   - shouldCheck: Whether to check for an expired access token.
     ///
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    func send(data: Data, shouldCheck: Bool = true) throws {
+    func send(data: Data, shouldCheck: Bool = true) async throws {
         guard let message = data.utf8string else {
             throw CXoneChatError.invalidData
         }
@@ -129,17 +125,10 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
         #endif
         
         if shouldCheck, accessToken?.isExpired(currentDate: Date.provide()) ?? false {
-            delegate?.refreshToken()
-            semaphore.wait()
+            try await delegate?.refreshToken()
         }
 
         socket?.send(.string(message))
-    }
-
-    /// Sends a ping through the WebSocket to ensure that the server is connected.
-    @available(*, deprecated, message: "Deprecated as of 2.2.0")
-    func ping() {
-        socket?.sendPing()
     }
     
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
@@ -150,7 +139,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
         
         Task {
             let request = URLRequest(url: object.url, method: .get, contentType: "application/json")
-            let (data, response) = try await connectionContext.session.fetch(for: request, fun: #function)
+            let (data, response) = try await connectionContext.session.fetch(for: request)
             
             guard let response = response as? HTTPURLResponse, (200 ... 299) ~= response.statusCode else {
                 LogManager.error("Error downloading s3 event")
@@ -162,6 +151,8 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     }
 
     func forward(data: Data) {
+        LogManager.trace("Handling event: \(String(data: data, encoding: .utf8)?.formattedJSON ?? "invalid data")")
+        
         if let event = data.toReceivedEvent() {
             subject.send(event)
         }
@@ -171,8 +162,15 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
 // MARK: - Private methods
 
 private extension SocketServiceImpl {
+    
+    // Adjusted values for debugging purposes
+    #if DEBUG
+    static let pingDelay = 100.0
+    static let pingResponseTimeout = 100.0
+    #else
     static let pingDelay = 10.0
     static let pingResponseTimeout = 5.0
+    #endif
 
     func startPulseTimer() -> Task<(), Never> {
         Task {
@@ -226,7 +224,8 @@ private extension SocketServiceImpl {
         addEventTransfer()
 
         // add listeners to events
-        addListener(downloadEventContentFromS3(_:))
+        addListener(downloadEventContentFromS3)
+        addListener(onOperationError)
     }
 
     func addEventTransfer() {
@@ -248,10 +247,6 @@ private extension SocketServiceImpl {
                 if message == #""pong""# {
                     self?.pongReceived = true
                 } else {
-                    #if DEBUG
-                    LogManager.trace("Did receive string: \(message.formattedJSON ?? message)")
-                    #endif
-
                     if let data = message.data(using: .utf8) {
                         self?.forward(data: data)
                     }
@@ -260,6 +255,18 @@ private extension SocketServiceImpl {
                 LogManager.warning("Listener did received unknown response case - \(response)")
                 return
             }
+        }
+    }
+    
+    func onOperationError(_ error: OperationError) {
+        switch error.errorCode {
+        case .customerAuthorizationFailed, .inconsistentData:
+            delegateManager.onError(error)
+        case .tokenRefreshFailed:
+            delegateManager.onTokenRefreshFailed()
+        case .customerReconnectFailed, .recoveringThreadFailed, .recoveringLivechatFailed:
+            // these are handled elsewhere
+            break
         }
     }
 }

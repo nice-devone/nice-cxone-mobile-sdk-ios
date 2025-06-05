@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,26 @@ import Foundation
 // MARK: - KeyedDecodingContainer
 
 extension KeyedDecodingContainer {
+    
+    func decodeUUID(forKey key: Key) throws -> UUID {
+        if let eventId = try decodeIfPresent(UUID.self, forKey: key) {
+            return eventId
+        } else if let eventId = try decodeIfPresent(LowerCaseUUID.self, forKey: key)?.uuid {
+            return eventId
+        } else {
+            throw DecodingError.valueNotFound(UUID.self, DecodingError.Context(codingPath: codingPath, debugDescription: key.stringValue))
+        }
+    }
+    
+    func decodeUUIDIfPresent(forKey key: Key) throws -> UUID? {
+        if let eventId = try decodeIfPresent(UUID.self, forKey: key) {
+            return eventId
+        } else if let eventId = try decodeIfPresent(LowerCaseUUID.self, forKey: key)?.uuid {
+            return eventId
+        } else {
+            return nil
+        }
+    }
     
     func decodeISODate(forKey key: Key) throws -> Date {
         let formatter = ISO8601DateFormatter()

@@ -1,0 +1,34 @@
+{
+  "configurations" : [
+    {
+      "id" : "0224A591-9CA1-45F4-9467-9B3A0E8865E8",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:",
+          "identifier" : "CXoneChatSDK",
+          "name" : "CXoneChatSDK"
+        }
+      ]
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CXoneChatSDKTests",
+        "name" : "CXoneChatSDKTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ open class CXoneXCTestCase: XCTestCase {
     }
 
     lazy var eventsService: EventsService = connectionService.eventsService
-    lazy var socketService = SocketServiceMock(connectionContext: ConnectionContextMock(session: urlSession))
+    lazy var socketService = SocketServiceMock(session: urlSession)
     lazy var CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
     lazy var configRequestHandler = accept(url(matches: ".*/\(channelId)$"), body: resource("ChannelConfiguration", type: "json"))
     lazy var urlSession: URLSession = {
@@ -49,17 +49,14 @@ open class CXoneXCTestCase: XCTestCase {
     var currentExpectation = XCTestExpectation(description: "")
     var didCheckDelegate = false
     
-    var threadsService: ChatThreadsService {
-        CXoneChat.threads as! ChatThreadsService
+    var threadsService: ChatThreadListService {
+        CXoneChat.threads as! ChatThreadListService
     }
     var connectionService: ConnectionService {
         CXoneChat.connection as! ConnectionService
     }
     var analyticsService: AnalyticsService {
         CXoneChat.analytics as! AnalyticsService
-    }
-    var messagesService: MessagesService {
-        threadsService.messages as! MessagesService
     }
     var customerService: CustomerService {
         CXoneChat.customer as! CustomerService
@@ -71,7 +68,7 @@ open class CXoneXCTestCase: XCTestCase {
         CXoneChat.threads.customFields as! ContactCustomFieldsService
     }
     var connectionContext: ConnectionContextMock {
-        socketService.connectionContext as! ConnectionContextMock
+        analyticsService.connectionContext as! ConnectionContextMock
     }
     
     // MARK: - Lifecycle
@@ -85,6 +82,9 @@ open class CXoneXCTestCase: XCTestCase {
         CXoneChat.add(delegate: self)
 
         didCheckDelegate = false
+        
+        connectionService.addListeners()
+        threadsService.addListeners()
     }
     
     // MARK: - Methods
@@ -100,10 +100,12 @@ open class CXoneXCTestCase: XCTestCase {
                     return
                 }
                 
-                do {
-                    try self?.customerService.processCustomerReconnectEvent()
-                } catch {
-                    XCTFail(error.localizedDescription)
+                Task {
+                    do {
+                        try await self?.customerService.processCustomerReconnectedEvent()
+                    } catch {
+                        XCTFail(error.localizedDescription)
+                    }
                 }
             }
         }
@@ -148,6 +150,10 @@ extension CXoneXCTestCase: CXoneChatDelegate {
     }
     
     public func onAgentTyping(_ isTyping: Bool, threadId: UUID) {
+        fulfillExpectationIfNeeded()
+    }
+    
+    public func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) {
         fulfillExpectationIfNeeded()
     }
     

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -25,17 +25,15 @@ internal protocol WebSocketProtocol {
 
     func sendPing(pongReceiveHandler: @escaping ((Error?) -> Void))
 
+    // periphery:ignore - may be used in the future
     func resume()
 
     func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
 }
 
 extension WebSocketProtocol {
+    
     func send(_ message: URLSessionWebSocketTask.Message) {
         send(message) { _ in }
-    }
-
-    func sendPing() {
-        sendPing { _ in }
     }
 }

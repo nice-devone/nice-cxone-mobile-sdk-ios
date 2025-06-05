@@ -1,0 +1,54 @@
+{
+   "allowedFileSize": "40",
+   "allowedFileTypes": [
+       {
+           "description": "images",
+           "mimeType": "image/*"
+    },
+       {
+           "description": "videos",
+           "mimeType": "video/*"
+    },
+       {
+           "description": ".pptx",
+           "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    },
+       {
+           "description": ".docx",
+           "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    },
+       {
+           "description": ".pdf",
+           "mimeType": "application/pdf"
+    },
+       {
+           "description": ".xlsx",
+           "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    },
+       {
+           "description": "Voice messages",
+           "mimeType": "audio/*"
+    },
+       {
+           "description": "textual files",
+           "mimeType": "text/*"
+    },
+       {
+           "description": ".ppt",
+           "mimeType": "application/vnd.ms-powerpoint"
+    },
+       {
+           "description": "DNG",
+           "mimeType": "image/x-adobe-dng"
+    },
+       {
+           "description": ".doc",
+           "mimeType": "application/msword"
+    },
+       {
+           "description": ".xls",
+           "mimeType": "application/vnd.ms-excel"
+    }
+  ],
+   "isAttachmentsEnabled": true
+}

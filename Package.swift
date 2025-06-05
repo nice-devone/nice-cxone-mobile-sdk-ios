@@ -1,6 +1,6 @@
 // swift-tools-version:5.7
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 import PackageDescription
 import Foundation
 
-
 let package = Package(
     name: "CXoneChatSDK",
     platforms: [
@@ -33,13 +32,15 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.0.11"),
+        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "3.0.0")
     ],
     targets: [
         .target(
             name: "CXoneChatSDK",
             dependencies: [
                 .product(name: "KeychainSwift", package: "keychain-swift"),
-                .product(name: "Mockable", package: "Mockable")
+                .product(name: "Mockable", package: "Mockable"),
+                .product(name: "CXoneGuideUtility", package: "nice-cxone-mobile-guide-utility-ios")
             ],
             path: "Sources",
             resources: [

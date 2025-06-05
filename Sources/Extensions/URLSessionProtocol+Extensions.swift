@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,23 +20,27 @@ extension URLSessionProtocol {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     @discardableResult
-    func fetch(from url: URL, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
-        let requst = URLRequest(url: url, method: .get)
+    func fetch(from url: URL, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
+        let request = URLRequest(url: url, method: .get)
 
-        return try await fetch(for: requst, fun: fun, file: file, line: line)
+        return try await fetch(for: request, file: file, line: line)
     }
     
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     @discardableResult
-    func fetch(for request: URLRequest, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
-        request.log(fun: fun, file: file, line: line)
+    func fetch(
+        for request: URLRequest,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async throws -> (Data, URLResponse) {
+        request.log(file: file, line: line)
         
         do {
             let (data, response) = try await data(for: request)
             
             if let response = response as? HTTPURLResponse {
-                response.log(data: data, fun: fun, file: file, line: line)
+                response.log(data: data, file: file, line: line)
             }
             
             return (data, response)

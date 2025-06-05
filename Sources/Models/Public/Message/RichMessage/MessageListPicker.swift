@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import Foundation
 /// It is a list of options, that customers can choose multiple times and are persistent in the conversation.
 /// The options/items are usually shown in overlay with richer formatting capabilities (icon, title, subtitle, sections, etc. in future)
 /// and with a bigger count than buttons or quick replies.
-public struct MessageListPicker {
+public struct MessageListPicker: Equatable {
     
     /// Title of the List Picker in the conversation
     public let title: String

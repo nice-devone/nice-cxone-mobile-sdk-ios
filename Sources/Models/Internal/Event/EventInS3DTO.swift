@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@ import Foundation
 
 struct EventInS3DTO: Equatable {
 
-    var eventType: EventType?
-
     // MARK: - Properties
+    
+    let eventId: UUID
+    
+    var eventType: EventType?
     
     let originEventType: EventType
     
@@ -39,6 +41,7 @@ extension EventInS3DTO: ReceivedEvent {
 extension EventInS3DTO: Decodable {
     
     enum CodingKeys: CodingKey {
+        case eventId
         case eventType
         case data
     }
@@ -61,6 +64,7 @@ extension EventInS3DTO: Decodable {
         let eventTypeContainer = try dataContainer.nestedContainer(keyedBy: OriginEventTypeCodingKeys.self, forKey: .originEvent)
         let urlContainer = try dataContainer.nestedContainer(keyedBy: UrlCodingKeys.self, forKey: .s3Object)
 
+        self.eventId = try container.decode(UUID.self, forKey: .eventId)
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.originEventType = try eventTypeContainer.decode(EventType.self, forKey: .eventType)
         self.url = try urlContainer.decode(URL.self, forKey: .url)

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -130,18 +130,19 @@ final class SocketDelegateManagerTests: XCTestCase {
             .onCustomEventMessage(.value(Data()))
             .called(1)
     }
-
+    
     func testAgentTyping() {
         let delegate = MockCXoneChatDelegate(policy: .relaxed)
         let manager = SocketDelegateManager()
         let uuid = UUID()
+        let agent = AgentMapper.map(MockData.agent)
 
         manager.add(delegate: delegate)
 
-        manager.onAgentTyping(true, threadId: uuid)
+        manager.onAgentTyping(true, agent: agent, threadId: uuid)
 
         verify(delegate)
-            .onAgentTyping(.value(true), threadId: .value(uuid))
+            .onAgentTyping (.value(true), agent: .matching { $0.id == agent.id }, threadId: .value(uuid))
             .called(1)
     }
 

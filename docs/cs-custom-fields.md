@@ -1,23 +1,132 @@
 # Case Study: Custom Fields
 
-CXone provides the capability to define custom fields for both the chat itself as well as for the user. These can be identified in the mobile SDK as `caseCustomFields` and `customerCustomFields`. To get the actual custom fields the mobile SDK has separate providers - `CaseCustomFieldsProvider` and `CustomerCustomFieldsProvider`. The `CaseCustomFieldsProvider' depends on chat threads, so it can be found as a variable within the `ChatThreadsProvider'. On the other hand the `CustomerCustomFieldsProvider` represents generic custom fields for users and can therefore be found directly within `CXoneChat`.
+## Overview
 
-> Important: When setting custom fields it is necessary to respect their definitions. The definitions are available as variables of the `channelConfiguration` object available in the `ConnectionProvider`. If an attempt is made to set a custom field that is not defined for the selected brand, it will be ignored from the CXone perspective.  If the requirements are not met, an error will be logged via ``LogDelegate.logError(_:)`` The error will be either `.unknownCaseCustomFields` or `.unknownCustomerCustomFields` depending on the provider of the definitions.
+CXone Mobile SDK provides the capability to handle custom fields for both conversations (contact/case custom fields) and customers (customer custom fields). Custom fields allow you to enrich your chat experience with additional data and enable deeper integration with your business processes.
 
-> Note: **Case** custom fields are custom fields associated with a single chat conversation/thread, whereas **Customer** custom fields are custom fields associated with a customer. This information is available for all conversations
+> **Note:** This guide focuses on implementations using the core SDK module. Developers using the pre-built UI module will have many of these features handled automatically.
 
+## Key Concepts
 
-## Static/Dynamic Custom Fields
+The SDK supports two types of custom fields:
 
-Occasionally you may need to modify custom fields or add to existing ones to get the most detailed information before communicating with an agent or chat bot. In this case you can use i.e. pre-chat, which is a form that can contain custom fields that can be easily changed dynamically in the channel settings. As mentioned, this is a chat thread dependent object, so it is located in the `ChatThreadsProvider`. This form can have 3 types of user input - text field, list, or hierarchical. Definitions marked `isRequired` must have a corresponding value defined. In addition, text fields with `isEmail` set will be validated according to the CXone email address rules.
+- **Contact Custom Fields**: Associated with a specific conversation thread
+- **Customer Custom Fields**: Associated with a customer across all their conversations
 
-> Warning: If the channel configuration includes a dynamic pre-chat survey, it must be filled in before starting a thread. Otherwise the thread will not be created and the SDK will throw a `CXoneChatError.missingPreChatCustomFields` error in response to the `ChatThreadsProvider.create` method.
+Each type of custom field is accessed through a different provider:
 
-Since it is possible to change custom fields during the lifetime of a channel, they must always be validly populated. It is also possible that the definitions of these custom fields may change and the previously filled fields may no longer be valid or even exist. If an existing thread was created with a pre-chat form and that form has subsequently been changed, the SDK will only offer the custom fields that currently have definitions and the others will not be offered at all.
+- `ContactCustomFieldsProvider`: Available via `CXoneChat.shared.threads.customFields`
+- `CustomerCustomFieldsProvider`: Available directly via `CXoneChat.shared.customerCustomFields`
 
+## Implementation Steps
 
-## Edit of Custom Fields
+### 1. Working with Contact Custom Fields
 
-As well as being able to fill in custom fields before creating a chat thread to get the necessary information, it is also useful to edit these values if they have been filled in incorrectly. In this case, it is only possible to edit those custom fields for which definitions exist. Otherwise the values will be ignored and the SDK will log an error.
+Contact custom fields are specific to individual conversation threads:
 
-> Important: To see logged warnings/errors you need to configure the SDK logger. This can be done using the `configureLogger(level:verbosity:)` method available in `CXoneChat`.
+```swift
+// Get custom fields for a specific thread
+let threadId = UUID() // Your thread ID
+let contactFields = CXoneChat.shared.threads.customFields.get(for: threadId)
+
+// Set custom fields for a specific thread
+let newContactFields = [
+    "orderNumber": "12345",
+    "department": "support"
+]
+
+Task {
+    do {
+        try await CXoneChat.shared.threads.customFields.set(newContactFields, for: threadId)
+    } catch {
+        // Handle error
+    }
+}
+```
+
+### 2. Working with Customer Custom Fields
+
+Customer custom fields are associated with the customer across all conversations:
+
+```swift
+// Get customer custom fields
+let customerFields = CXoneChat.shared.customerCustomFields.get()
+
+// Set customer custom fields
+let newCustomerFields = [
+    "customerType": "premium",
+    "accountNumber": "A98765"
+]
+
+Task {
+    do {
+        try await CXoneChat.shared.customerCustomFields.set(newCustomerFields)
+    } catch {
+        // Handle error
+    }
+}
+```
+
+### 3. Handling Pre-Chat Surveys
+
+Pre-chat surveys are forms that collect custom field values before a conversation starts:
+
+```swift
+// Check if pre-chat survey is required
+if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+    // Display pre-chat form to collect required information
+    // preChatSurvey.name contains the form title
+    // preChatSurvey.customFields contains field definitions
+    
+    // After collecting values from the user:
+    let customFields = [
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@example.com"
+    ]
+    
+    // Create thread with pre-chat survey fields
+    Task {
+        do {
+            let threadProvider = try await CXoneChat.shared.threads.create(with: customFields)
+            // Continue with the created thread
+        } catch {
+            // Handle error (e.g., CXoneChatError.missingPreChatCustomFields)
+        }
+    }
+} else {
+    // No pre-chat survey required, create thread normally
+    // ...
+}
+```
+
+## Understanding Custom Field Types
+
+The SDK supports three types of custom field inputs:
+
+1. **Text Fields**: Simple text input (may include email validation)
+2. **Selectors**: Dropdown selection from predefined options
+3. **Hierarchical**: Multi-level selection (e.g., categories and subcategories)
+
+Each field can be marked as `isRequired`, which means it must be filled in before a thread can be created.
+
+## Best Practices
+
+1. **Respect Field Definitions**: Only set custom fields that are defined in your channel configuration
+2. **Validate Required Fields**: Ensure all required fields have values before creating a thread
+3. **Handle Validation Errors**: Create appropriate UI feedback for validation failures
+4. **Enable Logging**: Configure the SDK logger to catch custom field validation issues
+
+```swift
+CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
+```
+
+## Sample Code
+
+For a complete implementation example, refer to the [Sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) which demonstrates handling both contact and customer custom fields.
+
+## Related Resources
+
+- [Single Thread Chat](cs-single-thread.md)
+- [Multi Thread Chat](cs-multi-thread.md)
+- [Rich Content Messages](cs-rich-content-messages.md)

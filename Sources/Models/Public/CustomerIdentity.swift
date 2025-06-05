@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents information about a customer identity to be sent on events.
-public struct CustomerIdentity {
+public struct CustomerIdentity: Equatable {
     
     // MARK: - Properties
     

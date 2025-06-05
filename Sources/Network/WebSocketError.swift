@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ import Foundation
 internal enum WebSocketError: Error {
     case serverError(URLSessionWebSocketTask.CloseCode)
     case protocolError(Error)
+    
+    // periphery:ignore - may be used in the future
     case cxoneError(CXoneChatError)
-
+    
+    // periphery:ignore - may be used in the future
     var description: String {
         switch self {
         case let .serverError(code):        "Server Error: \(code)"

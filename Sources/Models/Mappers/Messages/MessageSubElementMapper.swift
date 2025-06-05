@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,6 @@
 import Foundation
 
 enum MessageSubElementMapper {
-    
-    static func map(from type: MessageSubElementType) -> MessageSubElementDTOType {
-        switch type {
-        case .replyButton(let entity):
-            return .replyButton(MessageReplyButtonMapper.map(from: entity))
-        }
-    }
     
     static func map(from type: MessageSubElementDTOType) -> MessageSubElementType {
         switch type {

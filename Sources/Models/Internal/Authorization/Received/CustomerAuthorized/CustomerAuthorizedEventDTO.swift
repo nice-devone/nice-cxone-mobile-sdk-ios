@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -25,17 +25,12 @@ struct CustomerAuthorizedEventDTO: Equatable {
 
     /// The postback for the customer authorized event.
     let postback: CustomerAuthorizedEventPostbackDTO
-
-    init(eventId: UUID, eventType: EventType? = .customerAuthorized, postback: CustomerAuthorizedEventPostbackDTO) {
-        self.eventId = eventId
-        self.eventType = eventType
-        self.postback = postback
-    }
 }
 
 // MARK: - ReceivedEvent
 
 extension CustomerAuthorizedEventDTO: ReceivedEvent {
+    
     static let eventType: EventType? = .customerAuthorized
 
     var postbackEventType: EventType? { postback.eventType }
@@ -44,6 +39,7 @@ extension CustomerAuthorizedEventDTO: ReceivedEvent {
 // MARK: - Decoder
 
 extension CustomerAuthorizedEventDTO: Decodable {
+    
     enum CodingKeys: CodingKey {
         case eventId
         case eventType

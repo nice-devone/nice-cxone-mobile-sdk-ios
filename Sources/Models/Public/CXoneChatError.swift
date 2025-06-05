@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// Some features are available only with multithread channel configuration.
     ///  - Source of problem: SDK used incorrectly.
     /// - Attention: The channel is configured as a single-thread and called method requires a feature of multi-thread configuration,
-    ///     e.g.  ``ChatThreadsProvider/create()``.
+    ///     e.g.  ``ChatThreadListProvider/create()``.
     case unsupportedChannelConfig
 
     /// The conversion from object instance to data failed or when the Data object cannot be successfully converted to a valid UTF-8 string
@@ -104,14 +104,14 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// A invalid parameter has been passed to a method call.
     ///
     /// This is one of:
-    /// - ``MessagesProvider.send(message:)`` was called with no valid postback, empty text, and no attachments.
+    /// - ``ChatThreadProvider.send(_:)`` was called with no valid postback, empty text, and no attachments.
     case invalidParameter(String)
 
-    /// The brand has configured pre-chat survey with contact custom fields which needs to be provided via ``ChatThreadsProvider/create(with:)`` method.
+    /// The brand has configured pre-chat survey with contact custom fields which needs to be provided via ``ChatThreadListProvider/create(with:)`` method.
     ///
     /// - Source of problem: SDK used incorrectly
-    /// - Attention: Fill-up custom fields available in the ``ChatThreadsProvider/preChatSurvey``
-    ///     and pass them as a parameter in the ``ChatThreadsProvider/create(with:)`` method.
+    /// - Attention: Fill-up custom fields available in the ``ChatThreadListProvider/preChatSurvey``
+    ///     and pass them as a parameter in the ``ChatThreadListProvider/create(with:)`` method.
     case missingPreChatCustomFields
 
     /// A provided custom field does not have a definition in the case custom fields.
@@ -180,7 +180,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// Thread is missing the timestamp of when the message was created.
     ///
     /// Every thread message contains timestamp to be able to identify latest message for loading previously created
-    ///     and not yet loaded messages via ``MessagesProvider/loadMore(for:)`` method.
+    ///     and not yet loaded messages via ``ChatThreadProvider/loadMoreMessages`` method.
     /// - Source of problem: DFO issue
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case invalidOldestDate
@@ -220,7 +220,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// Unable to trigger the required method because the chat thread is not in the required state.
     ///
     /// The chat thread has to be in correct state to trigger required operation. 
-    /// For example, to update thread name via ``ChatThreadsProvider/updateName(_:for:)``
+    /// For example, to update thread name via ``ChatThreadListProvider/updateName(_:for:)``
     /// the thread can not be in ``ChatThreadState/closed`` state.
     ///
     /// Check ``ChatThreadState`` for more information.
@@ -228,6 +228,14 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// ## Source of problem
     /// SDK used incorrectly
     case illegalThreadState
+    
+    /// Did not receive a paired response from the server in the expected time.
+    ///
+    /// The SDK sent a request event to the server, but the server did not respond in the expected time.
+    ///
+    /// - Source of problem: SDK issue, DFO issue
+    /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+    case eventTimeout
     
     // MARK: - Properties
 
@@ -289,6 +297,8 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "The type of the attachment is not included in the allowed file MIME type."
         case .illegalThreadState:
             return "Unable to trigger required method because thread is not in required state."
+        case .eventTimeout:
+            return "Did not receive a paired response from the server in the expected time."
         }
     }
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,6 @@ class MessageSenderInfoTest: XCTestCase {
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: Agent(
                 id: 12345,
-                inContactId: "",
-                emailAddress: nil,
-                loginUsername: "kj",
                 firstName: "kjoe",
                 surname: "jim",
                 nickname: nil,
@@ -39,10 +36,11 @@ class MessageSenderInfoTest: XCTestCase {
                 isSurveyUser: false,
                 imageUrl: ""
             ),
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
-        XCTAssertEqual(message.senderInfo.fullName, message.authorUser?.fullName)
+        XCTAssertEqual(message.senderInfo?.fullName, message.authorUser?.fullName)
     }
     
     func testMessageSenderInfoAuthor() throws {
@@ -55,13 +53,14 @@ class MessageSenderInfoTest: XCTestCase {
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
+            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim"),
+            status: .seen
         )
         
-        XCTAssertEqual(message.senderInfo.fullName, message.authorEndUserIdentity?.fullName)
+        XCTAssertEqual(message.senderInfo?.fullName, message.authorEndUserIdentity?.fullName)
     }
     
-    func testMessageSenderInfoAgentUn() throws {
+    func testMessageSenderInfoAgentIsNil() throws {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
@@ -71,13 +70,14 @@ class MessageSenderInfoTest: XCTestCase {
             direction: .toClient,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
+            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim"),
+            status: .seen
         )
         
-        XCTAssertEqual(message.senderInfo.fullName, "Automated Agent")
+        XCTAssertEqual(message.authorUser?.fullName, nil)
     }
     
-    func testMessageSenderInfoAuthorUnknownCustomer() throws {
+    func testMessageSenderInfoAuthorIsNil() throws {
         let message = Message(
             id: UUID(),
             threadId: UUID(),
@@ -88,9 +88,6 @@ class MessageSenderInfoTest: XCTestCase {
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: Agent(
                 id: 12345,
-                inContactId: "",
-                emailAddress: nil,
-                loginUsername: "kj",
                 firstName: "kjoe",
                 surname: "jim",
                 nickname: nil,
@@ -98,10 +95,11 @@ class MessageSenderInfoTest: XCTestCase {
                 isSurveyUser: false,
                 imageUrl: ""
             ),
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
-        XCTAssertEqual(message.senderInfo.fullName, "Unknown Customer")
+        XCTAssertNil(message.senderInfo?.fullName)
     }
 
 }

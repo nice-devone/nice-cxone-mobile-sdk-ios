@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,15 @@ import Foundation
 extension Error {
     
     /// Logs localized description of the error with additional message, if it exists.
-    func logError(_ additionalMessage: String? = nil, fun: StaticString = #function, file: StaticString = #file, line: UInt = #line) {
+    func logError(
+        _ additionalMessage: String? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         if let message = additionalMessage {
-            LogManager.error("\(message) error: \(self.localizedDescription)", fun: fun, file: file, line: line)
+            LogManager.error("\(message) error: \(self.localizedDescription)", file: file, line: line)
         } else {
-            LogManager.error(self.localizedDescription, fun: fun, file: file, line: line)
+            LogManager.error(self.localizedDescription, file: file, line: line)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ class ConnectionContextImpl: ConnectionContext {
 
     // MARK: - Properties
     
-    var keychainService: KeychainService
+    let keychainService: KeychainService
     
     /// The token of the device for push notifications.
     var deviceToken: String?
@@ -55,11 +55,6 @@ class ConnectionContextImpl: ConnectionContext {
     ///
     /// The state defines whether it is necessary to set up the SDK, connect to the CXone services or start communication with an agent.
     var chatState: ChatState = .initial
-    
-    /// The active thread that is currently used for the `OnLoadMoreMessages` paired web socket event.
-    var activeThread: ChatThread?
-    
-    var threads = [ChatThread]()
     
     var visitorId: UUID? {
         get { UserDefaultsService.shared.get(UUID.self, for: .visitorId) }
@@ -154,10 +149,11 @@ class ConnectionContextImpl: ConnectionContext {
 // MARK: - Helpers
 
 private extension URLSession {
-
+    
+    // periphery:ignore - False positive, used in a non DEBUG configuration
     static var `default`: URLSession {
-        let config = URLSessionConfiguration.default
+        let configuration = URLSessionConfiguration.default
         
-        return URLSession(configuration: config)
+        return URLSession(configuration: configuration)
     }
 }

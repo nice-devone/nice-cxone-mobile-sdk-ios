@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ import Foundation
 final class CustomerCustomFieldsService {
     
     // MARK: - Properties
-    
-    private var channelConfig: ChannelConfigurationDTO {
-        socketService.connectionContext.channelConfig
-    }
     
     var socketService: SocketService
     var eventsService: EventsService
@@ -51,7 +47,7 @@ extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func set(_ customFields: [String: String]) throws {
+    func set(_ customFields: [String: String]) async throws {
         LogManager.trace("Setting custom fields for a contact (persists across all threads involving the customer).")
         
         try socketService.checkForConnection()
@@ -63,7 +59,7 @@ extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
             with: .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: customerFields))
         )
         
-        try socketService.send(data: data)
+        try await socketService.send(data: data)
     }
     
     // MARK: - Internal methods

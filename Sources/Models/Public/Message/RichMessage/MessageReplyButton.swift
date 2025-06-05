@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 import Foundation
 
 /// A reply button rich message sub element.
-public struct MessageReplyButton: Hashable {
+public struct MessageReplyButton: Hashable, Equatable {
     
     /// The text displayed in the button
     public let text: String
+    
+    /// A more detailed description of the option
+    public let description: String?
     
     /// The postback of the button.
     ///
@@ -28,9 +31,6 @@ public struct MessageReplyButton: Hashable {
     /// where he can inject some better (more automatically readable) identifiers than what customer/agent
     /// can see in the UI as the content of the message.
     public let postback: String?
-    
-    /// A more detailed description of the option
-    public let description: String?
     
     /// The name of an image that will be displayed as part of the options​ (256 KiB)
     public let iconName: String?

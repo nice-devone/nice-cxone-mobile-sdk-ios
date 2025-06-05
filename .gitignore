@@ -36,3 +36,8 @@ amplifytools.xcconfig
 
 /* Generated Jazzy documentation
 jazzy_docs/
+
+# Cursor
+.cursor
+.cursorignore
+.kb

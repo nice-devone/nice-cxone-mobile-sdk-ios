@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
@@ -90,7 +91,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
@@ -127,8 +129,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
                 MessageQuickReplies(
                     title: "Hello, we will deliver the package between 12:00 and 16:00. Please specify which day.",
                     buttons: [
-                        MessageReplyButton(text: "Today", postback: #"{"id":"1"}"#, description: nil, iconName: nil, iconUrl: nil, iconMimeType: nil),
-                        MessageReplyButton(text: "Tomorrow", postback: #"{"id":"2"}"#, description: nil, iconName: nil, iconUrl: nil, iconMimeType: nil)
+                        MessageReplyButton(text: "Today", description: nil, postback: #"{"id":"1"}"#, iconName: nil, iconUrl: nil, iconMimeType: nil),
+                        MessageReplyButton(text: "Tomorrow", description: nil, postback: #"{"id":"2"}"#, iconName: nil, iconUrl: nil, iconMimeType: nil)
                     ]
                 )
             ),
@@ -137,7 +139,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))
@@ -178,8 +181,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
                         .replyButton(
                             MessageReplyButton(
                                 text: "red",
-                                postback: "/red",
                                 description: "Like a tomato",
+                                postback: "/red",
                                 iconName: "place-kitten.jpg",
                                 iconUrl: URL(string: "https://placekitten.com/200/300"),
                                 iconMimeType: "image/jpeg"
@@ -188,8 +191,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
                         .replyButton(
                             MessageReplyButton(
                                 text: "green",
-                                postback: "/green",
                                 description: "Like an apple",
+                                postback: "/green",
                                 iconName: "place-kitten.jpg",
                                 iconUrl: URL(string: "https://placekitten.com/200/300"),
                                 iconMimeType: "image/jpeg"
@@ -203,7 +206,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: nil
+            authorEndUserIdentity: nil,
+            status: .seen
         )
         
         let encodedData = try encoder.encode(MessageMapper.map(message))

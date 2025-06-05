@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
+// periphery:ignore:all
 
 import Combine
 import Foundation
@@ -20,8 +21,10 @@ protocol ReceivedEvent {
     
     static var eventType: EventType? { get }
 
+    var eventId: UUID { get }
     var eventType: EventType? { get }
     var postbackEventType: EventType? { get }
+    var postbackErrorCode: ErrorCode? { get }
 }
 
 extension ReceivedEvent {
@@ -29,9 +32,17 @@ extension ReceivedEvent {
     var realEventType: EventType? {
         eventType ?? postbackEventType
     }
+    
+    var postbackErrorCode: ErrorCode? { nil }
 }
 
 extension Publisher where Output == ReceivedEvent {
+    
+    func with(errorCode: ErrorCode) -> any Publisher<Output, Failure> {
+        filter { event in
+            event.postbackErrorCode == errorCode
+        }
+    }
     
     func with(eventType: EventType) -> any Publisher<Output, Failure> {
         filter { event in
@@ -56,6 +67,10 @@ extension Publisher where Output == ReceivedEvent {
             return asType(type)
         }
     }
+    
+    func with<Type: ReceivedEvent>(errorCode: ErrorCode, as dataType: Type.Type) -> any Publisher<Type, Failure> {
+        with(errorCode: errorCode).asType(dataType)
+    }
 }
 
 extension Data {
@@ -65,46 +80,42 @@ extension Data {
 
         if let error = try? decoder.decode(ServerError.self, from: self), !error.message.isEmpty {
             return error
+        } else if let error = try? decoder.decode(OperationError.self, from: self) {
+            return error
         } else if let generic = try? decoder.decode(GenericEventDTO.self, from: self) {
-              if let error = generic.error {
-                  return error
-              } else if let error = generic.internalServerError {
-                  return error
-              } else {
-                  do {
-                      switch generic.realEventType {
-                      case .none:
-                          LogManager.error("event type not specified: \(self.utf8string ?? String(describing: generic))")
-                          
-                          return generic
-                      case .eventInS3:                      return try decoder.decode(EventInS3DTO.self, from: self)
-                      case .senderTypingStarted:            return try decoder.decode(AgentTypingEventDTO.self, from: self)
-                      case .senderTypingEnded:              return try decoder.decode(AgentTypingEventDTO.self, from: self)
-                      case .messageCreated:                 return try decoder.decode(MessageCreatedEventDTO.self, from: self)
-                      case .threadRecovered:                return try decoder.decode(ThreadRecoveredEventDTO.self, from: self)
-                      case .messageReadChanged:             return try decoder.decode(MessageReadByAgentEventDTO.self, from: self)
-                      case .contactInboxAssigneeChanged:    return try decoder.decode(ContactInboxAssigneeChangedEventDTO.self, from: self)
-                      case .threadListFetched:              return generic
-                      case .customerAuthorized:             return try decoder.decode(CustomerAuthorizedEventDTO.self, from: self)
-                      case .customerReconnected:            return generic
-                      case .moreMessagesLoaded:             return try decoder.decode(MoreMessagesLoadedEventDTO.self, from: self)
-                      case .threadArchived:                 return generic
-                      case .tokenRefreshed:                 return try decoder.decode(TokenRefreshedEventDTO.self, from: self)
-                      case .threadMetadataLoaded:           return try decoder.decode(ThreadMetadataLoadedEventDTO.self, from: self)
-                      case .fireProactiveAction:            return try decoder.decode(ProactiveActionEventDTO.self, from: self)
-                      case .caseStatusChanged:              return try decoder.decode(CaseStatusChangedEventDTO.self, from: self)
-                      case .setPositionInQueue:             return try decoder.decode(SetPositionInQueueEventDTO.self, from: self)
-                      case .liveChatRecovered:              return try decoder.decode(LiveChatRecoveredDTO.self, from: self)
-                      case let .some(type):
-                          LogManager.warning("unknown event type: \(type)")
-                          
-                          return generic
-                      }
-                  } catch {
-                      LogManager.error("Error decoding event: \(error)")
-                      return nil
-                  }
-              }
+            do {
+                switch generic.realEventType {
+                case .none:
+                    LogManager.error("event type not specified: \(self.utf8string ?? String(describing: generic))")
+                    
+                    return generic
+                case .eventInS3:                      return try decoder.decode(EventInS3DTO.self, from: self)
+                case .senderTypingStarted:            return try decoder.decode(AgentTypingEventDTO.self, from: self)
+                case .senderTypingEnded:              return try decoder.decode(AgentTypingEventDTO.self, from: self)
+                case .messageCreated:                 return try decoder.decode(MessageCreatedEventDTO.self, from: self)
+                case .threadRecovered:                return try decoder.decode(ThreadRecoveredEventDTO.self, from: self)
+                case .messageReadChanged:             return try decoder.decode(MessageReadByAgentEventDTO.self, from: self)
+                case .contactInboxAssigneeChanged:    return try decoder.decode(ContactInboxAssigneeChangedEventDTO.self, from: self)
+                case .threadListFetched:              return generic
+                case .customerAuthorized:             return try decoder.decode(CustomerAuthorizedEventDTO.self, from: self)
+                case .customerReconnected:            return generic
+                case .moreMessagesLoaded:             return try decoder.decode(MoreMessagesLoadedEventDTO.self, from: self)
+                case .threadArchived:                 return generic
+                case .tokenRefreshed:                 return try decoder.decode(TokenRefreshedEventDTO.self, from: self)
+                case .threadMetadataLoaded:           return try decoder.decode(ThreadMetadataLoadedEventDTO.self, from: self)
+                case .fireProactiveAction:            return try decoder.decode(ProactiveActionEventDTO.self, from: self)
+                case .caseStatusChanged:              return try decoder.decode(CaseStatusChangedEventDTO.self, from: self)
+                case .setPositionInQueue:             return try decoder.decode(SetPositionInQueueEventDTO.self, from: self)
+                case .liveChatRecovered:              return try decoder.decode(LiveChatRecoveredDTO.self, from: self)
+                case let .some(type):
+                    LogManager.warning("unknown event type: \(type)")
+                    
+                    return generic
+                }
+            } catch {
+                LogManager.error("Error decoding event: \(error)")
+                return nil
+            }
         } else {
             return nil
         }
