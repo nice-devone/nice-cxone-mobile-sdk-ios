@@ -19,6 +19,8 @@ import Foundation
 enum EventActionType: String, Codable {
     
     /// The customer is registering for chat access.
+    ///
+    /// - Warning: This action is used only during the `Authorize`.
     case register
     
     /// The customer is interacting with something in the chat window.

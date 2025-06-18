@@ -136,9 +136,9 @@ public class CXoneChat: ChatProvider, EventReceiver {
 
     private func onOperationError(_ error: OperationError) {
         switch error.errorCode {
-        case .recoveringThreadFailed,
-                .recoveringLiveChatFailed,
-                .customerReconnectFailed:
+        case .recoveringThreadFailed, .recoveringLiveChatFailed,
+                .customerReconnectFailed, .consumerReconnectFailed,
+                .customerAuthorizationFailed, .consumerAuthorizationFailed:
             // these are handled elsewhere
             break
         case .tokenRefreshFailed:

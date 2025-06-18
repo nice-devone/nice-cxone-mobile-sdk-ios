@@ -1,3 +1,11 @@
+<a name="2.3.3"></a>
+# [2.3.3] - 2025-06-18
+
+## Fixes
+- Correct `eventType` for RefreshToken event
+- Fix condition to authorize a customer with token via OAuth
+- Extend `ErrorCode` of legacy consumer authorization/reconnect failed events
+
 <a name="2.3.2"></a>
 # [2.3.2] - 2025-05-19
 
@@ -395,7 +403,12 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.3...HEAD
+[2.3.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.2...2.3.3
+[2.3.2]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.1...2.3.2
+[2.3.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.0...2.3.1
+[2.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.1...2.3.0
+[2.2.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.0.0...2.0.1

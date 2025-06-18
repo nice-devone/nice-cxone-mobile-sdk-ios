@@ -345,7 +345,7 @@ extension ConnectionService {
 
     func onOperationError(_ error: OperationError) {
         switch error.errorCode {
-        case .customerReconnectFailed:
+        case .customerReconnectFailed, .consumerReconnectFailed, .customerAuthorizationFailed, .consumerAuthorizationFailed:
             refreshToken()
         default:
             break
