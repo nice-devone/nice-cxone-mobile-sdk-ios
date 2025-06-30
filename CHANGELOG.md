@@ -1,3 +1,9 @@
+<a name="2.3.4"></a>
+# [2.3.4] - 2025-06-30
+
+## Fixes
+- Reset the `accessToken` when a new authorization code and code verifier are set
+
 <a name="2.3.3"></a>
 # [2.3.3] - 2025-06-18
 

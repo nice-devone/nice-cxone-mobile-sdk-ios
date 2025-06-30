@@ -99,12 +99,18 @@ The method uses a shorthand unnamed parameter, which can obscure the meaning of 
     func setAuthorizationCode(_ code: String) {
         LogManager.trace("Setting authorization code")
 
+        // Reset `accessToken` with a new authorization code for fresh authorization
+        connectionContext.accessToken = nil
+        
         connectionContext.authorizationCode = code
     }
     
     func setCodeVerifier(_ verifier: String) {
         LogManager.trace("Setting code verifier")
 
+        // Reset `accessToken` with a new authorization code for fresh authorization
+        connectionContext.accessToken = nil
+        
         connectionContext.codeVerifier = verifier
     }
     
