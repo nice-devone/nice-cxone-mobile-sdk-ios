@@ -620,6 +620,7 @@ class ChatThreadListServiceTests: XCTestCase {
             .next.willReturn(eventId)
         
         given(connectionContext)
+            .accessToken.willReturn(nil)
             .channelConfig.willReturn(MockData.getChannelConfiguration(isMultithread: false))
             .chatState.willReturn(.prepared)
         
@@ -674,6 +675,7 @@ class ChatThreadListServiceTests: XCTestCase {
             .next.willReturn(eventId)
         
         given(connectionContext)
+            .accessToken.willReturn(nil)
             .channelConfig.willReturn(MockData.getChannelConfiguration(isMultithread: true))
             .chatState.willReturn(.prepared)
         
@@ -725,6 +727,7 @@ class ChatThreadListServiceTests: XCTestCase {
             .next.willReturn(eventId)
         
         given(connectionContext)
+            .accessToken.willReturn(nil)
             .channelConfig.willReturn(MockData.getChannelConfiguration(isOnline: true, isLiveChat: true))
             .chatState.willReturn(.prepared)
         

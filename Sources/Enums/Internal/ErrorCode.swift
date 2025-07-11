@@ -20,7 +20,17 @@ enum ErrorCode: String, Codable {
     
     case customerAuthorizationFailed = "CustomerAuthorizationFailed"
     
+    /// Legacy error code for customer authorization failure.
+    ///
+    /// This error code will be replaced by `customerAuthorizationFailed` in the future.
+    case consumerAuthorizationFailed = "ConsumerAuthorizationFailed"
+    
     case customerReconnectFailed = "CustomerReconnectionFailed"
+    
+    /// Legacy error code for customer reconnection failure.
+    ///
+    /// This error code will be replaced by `customerReconnectFailed` in the future.
+    case consumerReconnectFailed = "ConsumerReconnectionFailed"
     
     case tokenRefreshFailed = "TokenRefreshingFailed"
     

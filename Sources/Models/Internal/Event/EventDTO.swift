@@ -49,6 +49,6 @@ struct EventDTO: Encodable {
             visitorId: visitorId
         )
         self.eventId = eventId
-        self.action = (eventType == .authorizeCustomer || eventType == .refreshToken) ? .register : .chatWindowEvent
+        self.action = eventType == .authorizeCustomer ? .register : .chatWindowEvent
     }
 }

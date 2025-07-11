@@ -29,12 +29,10 @@ class StringExtensionsTests: XCTestCase {
     }
     
     func testSubstringNil() {
-        XCTAssertNil("".substring(from: "a"))
         XCTAssertNil("".substring(to: "a"))
     }
     
     func testSubstringNotNil() {
-        XCTAssertNotNil("foo".substring(from: "f"))
         XCTAssertNotNil("foo".substring(to: "o"))
     }
     

@@ -1,7 +1,16 @@
+<a name="3.0.1"></a>
+# [3.0.1] - 2025-07-11
+
+### Fixes
+- Correct `eventType` for RefreshToken event
+- Fix condition to authorize a customer with token via OAuth
+- Extend `ErrorCode` of legacy consumer authorization/reconnect failed events
+
+
 <a name="3.0.0"></a>
 # [3.0.0] - 2025-06-04
 
-## Breaking Changes
+## Breaking Changes
 - Message's SenderInfo is optional due to possible automated messages without sender identity (e.g. Welcome Message)
 - SenderInfo attributes `firstName`, `lastName` and `fullName` are optional 
 
@@ -43,7 +52,7 @@
 <a name="2.2.1"></a>
 # [2.2.1] - 2024-12-06
 
-## Fixes
+## Fixes
 - Set customer custom fields correctly for Livechat mode
 
 
@@ -90,7 +99,7 @@
 <a name="2.0.1"></a>
 # [2.0.1] - 2024-07-11
 
-## Bug Fixes
+## Bug Fixes
 - Correct live chat set position in queue
 
 
@@ -335,7 +344,8 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.1...HEAD
+[3.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.1...2.3.0
 [2.2.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.0...2.2.1

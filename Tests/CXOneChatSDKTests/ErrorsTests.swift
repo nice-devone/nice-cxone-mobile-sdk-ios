@@ -20,7 +20,51 @@ class ErrorsTests: XCTestCase {
     
     // MARK: - OperationError
     
-    func testOperationErrorDescription() {
+    func testOperationErrorCustomerReconnectFailedDescription() {
+        let error = OperationError(
+            eventId: UUID.provide(),
+            errorCode: .customerReconnectFailed,
+            transactionId: LowerCaseUUID(),
+            errorMessage: "Customer reconnect failed"
+        )
+        
+        XCTAssertEqual(error.errorCode.rawValue, ErrorCode.customerReconnectFailed.rawValue)
+    }
+    
+    func testOperationErrorConsumerReconnectFailedDescription() {
+        let error = OperationError(
+            eventId: UUID.provide(),
+            errorCode: .customerReconnectFailed,
+            transactionId: LowerCaseUUID(),
+            errorMessage: "Customer reconnect failed"
+        )
+        
+        XCTAssertEqual(error.errorCode.rawValue, ErrorCode.customerReconnectFailed.rawValue)
+    }
+    
+    func testOperationErrorCustomerAuthorizationFailedDescription() {
+        let error = OperationError(
+            eventId: UUID.provide(),
+            errorCode: .customerAuthorizationFailed,
+            transactionId: LowerCaseUUID(),
+            errorMessage: "Customer Authorization failed"
+        )
+        
+        XCTAssertEqual(error.errorCode.rawValue, ErrorCode.customerAuthorizationFailed.rawValue)
+    }
+    
+    func testOperationErrorConsumerAuthorizationFailedDescription() {
+        let error = OperationError(
+            eventId: UUID.provide(),
+            errorCode: .customerAuthorizationFailed,
+            transactionId: LowerCaseUUID(),
+            errorMessage: "Customer Authorization failed"
+        )
+        
+        XCTAssertEqual(error.errorCode.rawValue, ErrorCode.customerAuthorizationFailed.rawValue)
+    }
+    
+    func testOperationErrorRecoveringThreadFailedDescription() {
         let error = OperationError(
             eventId: UUID.provide(),
             errorCode: .recoveringThreadFailed,

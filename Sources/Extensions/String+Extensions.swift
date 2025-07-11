@@ -25,10 +25,15 @@ extension String {
         }
         
         do {
-            let jsonArray = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-            let data = try JSONSerialization.data(withJSONObject: jsonArray, options: [.prettyPrinted])
+            let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             
-            return data.utf8string
+            guard JSONSerialization.isValidJSONObject(jsonObject) else {
+                return self
+            }
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
+            
+            return String(data: jsonData, encoding: .utf8)
         } catch {
             error.logError()
             return nil
