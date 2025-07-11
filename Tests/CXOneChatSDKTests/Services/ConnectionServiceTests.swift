@@ -221,6 +221,7 @@ class ConnectionServiceTests: XCTestCase {
             .visitorId.willReturn(nil)
             .customer.willReturn(nil)
             .brandId.willReturn(Self.brandId)
+            .accessToken.willReturn(nil)
             .authorizationCode.willReturn("")
             .codeVerifier.willReturn("")
             .channelId.willReturn(Self.channelId)

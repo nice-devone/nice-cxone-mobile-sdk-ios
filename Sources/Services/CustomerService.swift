@@ -83,12 +83,18 @@ extension CustomerService: CustomerProvider {
     func setAuthorizationCode(_ code: String) {
         LogManager.trace("Setting authorization code")
 
+        // Reset `accessToken` with a new authorization code for fresh authorization
+        connectionContext.accessToken = nil
+        
         connectionContext.authorizationCode = code
     }
     
     func setCodeVerifier(_ verifier: String) {
         LogManager.trace("Setting code verifier")
 
+        // Reset `accessToken` with a new authorization code for fresh authorization
+        connectionContext.accessToken = nil
+        
         connectionContext.codeVerifier = verifier
     }
     
@@ -130,7 +136,7 @@ extension CustomerService {
     func processCustomerAuthorizedEvent(_ response: CustomerAuthorizedEventDTO) async throws {
         LogManager.trace("Processing customer authorized")
         
-        if connectionContext.accessToken != nil {
+        if connectionContext.channelConfig.isAuthorizationEnabled {
             guard let token = response.postback.data.accessToken else {
                 throw CXoneChatError.missingAccessToken
             }

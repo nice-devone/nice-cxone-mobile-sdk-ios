@@ -121,7 +121,7 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
         }
         
         #if DEBUG
-        LogManager.trace("Sending a message: \(message.formattedJSON ?? message).")
+        LogManager.trace("Sending a message:\n\(message.formattedJSON ?? message)")
         #endif
         
         if shouldCheck, accessToken?.isExpired(currentDate: Date.provide()) ?? false {
@@ -151,8 +151,12 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     }
 
     func forward(data: Data) {
-        LogManager.trace("Handling event: \(String(data: data, encoding: .utf8)?.formattedJSON ?? "invalid data")")
-        
+        if let rawString = data.utf8string {
+            LogManager.trace("Handling event:\n\(rawString.formattedJSON ?? rawString)")
+        } else {
+            LogManager.trace("Handling event: invalid data (not UTF-8)")
+        }
+
         if let event = data.toReceivedEvent() {
             subject.send(event)
         }
@@ -260,11 +264,11 @@ private extension SocketServiceImpl {
     
     func onOperationError(_ error: OperationError) {
         switch error.errorCode {
-        case .customerAuthorizationFailed, .inconsistentData:
+        case .customerAuthorizationFailed, .consumerAuthorizationFailed, .inconsistentData:
             delegateManager.onError(error)
         case .tokenRefreshFailed:
             delegateManager.onTokenRefreshFailed()
-        case .customerReconnectFailed, .recoveringThreadFailed, .recoveringLivechatFailed:
+        case .customerReconnectFailed, .consumerReconnectFailed, .recoveringThreadFailed, .recoveringLivechatFailed:
             // these are handled elsewhere
             break
         }

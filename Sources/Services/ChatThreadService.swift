@@ -436,7 +436,7 @@ extension ChatThreadService {
     /// Some messages should not appear into the chat history because of specific reason,
     /// e.g. Begin live chat conversation = Live chat thread is created with hard coded message
     /// that we don't want to present to the user
-    func shouldIgnoreMessage(_ message: MessageDTO) -> Bool {
+    func shouldIgnoreMessage(_ message: MessageDTO, threadState: ChatThreadState) -> Bool {
         guard case .text(let payload) = message.contentType else {
             return false
         }
@@ -446,7 +446,9 @@ extension ChatThreadService {
             
             self.parsedWelcomeMessage = nil
             
-            return true
+            // Ignore the welcome message only if the thread is in `.pending` state
+            // (welcome message is appended manually in pending state, it does not yet exist in the chat history)
+            return threadState == .pending
         } else if payload.text == Self.beginLiveChatConversationMessage {
             LogManager.trace("Ignoring message – content is begin live conversation")
             
@@ -492,7 +494,7 @@ extension ChatThreadService: EventReceiver {
             chatThread.scrollToken.removeAll()
         } else {
             let messages = event.postback.data.messages
-                .filter { !shouldIgnoreMessage($0) }
+                .filter { !shouldIgnoreMessage($0, threadState: chatThread.state) }
                 .map(MessageMapper.map)
 
             chatThread.merge(messages: messages)

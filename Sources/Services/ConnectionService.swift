@@ -278,7 +278,7 @@ extension ConnectionService: EventReceiver {
     
     func onOperationError(_ error: OperationError) {
         switch error.errorCode {
-        case .customerReconnectFailed:
+        case .customerReconnectFailed, .consumerReconnectFailed:
             Task {
                 do {
                     try await refreshToken()

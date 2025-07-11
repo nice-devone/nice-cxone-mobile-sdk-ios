@@ -129,7 +129,11 @@ extension ChatThread {
             scrollToken: data.messagesScrollToken,
             state: data.thread.canAddMoreMessages
                 ? data.inboxAssignee == nil ? .loaded : .ready
-                : .closed
+                : .closed,
+            // Clear the position in queue if an `inboxAssignee` exists
+            positionInQueue: data.inboxAssignee == nil
+                ? self.positionInQueue
+                : nil
         )
     }
     

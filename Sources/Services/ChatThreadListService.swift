@@ -550,8 +550,14 @@ extension ChatThreadListService {
                 delegate.onThreadUpdated(thread)
             }
         } else {
-            for thread in filteredThreads {
-                try await loadInfo(for: thread.id)
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for thread in filteredThreads {
+                    group.addTask { [weak self] in
+                        try await self?.loadInfo(for: thread.id)
+                    }
+                }
+                
+                try await group.waitForAll()
             }
         }
     }
@@ -575,8 +581,8 @@ extension ChatThreadListService {
         // even for thread in `.pending` state.
         if threads.allSatisfy({ $0.state == .pending || $0.state.isLoaded }) {
             connectionContext.chatState = .ready
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
             
+            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
             delegate.onThreadsUpdated(threads)
         }
     }
@@ -590,7 +596,10 @@ extension ChatThreadListService {
         }
 
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
-        guard let service = try provider(for: threads[index]) as? ChatThreadService, !service.shouldIgnoreMessage(event.data.message) else {
+        guard let service = try provider(for: threads[index]) as? ChatThreadService,
+              !service.shouldIgnoreMessage(event.data.message, threadState: threads[index].state)
+        else {
+            LogManager.trace("Skip message read change for non-relevant message")
             return
         }
         
@@ -654,16 +663,18 @@ extension ChatThreadListService {
         }
         
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
-        guard let service = try provider(for: thread) as? ChatThreadService, !service.shouldIgnoreMessage(event.data.message) else {
-            LogManager.info("Ignoring incomming message from BE - it's content is a special one like begin liveChat conversation or welcome message")
-            return
+        if let service = try provider(for: thread) as? ChatThreadService, service.shouldIgnoreMessage(event.data.message, threadState: thread.state) {
+            LogManager.trace("Skipping merging other message created event - it's content is begin live chat conversation or welcome message")
+        } else {
+            LogManager.trace("Adding message to the thread")
+            
+            let message = MessageMapper.map(event.data.message)
+            thread.merge(messages: [message])
         }
         
-        let message = MessageMapper.map(event.data.message)
-        
-        thread.merge(messages: [message])
-
         if thread.state != .ready && thread.state != .closed {
+            LogManager.trace("Updating thread state to .ready")
+            
             thread.state = .ready
         }
         
