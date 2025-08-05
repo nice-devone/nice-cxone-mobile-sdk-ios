@@ -39,9 +39,14 @@ extension URLSessionProtocol {
                 response.log(data: data, fun: fun, file: file, line: line)
             }
             
+            if let apiError = try? JSONDecoder().decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
+                throw CXoneChatError.sdkVersionNotSupported
+            }
+            
             return (data, response)
         } catch {
             error.logError()
+            
             throw error
         }
     }

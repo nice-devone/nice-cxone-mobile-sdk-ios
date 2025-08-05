@@ -23,7 +23,7 @@ public class CXoneChat: ChatProvider, EventReceiver {
 
     /// The current marketing version of the CXone chat SDK
     @available(*, deprecated, message: "Deprecated with 2.2.0. Please use version property of CXoneChatSDKModule.")
-    public static var version: String = "2.3.0"
+    public static var version: String = "2.4.0"
     
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(

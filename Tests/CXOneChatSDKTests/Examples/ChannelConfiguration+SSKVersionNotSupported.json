@@ -1,0 +1,6 @@
+{
+    "error": {
+        "errorCode": "SdkVersionNotSupported",
+        "errorMessage": "Your version of SDK is not supported anymore, please do upgrade."
+    }
+}

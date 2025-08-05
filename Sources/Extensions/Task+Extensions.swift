@@ -53,7 +53,13 @@ extension Task where Failure == Error {
                 do {
                     return try await operation()
                 } catch {
+                    if case .sdkVersionNotSupported = error as? CXoneChatError {
+                        // This error indicates that the SDK version is not supported so it should not be retried.
+                        throw error
+                    }
+                    
                     let delay = calculateExponentialBackoffDelay(attempt: attempt)
+                    
                     try await Task<Never, Never>.sleep(nanoseconds: UInt64(delay))
                     
                     continue

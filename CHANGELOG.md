@@ -1,3 +1,9 @@
+<a name="2.4.0"></a>
+# [2.4.0] - 2025-08-05
+
+## Features
+- Add support for "sdkVersionNotSupported" error code to handle unsupported SDK versions
+
 <a name="2.3.4"></a>
 # [2.3.4] - 2025-06-30
 
@@ -29,7 +35,7 @@
 <a name="2.3.0"></a>
 # [2.3.0] - 2025-02-12
 
-## CXoneChatSDK
+## CXoneChatSDK
 
 ### Features
 - Add logging for URLSession responses

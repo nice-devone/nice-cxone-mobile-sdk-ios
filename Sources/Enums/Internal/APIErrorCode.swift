@@ -15,31 +15,8 @@
 
 import Foundation
 
-struct OperationError: Codable, LocalizedError, Equatable {
+enum APIErrorCode: String {
 
-    var eventType: EventType? { nil }
-
-    let errorCode: EventErrorCode
-
-    let transactionId: LowerCaseUUID
-
-    let errorMessage: String
-
-    var errorDescription: String? {
-        """
-        {
-            "eventType": "\(errorCode.rawValue)"
-            "transactionId": "\(transactionId.uuid.uuidString)"
-            "errorMessage" "\(errorMessage)"
-        }
-        """
-    }
-}
-
-// MARK: - ReceivedEvent
-
-extension OperationError: ReceivedEvent {
-    static let eventType: EventType? = nil
-
-    var postbackEventType: EventType? { nil }
+    /// The SDK version being used is no longer supported.
+    case sdkVersionNotSupported = "SdkVersionNotSupported"
 }

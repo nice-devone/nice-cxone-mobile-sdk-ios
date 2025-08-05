@@ -38,6 +38,8 @@ Developing an iOS app using the CXone Mobile package requires the following:
 
 The sample comes from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) or [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
 
+> ⚠️ Important: To ensure the sustainability of SDK version support, only the last two major versions are permitted. Attempting to use an outdated version will result in a `CXoneChatSDKError.sdkVersionNotSupported` error from the `getChannelConfiguration(environment:brandId:channelId:)` method, which will prevent further use of CXone chat services.
+
 
 ## Connect Your Application to CXone
 

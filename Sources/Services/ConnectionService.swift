@@ -68,6 +68,7 @@ class ConnectionService {
 extension ConnectionService: ConnectionProvider {
 
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -85,6 +86,7 @@ extension ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.

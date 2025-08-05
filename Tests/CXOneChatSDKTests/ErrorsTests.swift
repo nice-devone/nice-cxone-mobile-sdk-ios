@@ -47,7 +47,7 @@ class ErrorsTests: XCTestCase {
     func testOperationErrorRecoveringThreadFailedDescription() {
         let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "Recovering failed")
         
-        XCTAssertEqual(error.errorCode.rawValue, ErrorCode.recoveringThreadFailed.rawValue)
+        XCTAssertEqual(error.errorCode.rawValue, EventErrorCode.recoveringThreadFailed.rawValue)
     }
     
     // MARK: - ServerError
