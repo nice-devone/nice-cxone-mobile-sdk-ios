@@ -41,3 +41,7 @@ jazzy_docs/
 .cursor
 .cursorignore
 .kb
+
+XCBuild
+XCOut
+
