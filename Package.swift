@@ -26,13 +26,15 @@ let package = Package(
     products: [
         .library(
             name: "CXoneChatSDK",
+            type: .dynamic,
             targets: ["CXoneChatSDK"]
         ),
     ],
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.0.11"),
-        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "3.0.1")
+        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "3.0.1"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", exact: "600.0.1")
     ],
     targets: [
         .target(
