@@ -1,14 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Build an XCFramework from a Swift Package by ARCHIVING the package product.
-# No -packagePath usage; run from anywhere.
+# ---------------------------------------------------------------------------
+#  build_spm_xcframework.sh
 #
-# Usage (from package root that contains Package.swift):
-#   ./scripts/build_spm_xcframework_min.sh . CXoneChatSDK
-#
-# Or with explicit paths:
-#   ./scripts/build_spm_xcframework_min.sh "/abs/path/to/package" CXoneChatSDK Release "./XCOut" "./XCBuild"
+#  Archives a Swift Package product for both device and simulator, stitches
+#  the resulting frameworks together into an XCFramework, and verifies that
+#  Swift modules/interfaces are embedded for every slice.  This script is
+#  intentionally self-contained so it can be launched from any working
+#  directory, CI pipeline, or release automation.
+# ---------------------------------------------------------------------------
+
+usage() {
+  cat <<USAGE
+Usage: $0 [/path/to/package] <ProductName> [Release|Debug] [OUT_DIR] [BUILD_DIR]
+
+Examples:
+  $0 . CXoneChatSDK
+  $0 /abs/path/to/package CXoneChatSDK Release ./XCOut ./XCBuild
+USAGE
+}
+
+section() {
+  local title="$1"
+  echo
+  echo "==== $title ===="
+}
 
 PKG_DIR_RAW="${1:-.}"
 PRODUCT="${2:-}"
@@ -17,8 +34,7 @@ OUT_DIR="${4:-./XCOut}"
 BUILD_DIR="${5:-./XCBuild}"
 
 if [[ -z "$PRODUCT" ]]; then
-  echo "Usage: $0 [/path/to/package] <ProductName> [Release|Debug] [OUT_DIR] [BUILD_DIR]"
-  echo "Example: $0 . CXoneChatSDK"
+  usage
   exit 1
 fi
 
@@ -33,7 +49,11 @@ ABS_BUILD="$(cd "$(dirname "$BUILD_DIR")" && pwd)/$(basename "$BUILD_DIR")"
 DERIVED="$ABS_BUILD/DerivedData"
 LOG_DIR="$ABS_BUILD/logs"
 
-# ---- Helpers ----
+# ---- Helpers ---------------------------------------------------------------
+
+# Find the framework produced by an archive. xcodebuild may place package
+# products either directly under Products/Library/Frameworks or under the
+# PackageFrameworks directory, so we probe both locations.
 find_fw() {
   local arch_path="$1"
   local pf="$arch_path.xcarchive/Products/Library/Frameworks/PackageFrameworks/${PRODUCT}.framework"
@@ -43,6 +63,9 @@ find_fw() {
   /usr/bin/find "$arch_path.xcarchive/Products" -type d -name "${PRODUCT}.framework" -print -quit 2>/dev/null || true
 }
 
+# Copy Swift module artifacts from the build products directory into the
+# archived framework. This keeps the modules available even after the compiler
+# prunes intermediates later in the pipeline.
 copy_swiftmodules() {
   local variant_dir="$1"
   local framework_path="$2"
@@ -79,12 +102,78 @@ copy_swiftmodules() {
   echo "▶ Embedded Swift modules → $dst"
 }
 
-# ---- Pre-clean (requested) ----
-echo "▶ Pre-clean: removing .swiftpm, XCBuild, XCOut…"
+# Archive the scheme for a single destination (device or simulator). Returns
+# the resolved framework path via stdout so callers can capture it:
+#   FW_IOS="$(archive_variant "iOS device" ...)"
+archive_variant() {
+  local label="$1"
+  local destination="$2"
+  local archive_path="$3"
+  local result_bundle="$4"
+  local module_root="$5"
+
+  section "Archive (${label})"
+  xcodebuild archive \
+    -scheme "$PRODUCT" \
+    -configuration "$CONFIG" \
+    -destination "$destination" \
+    -archivePath "$archive_path" \
+    -derivedDataPath "$DERIVED" \
+    -resultBundlePath "$result_bundle" \
+    -showBuildTimingSummary \
+    "${COMMON_XCB_FLAGS[@]}"
+
+  local framework_path
+  framework_path="$(find_fw "$archive_path")"
+  if [[ -n "${framework_path:-}" ]]; then
+    copy_swiftmodules "$module_root" "$framework_path"
+  fi
+
+  printf '%s\n' "${framework_path:-}"
+}
+
+# Copy Swift interface/module artifacts from the source archives into each
+# XCFramework slice. xcodebuild -create-xcframework sometimes drops the binary
+# `.swiftmodule` files, so we synchronise them manually.
+sync_slice_modules() {
+  local source_device="$1"
+  local source_sim="$2"
+  local xcframework="$3"
+
+  section "Sync Swift modules into XCFramework slices"
+  for slice in "$xcframework"/*; do
+    [[ -d "$slice" ]] || continue
+
+    local source_fw="$source_device"
+    local slice_fw="$slice/$(basename "$source_device")"
+    if [[ "$slice" == *simulator* ]]; then
+      source_fw="$source_sim"
+      slice_fw="$slice/$(basename "$source_sim")"
+    fi
+
+    if [[ ! -d "$slice_fw" ]]; then
+      echo "⚠️  Unable to locate framework in slice: $slice"
+      continue
+    fi
+
+    local src_mod="$source_fw/Modules/${PRODUCT}.swiftmodule"
+    local dst_mod="$slice_fw/Modules/${PRODUCT}.swiftmodule"
+    if [[ -d "$src_mod" ]]; then
+      mkdir -p "$dst_mod"
+      shopt -s nullglob
+      /bin/cp -f "$src_mod"/* "$dst_mod/" 2>/dev/null || true
+      shopt -u nullglob
+    fi
+  done
+}
+
+# ---- Pre-clean -------------------------------------------------------------
+section "Pre-clean"
+echo "Removing .swiftpm, XCBuild, XCOut…"
 rm -rf "$PKG_DIR/.swiftpm" "$ABS_BUILD" "$ABS_OUT" || true
 mkdir -p "$ABS_OUT" "$ABS_BUILD" "$LOG_DIR"
 
-echo "==== Environment ===="
+section "Environment"
 echo "xcodebuild: $(xcrun --find xcodebuild)"
 xcodebuild -version
 echo "Package dir: $PKG_DIR"
@@ -116,39 +205,23 @@ BP_ROOT="$DERIVED/Build/Intermediates.noindex/ArchiveIntermediates/$PRODUCT/Buil
 
 # ---- Archive (device) ----
 ARCH_IOS="$ABS_BUILD/${PRODUCT}-iOS"
-echo "▶ Archive (iOS device)…"
-xcodebuild archive \
-  -scheme "$PRODUCT" \
-  -configuration "$CONFIG" \
-  -destination 'generic/platform=iOS' \
-  -archivePath "$ARCH_IOS" \
-  -derivedDataPath "$DERIVED" \
-  -resultBundlePath "$LOG_DIR/Archive-iOS.xcresult" \
-  -showBuildTimingSummary \
-  "${COMMON_XCB_FLAGS[@]}"
-
-FW_IOS="$(find_fw "$ARCH_IOS")"
-if [[ -n "${FW_IOS:-}" ]]; then
-  copy_swiftmodules "$BP_ROOT/Release-iphoneos" "$FW_IOS"
-fi
+FW_IOS="$(archive_variant \
+  "iOS device" \
+  "generic/platform=iOS" \
+  "$ARCH_IOS" \
+  "$LOG_DIR/Archive-iOS.xcresult" \
+  "$BP_ROOT/Release-iphoneos"
+)"
 
 # ---- Archive (simulator) ----
 ARCH_SIM="$ABS_BUILD/${PRODUCT}-iOS-sim"
-echo "▶ Archive (iOS Simulator)…"
-xcodebuild archive \
-  -scheme "$PRODUCT" \
-  -configuration "$CONFIG" \
-  -destination 'generic/platform=iOS Simulator' \
-  -archivePath "$ARCH_SIM" \
-  -derivedDataPath "$DERIVED" \
-  -resultBundlePath "$LOG_DIR/Archive-Sim.xcresult" \
-  -showBuildTimingSummary \
-  "${COMMON_XCB_FLAGS[@]}"
-
-FW_SIM="$(find_fw "$ARCH_SIM")"
-if [[ -n "${FW_SIM:-}" ]]; then
-  copy_swiftmodules "$BP_ROOT/Release-iphonesimulator" "$FW_SIM"
-fi
+FW_SIM="$(archive_variant \
+  "iOS Simulator" \
+  "generic/platform=iOS Simulator" \
+  "$ARCH_SIM" \
+  "$LOG_DIR/Archive-Sim.xcresult" \
+  "$BP_ROOT/Release-iphonesimulator"
+)"
 
 popd >/dev/null
 
@@ -183,30 +256,7 @@ xcodebuild -create-xcframework \
   -framework "$FW_SIM" \
   -output "$OUT_XC"
 
-# ---- Re-sync Swift modules into created slices (xcodebuild may drop .swiftmodule binaries)
-echo "▶ Syncing Swift modules into XCFramework slices…"
-for slice in "$OUT_XC"/*; do
-  [[ -d "$slice" ]] || continue
-  slice_fw="$slice/$(basename "$FW_IOS")"
-  [[ -d "$slice_fw" ]] || slice_fw="$slice/$(basename "$FW_SIM")"
-  source_fw="$FW_IOS"
-  if [[ "$slice" == *simulator* ]]; then
-    source_fw="$FW_SIM"
-    slice_fw="$slice/$(basename "$FW_SIM")"
-  fi
-  if [[ ! -d "$slice_fw" ]]; then
-    echo "⚠️  Unable to locate framework in slice: $slice"
-    continue
-  fi
-  src_mod="$source_fw/Modules/${PRODUCT}.swiftmodule"
-  dst_mod="$slice_fw/Modules/${PRODUCT}.swiftmodule"
-  if [[ -d "$src_mod" ]]; then
-    mkdir -p "$dst_mod"
-    shopt -s nullglob
-    /bin/cp -f "$src_mod"/* "$dst_mod/" 2>/dev/null || true
-    shopt -u nullglob
-  fi
-done
+sync_slice_modules "$FW_IOS" "$FW_SIM" "$OUT_XC"
 
 # ---- Verify Swift modules exist in each slice ----
 echo "▶ Verifying Swift modules exist in slices…"

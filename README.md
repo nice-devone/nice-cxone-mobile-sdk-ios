@@ -40,6 +40,22 @@ Developing an iOS app using the CXone Mobile package requires the following:
 The sample comes from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) or [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
 
 
+## Building an XCFramework
+
+When you need to distribute the SDK as a prebuilt binary (for example to consume it from a React Native/Expo module), use the helper script in `scripts/build_spm_xcframework.sh`.
+
+```sh
+./scripts/build_spm_xcframework.sh . CXoneChatSDK
+```
+
+The command:
+- cleans previous build artefacts under `XCBuild/` and `XCOut/`
+- archives the Swift package product for iOS devices and simulators
+- assembles `XCOut/CXoneChatSDK.xcframework` and embeds the Swift module/interface metadata required for Swift clients
+
+After running the script you can copy the generated `.xcframework` bundle into the consumer project and link it as a binary dependency.
+
+
 ## Connect Your Application to CXone
 
 You need to connect your app to **CXone** to begin communication with the **CXone platform** and to create a *Web Socket* connection. You also need to authorize your app users to use the chat features so they can begin loading threads.
