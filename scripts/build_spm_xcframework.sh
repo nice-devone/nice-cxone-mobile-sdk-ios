@@ -23,8 +23,8 @@ USAGE
 
 section() {
   local title="$1"
-  echo
-  echo "==== $title ===="
+  echo >&2
+  echo "==== $title ====" >&2
 }
 
 PKG_DIR_RAW="${1:-.}"
@@ -86,7 +86,7 @@ copy_swiftmodules() {
   mkdir -p "$dst"
 
   if [[ -z "$src" ]]; then
-    echo "⚠️  No Swift module artifacts found under: $variant_dir"
+    echo "⚠️  No Swift module artifacts found under: $variant_dir" >&2
     return 0
   fi
 
@@ -94,12 +94,12 @@ copy_swiftmodules() {
   local files=("$src"/*)
   shopt -u nullglob
   if [[ ${#files[@]} -eq 0 ]]; then
-    echo "⚠️  Swift module directory empty at: $src"
+    echo "⚠️  Swift module directory empty at: $src" >&2
     return 0
   fi
 
   /bin/cp -f "${files[@]}" "$dst/"
-  echo "▶ Embedded Swift modules → $dst"
+  echo "▶ Embedded Swift modules → $dst" >&2
 }
 
 # Archive the scheme for a single destination (device or simulator). Returns
@@ -113,7 +113,11 @@ archive_variant() {
   local module_root="$5"
 
   section "Archive (${label})"
-  xcodebuild archive \
+  # Ensure result bundle path is clean; xcodebuild fails if it already exists
+  rm -rf "$result_bundle" 2>/dev/null || true
+  local log_file
+  log_file="${result_bundle%.xcresult}.log"
+  if ! xcodebuild -quiet archive \
     -scheme "$PRODUCT" \
     -configuration "$CONFIG" \
     -destination "$destination" \
@@ -121,12 +125,22 @@ archive_variant() {
     -derivedDataPath "$DERIVED" \
     -resultBundlePath "$result_bundle" \
     -showBuildTimingSummary \
-    "${COMMON_XCB_FLAGS[@]}"
+    "${COMMON_XCB_FLAGS[@]}" >"$log_file" 2>&1; then
+    echo "✗ Archive (${label}) failed. See: $log_file"
+    tail -n 40 "$log_file" || true
+    exit 1
+  fi
 
   local framework_path
   framework_path="$(find_fw "$archive_path")"
   if [[ -n "${framework_path:-}" ]]; then
     copy_swiftmodules "$module_root" "$framework_path"
+  fi
+
+  if [[ -z "${framework_path:-}" ]]; then
+    echo "⚠️  No framework found under archive path: $archive_path.xcarchive/Products" >&2
+  else
+    echo "▶ Resolved framework (${label}): $framework_path" >&2
   fi
 
   printf '%s\n' "${framework_path:-}"
@@ -251,10 +265,54 @@ fi
 OUT_XC="$ABS_OUT/$PRODUCT.xcframework"
 echo "▶ Creating XCFramework → $OUT_XC"
 rm -rf "$OUT_XC"
-xcodebuild -create-xcframework \
-  -framework "$FW_IOS" \
-  -framework "$FW_SIM" \
-  -output "$OUT_XC"
+
+# Minimise environment to avoid E2BIG (Argument list too long) on Xcode 26
+DEV_DIR="$(/usr/bin/xcode-select -p 2>/dev/null || true)"
+ORIG_HOME="${HOME:-}"
+CLEAN_ENV=(env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin")
+if [[ -n "${DEV_DIR:-}" ]]; then CLEAN_ENV+=(DEVELOPER_DIR="$DEV_DIR"); fi
+if [[ -n "${ORIG_HOME:-}" ]]; then CLEAN_ENV+=(HOME="$ORIG_HOME"); fi
+
+# Stage frameworks into short paths to keep argv short
+SHORT_DIR="$ABS_BUILD/short-fw"
+rm -rf "$SHORT_DIR" && mkdir -p "$SHORT_DIR/ios" "$SHORT_DIR/sim"
+ios_fw_name="$(basename "$FW_IOS")"; sim_fw_name="$(basename "$FW_SIM")"
+echo "Staging for stitch:"
+echo "  ios: $FW_IOS -> $SHORT_DIR/ios/$ios_fw_name"
+echo "  sim: $FW_SIM -> $SHORT_DIR/sim/$sim_fw_name"
+/usr/bin/ditto "$FW_IOS" "$SHORT_DIR/ios/$ios_fw_name"
+/usr/bin/ditto "$FW_SIM" "$SHORT_DIR/sim/$sim_fw_name"
+
+# Show staged contents to aid debugging
+echo "Staged contents:"
+ls -la "$SHORT_DIR/ios" || true
+ls -la "$SHORT_DIR/sim" || true
+
+# Attempt with minimal environment first; fall back to normal env if needed
+CREATE_LOG1="$LOG_DIR/create-xcframework-minimal.log"
+CREATE_LOG2="$LOG_DIR/create-xcframework-normal.log"
+if ! "${CLEAN_ENV[@]}" xcrun xcodebuild -create-xcframework \
+  -framework "$SHORT_DIR/ios/$ios_fw_name" \
+  -framework "$SHORT_DIR/sim/$sim_fw_name" \
+  -output "$OUT_XC" >"$CREATE_LOG1" 2>&1; then
+  echo "⚠️  create-xcframework failed under minimal env. Retrying without env -i… (log: $CREATE_LOG1)"
+  if ! xcrun xcodebuild -create-xcframework \
+    -framework "$SHORT_DIR/ios/$ios_fw_name" \
+    -framework "$SHORT_DIR/sim/$sim_fw_name" \
+    -output "$OUT_XC" >"$CREATE_LOG2" 2>&1; then
+    echo "✗ create-xcframework failed under normal env as well."
+    echo "  Logs:"
+    echo "    minimal: $CREATE_LOG1"; tail -n 30 "$CREATE_LOG1" || true
+    echo "    normal:  $CREATE_LOG2"; tail -n 30 "$CREATE_LOG2" || true
+    exit 1
+  fi
+fi
+
+# Ensure output exists before proceeding
+if [[ ! -d "$OUT_XC" ]]; then
+  echo "✗ XCFramework not created: $OUT_XC"
+  exit 1
+fi
 
 sync_slice_modules "$FW_IOS" "$FW_SIM" "$OUT_XC"
 
