@@ -26,6 +26,7 @@ let package = Package(
     products: [
         .library(
             name: "CXoneChatSDK",
+            type: .dynamic,
             targets: ["CXoneChatSDK"]
         ),
     ],
