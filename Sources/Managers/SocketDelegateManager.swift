@@ -126,7 +126,11 @@ extension SocketDelegateManager: CXoneChatDelegate {
         delegates.forEach { $0.onTokenRefreshFailed() }
     }
 
-    func onProactivePopupAction(data: [String: Any], actionId: UUID) { 
+    func onProactiveActionReceived(of type: ProactiveActionType) {
+        delegates.forEach { $0.onProactiveActionReceived(of: type) }
+    }
+    
+    func onProactivePopupAction(data: [String: Any], actionId: UUID) {
         delegates.forEach { $0.onProactivePopupAction(data: data, actionId: actionId) }
     }
 }

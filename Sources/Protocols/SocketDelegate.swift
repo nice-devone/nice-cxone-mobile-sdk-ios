@@ -24,4 +24,6 @@ protocol SocketDelegate: AnyObject {
     func didReceive(error: Error)
 
     func refreshToken() async throws
+    
+    func reconnect() async throws
 }

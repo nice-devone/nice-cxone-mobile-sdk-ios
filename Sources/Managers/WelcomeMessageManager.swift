@@ -159,9 +159,9 @@ private extension CustomerIdentityDTO {
         let lastName = self.lastName ?? ""
         
         return [
-            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: Date.provide()),
-            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: Date.provide()),
-            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: Date.provide())
+            CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: Date()),
+            CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: Date()),
+            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: Date())
         ]
     }
 }

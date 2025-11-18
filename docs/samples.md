@@ -870,6 +870,10 @@ func setup() {
 }
 ```
 
+### Proactive Action Analytics
+
+> **Note**: The following analytics methods are deprecated. For new implementations, use the `ProactiveActionProvider.trigger()` method instead. See the [Inactivity Popup Case Study](cs-inactivity-popup.md) for the recommended approach.
+
 ### Proactive Action Click
 
 `AnalyticsProvider.proactiveActionClick(data:)` reports proactive action was clicked or acted upon by the visitor. It is necessary to have established connection; otherwise, it throws an error.
@@ -910,6 +914,39 @@ func reportProactiveAction(successful: Bool) {
 }
 ```
 
+## Proactive Actions
+
+The SDK provides a modern API for handling proactive actions like inactivity popups. Use the `ProactiveActionProvider` for type-safe, semantic action handling.
+
+### Using the Proactive Action Provider
+
+```swift
+// Get the proactive action provider
+let proactiveAction = CXoneChat.shared.proactiveAction
+
+// Handle different action types
+Task {
+    do {
+        switch actionType {
+        case .refreshSession:
+            try await proactiveAction.trigger(.refreshSession(popup))
+        case .expireSession:
+            try await proactiveAction.trigger(.expireSession(popup))
+        }
+    } catch {
+        print("Failed to trigger proactive action: \(error)")
+    }
+}
+```
+
+**Benefits of the New API:**
+- Type-safe action handling with associated data
+- Clear separation of concerns
+- Automatic response formatting
+- Better error handling
+- Consistent with modern Swift patterns
+
+For complete implementation details, see our [Inactivity Popup Case Study](cs-inactivity-popup.md).
 
 ## Event Delegates
 
@@ -1025,12 +1062,30 @@ func onTokenRefreshFailed() {
 }
 ```
 
-### On Proactive Popup Action
+### On Proactive Action Received
 
-Callback to be called when a custom popup proactive action is received.
+Callback to be called when a proactive action with typed data is received.
 
 ```swift
-func onProactivePopupAction(data: [String: Any], actionId: UUID) {
+func onProactiveActionReceived(of type: ProactiveActionType) {
+    switch type {
+    case .inactivityPopup(let popup):
+        // Handle inactivity popup
+        handleInactivityPopup(popup)
+    case .customPopupBox:
+        ...
+    }
+}
+
+private func handleInactivityPopup(_ popup: InactivityPopup) {
     ...
 }
 ```
+
+**Important Notes:**
+- The inactivity popup feature works for live chat channels only (not available for messaging)
+- You must implement this delegate method to handle inactivity popups
+- Use the `ProactiveActionTrigger` enum for type-safe responses
+- The SDK automatically handles the response formatting and server communication
+- **Architecture**: The backend handles session timing and expiration - don't implement custom timers
+- For a complete implementation, see our [Inactivity Popup Case Study](cs-inactivity-popup.md)

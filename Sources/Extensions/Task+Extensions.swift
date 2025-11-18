@@ -15,17 +15,12 @@
 
 import Foundation
 
-extension Task {
-
-    private static var secondInNanoseconds: TimeInterval {
-        1_000_000_000
-    }
-}
+// MARK: - Task<Never, Never>
 
 extension Task where Success == Never, Failure == Never {
     
     static func sleep(seconds: Double) async {
-        let duration = UInt64(seconds * secondInNanoseconds)
+        let duration = UInt64(seconds * TimeInterval.secondInNanoseconds)
         
         do {
             try await Task.sleep(nanoseconds: duration)
@@ -40,6 +35,8 @@ extension Task where Success == Never, Failure == Never {
     }
 }
 
+// MARK: - Task<_, Error>
+
 extension Task where Failure == Error {
     
     @discardableResult
@@ -53,7 +50,13 @@ extension Task where Failure == Error {
                 do {
                     return try await operation()
                 } catch {
-                    let delay = calculateExponentialBackoffDelay(attempt: attempt)
+                    if case .sdkVersionNotSupported = error as? CXoneChatError {
+                        // This error indicates that the SDK version is not supported so it should not be retried.
+                        throw error
+                    }
+                    
+                    let delay = TimeInterval.calculateExponentialBackoffDelay(attempt: attempt)
+                    
                     try await Task<Never, Never>.sleep(nanoseconds: UInt64(delay))
                     
                     continue
@@ -64,13 +67,5 @@ extension Task where Failure == Error {
             
             return try await operation()
         }
-    }
-    
-    private static func calculateExponentialBackoffDelay(attempt: Int) -> TimeInterval {
-        let maxDelay = 30 * secondInNanoseconds
-        let delay = Double(1 << attempt) * Double(secondInNanoseconds)
-        let jitter = Double.random(in: 0...secondInNanoseconds)
-        
-        return min(delay + jitter, maxDelay)
     }
 }

@@ -48,6 +48,12 @@ public protocol ChatProvider: AnyObject {
     /// The provider for report related properties and methods.
     var analytics: AnalyticsProvider { get }
     
+    /// The provider for handling user responses to proactive actions such as inactivity popups, custom automation popups,
+    /// and future automated engagement features.
+    ///
+    /// Use this provider to send user interaction results (e.g., "Continue", "Close", etc.) for proactive UI elements back to the backend.
+    var proactiveAction: ProactiveActionProvider { get }
+    
     /// Add a ``CXoneChatDelegate``
     ///
     /// Future delegate messages will be routed to the newly added delegate.

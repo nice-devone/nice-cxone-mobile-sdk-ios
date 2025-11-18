@@ -18,6 +18,9 @@ import UIKit
 
 /// Represents fingerprint data about the customer.
 struct DeviceFingerprintDTO {
+    
+    // MARK: - Properties
+    
     /// Country code per locale.
     let country: String?
 
@@ -45,6 +48,8 @@ struct DeviceFingerprintDTO {
     /// The token of the device for push notifications.
     let deviceToken: String?
 
+    // MARK: - Init
+    
     init(
         country: String? = Locale.current.countryCode,
         ipAddress: String? = nil,
@@ -68,17 +73,31 @@ struct DeviceFingerprintDTO {
     }
 }
 
-private extension Locale {
-    var countryCode: String? {
-        if #available(iOS 16, *) {
-            region?.identifier
-        } else {
-            regionCode
-        }
+// MARK: - CustomStringConvertible
+
+extension DeviceFingerprintDTO: CustomStringConvertible {
+    
+    var description: String {
+        let dict: [String: String?] = [
+            "country": country,
+            "ipAddress": ipAddress,
+            "language": language,
+            "location": location,
+            "applicationType": applicationType,
+            "operatingSystem": operatingSystem,
+            "osVersion": osVersion,
+            "deviceType": deviceType,
+            "deviceToken": deviceToken
+        ]
+        
+        return dict.jsonString ?? "DeviceFingerprintDTO"
     }
 }
 
+// MARK: - Codable
+
 extension DeviceFingerprintDTO: Codable {
+    
     enum CodingKeys: String, CodingKey {
         case country
         case ipAddress = "ip"
@@ -90,4 +109,34 @@ extension DeviceFingerprintDTO: Codable {
         case deviceType
         case deviceToken
     }
+}
+
+// MARK: - Helpers
+    
+private extension Locale {
+    
+    var countryCode: String? {
+        if #available(iOS 16, *) {
+            region?.identifier
+        } else {
+            regionCode
+        }
+    }
+}
+
+private extension Dictionary {
+ 
+    var jsonString: String? {
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: self, options: []) else {
+            LogManager.error("Failed to serialize to JSON")
+            return nil
+        }
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            LogManager.error("Failed to convert JSON data to String")
+            return nil
+        }
+        
+        return jsonString
+    }
+
 }

@@ -29,7 +29,7 @@ struct AnalyticsEventDTO {
     // MARK: - Init
 
     init(
-        eventId: UUID = UUID.provide(),
+        eventId: UUID = UUID(),
         type: AnalyticsEventType,
         visitId: UUID,
         destinationId: UUID,
@@ -45,7 +45,7 @@ struct AnalyticsEventDTO {
     }
 
     init(
-        eventId: UUID = UUID.provide(),
+        eventId: UUID = UUID(),
         type: AnalyticsEventType,
         connection: ConnectionContext,
         createdAt: Date,

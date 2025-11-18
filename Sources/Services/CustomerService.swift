@@ -163,9 +163,6 @@ extension CustomerService {
     func processCustomerReconnectedEvent() async throws {
         LogManager.trace("Processing customer reconnect")
         
-        connectionContext.chatState = .connected
-        delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
-        
         guard let threadsService else {
             throw CXoneChatError.invalidParameter("threadService")
         }

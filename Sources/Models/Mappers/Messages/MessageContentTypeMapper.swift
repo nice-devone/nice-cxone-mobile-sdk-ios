@@ -17,7 +17,7 @@ import Foundation
 
 enum MessageContentTypeMapper {
     
-    static func map(_ entity: MessageContentDTOType) -> MessageContentType {
+    static func map(_ entity: MessageContentDTOType) -> MessageContentType? {
         switch entity {
         case .text(let entity):
             return .text(MessagePayloadMapper.map(entity))
@@ -27,8 +27,16 @@ enum MessageContentTypeMapper {
             return .quickReplies(MessageQuickRepliesMapper.map(from: entity))
         case .listPicker(let entity):
             return .listPicker(MessageListPickerMapper.map(from: entity))
-        case .unknown:
-            return .unknown
+        case .inactivityPopup:
+            LogManager.info("Inactivity popup is not supported in the chat history.")
+            
+            return nil
+        case .postback:
+            LogManager.info("Postback is not supported in the chat history.")
+            
+            return nil
+        case .unknown(let fallback):
+            return .unknown(fallbackText: fallback)
         }
     }
 }

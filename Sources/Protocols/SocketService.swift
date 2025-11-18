@@ -35,7 +35,9 @@ protocol SocketService: AnyObject {
     /// Opens a new WebSocket connection using the specified URL.
     /// 
     /// - Parameter socketURL: The URL for the location of the WebSocket.
-    func connect(socketURL: URL)
+    ///
+    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
+    func connect(socketURL: URL) async throws
 
     /// Closes the current WebSocket session.
     func disconnect(unexpectedly: Bool)

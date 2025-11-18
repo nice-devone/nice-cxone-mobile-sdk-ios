@@ -31,6 +31,7 @@ public protocol ConnectionProvider {
     ///   - channelId: The unique id of the channel for the connection.
     ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -50,6 +51,7 @@ public protocol ConnectionProvider {
     ///   - completion: Completion handler to be called when the request is successful or fails.
     ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -103,7 +105,32 @@ public protocol ConnectionProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Replaced with prepare(chatURL:socketURL:brandId:channelId:loggerURL:) to be able to use additional logger.")
     func prepare(chatURL: String, socketURL: String, brandId: Int, channelId: String) async throws
+    
+    /// Prepares the SDK for establishing connection to the CXone service.
+    ///
+    /// In order to you use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
+    ///
+    /// - Parameters:
+    ///   - chatURL: The URL to be used for chat requests (channel config and attachment upload).
+    ///   - socketURL: The URL to be used for the WebSocket connection.
+    ///   - loggerURL: The URL to be use for internal chat logger.
+    ///   - brandId: The unique id of the brand for which to open the connection.
+    ///   - channelId: The unique id of the channel for the connection.
+    ///
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
+    func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String) async throws
 
     /// Connects to the CXone service via web socket.
     ///
@@ -118,6 +145,7 @@ public protocol ConnectionProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``CXoneChatError/notConnected`` if the connection was not successfully established
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed

@@ -126,4 +126,4 @@ For a complete implementation reference, see:
 
 ## Need a Custom UI?
 
-If you need to build your own custom UI without using the UI module, please check our [Core SDK Integration Guide](core-sdk-integration.md) for details on implementing the delegate methods, connecting manually, and handling all states yourself.
+If you need to build your own custom UI without using the UI module, please check our [Core SDK Integration Guide](cs-core-sdk-integration.md) for details on implementing the delegate methods, connecting manually, and handling all states yourself.

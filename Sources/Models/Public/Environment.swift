@@ -91,4 +91,21 @@ public enum Environment: String, CaseIterable, EnvironmentDetails, Codable {
             return "wss://chat-gateway-de-jp1.niceincontact.com"
         }
     }
+    
+    public var loggerURL: String {
+        switch self {
+        case .NA1:
+            return "https://app-de-na1.niceincontact.com/logger-public"
+        case .EU1:
+            return "https://app-de-eu1.niceincontact.com/logger-public"
+        case .AU1:
+            return "https://app-de-au1.niceincontact.com/logger-public"
+        case .CA1:
+            return "https://app-de-ca1.niceincontact.com/logger-public"
+        case .UK1:
+            return "https://app-de-uk1.niceincontact.com/logger-public"
+        case .JP1:
+            return "https://app-de-jp1.niceincontact.com/logger-public"
+        }
+    }
 }

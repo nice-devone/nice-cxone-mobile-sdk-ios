@@ -36,6 +36,7 @@ extension String {
             return String(data: jsonData, encoding: .utf8)
         } catch {
             error.logError()
+            
             return nil
         }
     }

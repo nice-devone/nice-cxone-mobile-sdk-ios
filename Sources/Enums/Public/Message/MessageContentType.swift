@@ -38,6 +38,11 @@ public enum MessageContentType: Equatable {
     /// and with a bigger count than buttons or quick replies.
     case listPicker(MessageListPicker)
     
-    /// An unknown content type.
-    case unknown
+    /// Represents an unknown content type encountered during parsing or processing.
+    ///
+    /// This case is used as a fallback when the actual content type cannot be determined or is not supported.
+    ///
+    /// - Parameter fallbackText: An optional string that provides a human-readable description or placeholder
+    ///   for the unknown content.
+    case unknown(fallbackText: String?)
 }

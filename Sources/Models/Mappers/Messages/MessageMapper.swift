@@ -17,18 +17,29 @@ import Foundation
 
 enum MessageMapper {
     
-    static func map(_ entity: MessageDTO) -> Message {
-        Message(
+    static func map(_ entity: MessageDTO) -> Message? {
+        guard let contentType = MessageContentTypeMapper.map(entity.contentType) else {
+            return nil
+        }
+        
+        return Message(
             id: entity.idOnExternalPlatform,
             threadId: entity.threadIdOnExternalPlatform,
-            contentType: MessageContentTypeMapper.map(entity.contentType),
+            contentType: contentType,
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),
-            direction: Self.map(entity.direction),
-            userStatistics: UserStatistics(seenAt: entity.userStatistics.seenAt, readAt: entity.userStatistics.readAt),
+            direction: entity.direction == .inbound ? .toAgent : .toClient,
+            agentStatistics: UserStatistics(
+                seenAt: entity.agentStatistics.seenAt,
+                readAt: entity.agentStatistics.readAt
+            ),
+            customerStatistics: UserStatistics(
+                seenAt: entity.customerStatistics.seenAt,
+                readAt: entity.customerStatistics.readAt
+            ),
             authorUser: entity.authorUser.map(AgentMapper.map),
             authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map),
-            status: Self.status(from: entity.userStatistics)
+            status: entity.agentStatistics.readAt != nil ? .seen : .delivered
         )
     }
     
@@ -37,38 +48,14 @@ enum MessageMapper {
             id: entity.idOnExternalPlatform,
             threadId: entity.thread.idOnExternalPlatform,
             contentType: .text(payload),
-            createdAt: Date.provide(),
+            createdAt: Date(),
             attachments: entity.attachments.map(AttachmentMapper.map),
             direction: .toAgent,
-            userStatistics: nil,
+            agentStatistics: nil,
+            customerStatistics: nil,
             authorUser: authorUser,
             authorEndUserIdentity: customer,
             status: .sent
         )
-    }
-}
-
-// MARK: - MessageDirection mapper
-
-private extension MessageMapper {
-    
-    static func map(_ direction: MessageDirectionDTOType) -> MessageDirection {
-        switch direction {
-        case .inbound:
-            return .toAgent
-        case .outbound:
-            return .toClient
-        }
-    }
-    
-    static func status(from userStatistics: UserStatisticsDTO?) -> MessageStatus {
-        switch userStatistics {
-        case .some(let statistics) where statistics.readAt != nil:
-            return .seen
-        case .some:
-            return .delivered
-        case .none:
-            return .sent
-        }
     }
 }

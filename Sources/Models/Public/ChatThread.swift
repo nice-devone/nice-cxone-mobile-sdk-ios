@@ -111,17 +111,8 @@ extension ChatThread {
     }
     
     func updated(from data: LiveChatRecoveredPostbackDataDTO) {
-        let filteredMessages = data.messages.filter { message in
-            guard case .text(let payload) = message.contentType else {
-                return true
-            }
-            
-            // Do not append content of `beginLiveChatConversationMessage`
-            return payload.text != ChatThreadService.beginLiveChatConversationMessage
-        }
-        
         updated(
-            messages: filteredMessages,
+            messages: data.messages,
             inboxAssignee: data.inboxAssignee.map(AgentMapper.map),
             previousInboxAssignee: data.previousInboxAssignee.map(AgentMapper.map),
             name: data.thread.threadName,
@@ -147,6 +138,19 @@ extension ChatThread {
         state: ChatThreadState? = nil,
         positionInQueue: Int? = nil
     ) {
+        let filteredMessages = messages?.filter { message in
+            switch message.contentType {
+            case .text(let payload):
+                // Do not append content of the begin live chat conversation message, unsupported message type answer, or inactivity popup answer
+               return payload.parameters.hasOneOf(.isBeginLiveChatConversation, .isUnsupportedMessageTypeAnswer, .isInactivityPopupAnswer) == false
+            case .inactivityPopup:
+                // Filter out inactivity popup messages (they are handled separately)
+                return false
+            default:
+                return true
+            }
+        }
+        
         self.state = state ?? self.state
         self.name = name ?? self.name
         self.assignedAgent = inboxAssignee ?? self.assignedAgent
@@ -155,8 +159,8 @@ extension ChatThread {
         self.scrollToken = scrollToken ?? self.scrollToken
         self.positionInQueue = positionInQueue ?? self.positionInQueue
         
-        if let messages {
-            self.merge(messages: messages.map(MessageMapper.map))
+        if let filteredMessages {
+            self.merge(messages: filteredMessages.compactMap(MessageMapper.map))
         }
     }
 }

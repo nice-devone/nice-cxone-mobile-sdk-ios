@@ -45,6 +45,9 @@ enum EventType: String, CaseIterable {
     /// An event to send a message in a chat thread.
     case sendMessage = "SendMessage"
     
+    /// POSTBACK interaction (user selected an action).
+    case postback = "Postback"
+    
     /// An event received when a message has been received in a chat.
     case messageCreated = "MessageCreated"
 
@@ -56,6 +59,9 @@ enum EventType: String, CaseIterable {
     
     /// An event to send to mark a chat message as seen by the customer.
     case messageSeenByCustomer = "MessageSeenByCustomer"
+    
+    /// An event received when a messages has been seen by a customer
+    case messageSeenChanged = "MessageSeenChanged"
     
     /// An event received when a read status of a message has been changed.
     case messageReadChanged = "MessageReadChanged"
