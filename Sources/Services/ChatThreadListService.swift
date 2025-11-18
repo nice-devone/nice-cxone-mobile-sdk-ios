@@ -773,11 +773,17 @@ extension ChatThreadListService {
         } else if connectionContext.channelConfig.prechatSurvey != nil {
             LogManager.info("Channel Configuration contains pre-chat which has to be filled-in. Notify about ready chat. Error: \(error.localizedDescription)")
             
+            // Clean up stale threads before showing pre-chat form
+            clearStaleThreadsAfterRecoveryFailure()
+            
             connectionContext.chatState = .ready
             
             delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
         } else {
             LogManager.info("No thread available and no form needs to be filled-in -> automatically create a new one. Error: \(error.localizedDescription)")
+            
+            // Clean up stale threads before showing pre-chat form
+            clearStaleThreadsAfterRecoveryFailure()
             
             try await create()
         }
@@ -841,6 +847,29 @@ extension ChatThreadListService {
 // MARK: - Private methods
 
 private extension ChatThreadListService {
+    
+    /// Clears stale threads and cached data after thread recovery failure.
+    ///
+    /// When the server indicates a thread no longer exists (RecoveringThreadFailed or RecoveringLivechatFailed error),
+    /// we need to clean up any local references to that thread before proceeding with
+    /// new chat creation or showing pre-chat forms.
+    func clearStaleThreadsAfterRecoveryFailure() {
+        // Clear cached thread ID for single-thread and LiveChat modes
+        // Do this FIRST, regardless of threads array state
+        if connectionContext.chatMode != .multithread {
+            UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
+        }
+        
+        guard !threads.isEmpty else {
+            LogManager.info("No threads to clear, but cached thread ID was removed")
+            return
+        }
+        
+        LogManager.info("Clearing \(threads.count) stale thread(s) that failed recovery")
+        
+        threads.removeAll()
+        threadProviders.removeAll()
+    }
     
     func allPrechatCustomFieldsFilled(for threadId: UUID) -> Bool {
         guard let prechatSurveyCustomFields = connectionContext.channelConfig.prechatSurvey?.customFields else {
