@@ -1,5 +1,5 @@
 <a name="3.1.1"></a>
-# [3.1.0] - 2025-11-18
+# [3.1.1] - 2025-11-18
 
 ## Fixes
 - clear stale threads after recovery failure
