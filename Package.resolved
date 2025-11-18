@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/evgenyneu/keychain-swift",
       "state" : {
-        "revision" : "d108a1fa6189e661f91560548ef48651ed8d93b9",
-        "version" : "20.0.0"
+        "revision" : "5e1b02b6a9dac2a759a1d5dbc175c86bd192a608",
+        "version" : "24.0.0"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kolos65/Mockable",
       "state" : {
-        "revision" : "a9e5e1d222035567069ed6fff8429c327229b5f6",
-        "version" : "0.0.11"
+        "revision" : "0a822d53fa7516abe659b44a9c508b8eb9b666bd",
+        "version" : "0.4.1"
       }
     },
     {
@@ -23,17 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git",
       "state" : {
-        "revision" : "b77724823d31b46935cb38573b85b4df559def1f",
-        "version" : "3.0.1"
-      }
-    },
-    {
-      "identity" : "swift-issue-reporting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
-      "state" : {
-        "revision" : "27d767d643fa2cf083d0a73d74fa84cacb53e85c",
-        "version" : "1.4.1"
+        "revision" : "0946769864509fbe7d48e12cfae51677213b8586",
+        "version" : "3.1.0"
       }
     },
     {
@@ -41,8 +32,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
-        "version" : "510.0.3"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "4c27acf5394b645b70d8ba19dc249c0472d5f618",
+        "version" : "1.7.0"
       }
     }
   ],

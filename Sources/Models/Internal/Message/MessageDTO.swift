@@ -40,8 +40,11 @@ struct MessageDTO: Equatable {
     /// The direction that the message is being sent (in regards to the agent).
     let direction: MessageDirectionDTOType
     
-    /// Statistic information about the message (read status, viewed status, etc.).
-    let userStatistics: UserStatisticsDTO
+    /// An agent statistic information about the message (read status, viewed status, etc.).
+    let agentStatistics: UserStatisticsDTO
+    
+    /// A user statistic information about the message (read status, viewed status, etc.).
+    let customerStatistics: UserStatisticsDTO
     
     /// The agent that sent the message. Only present if the direction is outbound.
     let authorUser: AgentDTO?
@@ -62,6 +65,7 @@ extension MessageDTO: Decodable {
         case attachments
         case direction
         case userStatistics
+        case customerStatistics
         case authorUser
         case authorEndUserIdentity
     }
@@ -75,7 +79,10 @@ extension MessageDTO: Decodable {
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)
         self.direction = try container.decode(MessageDirectionDTOType.self, forKey: .direction)
         self.contentType = try container.decode(MessageContentDTOType.self, forKey: .messageContent)
-        self.userStatistics = try container.decode(UserStatisticsDTO.self, forKey: .userStatistics)
+        self.agentStatistics = try container.decodeIfPresent(UserStatisticsDTO.self, forKey: .userStatistics)
+            ?? UserStatisticsDTO(seenAt: nil, readAt: nil)
+        self.customerStatistics = try container.decodeIfPresent(UserStatisticsDTO.self, forKey: .customerStatistics)
+            ?? UserStatisticsDTO(seenAt: nil, readAt: nil)
         self.authorUser = try container.decodeIfPresent(AgentDTO.self, forKey: .authorUser)
         self.authorEndUserIdentity = try container.decodeIfPresent(CustomerIdentityDTO.self, forKey: .authorEndUserIdentity)
     }

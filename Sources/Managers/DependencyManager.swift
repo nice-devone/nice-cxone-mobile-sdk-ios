@@ -29,6 +29,7 @@ class DependencyManager {
     private var contactFields: ContactCustomFieldsProvider?
     private var threads: ChatThreadListProvider?
     private var analytics: AnalyticsProvider?
+    private var proactiveActions: ProactiveActionProvider?
     
     // MARK: - Properties
     
@@ -139,6 +140,17 @@ class DependencyManager {
         
         return provider
     }
+    
+    func resolve() -> ProactiveActionProvider {
+        if let proactiveActions {
+            return proactiveActions
+        }
+        
+        let provider = ProactiveActionService(socketService: socketService, customerCustomFields: resolve(), threads: resolve())
+        self.proactiveActions = provider
+        
+        return provider
+    }
 }
 
 // MARK: - Private methods
@@ -153,5 +165,8 @@ private extension DependencyManager {
         // Register listeners for thread list service
         let threads: ChatThreadListProvider = resolve()
         (threads as? ChatThreadListService)?.addListeners()
+        
+        let proactiveActions: ProactiveActionProvider = resolve()
+        (proactiveActions as? ProactiveActionService)?.addListeners()
     }
 }

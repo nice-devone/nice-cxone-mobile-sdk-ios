@@ -1,7 +1,22 @@
+<a name="3.1.0"></a>
+# [3.1.0] - 2025-11-18
+
+## Features
+- Align begin live chat conversation message + better filtering of the message
+- Decode fallback message for unsupported message types and automatically inform agent console about that
+- Add support for "sdkVersionNotSupported" error code to handle unsupported SDK versions
+- Add support for multiple images selection for Photo Gallery attachment source option
+- Implement internal client logger for better issue tracing
+- Exponential backoff mechanism for WebSocket reconnect
+- Align WebSocket event parameters for filtering in SendOutbound
+- Migrate unit tests to Swift Testing
+- Support for Inactivity Popup
+
+
 <a name="3.0.1"></a>
 # [3.0.1] - 2025-07-11
 
-### Fixes
+## Fixes
 - Correct `eventType` for RefreshToken event
 - Fix condition to authorize a customer with token via OAuth
 - Extend `ErrorCode` of legacy consumer authorization/reconnect failed events
@@ -344,7 +359,8 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.1...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.2.1...2.3.0

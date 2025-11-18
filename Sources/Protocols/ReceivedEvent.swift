@@ -12,7 +12,7 @@
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
-// periphery:ignore:all
+// periphery:ignore:all - false positive; used in several DTO objects
 
 import Combine
 import Foundation
@@ -24,7 +24,7 @@ protocol ReceivedEvent {
     var eventId: UUID { get }
     var eventType: EventType? { get }
     var postbackEventType: EventType? { get }
-    var postbackErrorCode: ErrorCode? { get }
+    var postbackErrorCode: EventErrorCode? { get }
 }
 
 extension ReceivedEvent {
@@ -33,12 +33,12 @@ extension ReceivedEvent {
         eventType ?? postbackEventType
     }
     
-    var postbackErrorCode: ErrorCode? { nil }
+    var postbackErrorCode: EventErrorCode? { nil }
 }
 
 extension Publisher where Output == ReceivedEvent {
     
-    func with(errorCode: ErrorCode) -> any Publisher<Output, Failure> {
+    func with(errorCode: EventErrorCode) -> any Publisher<Output, Failure> {
         filter { event in
             event.postbackErrorCode == errorCode
         }
@@ -68,7 +68,7 @@ extension Publisher where Output == ReceivedEvent {
         }
     }
     
-    func with<Type: ReceivedEvent>(errorCode: ErrorCode, as dataType: Type.Type) -> any Publisher<Type, Failure> {
+    func with<Type: ReceivedEvent>(errorCode: EventErrorCode, as dataType: Type.Type) -> any Publisher<Type, Failure> {
         with(errorCode: errorCode).asType(dataType)
     }
 }
@@ -93,6 +93,7 @@ extension Data {
                 case .senderTypingStarted:            return try decoder.decode(AgentTypingEventDTO.self, from: self)
                 case .senderTypingEnded:              return try decoder.decode(AgentTypingEventDTO.self, from: self)
                 case .messageCreated:                 return try decoder.decode(MessageCreatedEventDTO.self, from: self)
+                case .messageSeenChanged:             return try decoder.decode(MessageSeenChangedDTO.self, from: self)
                 case .threadRecovered:                return try decoder.decode(ThreadRecoveredEventDTO.self, from: self)
                 case .messageReadChanged:             return try decoder.decode(MessageReadByAgentEventDTO.self, from: self)
                 case .contactInboxAssigneeChanged:    return try decoder.decode(ContactInboxAssigneeChangedEventDTO.self, from: self)

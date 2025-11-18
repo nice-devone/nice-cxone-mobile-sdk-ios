@@ -12,7 +12,7 @@
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
-// periphery:ignore:all
+// periphery:ignore:all - false positive; it used for web socket communication
 
 import Foundation
 import Mockable

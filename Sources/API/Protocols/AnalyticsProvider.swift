@@ -98,6 +98,7 @@ public protocol AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     func proactiveActionDisplay(data: ProactiveActionDetails) async throws
     
     /// Reports to CXone that a proactive action was clicked or acted upon by the visitor.
@@ -113,6 +114,7 @@ public protocol AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     func proactiveActionClick(data: ProactiveActionDetails) async throws
     
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
@@ -127,5 +129,6 @@ public protocol AnalyticsProvider {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws
 }

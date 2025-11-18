@@ -15,12 +15,39 @@
 
 import Foundation
 
-/// All info about a payload of a message.
+enum MessageParameter: String {
+    case isBeginLiveChatConversation = "isInitialMessage"
+    case isUnsupportedMessageTypeAnswer
+    case isInactivityPopupAnswer
+}
+
+/// All info about a message payload.
 struct MessagePayloadDTO: Equatable {
+    
+    // MARK: - Properties
     
     /// The content of the payload.
     let text: String
     
-    /// The postback  of the payload.
+    /// Optional parameters
+    let parameters: [String: AnyValue]
+    
+    /// The postback of the payload.
     let postback: String?
+    
+    // MARK: - Init
+    
+    init(text: String, postback: String?, parameters: [String: AnyValue]) {
+        self.text = text
+        self.postback = postback
+        self.parameters = parameters
+    }
+    
+    init(text: String, postback: String?, parameters: [MessageParameter: AnyValue]) {
+        self.text = text
+        self.postback = postback
+        self.parameters = parameters.reduce(into: [String: AnyValue]()) { partialResult, parameter in
+            partialResult[parameter.key.rawValue] = parameter.value
+        }
+    }
 }

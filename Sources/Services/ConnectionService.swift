@@ -14,11 +14,15 @@
 //
 
 import Combine
+import CXoneGuideUtility
 import Foundation
 
 class ConnectionService {
 
     // MARK: - Properties
+    
+    // To be able to retry getting channel configuration in case of transient errors
+    static var getChannelRetryAttempts = 3
     
     let delegate: CXoneChatDelegate
     var socketService: SocketService
@@ -71,6 +75,7 @@ class ConnectionService {
 extension ConnectionService: ConnectionProvider {
 
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -88,6 +93,7 @@ extension ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -141,7 +147,23 @@ extension ConnectionService: ConnectionProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Replaced with prepare(chatURL:socketURL:brandId:channelId:loggerURL:) to be able to use additional logger.")
     func prepare(chatURL: String, socketURL: String, brandId: Int, channelId: String) async throws {
+        try await prepare(chatURL: chatURL, socketURL: socketURL, loggerURL: "", brandId: brandId, channelId: channelId)
+    }
+    
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
+    func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String) async throws {
         if connectionContext.chatState == .preparing {
             return
         }
@@ -151,7 +173,12 @@ extension ConnectionService: ConnectionProvider {
         
         LogManager.trace("Preparing SDK for connection with custom environment")
         
-        connectionContext.environment = CustomEnvironment(chatURL: chatURL, socketURL: socketURL)
+        connectionContext.environment = CustomEnvironment(
+            chatURL: chatURL,
+            socketURL: socketURL,
+            // `nil` value allows to evaluate the URL from the chat URL
+            loggerURL: loggerURL.isEmpty ? nil : loggerURL
+        )
         
         try await prepare(brandId: brandId, channelId: channelId)
     }
@@ -162,6 +189,7 @@ extension ConnectionService: ConnectionProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
@@ -190,25 +218,9 @@ extension ConnectionService: ConnectionProvider {
             connectionContext.chatState = .connecting
             delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
             
-            do {
-                try connectToSocket()
-                
-                // Setup websocket event listeners
-                if let registerListeners {
-                    registerListeners()
-                } else {
-                    LogManager.error("Unable to register listeners for the socket events")
-                    
-                    socketService.disconnect(unexpectedly: true)
-                    return
-                }
-                
-                try await checkForAuthorization()
-            } catch {
-                socketService.disconnect(unexpectedly: true)
-                
-                throw error
-            }
+            try await connectToSocket()
+            
+            try await startAutomatedConnectionFlow()
         }
     }
 
@@ -262,7 +274,7 @@ extension ConnectionService: ConnectionProvider {
             triggerId: LowerCaseUUID(uuid: triggerId)
         )
 
-        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID.provide(), payload: payload))
+        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID(), payload: payload))
 
         try await socketService.send(data: data)
     }
@@ -279,13 +291,13 @@ extension ConnectionService: EventReceiver {
     func onOperationError(_ error: OperationError) {
         switch error.errorCode {
         case .customerReconnectFailed, .consumerReconnectFailed:
-            Task {
+            Task { [weak self] in
                 do {
-                    try await refreshToken()
+                    try await self?.refreshToken()
                 } catch {
                     error.logError()
                     
-                    delegate.onError(error)
+                    self?.delegate.onError(error)
                 }
             }
         default:
@@ -312,6 +324,7 @@ extension ConnectionService {
 
 private extension ConnectionService {
     
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
     /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
@@ -320,9 +333,9 @@ private extension ConnectionService {
     /// - Throws: ``NSError`` object that indicates why the request failed
     func getChannelConfiguration(url: URL) async throws -> ChannelConfigurationDTO {
         try await Task
-            .retrying {
+            .retrying(attempts: Self.getChannelRetryAttempts) {
                 let (data, _) = try await self.connectionContext.session.fetch(from: url)
-                
+
                 return try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
             }
             .value
@@ -353,18 +366,23 @@ private extension ConnectionService {
             connectionContext.brandId = brandId
             connectionContext.channelId = channelId
             
-            LogManager.trace("Did get channel configuration")
+            // Configure the client logger since all necessary paramenters are set
+            LogManager.configureInternalLogger(connectionContext: connectionContext)
             
-            connectionContext.destinationId = UUID.provide()
+            LogManager.trace("Did set channel configuration for the SDK")
+            
+            connectionContext.destinationId = UUID()
             
             let visitorId: UUID = connectionContext.visitorId ?? {
-                let visitorId = UUID.provide()
+                LogManager.trace("Creating new visitor ID")
+                
+                let visitorId = UUID()
                 connectionContext.visitorId = visitorId
                 
                 return visitorId
             }()
             let customerId: String = connectionContext.customer?.idOnExternalPlatform ?? {
-                let customerId = UUID.provide()
+                let customerId = UUID()
                 customerService?.createCustomer(customerId: customerId)
                 
                 return customerId.uuidString
@@ -383,7 +401,8 @@ private extension ConnectionService {
     }
     
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
-    func connectToSocket() throws {
+    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
+    func connectToSocket() async throws {
         LogManager.trace("Connecting to the socket")
         
         let socketEndpoint = SocketEndpointDTO(
@@ -402,7 +421,32 @@ private extension ConnectionService {
             throw CXoneChatError.invalidParameter("Configuration has invalid websocket url")
         }
         
-        socketService.connect(socketURL: url)
+        try await socketService.connect(socketURL: url)
+    }
+    
+    func startAutomatedConnectionFlow() async throws {
+        LogManager.trace("Starting automated connection flow")
+        
+        connectionContext.chatState = .connected
+        delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        
+        do {
+            // Setup websocket event listeners
+            if let registerListeners {
+                registerListeners()
+            } else {
+                LogManager.error("Unable to register listeners for the socket events")
+                
+                socketService.disconnect(unexpectedly: true)
+                return
+            }
+            
+            try await checkForAuthorization()
+        } catch {
+            socketService.disconnect(unexpectedly: true)
+            
+            throw error
+        }
     }
     
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
@@ -517,7 +561,7 @@ private extension ConnectionService {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func isLiveChatAvailable() async throws -> Bool {
-        guard connectionContext.channelConfig.liveChatAvailability.expires <= Date.provide() else {
+        guard connectionContext.channelConfig.liveChatAvailability.expires <= Date() else {
             return connectionContext.channelConfig.liveChatAvailability.isOnline
         }
         guard let url = connectionContext.environment.chatServerUrl?.liveChatAvailabilityUrl(
@@ -540,7 +584,7 @@ private extension ConnectionService {
             liveChatAvailability: CurrentLiveChatAvailability(
                 isChannelLiveChat: connectionContext.chatMode == .liveChat,
                 isOnline: isOnline,
-                expires: Date.provide().addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
+                expires: Date().addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
             )
         )
         
@@ -609,5 +653,11 @@ extension ConnectionService: SocketDelegate {
         LogManager.trace("Saving a access token")
         
         socketService.accessToken = response.postback.accessToken
+    }
+    
+    func reconnect() async throws {
+        LogManager.trace("Reconnecting to the web socket")
+        
+        try await startAutomatedConnectionFlow()
     }
 }

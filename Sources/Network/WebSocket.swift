@@ -26,7 +26,7 @@ internal class WebSocket: NSObject {
 
     private let task: URLSessionWebSocketTaskProtocol
 
-    private var waitForStart: CheckedContinuation<(), Never>?
+    private var waitForStart: CheckedContinuation<(), any Error>?
 
     // MARK: - Init
 
@@ -37,55 +37,27 @@ internal class WebSocket: NSObject {
         task.receive(completionHandler: onReceive)
         task.delegate = self
     }
-
-    // periphery:ignore - may be used in the future
-    func resume() async {
-        await withCheckedContinuation { continuation in
-            waitForStart = continuation
-            task.resume()
-        }
-    }
-
-    // MARK: - Methods
-    
-    func onReceive(result: Result<URLSessionWebSocketTask.Message, any Error>) {
-        switch result {
-        case let .success(success):
-            receive.send(success)
-            task.receive(completionHandler: onReceive(result:))
-        case let .failure(error):
-            receive.send(completion: .failure(.protocolError(error)))
-        }
-    }
-
-    func sessionDidOpen() {
-        waitForStart?.resume()
-        waitForStart = nil
-    }
-
-    func sessionDidClose(with code: URLSessionWebSocketTask.CloseCode) {
-        switch code {
-        case .normalClosure:
-            receive.send(completion: .finished)
-        default:
-            receive.send(completion: .failure(.serverError(code)))
-        }
-    }
 }
 
 // MARK: - WebSocketProtocol implementation
 
 extension WebSocket: WebSocketProtocol {
     
-    func send(
-        _ message: URLSessionWebSocketTask.Message,
-        completionHandler: @escaping ((Error?) -> Void)
-    ) {
+    func resume() async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            waitForStart = continuation
+            task.resume()
+        }
+    }
+    
+    func send(_ message: URLSessionWebSocketTask.Message, completionHandler: @escaping ((Error?) -> Void)) {
         task.send(message) { [weak self] error in
             if let error {
                 LogManager.error("Error sending message: \(error)")
+                
                 self?.receive.send(completion: .failure(.protocolError(error)))
             }
+
             completionHandler(error)
         }
     }
@@ -94,15 +66,12 @@ extension WebSocket: WebSocketProtocol {
         task.sendPing { [weak self] error in
             if let error {
                 LogManager.error("Error sending ping: \(error)")
+                
                 self?.receive.send(completion: .failure(.protocolError(error)))
             }
+            
             pongReceiveHandler(error)
         }
-    }
-
-    // periphery:ignore - may be used in the future
-    func resume() {
-        task.resume()
     }
     
     func cancel(with closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
@@ -115,15 +84,53 @@ extension WebSocket: WebSocketProtocol {
 extension WebSocket: URLSessionWebSocketDelegate {
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        LogManager.trace("WebSocket connection opened")
+        
         sessionDidOpen()
     }
 
-    func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    ) {
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        LogManager.trace("WebSocket connection closed with code: \(closeCode), reason: \(String(describing: reason))")
+        
         sessionDidClose(with: closeCode)
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+        LogManager.trace("WebSocket task completed with error: \(String(describing: error))")
+        
+        sessionDidClose(with: .goingAway)
+    }
+}
+
+// MARK: - Internal methods
+
+extension WebSocket {
+
+    func sessionDidOpen() {
+        waitForStart?.resume()
+        waitForStart = nil
+    }
+
+    func onReceive(result: Result<URLSessionWebSocketTask.Message, any Error>) {
+        switch result {
+        case let .success(success):
+            receive.send(success)
+            
+            task.receive(completionHandler: onReceive)
+        case let .failure(error):
+            receive.send(completion: .failure(.protocolError(error)))
+        }
+    }
+    
+    func sessionDidClose(with code: URLSessionWebSocketTask.CloseCode) {
+        waitForStart?.resume(throwing: WebSocketError.serverError(code))
+        waitForStart = nil
+        
+        switch code {
+        case .normalClosure:
+            receive.send(completion: .finished)
+        default:
+            receive.send(completion: .failure(.serverError(code)))
+        }
     }
 }

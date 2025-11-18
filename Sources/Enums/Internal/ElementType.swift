@@ -17,7 +17,7 @@ import Foundation
 
 /// The different types of elements that can be present in the content of a message.
 enum ElementType: String, Codable {
-    
+
     // MARK: - Content Type
     
     /// Basic text.
@@ -32,10 +32,30 @@ enum ElementType: String, Codable {
     /// A quick reply plugin/rich message to display.
     case quickReplies = "QUICK_REPLIES"
     
+    /// A plugin message content type.
+    case plugin = "PLUGIN"
+    
+    /// A postback message content type.
+    case postback = "POSTBACK"
+    
+    // MARK: - Plugin SubElements
+    
+    /// A title message content type in legacy plugins.
+    case title = "TITLE"
+    
+    /// A countdown timer message content type in legacy plugins.
+    case countdown = "COUNTDOWN"
+    
+    /// A button message content type used in legacy plugins.
+    case button = "BUTTON"
+    
     // MARK: - TORM SubElements
     
     /// A reply button that the customer can press and send its text as a chat reply.
     case replyButton = "REPLY_BUTTON"
+    
+    /// Inactivity popup container element.
+    case inactivityPopup = "INACTIVITY_POPUP"
     
     case unknown
     

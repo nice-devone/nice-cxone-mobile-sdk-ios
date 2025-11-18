@@ -95,7 +95,7 @@ class ConnectionContextImpl: ConnectionContext {
     init(
         keychainService: KeychainService,
         session: URLSession? = nil,
-        environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: ""),
+        environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "", loggerURL: ""),
         brandId: Int = .min,
         deviceToken: String? = nil,
         authorizationCode: String = "",
@@ -117,7 +117,7 @@ class ConnectionContextImpl: ConnectionContext {
             liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
         ),
         channelId: String = "",
-        destinationId: UUID = UUID.provide(),
+        destinationId: UUID = UUID(),
         visitDetailsStore: CurrentVisitDetails? = nil
     ) {
         self.keychainService = keychainService

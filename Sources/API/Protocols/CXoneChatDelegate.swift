@@ -70,11 +70,19 @@ public protocol CXoneChatDelegate: AnyObject {
     func onTokenRefreshFailed()
     
     /// Callback to be called when a custom popup proactive action is received.
-    /// 
+    ///
     /// - Parameters:
     ///   -  data: The proactive popup action data
     ///   - actionId: The unique identifier of the action.
+    @available(*, deprecated, message: "Use onProactiveActionReceived(of:) instead. This method will be removed in a future version.")
     func onProactivePopupAction(data: [String: Any], actionId: UUID)
+    
+    /// Callback to be called when a proactive action is received with typed data.
+    ///
+    /// This is the preferred method for handling inactivity popups and other proactive actions.
+    /// - Parameters:
+    ///   - type: The typed proactive action data
+    func onProactiveActionReceived(of type: ProactiveActionType)
 }
 
 // MARK: - Default Implementation
@@ -93,5 +101,6 @@ public extension CXoneChatDelegate {
     func onError(_ error: Error) { }
     func onTokenRefreshFailed() { }
     func onProactivePopupAction(data: [String: Any], actionId: UUID) { }
+    func onProactiveActionReceived(of type: ProactiveActionType) { }
     // swiftlint:enable missing_docs
 }

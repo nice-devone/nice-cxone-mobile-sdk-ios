@@ -20,6 +20,13 @@ public enum CXoneChatError: LocalizedError, Equatable {
 
     // MARK: Errors when calling any method
 
+    /// The SDK version being used is no longer supported.
+    ///
+    /// This error occurs when the SDK version is outdated and incompatible with the current API.
+    /// - Source of problem: Deprecated SDK version.
+    /// - Attention: Please upgrade to the latest version of the SDK to ensure compatibility and access to all features.
+    case sdkVersionNotSupported
+    
     /// An attempt was made to use a method without connecting first.
     ///
     /// Most of the methods in the SDK require a connection to CXone services.
@@ -241,6 +248,8 @@ public enum CXoneChatError: LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
+        case .sdkVersionNotSupported:
+            return "Your version of SDK is not supported anymore, please do upgrade."
         case .notConnected:
             return "You are trying to call a method without connecting first. Make sure you call connect first."
         case .unsupportedChannelConfig:

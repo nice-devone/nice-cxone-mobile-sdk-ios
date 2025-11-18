@@ -21,7 +21,7 @@ struct OperationError: LocalizedError {
 
     let eventId: UUID
     
-    let errorCode: ErrorCode
+    let errorCode: EventErrorCode
 
     let transactionId: LowerCaseUUID
 
@@ -55,7 +55,7 @@ extension OperationError: ReceivedEvent {
     static let eventType: EventType? = nil
 
     var postbackEventType: EventType? { nil }
-    var postbackErrorCode: ErrorCode? { errorCode }
+    var postbackErrorCode: EventErrorCode? { errorCode }
     var eventType: EventType? { nil }
 }
 
@@ -76,10 +76,10 @@ extension OperationError: Codable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.eventId = try container.decodeUUIDIfPresent(forKey: .eventId) ?? UUID.provide()
+        self.eventId = try container.decodeUUIDIfPresent(forKey: .eventId) ?? UUID()
         
         let errorContainer = try container.nestedContainer(keyedBy: ErrorKeys.self, forKey: .error)
-        self.errorCode = try errorContainer.decode(ErrorCode.self, forKey: .errorCode)
+        self.errorCode = try errorContainer.decode(EventErrorCode.self, forKey: .errorCode)
         self.transactionId = try errorContainer.decode(LowerCaseUUID.self, forKey: .transactionId)
         self.errorMessage = try errorContainer.decode(String.self, forKey: .errorMessage)
     }

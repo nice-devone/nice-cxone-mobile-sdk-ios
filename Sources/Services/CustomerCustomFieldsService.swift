@@ -52,7 +52,7 @@ extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
         
         try socketService.checkForConnection()
         
-        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date.provide()) })
+        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) })
         
         let data = try eventsService.create(
             .setCustomerCustomFields,

@@ -66,14 +66,31 @@ class UserDefaultsService: NSObject {
         set(obj, for: key.rawValue)
     }
     
+    // Special overload for Optional types to handle nil properly
+    func set<T: Encodable>(_ obj: T?, for key: Keys) {
+        set(obj, for: key.rawValue)
+    }
+    
     func set<T: Encodable>(_ obj: T, for key: String) {
-        guard let data = try? JSONEncoder().encode(obj) else {
-            return
+        do {
+            let data = try JSONEncoder().encode(obj)
+            self.userDefaults?.set(data, forKey: key)
+            self.userDefaults?.synchronize()
+        } catch {
+            // If encoding fails for any reason, remove the key
+            self.userDefaults?.removeObject(forKey: key)
+            self.userDefaults?.synchronize()
         }
-        
-        self.userDefaults?.set(data, forKey: key)
-        
-        self.userDefaults?.synchronize()
+    }
+    
+    // Special overload for Optional types to handle nil properly
+    func set<T: Encodable>(_ obj: T?, for key: String) {
+        if let obj = obj {
+            set(obj, for: key)
+        } else {
+            self.userDefaults?.removeObject(forKey: key)
+            self.userDefaults?.synchronize()
+        }
     }
     
     func get<T: Decodable>(_ type: T.Type, for key: Keys) -> T? {
@@ -81,10 +98,14 @@ class UserDefaultsService: NSObject {
     }
     
     func get<T: Decodable>(_ type: T.Type, for key: String) -> T? {
-        guard let data = self.userDefaults?.object(forKey: key) as? Data else {
+        guard let data = self.userDefaults?.data(forKey: key) else {
             return nil
         }
         
-        return try? JSONDecoder().decode(T.self, from: data)
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            return nil
+        }
     }
 }

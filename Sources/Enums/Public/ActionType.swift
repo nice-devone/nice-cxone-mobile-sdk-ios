@@ -16,6 +16,7 @@
 import Foundation
 
 /// Supported proactive action types.
+@available(*, deprecated, message: "Use ProactiveActionType enum with typed data instead")
 public enum ActionType: String, Codable {
     
     /// Proactive action Welcome message.

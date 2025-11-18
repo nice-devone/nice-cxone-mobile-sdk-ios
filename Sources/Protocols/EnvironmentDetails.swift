@@ -23,6 +23,9 @@ protocol EnvironmentDetails {
 
     /// The URL used for the WebSocket connection.
     var socketURL: String { get }
+    
+    /// The URL used for internal logging.
+    var loggerURL: String { get }
 }
 
 // MARK: - Helpers

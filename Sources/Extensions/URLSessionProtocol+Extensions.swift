@@ -42,10 +42,15 @@ extension URLSessionProtocol {
             if let response = response as? HTTPURLResponse {
                 response.log(data: data, file: file, line: line)
             }
+                        
+            if let apiError = try? JSONDecoder().decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
+                throw CXoneChatError.sdkVersionNotSupported
+            }
             
             return (data, response)
         } catch {
             error.logError()
+            
             throw error
         }
     }

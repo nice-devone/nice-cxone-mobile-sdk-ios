@@ -54,7 +54,7 @@ extension ContactCustomFieldsService: ContactCustomFieldsProvider {
 
         try socketService.checkForConnection()
         
-        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date.provide()) }, for: threadId)
+        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) }, for: threadId)
         
         if let id = socketService.connectionContext.contactId {
             let data = try eventsService.create(

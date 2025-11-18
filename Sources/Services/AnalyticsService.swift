@@ -73,7 +73,7 @@ extension AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting page view started - \(title).")
 
-        let date = Date.provide()
+        let date = Date()
         let sendVisit = checkVisit(date: date)
 
         if sendVisit {
@@ -117,13 +117,13 @@ extension AnalyticsService: AnalyticsProvider {
             throw CXoneChatError.illegalChatState
         }
         
-        let timeSpentInSeconds = Int(Date.provide().timeIntervalSince(lastPageViewed.timestamp))
+        let timeSpentInSeconds = Int(Date().timeIntervalSince(lastPageViewed.timestamp))
         LogManager.trace("Reporting page view ended - \(title) Time spent: \(timeSpentInSeconds).")
         
         if lastPageViewed.title == title, lastPageViewed.url == url {
             try await trigger(
                 .timeSpentOnPage,
-                date: Date.provide(),
+                date: Date(),
                 data: TimeSpentOnPageEventDTO(url: url, title: title, timeSpentOnPage: timeSpentInSeconds)
             )
             
@@ -151,7 +151,7 @@ extension AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting chat window open.")
         
-        try await trigger(.chatWindowOpened, date: Date.provide())
+        try await trigger(.chatWindowOpened, date: Date())
     }
 
     /// Reports to CXone that a conversion has occurred.
@@ -177,7 +177,7 @@ extension AnalyticsService: AnalyticsProvider {
         
         LogManager.trace("Reporting conversion occurred.")
 
-        let date = Date.provide()
+        let date = Date()
 
         try await trigger(
             .conversion,
@@ -200,8 +200,9 @@ extension AnalyticsService: AnalyticsProvider {
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     public func proactiveActionDisplay(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionDisplayed, data: data, date: Date.provide())
+        try await proactiveAction(.proactiveActionDisplayed, data: data, date: Date())
     }
 
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
@@ -218,8 +219,9 @@ extension AnalyticsService: AnalyticsProvider {
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     public func proactiveActionClick(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionClicked, data: data, date: Date.provide())
+        try await proactiveAction(.proactiveActionClicked, data: data, date: Date())
     }
     
     /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
@@ -237,11 +239,12 @@ extension AnalyticsService: AnalyticsProvider {
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
     public func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws {
         try await proactiveAction(
             isSuccess ? .proactiveActionSuccess : .proactiveActionFailed,
             data: data,
-            date: Date.provide()
+            date: Date()
         )
     }
 }
@@ -262,7 +265,7 @@ private extension AnalyticsService {
             // if there is no visit, or the current visit has expired
             // create a new visit expiring in 30 minutes.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: UUID.provide(),
+                visitId: UUID(),
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -271,7 +274,7 @@ private extension AnalyticsService {
             // if the visit is current, then we just update the visit
             // expiration date, maintaining the existing visit id.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: connectionContext.visitId ?? UUID.provide(),
+                visitId: connectionContext.visitId ?? UUID(),
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 

@@ -28,7 +28,7 @@ struct LowerCaseUUID: Equatable {
 
     // MARK: - Init
 
-    init(uuid: UUID = UUID.provide()) {
+    init(uuid: UUID = UUID()) {
         self.uuid = UUID(uuidString: uuid.uuidString.lowercased()) ?? uuid
     }
 }

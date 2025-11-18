@@ -38,8 +38,15 @@ public struct Message {
     /// The direction that the message is being sent (in regards to the agent).
     public let direction: MessageDirection
     
-    /// Statistic information about the message (read status, viewed status, etc.).
+    /// An agent statistic information about the message (read status, viewed status, etc.).
+    @available(*, deprecated, renamed: "agentStatistics")
     public let userStatistics: UserStatistics?
+    
+    /// An agent statistic information about the message (read status, viewed status, etc.).
+    public let agentStatistics: UserStatistics?
+    
+    /// A customer statistic information about the message (read status, viewed status, etc.).
+    public let customerStatistics: UserStatistics?
     
     /// The agent that sent the message. Only present if the direction is to client (outbound).
     public let authorUser: Agent?
@@ -57,16 +64,24 @@ public struct Message {
     
     // MARK: - Init
     
+    /// Initializer of the Message object
+    ///
+    ///   - Note: The ``userStatistics`` attribute has been replaced with the ``agentStatistics`` so this initializer will be removed in a future release
+    ///
     /// - Parameters:
     ///   - id: The unique id for the message.
     ///   - threadId: The thread id for the message.
-    ///   - messageContent: The content of the message
+    ///   - contentType: The content of the message
     ///   - createdAt: The timestamp of when the message was created.
     ///   - attachments: The attachments on the message.
     ///   - direction: The direction that the message is being sent (in regards to the agent).
-    ///   - userStatistics: Statistic information about the message (read status, viewed status, etc.).
+    ///   - userStatistics: An agent statistic information about the message (read status, viewed status, etc.).
+    ///   - agentStatistics: An agent statistic information about the message (read status, viewed status, etc.).
+    ///   - customerStatistics: A customer statistic information about the message (read status, viewed status, etc.).
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
+    ///   - status: The delivery or read status of the message.
+    @available(*, deprecated, message: "Due to replacement of the `userStatistics` atrribute with `agentStatistics` and new attribute `customerStatistics`, this initializer will be removed in a future.") // swiftlint:disable:this line_length
     public init(
         id: UUID,
         threadId: UUID,
@@ -86,6 +101,49 @@ public struct Message {
         self.attachments = attachments
         self.direction = direction
         self.userStatistics = userStatistics
+        self.agentStatistics = userStatistics
+        self.customerStatistics = nil
+        self.authorUser = authorUser
+        self.authorEndUserIdentity = authorEndUserIdentity
+        self.status = status
+    }
+    
+    /// Initializer of the Message object
+    ///
+    /// - Parameters:
+    ///   - id: The unique id for the message.
+    ///   - threadId: The thread id for the message.
+    ///   - contentType: The content of the message
+    ///   - createdAt: The timestamp of when the message was created.
+    ///   - attachments: The attachments on the message.
+    ///   - direction: The direction that the message is being sent (in regards to the agent).
+    ///   - agentStatistics: An agent statistic information about the message (read status, viewed status, etc.).
+    ///   - customerStatistics: A customer statistic information about the message (read status, viewed status, etc.).
+    ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
+    ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
+    ///   - status: The delivery or read status of the message.
+    public init(
+        id: UUID,
+        threadId: UUID,
+        contentType: MessageContentType,
+        createdAt: Date,
+        attachments: [Attachment],
+        direction: MessageDirection,
+        agentStatistics: UserStatistics?,
+        customerStatistics: UserStatistics?,
+        authorUser: Agent?,
+        authorEndUserIdentity: CustomerIdentity?,
+        status: MessageStatus
+    ) {
+        self.id = id
+        self.threadId = threadId
+        self.contentType = contentType
+        self.createdAt = createdAt
+        self.attachments = attachments
+        self.direction = direction
+        self.userStatistics = agentStatistics
+        self.agentStatistics = agentStatistics
+        self.customerStatistics = customerStatistics
         self.authorUser = authorUser
         self.authorEndUserIdentity = authorEndUserIdentity
         self.status = status
@@ -103,7 +161,9 @@ extension Message: Equatable {
             && lhs.createdAt == rhs.createdAt
             && lhs.attachments == rhs.attachments
             && lhs.direction == rhs.direction
-            && lhs.userStatistics == rhs.userStatistics
+            && lhs.userStatistics == rhs.agentStatistics
+            && lhs.agentStatistics == rhs.agentStatistics
+            && lhs.customerStatistics == rhs.customerStatistics
             && lhs.authorUser == rhs.authorUser
             && lhs.authorEndUserIdentity == rhs.authorEndUserIdentity
             && lhs.status == rhs.status

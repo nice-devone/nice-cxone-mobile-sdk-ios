@@ -45,7 +45,7 @@ extension ServerError: ReceivedEvent {
     static let eventType: EventType? = nil
 
     /// - Warning: The value is initialized locally so it does not refer to the server one
-    var eventId: UUID { UUID.provide() }
+    var eventId: UUID { UUID() }
     var eventType: EventType? { nil }
     var postbackEventType: EventType? { nil }
 }

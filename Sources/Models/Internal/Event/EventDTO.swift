@@ -32,7 +32,7 @@ struct EventDTO: Encodable {
     // MARK: - Init
     
     init(
-        eventId: UUID = UUID.provide(),
+        eventId: UUID = UUID(),
         brandId: Int,
         channelId: String,
         customerIdentity: CustomerIdentityDTO,

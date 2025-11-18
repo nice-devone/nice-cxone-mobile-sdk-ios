@@ -107,7 +107,7 @@ For a complete implementation example, refer to the [Sample application](https:/
 
 ## Related Resources
 
-- [Core SDK Integration](core-sdk-integration.md)
+- [Core SDK Integration](cs-core-sdk-integration.md)
 - [Custom Fields](cs-custom-fields.md)
 - [Logging](cs-logging.md)
 
@@ -121,4 +121,4 @@ When using the UI module:
 - State changes are managed by the UI components
 - Pre-chat forms are rendered with built-in UI
 
-For UI module integration, refer to the [Core SDK Integration](core-sdk-integration.md) guide which demonstrates using the ChatCoordinator to leverage the pre-built UI components.
+For UI module integration, refer to the [Core SDK Integration](cs-core-sdk-integration.md) guide which demonstrates using the ChatCoordinator to leverage the pre-built UI components.

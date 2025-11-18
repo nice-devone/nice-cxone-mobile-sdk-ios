@@ -38,6 +38,7 @@ amplifytools.xcconfig
 jazzy_docs/
 
 # Cursor
+.claude
 .cursor
 .cursorignore
 .kb
