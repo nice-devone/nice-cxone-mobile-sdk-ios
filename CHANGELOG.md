@@ -1,27 +1,8 @@
 <a name="3.1.3"></a>
 # [3.1.3] - 2026-01-19
 
-## CXoneChatSDK
-
-### Fixes
+## Fixes
 - Migrate from UUID to String
-
-## CXoneChatUI
-
-### Fixes
-- Migrate from UUID to String
-
-### Dependencies
-- Update CXoneChatSDK from 3.1.2 to 3.1.3
-
-### Sample
-
-### Fixes
-- Migrate from UUID to String
-
-### Dependencies
-- Update CXoneChatSDK from 3.1.2 to 3.1.3
-- Update CXoneChatUI from 3.1.2 to 3.1.3
 
 
 <a name="3.1.1"></a>
@@ -392,7 +373,9 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.3...HEAD
+[3.1.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.1...3.1.3
+[3.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/2.3.0...3.0.0
