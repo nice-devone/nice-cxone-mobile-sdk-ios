@@ -33,20 +33,20 @@ class ConnectionContextTests: XCTestCase {
     func testVisitorDetailsSetProperly() {
         XCTAssertNil(sut.visitDetails)
         
-        sut.visitDetails = CurrentVisitDetails(visitId: UUID(), expires: Date())
+        sut.visitDetails = CurrentVisitDetails(visitId: LowercaseUUID().uuidString, expires: Date())
         
         XCTAssertNotNil(sut.visitDetails)
     }
     
     func testVisitorIdSetProperly() {
         XCTAssertNil(sut.visitorId)
-        sut.visitorId = UUID()
+        sut.visitorId = LowercaseUUID().uuidString
         XCTAssertNotNil(sut.visitorId)
     }
     
     func testCustomerSetProperly() {
         XCTAssertNil(sut.customer)
-        sut.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        sut.customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         XCTAssertNotNil(sut.customer)
     }
     

@@ -21,7 +21,7 @@ struct OperationError: Codable, LocalizedError, Equatable {
 
     let errorCode: EventErrorCode
 
-    let transactionId: LowerCaseUUID
+    let transactionId: String
 
     let errorMessage: String
 
@@ -29,7 +29,7 @@ struct OperationError: Codable, LocalizedError, Equatable {
         """
         {
             "eventType": "\(errorCode.rawValue)"
-            "transactionId": "\(transactionId.uuid.uuidString)"
+            "transactionId": "\(transactionId)"
             "errorMessage" "\(errorMessage)"
         }
         """

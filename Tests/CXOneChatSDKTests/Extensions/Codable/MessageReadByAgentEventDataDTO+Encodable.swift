@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension MessageReadByAgentEventDataDTO: Encodable {
+extension MessageReadByAgentEventDataDTO: Swift.Encodable {
  
     enum CodingKeys: CodingKey {
         case brand

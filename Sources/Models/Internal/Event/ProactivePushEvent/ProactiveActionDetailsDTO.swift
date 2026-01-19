@@ -19,7 +19,7 @@ import Foundation
 struct ProactiveActionDetailsDTO: Codable {
 
     /// The unique id of the action.
-    let actionId: LowerCaseUUID
+    let actionId: String
 
     /// The name of the action.
     let actionName: String

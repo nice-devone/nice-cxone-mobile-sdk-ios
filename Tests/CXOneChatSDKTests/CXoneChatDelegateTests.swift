@@ -37,7 +37,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testThreadUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.socketDelegateManager.onThreadUpdated(ChatThreadMapper.map(MockData.getThread()))
+        CXoneChat.socketDelegateManager.onThreadUpdated(ChatThreadMapper.map(MockData.getThread())!)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -45,7 +45,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
     func testThreadsUpdatedCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
-        CXoneChat.socketDelegateManager.onThreadsUpdated([ChatThreadMapper.map(MockData.getThread())])
+        CXoneChat.socketDelegateManager.onThreadsUpdated([ChatThreadMapper.map(MockData.getThread())!])
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -58,7 +58,7 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testProactivePopupActionCalled() async {
+    func testProactivePopupActionUUIDCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
         CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: UUID())
@@ -66,10 +66,26 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testOnAgentTypingDefaultImplementationCalled() async {
+    func testProactivePopupActionStringCalled() async {
+        currentExpectation = XCTestExpectation(description: "")
+        
+        CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: LowercaseUUID().uuidString)
+        
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
+    }
+    
+    func testOnAgentTypingDefaultImplementationUUIDCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
         CXoneChat.socketDelegateManager.onAgentTyping(true, threadId: UUID())
+        
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
+    }
+    
+    func testOnAgentTypingDefaultImplementationLowercaseUUIDCalled() async {
+        currentExpectation = XCTestExpectation(description: "")
+        
+        CXoneChat.socketDelegateManager.onAgentTyping(true, threadId: LowercaseUUID().uuidString)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -106,10 +122,18 @@ class CXoneChatDelegateTests: CXoneXCTestCase {
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
     
-    func testOnProactivePopupActionDefaultImplementationCalled() async {
+    func testOnProactivePopupActionDefaultImplementationUUIDCalled() async {
         currentExpectation = XCTestExpectation(description: "")
         
         CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: UUID())
+        
+        await fulfillment(of: [currentExpectation], timeout: 1.0)
+    }
+    
+    func testOnProactivePopupActionDefaultImplementationLowercaseUUIDCalled() async {
+        currentExpectation = XCTestExpectation(description: "")
+        
+        CXoneChat.socketDelegateManager.onProactivePopupAction(data: [:], actionId: LowercaseUUID().uuidString)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }

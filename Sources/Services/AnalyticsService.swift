@@ -30,7 +30,7 @@ class AnalyticsService {
     var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
-    var visitId: UUID? {
+    var visitId: String? {
         connectionContext.visitId
     }
     
@@ -48,9 +48,13 @@ class AnalyticsService {
 // interface while allowing tests to specify an additional date parameter.
 extension AnalyticsService: AnalyticsProvider {
     
+    @available(*, deprecated, message: "Use alternative with `String` return value type. It preserves the original case-sensitive identifier from the backend.")
     public var visitorId: UUID? {
-        get { connectionContext.visitorId }
-        set { connectionContext.visitorId = newValue }
+        connectionContext.visitorId.flatMap(UUID.init)
+    }
+    
+    public var visitorIdString: String? {
+        connectionContext.visitorId
     }
 
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
@@ -270,7 +274,7 @@ extension AnalyticsService: AnalyticsProvider {
         let data = try jsonEncoder.encode(
             StoreVisitorEventsDTO(
                 action: .chatWindowEvent,
-                eventId: UUID.provide(),
+                eventId: LowercaseUUID.provide().uuidString,
                 payload: getVisitorEventsPayload(eventType: .custom, data: data)
             )
         )
@@ -295,7 +299,7 @@ private extension AnalyticsService {
             // if there is no visit, or the current visit has expired
             // create a new visit expiring in 30 minutes.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: UUID.provide(),
+                visitId: LowercaseUUID.provide().uuidString,
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -304,7 +308,7 @@ private extension AnalyticsService {
             // if the visit is current, then we just update the visit
             // expiration date, maintaining the existing visit id.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: connectionContext.visitId ?? UUID.provide(),
+                visitId: connectionContext.visitId ?? LowercaseUUID.provide().uuidString,
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -372,7 +376,7 @@ private extension AnalyticsService {
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
-        guard let visitorId = visitorId else {
+        guard let visitorIdString else {
             throw CXoneChatError.missingVisitorId
         }
 
@@ -383,7 +387,7 @@ private extension AnalyticsService {
             data: data
         )
 
-        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorId, fun: fun, file: file, line: line)
+        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorIdString, fun: fun, file: file, line: line)
     }
 
     /// Post an event to the web-analytics service with specified brand and visitor ids.
@@ -405,7 +409,7 @@ private extension AnalyticsService {
     func post(
         event: AnalyticsEventDTO,
         brandId: Int,
-        visitorId: UUID,
+        visitorId: String,
         fun: StaticString = #function,
         file: StaticString = #file,
         line: UInt = #line
@@ -428,20 +432,20 @@ private extension AnalyticsService {
 
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
     func getVisitorEventsPayload(eventType: EventType, data: VisitorEventDataType?) throws -> StoreVisitorEventsPayloadDTO {
-        guard let visitorId = visitorId else {
+        guard let visitorIdString else {
             throw CXoneChatError.customerVisitorAssociationFailure
         }
         
         return StoreVisitorEventsPayloadDTO(
             eventType: .storeVisitorEvents,
             brand: BrandDTO(id: connectionContext.brandId),
-            visitorId: LowerCaseUUID(uuid: visitorId),
-            id: LowerCaseUUID(uuid: connectionContext.destinationId),
+            visitorId: visitorIdString,
+            id: connectionContext.destinationId,
             data: .visitorEvent(
                 VisitorsEventsDTO(
                     visitorEvents: [
                         VisitorEventDTO(
-                            id: LowerCaseUUID(uuid: UUID.provide()),
+                            id: LowercaseUUID.provide().uuidString,
                             type: eventType,
                             createdAtWithMilliseconds: Date.provide().iso8601withFractionalSeconds,
                             data: data

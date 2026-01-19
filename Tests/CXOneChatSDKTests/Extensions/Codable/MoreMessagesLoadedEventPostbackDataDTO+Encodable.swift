@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension MoreMessagesLoadedEventPostbackDataDTO: Encodable {
+extension MoreMessagesLoadedEventPostbackDataDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case messages

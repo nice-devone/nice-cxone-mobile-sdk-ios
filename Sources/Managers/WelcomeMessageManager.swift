@@ -33,7 +33,7 @@ class WelcomeMessageManager {
     ///     ```swift
     ///     // Without parameters
     ///     let message = "Dear customer, we have a 5% discout for you!"
-    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
     ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
     ///     parsedMessage // "Dear customer, we have a 5% discout for you!"
@@ -42,7 +42,7 @@ class WelcomeMessageManager {
     ///     ```swift
     ///     // Parameterized without fallback
     ///     let message = "Dear {{customer.fullName}}, we have a {{contact.customFields.discount}} discout for you!"
-    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
     ///     let parsedMessage = welcomeMessageManager.parse(
     ///         message,
     ///         contactFields: ["contact.customFields.discount": "10 %"],
@@ -56,7 +56,7 @@ class WelcomeMessageManager {
     ///     ```swift
     ///     // Parameterized with fallback
     ///     let message = "Dear {{customer.fullName|customer}}, we have a {{contact.customFields.discount|5%}} discout for you!"
-    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
     ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
     ///     parsedMessage // "Dear John Doe, we have a 5% discout for you!"
@@ -66,7 +66,7 @@ class WelcomeMessageManager {
     ///     // Fallback message
     ///     let message = "Dear {{customer.fullName}}, we have a {{contact.customFields.discount}} discout for you!"
     ///         + "{{fallbackMessage|Dear customer, we have a special deal for you!}}"
-    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+    ///     let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
     ///     let parsedMessage = welcomeMessageManager.parse(message, contactFields: [:], customerFields: [:], customer: customer)
     ///
     ///     parsedMessage // "Dear customer, we have a special deal for you!"

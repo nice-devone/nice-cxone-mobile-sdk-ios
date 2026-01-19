@@ -16,7 +16,7 @@
 @testable import CXoneChatSDK
 import Foundation
 
-extension EndContactEventDTO: Decodable {
+extension EndContactEventDTO: Swift.Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -28,7 +28,7 @@ extension EndContactEventDTO: Decodable {
     }
 }
 
-extension EndContactEventDataDTO: Decodable {
+extension EndContactEventDataDTO: Swift.Decodable {
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -36,7 +36,7 @@ extension EndContactEventDataDTO: Decodable {
         let contactContainer = try container.nestedContainer(keyedBy: ContactCodingKeys.self, forKey: .contact)
         
         self.init(
-            thread: try threadContainer.decode(UUID.self, forKey: .idOnExternalPlatform),
+            thread: try threadContainer.decode(String.self, forKey: .idOnExternalPlatform),
             contact: try contactContainer.decode(String.self, forKey: .id)
         )
     }

@@ -31,8 +31,8 @@ class EventsServiceTests: CXoneXCTestCase {
     }
     
     func testCreateSuccecsful() {
-        eventsService.connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
-        eventsService.connectionContext.visitorId = UUID()
+        eventsService.connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
+        eventsService.connectionContext.visitorId = LowercaseUUID().uuidString
         
         XCTAssertNoThrow(try eventsService.create(.reconnectCustomer))
     }

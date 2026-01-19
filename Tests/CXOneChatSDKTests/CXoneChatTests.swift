@@ -29,7 +29,7 @@ class CXoneChatTests: XCTestCase {
     }
     
     func testSignOutResetProperly() {
-        (CXoneChat.shared.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID(), state: .ready))
+        (CXoneChat.shared.threads as? ChatThreadsService)?.threads.append(ChatThread(id: LowercaseUUID().uuidString, state: .ready))
         XCTAssertFalse(CXoneChat.shared.threads.get().isEmpty)
         
         CXoneChat.signOut()

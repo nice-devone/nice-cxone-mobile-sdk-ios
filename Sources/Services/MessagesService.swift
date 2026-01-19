@@ -78,7 +78,7 @@ class MessagesService: MessagesProvider {
 
         connectionContext.activeThread = chatThread
         
-        let thread = ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)
+        let thread = ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)
         let data = try eventsService.create(
             .loadMoreMessages,
             with: .loadMoreMessageData(LoadMoreMessagesEventDataDTO(scrollToken: chatThread.scrollToken, thread: thread, oldestMessageDatetime: oldestDate))
@@ -106,10 +106,10 @@ class MessagesService: MessagesProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
-    func send(_ message: OutboundMessage, for chatThread: ChatThread) async throws {
+    func send(_ message: OutboundMessage, for chatThread: ChatThread) async throws { // swiftlint:disable:this function_body_length
         LogManager.trace("Sending a message in the specified chat thread.")
 
-        guard let threadIndex = connectionContext.threads.index(of: chatThread.id) else {
+        guard let threadIndex = connectionContext.threads.index(of: chatThread.idString) else {
             throw CXoneChatError.invalidThread
         }
         guard chatThread.state != .closed else {
@@ -126,7 +126,7 @@ class MessagesService: MessagesProvider {
 
         try socketService.checkForConnection()
 
-        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[chatThread.id]?.convertValueToIdentifier(
+        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[chatThread.idString]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
         let customerFields = (customerFieldsProvider as? CustomerCustomFieldsService)?.customerFields.convertValueToIdentifier(
@@ -137,11 +137,11 @@ class MessagesService: MessagesProvider {
         
         let mappedAttachments = try await message.attachments.map(with: connectionContext)
         
-        let messageId = UUID.provide()
+        let messageId = LowercaseUUID.provide().uuidString
         
         let eventData = EventDataType.sendMessageData(
             SendMessageEventDataDTO(
-                thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
+                thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name),
                 contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback)),
                 idOnExternalPlatform: messageId,
                 customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
@@ -155,7 +155,7 @@ class MessagesService: MessagesProvider {
         if message.text != Self.beginLiveChatConversationMessage {
             let message = Message(
                 id: messageId,
-                threadId: chatThread.id,
+                threadId: chatThread.idString,
                 contentType: .text(MessagePayload(text: message.text, postback: message.postback)),
                 createdAt: Date.provide(),
                 attachments: mappedAttachments.map(AttachmentMapper.map),
@@ -186,15 +186,15 @@ extension MessagesService {
             throw CXoneChatError.customerAssociationFailure
         }
 
-        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[thread.id] ?? []
+        let contactFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[thread.idString] ?? []
         let customerFields = (customerFieldsProvider as? CustomerCustomFieldsService)?.customerFields ?? []
         
         let parsedMessage = welcomeMessageManager.parse(welcomeMessage, contactFields: contactFields, customerFields: customerFields, customer: customer)
         self.parsedWelcomeMessage = parsedMessage
         
         return Message(
-            id: UUID.provide(),
-            threadId: thread.id,
+            id: LowercaseUUID.provide().uuidString,
+            threadId: thread.idString,
             contentType: .text(MessagePayload(text: parsedMessage, postback: nil)),
             createdAt: Date.provide(),
             attachments: [],
@@ -271,18 +271,18 @@ private extension MessagesService {
 
         try socketService.checkForConnection()
         
-        let customFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[thread.id]?.convertValueToIdentifier(
+        let customFields = (contactFieldsProvider as? ContactCustomFieldsService)?.contactFields[thread.idString]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
         
         let eventData = EventDataType.sendOutboundMessageData(
             SendOutboundMessageEventDataDTO(
                 thread: ThreadDTO(
-                    idOnExternalPlatform: thread.id,
+                    idOnExternalPlatform: thread.idString,
                     threadName: thread.messages.isEmpty ? nil : thread.name
                 ),
                 contentType: .text(MessagePayloadDTO(text: parsedWelcomeMessage, postback: nil)),
-                idOnExternalPlatform: UUID.provide(),
+                idOnExternalPlatform: LowercaseUUID.provide().uuidString,
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),

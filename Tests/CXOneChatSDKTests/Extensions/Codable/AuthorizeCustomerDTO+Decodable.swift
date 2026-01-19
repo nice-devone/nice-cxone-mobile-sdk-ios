@@ -16,7 +16,7 @@
 @testable import CXoneChatSDK
 import Foundation
 
-extension AuthorizeCustomerEventDataDTO: Decodable {
+extension AuthorizeCustomerEventDataDTO: Swift.Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

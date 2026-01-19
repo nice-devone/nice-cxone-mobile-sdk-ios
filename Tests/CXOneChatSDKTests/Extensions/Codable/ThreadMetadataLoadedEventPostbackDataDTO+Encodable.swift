@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ThreadMetadataLoadedEventPostbackDataDTO: Encodable {
+extension ThreadMetadataLoadedEventPostbackDataDTO: Swift.Encodable {
  
     enum CodingKeys: CodingKey {
         case ownerAssignee

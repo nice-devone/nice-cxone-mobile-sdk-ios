@@ -18,7 +18,7 @@ import Foundation
 /// Event received when thread metadata has been loaded.
 struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
 
-    let eventId: UUID
+    let eventId: String
 
     /// Type of event
     let eventType: EventType?
@@ -27,7 +27,7 @@ struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
 
     // MARK: - constructor
 
-    init(eventId: UUID, eventType: EventType? = .threadMetadataLoaded, postback: ThreadMetadataLoadedEventPostbackDTO) {
+    init(eventId: String, eventType: EventType? = .threadMetadataLoaded, postback: ThreadMetadataLoadedEventPostbackDTO) {
         self.eventId = eventId
         self.eventType = eventType
         self.postback = postback

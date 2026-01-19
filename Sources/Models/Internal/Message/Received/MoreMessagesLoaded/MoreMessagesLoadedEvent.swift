@@ -19,7 +19,7 @@ import Foundation
 struct MoreMessagesLoadedEventDTO: Decodable, Equatable {
 
     /// The unique identifier of the event.
-    let eventId: UUID
+    let eventId: String
 
     /// Type of event
     let eventType: EventType?
@@ -29,7 +29,7 @@ struct MoreMessagesLoadedEventDTO: Decodable, Equatable {
 
     // MARK: - constructors
     
-    init(eventId: UUID, eventType: EventType? = .moreMessagesLoaded, postback: MoreMessagesLoadedEventPostbackDTO) {
+    init(eventId: String, eventType: EventType? = .moreMessagesLoaded, postback: MoreMessagesLoadedEventPostbackDTO) {
         self.eventId = eventId
         self.eventType = eventType
         self.postback = postback

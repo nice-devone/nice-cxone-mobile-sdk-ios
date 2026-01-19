@@ -21,7 +21,7 @@ struct GenericEventDTO: Decodable, Equatable {
     // MARK: - Properties
     
     /// Event ID of this event (or original event we're responding to)
-    let eventId: LowerCaseUUID?
+    let eventId: String?
     /// The type of the event.
     let eventType: EventType?
     /// The postback of the event.
@@ -32,7 +32,7 @@ struct GenericEventDTO: Decodable, Equatable {
     // MARK: - Init
     
     init(
-        eventId: LowerCaseUUID? = nil,
+        eventId: String? = nil,
         eventType: EventType?,
         postback: GenericEventPostbackDTO?,
         error: OperationError?,

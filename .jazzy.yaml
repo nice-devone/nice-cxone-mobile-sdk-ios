@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+#
+# Licensed under the NICE License;
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/LICENSE
+#
+# TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
+# AN “AS IS” BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+# OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
+#
+
+author: NICE Systems
+author_url: https://www.nice.com
+copyright: © 2025 NICE
+github_url: https://github.com/BrandEmbassy/cxone-mobile-sdk-ios
+min_acl: public
+clean: true
+module: CXoneChatSDK
+module_version: 2.4.1
+swift_build_tool: xcodebuild
+output: jazzy_docs
+xcodebuild_arguments:
+  - -project
+  - ../sample/iOSSDKExample.xcodeproj
+  - -scheme
+  - CXoneChatSDK
+  - -skipPackagePluginValidation
+  - -skipMacroValidation
+  - -destination
+  - 'platform=iOS Simulator,OS=18.0,name=iPhone 16'

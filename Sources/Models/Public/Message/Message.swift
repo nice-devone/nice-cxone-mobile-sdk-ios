@@ -20,11 +20,25 @@ public struct Message {
     
     // MARK: - Properties
     
-    /// The unique id for the message.
+    /// The unique id for the message. Refers to the `idOnExternalPlatform`.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
     
-    /// The thread id for the message.
+    /// The unique id for the message. Refers to the `idOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the message as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let idString: String
+    
+    /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
+    @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
     public let threadId: UUID
+    
+    /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the thread as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let threadIdString: String
     
     /// The content of the message
     public let contentType: MessageContentType
@@ -76,6 +90,10 @@ public struct Message {
     ///   - userStatistics: Statistic information about the message (read status, viewed status, etc.).
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
+    @available(
+        *, deprecated,
+         message: "Use alternative with `String` parameter for `id` and `threadId`. It preserves the original case-sensitive identifier from the backend."
+    )
     public init(
         id: UUID,
         threadId: UUID,
@@ -88,7 +106,45 @@ public struct Message {
         authorEndUserIdentity: CustomerIdentity?
     ) {
         self.id = id
+        self.idString = id.uuidString.lowercased()
         self.threadId = threadId
+        self.threadIdString = threadId.uuidString.lowercased()
+        self.contentType = contentType
+        self.createdAt = createdAt
+        self.attachments = attachments
+        self.direction = direction
+        self.userStatistics = userStatistics
+        self.authorUser = authorUser
+        self.authorEndUserIdentity = authorEndUserIdentity
+    }
+    
+    /// Initializer of the Message object
+    ///
+    /// - Parameters:
+    ///   - id: The unique id for the message.
+    ///   - threadId: The thread id for the message.
+    ///   - contentType: The content of the message
+    ///   - createdAt: The timestamp of when the message was created.
+    ///   - attachments: The attachments on the message.
+    ///   - direction: The direction that the message is being sent (in regards to the agent).
+    ///   - customerStatistics: A customer statistic information about the message (read status, viewed status, etc.).
+    ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
+    ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
+    init(
+        id: String,
+        threadId: String,
+        contentType: MessageContentType,
+        createdAt: Date,
+        attachments: [Attachment],
+        direction: MessageDirection,
+        userStatistics: UserStatistics?,
+        authorUser: Agent?,
+        authorEndUserIdentity: CustomerIdentity?
+    ) {
+        self.id = UUID() // `id` has been replaced with `idString` and since it's under the internal init we don't want to use it anymore
+        self.idString = id
+        self.threadId = UUID() // `threadId` has been replaced with `threadIdString` and since it's under the internal init we don't want to use it anymore
+        self.threadIdString = threadId
         self.contentType = contentType
         self.createdAt = createdAt
         self.attachments = attachments
@@ -104,6 +160,6 @@ public struct Message {
 extension Message: Equatable {
 
     public static func == (lhs: Message, rhs: Message) -> Bool {
-        lhs.id == rhs.id
+        lhs.idString == rhs.idString
     }
 }

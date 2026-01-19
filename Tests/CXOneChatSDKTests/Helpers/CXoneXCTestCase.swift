@@ -111,7 +111,7 @@ open class CXoneXCTestCase: XCTestCase {
         try await URLProtocolMock.with(handlers: configRequestHandler) {
             CXoneChat = CXoneChatSDK.CXoneChat(socketService: socketService)
 
-            connectionService.connectionContext.destinationId = UUID()
+            connectionService.connectionContext.destinationId = LowercaseUUID().uuidString
 
             try await CXoneChat.connection.prepare(environment: .NA1, brandId: brandId, channelId: channelId)
             
@@ -151,6 +151,11 @@ extension CXoneXCTestCase: CXoneChatDelegate {
         fulfillExpectationIfNeeded()
     }
     
+    @nonobjc
+    public func onAgentTyping(_ isTyping: Bool, threadId: String) {
+        fulfillExpectationIfNeeded()
+    }
+    
     public func onContactCustomFieldsSet() {
         fulfillExpectationIfNeeded()
     }
@@ -168,6 +173,11 @@ extension CXoneXCTestCase: CXoneChatDelegate {
     }
     
     public func onProactivePopupAction(data: [String: Any], actionId: UUID) {
+        fulfillExpectationIfNeeded()
+    }
+    
+    @nonobjc
+    public func onProactivePopupAction(data: [String: Any], actionId: String) {
         fulfillExpectationIfNeeded()
     }
     

@@ -19,7 +19,7 @@ struct InternalServerError: LocalizedError, Equatable {
 
     var eventType: EventType? { nil }
 
-    let eventId: UUID
+    let eventId: String
 
     let error: OperationError
 
@@ -52,7 +52,7 @@ extension InternalServerError: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let inputDataContainer = try container.nestedContainer(keyedBy: InputDataCodingKeys.self, forKey: .inputData)
         
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.error = try container.decode(OperationError.self, forKey: .error)
         self.thread = try inputDataContainer.decodeIfPresent(ThreadDTO.self, forKey: .thread)
     }

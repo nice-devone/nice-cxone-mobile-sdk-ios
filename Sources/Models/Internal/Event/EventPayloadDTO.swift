@@ -33,14 +33,14 @@ struct EventPayloadDTO {
     let eventType: EventType
     
     /// The visitor to reconnect. Only used for the ReconnectCustomer event.
-    let visitorId: LowerCaseUUID?
+    let visitorId: String?
 
     /// The data to be sent for the event.
     let data: EventDataType?
     
     // MARK: - Init
     
-    init(brandId: Int, channelId: String, customerIdentity: CustomerIdentityDTO, eventType: EventType, data: EventDataType?, visitorId: LowerCaseUUID?) {
+    init(brandId: Int, channelId: String, customerIdentity: CustomerIdentityDTO, eventType: EventType, data: EventDataType?, visitorId: String?) {
         self.brand = BrandDTO(id: brandId)
         self.channel = ChannelIdentifierDTO(id: channelId)
         self.customerIdentity = customerIdentity

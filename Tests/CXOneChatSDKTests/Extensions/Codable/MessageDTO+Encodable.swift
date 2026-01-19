@@ -15,13 +15,13 @@
 
 @testable import CXoneChatSDK
 
-extension MessageDTO: Encodable {
+extension MessageDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(idOnExternalPlatform, forKey: .idOnExternalPlatform)
-        try container.encode(threadIdOnExternalPlatform, forKey: .threadIdOnExternalPlatform)
+        try container.encode(idOnExternalPlatformString, forKey: .idOnExternalPlatform)
+        try container.encode(threadIdOnExternalPlatformString, forKey: .threadIdOnExternalPlatform)
         try container.encodeISODate(createdAt, forKey: .createdAt)
         try container.encode(attachments, forKey: .attachments)
         try container.encode(direction, forKey: .direction)

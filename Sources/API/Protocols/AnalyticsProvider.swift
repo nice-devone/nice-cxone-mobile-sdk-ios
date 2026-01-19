@@ -19,7 +19,11 @@ import Foundation
 public protocol AnalyticsProvider {
     
     /// The id for the visitor.
+    @available(*, deprecated, renamed: "visitorIdString", message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend.")
     var visitorId: UUID? { get }
+    
+    /// The id for the visitor.
+    var visitorIdString: String? { get }
     
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
     ///

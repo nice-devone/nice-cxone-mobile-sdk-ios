@@ -33,7 +33,11 @@ enum MockData {
         isSurveyUser: false,
         publicImageUrl: imageUrl
     )
-    static let customerIdentity = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: nil, lastName: nil)
+    static let customerIdentity = CustomerIdentityDTO(
+        idOnExternalPlatform: LowercaseUUID().uuidString,
+        firstName: nil,
+        lastName: nil
+    )
     
     static let optionsHierarchicalCustomField = CustomFieldHierarchicalDTO(
         ident: "options",
@@ -104,10 +108,10 @@ enum MockData {
     }
     
     static func getThread(
-        threadId: UUID = UUID(),
-        scrollToken: String = UUID().uuidString,
+        threadId: String = LowercaseUUID().uuidString,
+        scrollToken: String = LowercaseUUID().uuidString,
         withMessages: Bool = true,
-        contactId: String = UUID().uuidString
+        contactId: String = LowercaseUUID().uuidString
     ) -> ChatThreadDTO {
         ChatThreadDTO(
             idOnExternalPlatform: threadId,
@@ -122,14 +126,16 @@ enum MockData {
     }
     
     static func getMessage(
-        threadId: UUID = UUID(),
-        messageId: UUID = UUID(),
+        threadId: String = LowercaseUUID().uuidString,
+        messageId: String = LowercaseUUID().uuidString,
         isSenderAgent: Bool,
         createdAt: Date = dateProvider.now
     ) -> MessageDTO {
         MessageDTO(
-            idOnExternalPlatform: messageId,
-            threadIdOnExternalPlatform: threadId,
+            idOnExternalPlatform: UUID(),
+            idOnExternalPlatformString: messageId,
+            threadIdOnExternalPlatform: UUID(),
+            threadIdOnExternalPlatformString: threadId,
             contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
             createdAt: createdAt,
             attachments: [],

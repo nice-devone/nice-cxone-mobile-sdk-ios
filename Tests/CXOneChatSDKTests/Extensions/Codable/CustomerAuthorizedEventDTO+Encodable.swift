@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension CustomerAuthorizedEventDTO: Encodable {
+extension CustomerAuthorizedEventDTO: Swift.Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

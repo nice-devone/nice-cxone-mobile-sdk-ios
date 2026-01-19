@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ThreadMetadataLoadedEventPostbackDTO: Encodable {
+extension ThreadMetadataLoadedEventPostbackDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventType

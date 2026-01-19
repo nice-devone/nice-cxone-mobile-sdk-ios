@@ -27,7 +27,7 @@ final class ChatThreadsServiceTest: XCTestCase {
     private let connectionContext = MockConnectionContext()
     private lazy var eventsService = EventsService(connectionContext: connectionContext)
     private let dateProvider = DateProviderMock()
-    private let uuidProvider = MockUUIDProvider()
+    private let uuidProvider = MockLowercaseUUIDProvider()
     private let subject = PassthroughSubject<ReceivedEvent, Never>()
     private lazy var events = subject.eraseToAnyPublisher()
     private let delegate = MockCXoneChatDelegate()
@@ -42,7 +42,7 @@ final class ChatThreadsServiceTest: XCTestCase {
         given(connectionContext)
             .brandId.willReturn(4077)
             .channelId.willReturn("M*A*S*H")
-            .visitorId.willReturn(UUID())
+            .visitorId.willReturn(LowercaseUUID().uuidString)
             .channelConfig.willReturn(MockData.getChannelConfiguration(isMultithread: true))
             .customer.willReturn(MockData.customerIdentity)
 
@@ -57,14 +57,14 @@ final class ChatThreadsServiceTest: XCTestCase {
     }
 
     func testArchiveThreadSuccess() async throws {
-        let eventId = UUID()
+        let eventId = LowercaseUUID()
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .ready
         )
         let expectation = expectation(description: "Service Complete")
 
-        UUID.provider = uuidProvider
+        LowercaseUUID.provider = uuidProvider
         given(uuidProvider)
             .next.willReturn(eventId)
 
@@ -72,7 +72,7 @@ final class ChatThreadsServiceTest: XCTestCase {
             .send(data: .any, shouldCheck: .any).willProduce { _, _ in
                 self.subject.send(
                     GenericEventDTO(
-                        eventId: eventId.asLowerCaseUUID,
+                        eventId: eventId.uuidString,
                         eventType: .threadArchived,
                         postback: nil,
                         error: nil,
@@ -101,14 +101,15 @@ final class ChatThreadsServiceTest: XCTestCase {
 
         verify(delegate)
             .onThreadUpdated(.matching {
-                $0.id == thread.id // TODO: - Add state check back when the MessageService is refactored to the ChatThreadService (&& $0.state == .closed)
+                // TODO: - Add state check back when the MessageService is refactored to the ChatThreadService (&& $0.state == .closed)
+                $0.idString == thread.idString
             })
             .called(1)
     }
 
     func testArchiveNewThreadSuccess() async throws {
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .pending
         )
         let expectation = expectation(description: "Service Complete")
@@ -135,21 +136,22 @@ final class ChatThreadsServiceTest: XCTestCase {
 
         verify(delegate)
             .onThreadUpdated(.matching {
-                $0.id == thread.id // TODO: - Add state check back when the MessageService is refactored to the ChatThreadService (&& $0.state == .closed)
+                // TODO: - Add state check back when the MessageService is refactored to the ChatThreadService (&& $0.state == .closed)
+                $0.idString == thread.idString
             })
             .called(1)
     }
 
 
     func testArchiveThreadFailure() async throws {
-        let eventId = UUID()
+        let eventId = LowercaseUUID()
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .ready
         )
         let expectation = expectation(description: "Service Complete")
 
-        UUID.provider = uuidProvider
+        LowercaseUUID.provider = uuidProvider
         given(uuidProvider)
             .next.willReturn(eventId)
 
@@ -158,7 +160,7 @@ final class ChatThreadsServiceTest: XCTestCase {
                 self.subject.send(
                     OperationError(
                         errorCode: .inconsistentData,
-                        transactionId: eventId.asLowerCaseUUID,
+                        transactionId: eventId.uuidString,
                         errorMessage: "Unknown Event"
                     )
                 )
@@ -185,7 +187,7 @@ final class ChatThreadsServiceTest: XCTestCase {
 
         verify(delegate)
             .onThreadUpdated(.matching {
-                $0.id == thread.id && $0.state == .ready
+                $0.idString == thread.idString && $0.state == .ready
             })
             .called(1)
             .onError(.any)
@@ -193,13 +195,13 @@ final class ChatThreadsServiceTest: XCTestCase {
     }
 
     func testArchiveUnknownThreadThrows() async throws {
-        let eventId = UUID()
+        let eventId = LowercaseUUID()
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .ready
         )
 
-        UUID.provider = uuidProvider
+        LowercaseUUID.provider = uuidProvider
         given(uuidProvider)
             .next.willReturn(eventId)
 
@@ -215,13 +217,13 @@ final class ChatThreadsServiceTest: XCTestCase {
     }
 
     func testArchiveClosedThreadThrows() async throws {
-        let eventId = UUID()
+        let eventId = LowercaseUUID()
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .closed
         )
 
-        UUID.provider = uuidProvider
+        LowercaseUUID.provider = uuidProvider
         
         given(uuidProvider)
             .next.willReturn(eventId)
@@ -241,13 +243,13 @@ final class ChatThreadsServiceTest: XCTestCase {
         given(connectionContext)
             .channelConfig.willReturn(MockData.getChannelConfiguration(isMultithread: false))
 
-        let eventId = UUID()
+        let eventId = LowercaseUUID()
         let thread = ChatThread(
-            id: UUID(),
+            id: LowercaseUUID().uuidString,
             state: .ready
         )
 
-        UUID.provider = uuidProvider
+        LowercaseUUID.provider = uuidProvider
         given(uuidProvider)
             .next.willReturn(eventId)
 

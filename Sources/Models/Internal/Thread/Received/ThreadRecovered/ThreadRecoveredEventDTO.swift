@@ -21,14 +21,14 @@ struct ThreadRecoveredEventDTO: Decodable, Equatable {
     let eventType: EventType?
 
     /// The unique identifier of the event.
-    let eventId: UUID
+    let eventId: String
 
     /// The postback of the thread recovered event.
     let postback: ThreadRecoveredEventPostbackDTO
 
     // MARK: - constructor
 
-    init(eventType: EventType? = .threadRecovered, eventId: UUID, postback: ThreadRecoveredEventPostbackDTO) {
+    init(eventType: EventType? = .threadRecovered, eventId: String, postback: ThreadRecoveredEventPostbackDTO) {
         self.eventType = eventType
         self.eventId = eventId
         self.postback = postback

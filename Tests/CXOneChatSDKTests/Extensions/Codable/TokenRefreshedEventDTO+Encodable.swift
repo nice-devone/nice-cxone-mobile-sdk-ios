@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension TokenRefreshedEventDTO: Encodable {
+extension TokenRefreshedEventDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventId

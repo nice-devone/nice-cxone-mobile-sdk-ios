@@ -1,13 +1,13 @@
 {
-    "eventId": "0695C6B2-1720-44CB-8262-558750A308CB",
+    "eventId": "0695c6b2-1720-44cb-8262-558750a308cb",
     "postback": {
         "eventType": "ThreadListFetched",
         "data": {
             "threads": [
                 {
-                    "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+                    "id": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118d0df-99aa-49e9-a115-c5b98736dee7",
                     "channelId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4",
-                    "idOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+                    "idOnExternalPlatform": "3118d0df-99aa-49e9-a115-c5b98736dee7",
                     "ticketNumber": "",
                     "content": "",
                     "title": "",
@@ -17,7 +17,7 @@
                     "createdAt": "2022-02-28T17:26:07+00:00",
                     "updatedAt": "2022-03-15T20:16:28+00:00",
                     "author": {
-                        "id": "1D392560-E1C0-4973-A9E1-1280DB66D0D5",
+                        "id": "1d392560-e1c0-4973-a9e1-1280db66d0d5",
                         "name": "Yoel valle",
                         "nickname": ""
                     },

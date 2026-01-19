@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ExecuteTriggerEventPayloadDTO: Decodable {
+extension ExecuteTriggerEventPayloadDTO: Swift.Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -30,9 +30,9 @@ extension ExecuteTriggerEventPayloadDTO: Decodable {
             brand: try container.decode(BrandDTO.self, forKey: .brand),
             channel: try container.decode(ChannelIdentifierDTO.self, forKey: .channel),
             customerIdentity: try container.decode(CustomerIdentityDTO.self, forKey: .customerIdentity),
-            eventId: try destinationContainer.decode(LowerCaseUUID.self, forKey: .id),
-            visitorId: try visitorContainer.decode(LowerCaseUUID.self, forKey: .id),
-            triggerId: try triggerContainer.decode(LowerCaseUUID.self, forKey: .id)
+            eventId: try destinationContainer.decode(String.self, forKey: .id),
+            visitorId: try visitorContainer.decode(String.self, forKey: .id),
+            triggerId: try triggerContainer.decode(String.self, forKey: .id)
         )
     }
 }

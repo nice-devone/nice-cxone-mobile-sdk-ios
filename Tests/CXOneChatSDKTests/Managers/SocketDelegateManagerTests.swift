@@ -89,7 +89,7 @@ final class SocketDelegateManagerTests: XCTestCase {
     func testThreadUpdated() {
         let delegate = MockCXoneChatDelegate(policy: .relaxed)
         let manager = SocketDelegateManager()
-        let expected = ChatThread(id: UUID(), state: .closed)
+        let expected = ChatThread(id: LowercaseUUID().uuidString, state: .closed)
 
         manager.add(delegate: delegate)
 
@@ -97,7 +97,7 @@ final class SocketDelegateManagerTests: XCTestCase {
 
         verify(delegate)
             .onThreadUpdated(.matching { actual in
-                expected.id == actual.id
+                expected.idString == actual.idString
             })
             .called(1)
     }
@@ -105,7 +105,7 @@ final class SocketDelegateManagerTests: XCTestCase {
     func testThreadsUpdated() {
         let delegate = MockCXoneChatDelegate(policy: .relaxed)
         let manager = SocketDelegateManager()
-        let expected = ChatThread(id: UUID(), state: .closed)
+        let expected = ChatThread(id: LowercaseUUID().uuidString, state: .closed)
 
         manager.add(delegate: delegate)
 
@@ -113,7 +113,7 @@ final class SocketDelegateManagerTests: XCTestCase {
 
         verify(delegate)
             .onThreadsUpdated(.matching { actual in
-                expected.id == actual[0].id
+                expected.idString == actual[0].idString
             })
             .called(1)
     }
@@ -134,7 +134,7 @@ final class SocketDelegateManagerTests: XCTestCase {
     func testAgentTyping() {
         let delegate = MockCXoneChatDelegate(policy: .relaxed)
         let manager = SocketDelegateManager()
-        let uuid = UUID()
+        let uuid = LowercaseUUID().uuidString
 
         manager.add(delegate: delegate)
 
@@ -207,7 +207,7 @@ final class SocketDelegateManagerTests: XCTestCase {
         let delegate = MockCXoneChatDelegate(policy: .relaxed)
         let manager = SocketDelegateManager()
         let expect = [ "some": "data" ]
-        let uuid = UUID()
+        let uuid = LowercaseUUID().uuidString
 
         manager.add(delegate: delegate)
 

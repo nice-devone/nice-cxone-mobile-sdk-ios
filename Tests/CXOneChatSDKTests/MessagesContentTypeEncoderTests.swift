@@ -27,16 +27,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
     // MARK: - ContentType Text
     
     func testContentTypeTextEncodeCorrectly() throws {
-        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
-              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
-              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000")
-        else {
+        guard let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000") else {
             throw CXoneChatError.invalidData
         }
         
         let message = Message(
-            id: id,
-            threadId: threadId,
+            id: "a91082b7-46f8-4d0d-af43-079994de98c6",
+            threadId: "ad342920-c75e-4b06-b973-00494ccb11b7",
             contentType: .text(MessagePayload(text: "Hello world", postback: "/hello_world")),
             createdAt: createdAt,
             attachments: [],
@@ -52,7 +49,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
-        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        XCTAssertEqual(decodedMessage.idOnExternalPlatformString, expectationMessage.idOnExternalPlatformString)
         
         guard case .text(let decodedEntity) = decodedMessage.contentType, case .text(let expectationEntity) = expectationMessage.contentType else {
             throw CXoneChatError.invalidData
@@ -64,9 +61,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
     // MARK: - Content Type Rich Link
     
     func testContentTypeRichLinkEncodeCorrectly() throws {
-        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
-              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
-              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000"),
+        guard let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000"),
               let url = URL(string: "https://www.google.com"),
               let imageUrl = URL(string: "https://placekitten.com/200/300")
         else {
@@ -74,8 +69,8 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         }
         
         let message = Message(
-            id: id,
-            threadId: threadId,
+            id: "a91082b7-46f8-4d0d-af43-079994de98c6",
+            threadId: "ad342920-c75e-4b06-b973-00494ccb11b7",
             contentType: .richLink(
                 MessageRichLink(
                     title: "Check our new gadget!",
@@ -99,7 +94,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
-        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        XCTAssertEqual(decodedMessage.idOnExternalPlatformString, expectationMessage.idOnExternalPlatformString)
         
         guard case .richLink(let decodedRichLink) = decodedMessage.contentType,
               case .richLink(let expectationRichLink) = expectationMessage.contentType
@@ -113,16 +108,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
     // MARK: - Content Type Quick Replies
     
     func testContentTypeQuickRepliesEncodeCorrectly() throws {
-        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
-              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
-              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000")
-        else {
+        guard let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000") else {
             throw CXoneChatError.invalidData
         }
         
         let message = Message(
-            id: id,
-            threadId: threadId,
+            id: "a91082b7-46f8-4d0d-af43-079994de98c6",
+            threadId: "ad342920-c75e-4b06-b973-00494ccb11b7",
             contentType: .quickReplies(
                 MessageQuickReplies(
                     title: "Hello, we will deliver the package between 12:00 and 16:00. Please specify which day.",
@@ -146,7 +138,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
-        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        XCTAssertEqual(decodedMessage.idOnExternalPlatformString, expectationMessage.idOnExternalPlatformString)
         
         guard case .quickReplies(let decodedQuickReplies) = decodedMessage.contentType,
               case .quickReplies(let expectationQuickReplies) = expectationMessage.contentType
@@ -160,16 +152,13 @@ class MessagesContentTypeEncoderTests: XCTestCase {
     // MARK: - Content Type List Picker
     
     func testContentTypeListPickerEncodeCorrectly() throws {
-        guard let id = UUID(uuidString: "a91082b7-46f8-4d0d-af43-079994de98c6"),
-              let threadId = UUID(uuidString: "AD342920-C75E-4B06-B973-00494CC811B7"),
-              let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000")
-        else {
+        guard let createdAt = iso8601Formatter.date(from: "2022-03-15T17:54:50+0000") else {
             throw CXoneChatError.invalidData
         }
         
         let message = Message(
-            id: id,
-            threadId: threadId,
+            id: "a91082b7-46f8-4d0d-af43-079994de98c6",
+            threadId: "ad342920-c75e-4b06-b973-00494ccb11b7",
             contentType: .listPicker(
                 MessageListPicker(
                     title: "Choose a color!",
@@ -212,7 +201,7 @@ class MessagesContentTypeEncoderTests: XCTestCase {
         let decodedMessage = try decoder.decode(MessageDTO.self, from: encodedData)
         let expectationMessage = try decoder.decode(MessageDTO.self, from: expectationData)
         
-        XCTAssertEqual(decodedMessage.idOnExternalPlatform, expectationMessage.idOnExternalPlatform)
+        XCTAssertEqual(decodedMessage.idOnExternalPlatformString, expectationMessage.idOnExternalPlatformString)
         
         guard case .listPicker(let decodedListPicker) = decodedMessage.contentType,
               case .listPicker(let expectationListPicker) = expectationMessage.contentType

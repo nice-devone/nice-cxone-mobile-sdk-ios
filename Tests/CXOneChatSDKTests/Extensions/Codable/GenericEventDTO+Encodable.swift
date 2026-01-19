@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension GenericEventDTO: Encodable {
+extension GenericEventDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventType

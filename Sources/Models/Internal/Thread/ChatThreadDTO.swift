@@ -19,7 +19,7 @@ import Foundation
 struct ChatThreadDTO {
     
     /// The unique id of the thread.
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: String
     
     /// The name given to the thread (for multi-thread channels only).
     let threadName: String?

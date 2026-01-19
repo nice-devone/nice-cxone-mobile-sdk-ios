@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension WebSocketError: Equatable {
+extension WebSocketError: Swift.Equatable {
     public static func == (lhs: WebSocketError, rhs: WebSocketError) -> Bool {
         lhs.description == rhs.description
     }

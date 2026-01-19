@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ContactInboxAssigneeChangedDataDTO: Encodable {
+extension ContactInboxAssigneeChangedDataDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case `case`

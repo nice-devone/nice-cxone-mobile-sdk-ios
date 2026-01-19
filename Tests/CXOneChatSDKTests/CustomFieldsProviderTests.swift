@@ -65,8 +65,8 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
     }
     
     func testGetContactFieldsForMultiThread() async throws {
-        let threadA = ChatThread(id: UUID(), state: .ready)
-        let threadB = ChatThread(id: UUID(), state: .ready)
+        let threadA = ChatThread(id: LowercaseUUID().uuidString, state: .ready)
+        let threadB = ChatThread(id: LowercaseUUID().uuidString, state: .ready)
         
         let dictionaryA = ["firstName": "Peter"]
         let dataA = Dictionary<String, String>(uniqueKeysWithValues: [MockData.nameTextCustomField].map { ($0.ident, $0.value ?? "") })
@@ -75,11 +75,11 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryA, for: threadA.id))
-        XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryB, for: threadB.id))
+        XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryA, for: threadA.idString))
+        XCTAssertNoThrow(try CXoneChat.threads.customFields.set(dictionaryB, for: threadB.idString))
         
-        XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadA.id), dataA)
-        XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadB.id), dataB)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadA.idString), dataA)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: threadB.idString), dataB)
     }
     
     func testUpdateCustomerCustomFields() async throws {
@@ -107,7 +107,7 @@ class CustomFieldsProviderTests: CXoneXCTestCase {
     func testUpdateContactCustomFields() async throws {
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        let threadId = UUID()
+        let threadId = LowercaseUUID().uuidString
         
         contactFieldsService.updateFields(
             [

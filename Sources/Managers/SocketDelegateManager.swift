@@ -109,6 +109,10 @@ extension SocketDelegateManager: CXoneChatDelegate {
     func onAgentTyping(_ isTyping: Bool, threadId: UUID) { 
         delegates.forEach { $0.onAgentTyping(isTyping, threadId: threadId) }
     }
+    
+    func onAgentTyping(_ isTyping: Bool, threadId: String) {
+        delegates.forEach { $0.onAgentTyping(isTyping, threadId: threadId) }
+    }
 
     func onContactCustomFieldsSet() { 
         delegates.forEach { $0.onContactCustomFieldsSet() }
@@ -127,6 +131,10 @@ extension SocketDelegateManager: CXoneChatDelegate {
     }
 
     func onProactivePopupAction(data: [String: Any], actionId: UUID) { 
+        delegates.forEach { $0.onProactivePopupAction(data: data, actionId: actionId) }
+    }
+    
+    func onProactivePopupAction(data: [String: Any], actionId: String) {
         delegates.forEach { $0.onProactivePopupAction(data: data, actionId: actionId) }
     }
 }

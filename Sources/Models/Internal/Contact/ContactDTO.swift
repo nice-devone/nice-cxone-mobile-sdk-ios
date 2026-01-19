@@ -26,7 +26,7 @@ struct ContactDTO: Equatable {
     let id: String
 
     /// The id of the thread for which this contact applies.
-    let threadIdOnExternalPlatform: UUID
+    let threadIdOnExternalPlatform: String
 
     /// The status of the contact.
     let status: ContactStatus
@@ -58,7 +58,7 @@ extension ContactDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.id = try container.decode(String.self, forKey: .id)
-        self.threadIdOnExternalPlatform = try container.decode(UUID.self, forKey: .threadIdOnExternalPlatform)
+        self.threadIdOnExternalPlatform = try container.decode(String.self, forKey: .threadIdOnExternalPlatform)
         self.status = try container.decode(ContactStatus.self, forKey: .status)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.customFields = try container.decode([CustomFieldDTO].self, forKey: .customFields)

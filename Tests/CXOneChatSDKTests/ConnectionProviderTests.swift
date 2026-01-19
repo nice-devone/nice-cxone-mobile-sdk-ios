@@ -87,7 +87,7 @@ class ConnectionProviderTests: CXoneXCTestCase {
         
         XCTAssertEqual(brandId, self.brandId.description)
         XCTAssertEqual(channelId, self.channelId)
-        XCTAssertEqual(visitorId, connectionContext.visitorId?.uuidString)
+        XCTAssertEqual(visitorId, connectionContext.visitorId)
         XCTAssertEqual(sdkVersion, CXoneChatSDK.CXoneChat.version)
         XCTAssertEqual(sdkVersion, CXoneChatSDKModule.version)
         XCTAssertEqual(sdkPlatform, "ios")
@@ -123,13 +123,13 @@ class ConnectionProviderTests: CXoneXCTestCase {
     
     
     func testExecuteTriggerThrowsNoConnected() {
-        XCTAssertThrowsError(try CXoneChat.connection.executeTrigger(UUID()))
+        XCTAssertThrowsError(try CXoneChat.connection.executeTrigger(LowercaseUUID().uuidString))
     }
     
     func testExecuteTriggerNoThrow() async throws {
         try await setUpConnection()
         
-        XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(UUID()))
+        XCTAssertNoThrow(try CXoneChat.connection.executeTrigger(LowercaseUUID().uuidString))
     }
     
     func testChannelIsMultithread() async throws {

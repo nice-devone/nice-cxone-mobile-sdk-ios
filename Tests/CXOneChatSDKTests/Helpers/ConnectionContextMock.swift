@@ -52,7 +52,7 @@ class ConnectionContextMock: ConnectionContext {
     var channelId = ""
     
     /// The id generated for the destination.
-    var destinationId = UUID()
+    var destinationId = LowercaseUUID().uuidString
     
     /// The environment/location to use for CXone.
     var environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "")
@@ -66,7 +66,7 @@ class ConnectionContextMock: ConnectionContext {
     
     var chatState: ChatState = .initial
     
-    var visitorId: UUID?
+    var visitorId: String?
     
     var _customer: CustomerIdentityDTO?
     var customer: CustomerIdentityDTO? {

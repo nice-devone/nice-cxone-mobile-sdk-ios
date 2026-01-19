@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension CaseStatusChangedEventDTO: Encodable {
+extension CaseStatusChangedEventDTO: Swift.Encodable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -28,7 +28,7 @@ extension CaseStatusChangedEventDTO: Encodable {
     }
 }
 
-extension CaseStatusChangedDataDTO: Encodable {
+extension CaseStatusChangedDataDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case brand

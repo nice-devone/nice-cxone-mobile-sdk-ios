@@ -1,5 +1,5 @@
 {
-  "eventId": "8880DC12-588A-4BDF-BFBF-1C42987D4E1D",
+  "eventId": "8880dc12-588a-4bdf-bfbf-1c42987d4e1d",
   "postback": {
     "eventType": "ThreadMetadataLoaded",
     "data": {
@@ -27,10 +27,10 @@
       },
       "lastMessage": {
         "id": "51025b2b-9859-4dbd-96fd-b56f6d3f85f0",
-        "idOnExternalPlatform": "2179E34E-ED52-4C9A-B5C4-E15361BB3F7C",
-        "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
-        "threadId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118D0DF-99AA-49E9-A115-C5B98736DEE7",
-        "threadIdOnExternalPlatform": "3118D0DF-99AA-49E9-A115-C5B98736DEE7",
+        "idOnExternalPlatform": "2179e34e-ed52-4c9a-b5c4-e15361bb3f7c",
+        "postId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118d0df-99aa-49e9-a115-c5b98736dee7",
+        "threadId": "chat_51eafb4e-8829-4efe-b58c-3bc9febf18c4_3118d0df-99aa-49e9-a115-c5b98736dee7",
+        "threadIdOnExternalPlatform": "3118d0df-99aa-49e9-a115-c5b98736dee7",
         "messageContent": {
           "text": "Defoe ",
           "type": "TEXT",

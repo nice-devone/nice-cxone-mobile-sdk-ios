@@ -23,10 +23,26 @@ struct MessageDTO: Equatable {
     // MARK: - Properties
     
     /// The unique id for the message.
+    @available(
+        *, deprecated,
+         renamed: "idOnExternalPlatformString",
+         message: "Use `idOnExternalPlatformString`. It preserves the original case-sensitive identifier from the backend."
+    )
     let idOnExternalPlatform: UUID
     
+    /// The unique id for the message.
+    let idOnExternalPlatformString: String
+    
     /// The thread id for the message.
+    @available(
+        *, deprecated,
+         renamed: "threadIdOnExternalPlatformString",
+         message: "Use `threadIdOnExternalPlatformString`. It preserves the original case-sensitive identifier from the backend."
+    )
     let threadIdOnExternalPlatform: UUID
+    
+    /// The thread id for the message.
+    let threadIdOnExternalPlatformString: String
     
     /// The content of the message
     let contentType: MessageContentDTOType
@@ -70,7 +86,9 @@ extension MessageDTO: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
+        self.idOnExternalPlatformString = try container.decode(String.self, forKey: .idOnExternalPlatform)
         self.threadIdOnExternalPlatform = try container.decode(UUID.self, forKey: .threadIdOnExternalPlatform)
+        self.threadIdOnExternalPlatformString = try container.decode(String.self, forKey: .threadIdOnExternalPlatform)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)
         self.direction = try container.decode(MessageDirectionDTOType.self, forKey: .direction)

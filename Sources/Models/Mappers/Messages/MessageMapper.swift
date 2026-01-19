@@ -20,7 +20,9 @@ enum MessageMapper {
     static func map(_ entity: Message) throws -> MessageDTO {
         MessageDTO(
             idOnExternalPlatform: entity.id,
+            idOnExternalPlatformString: entity.idString,
             threadIdOnExternalPlatform: entity.threadId,
+            threadIdOnExternalPlatformString: entity.threadIdString,
             contentType: try MessageContentTypeMapper.map(entity.contentType),
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),
@@ -33,8 +35,8 @@ enum MessageMapper {
     
     static func map(_ entity: MessageDTO) -> Message {
         Message(
-            id: entity.idOnExternalPlatform,
-            threadId: entity.threadIdOnExternalPlatform,
+            id: entity.idOnExternalPlatformString,
+            threadId: entity.threadIdOnExternalPlatformString,
             contentType: MessageContentTypeMapper.map(entity.contentType),
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),

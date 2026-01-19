@@ -33,7 +33,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageWithoutValueAndFallback() {
         sut = "Welcome {{customer.fullName}}!"
         expectation = "Welcome {{customer.fullName}}!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -43,7 +43,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageWithoutVariables() {
         sut = "Welcome stranger!"
         expectation = "Welcome stranger!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -53,7 +53,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageEmptyFallBack() {
         sut = "Welcome {{customer.firstName|}}!"
         expectation = "Welcome !"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -63,7 +63,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageFallback() {
         sut = "Welcome {{customer.firstName|stranger}}!"
         expectation = "Welcome stranger!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -73,7 +73,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageFallbackCustomFieldsEmptyValue() {
         sut = "Welcome {{customer.firstName|stranger}}!"
         expectation = "Welcome stranger!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -83,7 +83,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageWithVariable() {
         sut = "Welcome {{customer.firstName|stranger}}!"
         expectation = "Welcome John!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -93,7 +93,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageFallWithVariable() {
         sut = "Welcome {{customer.firstName|stranger}}!"
         expectation = "Welcome stranger!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -103,7 +103,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageWithVariables() {
         sut = "Welcome {{customer.firstName}} {{customer.lastName}}!"
         expectation = "Welcome John Doe!"
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -113,7 +113,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testComplexWelcomeMessage() {
         sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discount-value|5%}}."
         expectation = "Dear John, we would like to offer you a discount of 7.5%."
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         let contactFields = [CustomFieldDTO(ident: "customer.customFields.discount-value", value: "7.5%", updatedAt: Date())]
         
         let parsedMessage = manager.parse(sut, contactFields: contactFields, customerFields: [], customer: customer)
@@ -124,7 +124,7 @@ class WelcomeMessageManagerTest: XCTestCase {
     func testWelcomeMessageComplexFallback() {
         sut = "Dear {{customer.firstName|customer}}, we would like to offer you a discount of {{customer.customFields.discountValue|5%}}."
         expectation = "Dear customer, we would like to offer you a discount of 5%."
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         
@@ -136,7 +136,7 @@ class WelcomeMessageManagerTest: XCTestCase {
                 + " Do you have {{customer.customFields.minutes|15 minutes}}?"
         expectation = "Dear John, we would like to offer you a discount of 2.5%. Do you have 10 minutes?"
         
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "John", lastName: "Doe")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")
         let customerFields = [CustomFieldDTO(ident: "contact.customFields.discount_value", value: "2.5%", updatedAt: Date())]
         let contactFields = [CustomFieldDTO(ident: "customer.customFields.minutes", value: "10 minutes", updatedAt: Date())]
         
@@ -149,7 +149,7 @@ class WelcomeMessageManagerTest: XCTestCase {
         sut = "Dear {{customer.fullName}}, do you have 5 minutes to discuss your problem? {{fallbackMessage|Dear customer, can we discuss your problem?}}"
         expectation = "Dear customer, can we discuss your problem?"
         
-        let customer = CustomerIdentityDTO(idOnExternalPlatform: UUID().uuidString, firstName: "", lastName: "")
+        let customer = CustomerIdentityDTO(idOnExternalPlatform: LowercaseUUID().uuidString, firstName: "", lastName: "")
         
         let parsedMessage = manager.parse(sut, contactFields: [], customerFields: [], customer: customer)
         

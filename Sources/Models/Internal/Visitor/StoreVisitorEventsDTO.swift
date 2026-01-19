@@ -19,7 +19,7 @@ struct StoreVisitorEventsDTO: Encodable {
     
     let action: EventActionType
 
-    let eventId: UUID
+    let eventId: String
 
     let payload: StoreVisitorEventsPayloadDTO
 }

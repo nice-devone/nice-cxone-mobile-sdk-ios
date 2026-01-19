@@ -21,7 +21,7 @@ import Foundation
 struct VisitorEventDTO: Encodable {
     
     /// The unique id of the event.
-    let id: LowerCaseUUID
+    let id: String
     
     /// The type of visitor event.
     let type: EventType

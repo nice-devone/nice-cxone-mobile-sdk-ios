@@ -19,7 +19,7 @@ struct ProactiveEventDTO: Equatable {
 
     // MARK: - Properties
 
-    let id: UUID
+    let id: String
     let name: String
     let type: ActionType
 }
@@ -28,7 +28,7 @@ struct ProactiveEventDTO: Equatable {
 
 extension ProactiveEventDTO {
     init(from: ProactiveActionDetails) {
-        id = from.id
+        id = from.idString
         name = from.name
         type = from.type
     }

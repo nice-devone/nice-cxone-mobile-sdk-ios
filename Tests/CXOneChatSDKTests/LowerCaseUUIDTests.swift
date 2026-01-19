@@ -18,9 +18,9 @@ import XCTest
 
 class LowerCaseUUIDTest: XCTestCase {
 
-    func testLowerCaseIsEaquelToUpperCaseStringUUId() throws {
+    func testLowerCaseIsEqualToUpperCaseStringUUID() throws {
         let uuid = UUID()
-        let data = try JSONEncoder().encode(LowerCaseUUID(uuid: uuid))
+        let data = try JSONEncoder().encode(LowercaseUUID(uuid: uuid))
         
         XCTAssertEqual(uuid.uuidString.lowercased(), data.utf8string?.replacingOccurrences(of: "\"", with: ""))
     }

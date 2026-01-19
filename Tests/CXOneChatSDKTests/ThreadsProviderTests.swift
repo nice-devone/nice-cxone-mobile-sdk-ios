@@ -23,7 +23,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testCreateThreadThrowsError() async throws {
         try await setUpConnection()
         
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread()))
+        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread())!)
         
         await XCTAssertAsyncThrowsError(try await CXoneChat.threads.create())
     }
@@ -63,7 +63,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
 
     func testLoadThreadThrowsWithGivenId() {
-        XCTAssertThrowsError(try CXoneChat.threads.load(with: UUID()))
+        XCTAssertThrowsError(try CXoneChat.threads.load(with: LowercaseUUID().uuidString))
     }
     
     func testLoadThreadWithGivenId() async throws {
@@ -71,7 +71,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection()
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads.append(thread)
         
         socketService.messageSend = 0
@@ -81,7 +81,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             self?.currentExpectation.fulfill()
         }
         
-        XCTAssertNoThrow(try CXoneChat.threads.load(with: thread.id))
+        XCTAssertNoThrow(try CXoneChat.threads.load(with: thread.idString))
         XCTAssertEqual(socketService.messageSend, 1)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
@@ -90,15 +90,15 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testArchiveThreadThrowsUnsupportedChannelConfigError() {
         connectionService.connectionContext.channelConfig = MockData.getChannelConfiguration()
         
-        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())))
+        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())!))
     }
     
     func testArchiveThreadThrowsThreadIndexError() async throws {
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: UUID(), state: .pending))
+        (CXoneChat.threads as? ChatThreadsService)?.threads.append(ChatThread(id: LowercaseUUID().uuidString, state: .pending))
 
-        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())), "invalid thread") { error in
+        XCTAssertThrowsError(try CXoneChat.threads.archive(ChatThreadMapper.map(MockData.getThread())!), "invalid thread") { error in
             XCTAssertEqual(error as? CXoneChatError, .invalidThread)
         }
     }
@@ -108,7 +108,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads.append(thread)
         var check = false
         
@@ -127,17 +127,17 @@ class ThreadsProviderTests: CXoneXCTestCase {
     func testThreadRecover() async throws {
         currentExpectation = XCTestExpectation(description: "loadthread exp")
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads.append(thread)
         
         let event = ThreadRecoveredEventDTO(
-            eventId: UUID(),
+            eventId: LowercaseUUID().uuidString,
             postback: ThreadRecoveredEventPostbackDTO(
                 eventType: .recoverThread,
                 data: ThreadRecoveredEventPostbackDataDTO(
                     consumerContact: ContactDTO(
-                        id: UUID().uuidString,
-                        threadIdOnExternalPlatform: UUID(),
+                        id: LowercaseUUID().uuidString,
+                        threadIdOnExternalPlatform: LowercaseUUID().uuidString,
                         status: .new,
                         createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
                         customFields: []
@@ -145,7 +145,9 @@ class ThreadsProviderTests: CXoneXCTestCase {
                     messages: [
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
+                            idOnExternalPlatformString: LowercaseUUID().uuidString,
                             threadIdOnExternalPlatform: thread.id,
+                            threadIdOnExternalPlatformString: thread.idString,
                             contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
                             attachments: [],
@@ -156,7 +158,9 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         ),
                         MessageDTO(
                             idOnExternalPlatform: UUID(),
+                            idOnExternalPlatformString: LowercaseUUID().uuidString,
                             threadIdOnExternalPlatform: thread.id,
+                            threadIdOnExternalPlatformString: thread.idString,
                             contentType: .text(MessagePayloadDTO(text: "", postback: nil)),
                             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:57+00:00"),
                             attachments: [],
@@ -167,7 +171,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
                         )
                     ],
                     inboxAssignee: MockData.agent,
-                    thread: ReceivedThreadDataDTO(idOnExternalPlatform: thread.id, channelId: "channel_1", threadName: "name", canAddMoreMessages: true),
+                    thread: ReceivedThreadDataDTO(idOnExternalPlatform: thread.idString, channelId: "channel_1", threadName: "name", canAddMoreMessages: true),
                     messagesScrollToken: "token",
                     customerCustomFields: []
                 )
@@ -216,7 +220,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection()
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads.append(thread)
         
         socketService.messageSend = 0
@@ -236,20 +240,20 @@ class ThreadsProviderTests: CXoneXCTestCase {
         currentExpectation = XCTestExpectation(description: "On Thread Load from Process")
         
         let eventData = ThreadRecoveredEventDTO(
-            eventId: UUID(),
+            eventId: LowercaseUUID().uuidString,
             postback: ThreadRecoveredEventPostbackDTO(
                 eventType: .recoverThread,
                 data: ThreadRecoveredEventPostbackDataDTO(
                     consumerContact: ContactDTO(
-                        id: UUID().uuidString,
-                        threadIdOnExternalPlatform: UUID(),
+                        id: LowercaseUUID().uuidString,
+                        threadIdOnExternalPlatform: LowercaseUUID().uuidString,
                         status: .open,
                         createdAt: Date.provide(),
                         customFields: [CustomFieldDTO(ident: "contact.customFields.location", value: "EU", updatedAt: Date.provide())]
                     ),
                     messages: [],
                     inboxAssignee: nil,
-                    thread: ReceivedThreadDataDTO(idOnExternalPlatform: UUID(), channelId: "", threadName: "", canAddMoreMessages: true),
+                    thread: ReceivedThreadDataDTO(idOnExternalPlatform: LowercaseUUID().uuidString, channelId: "", threadName: "", canAddMoreMessages: true),
                     messagesScrollToken: "asdasda",
                     customerCustomFields: [CustomFieldDTO(ident: "customer.customFields.age", value: "EU", updatedAt: Date.provide())]
                 )
@@ -269,7 +273,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         let data = try loadBundleData(from: "ThreadMetadataLoadedEvent", type: "json")
         let event = try decoder.decode(ThreadMetadataLoadedEventDTO.self, from: data)
         
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7")!)))
+        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: "3118d0df-99aa-49e9-a115-c5b98736dee7"))!)
         
         try threadsService.processThreadMetadataLoadedEvent(event)
         
@@ -285,27 +289,19 @@ class ThreadsProviderTests: CXoneXCTestCase {
     }
     
     func testUpdateThreadNameThrowsUnsupportedChannelConfigError() throws {
-        guard let uuid = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7") else {
-            throw CXoneChatError.invalidData
-        }
-        
         connectionService.connectionContext.channelConfig = MockData.getChannelConfiguration()
         
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: uuid)))
+        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: "3118d0df-99aa-49e9-a115-c5b98736dee7"))!)
         
-        XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: UUID()))
+        XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: LowercaseUUID().uuidString))
     }
     
     func testUpdateThreadNameThrowsInvalidThreadError() async throws {
-        guard let uuid = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7") else {
-            throw CXoneChatError.invalidData
-        }
-        
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: uuid)))
+        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: "3118d0df-99aa-49e9-a115-c5b98736dee7"))!)
         
-        XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: UUID())) { error in
+        XCTAssertThrowsError(try CXoneChat.threads.updateName("Thread Name", for: LowercaseUUID().uuidString)) { error in
             XCTAssertEqual(error as? CXoneChatError, CXoneChatError.invalidThread)
         }
     }
@@ -315,11 +311,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true))
         
-        guard let uuid = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7") else {
-            throw CXoneChatError.invalidData
-        }
-        
-        let thread = ChatThreadMapper.map(MockData.getThread(threadId: uuid))
+        let thread = ChatThreadMapper.map(MockData.getThread(threadId: "3118d0df-99aa-49e9-a115-c5b98736dee7"))!
         var check = false
         
         socketService.messageSend = 0
@@ -327,7 +319,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             guard !check, sendMessage.contains("UpdateThread") else {
                 return
             }
-            guard let index = self?.CXoneChat.threads.get().index(of: thread.id) else {
+            guard let index = self?.CXoneChat.threads.get().index(of: thread.idString) else {
                 XCTFail("\(#function) could not get index.")
                 return
             }
@@ -341,7 +333,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         threadsService.threads.append(thread)
         
-        XCTAssertNoThrow(try CXoneChat.threads.updateName("Thread Name", for: thread.id))
+        XCTAssertNoThrow(try CXoneChat.threads.updateName("Thread Name", for: thread.idString))
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
     }
@@ -363,8 +355,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         try await setUpConnection(channelConfiguration: MockData.getChannelConfiguration(isMultithread: true), isEventMessageHandlerActive: false)
         
-        let threadId = UUID(uuidString: "3118D0DF-99AA-49E9-A115-C5B98736DEE7")!
-        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: threadId)))
+        let threadId = "3118d0df-99aa-49e9-a115-c5b98736dee7"
+        threadsService.threads.append(ChatThreadMapper.map(MockData.getThread(threadId: threadId))!)
         
         XCTAssertNoThrow(try CXoneChat.threads.updateName("Thread Name", for: threadId))
         
@@ -479,7 +471,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw XCTError("Unable to retrieve required thread")
         }
         
-        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.idString).isEmpty)
     }
     
     func testCustomFieldsNotOverrideStoredOnes() async throws {
@@ -498,10 +490,10 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw XCTError("Unable to retrieve required thread")
         }
         
-        try CXoneChat.threads.customFields.set(["firstName": "John", "gender": "Male"], for: thread.id)
+        try CXoneChat.threads.customFields.set(["firstName": "John", "gender": "Male"], for: thread.idString)
         
-        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
-        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 3)
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.idString).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.idString).count, 3)
     }
     
     func testCreateWithPrechatCustomFieldsAdditionalFieldsNoThrow() async throws {
@@ -526,8 +518,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw XCTError("Unable to retrieve required thread")
         }
         
-        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
-        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 4)
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.idString).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.idString).count, 4)
     }
     
     func testCreateWithoutPrechatCustomFieldsAdditionalFieldsNoThrow() async throws {
@@ -543,8 +535,8 @@ class ThreadsProviderTests: CXoneXCTestCase {
             throw XCTError("Unable to retrieve required thread")
         }
         
-        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.id).isEmpty)
-        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.id).count, 2)
+        XCTAssertFalse(CXoneChat.threads.customFields.get(for: thread.idString).isEmpty)
+        XCTAssertEqual(CXoneChat.threads.customFields.get(for: thread.idString).count, 2)
         
         let agent = AgentMapper.map(MockData.agent)
         XCTAssertNil(agent.inContactId)
@@ -592,7 +584,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         XCTAssertTrue(connectionContext.channelConfig.settings.isRecoverLiveChatDoesNotFailEnabled)
 
-        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "Recovering failed")
+        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowercaseUUID().uuidString, errorMessage: "Recovering failed")
         threadsService.processRecoveringThreadFailedError(error)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)
@@ -606,7 +598,7 @@ class ThreadsProviderTests: CXoneXCTestCase {
         
         XCTAssertFalse(connectionContext.channelConfig.settings.isRecoverLiveChatDoesNotFailEnabled)
         
-        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowerCaseUUID(), errorMessage: "Recovering failed")
+        let error = OperationError(errorCode: .recoveringThreadFailed, transactionId: LowercaseUUID().uuidString, errorMessage: "Recovering failed")
         threadsService.processRecoveringThreadFailedError(error)
         
         await fulfillment(of: [currentExpectation], timeout: 1.0)

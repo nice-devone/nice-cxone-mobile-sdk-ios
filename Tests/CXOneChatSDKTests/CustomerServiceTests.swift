@@ -21,7 +21,7 @@ class CustomerProviderTests: CXoneXCTestCase {
     // MARK: - Tests
     
     func testSetUserIdentityNoThrows() throws {
-        try CXoneChat.customer.set(customer: CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+        try CXoneChat.customer.set(customer: CustomerIdentity(id: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe"))
         
         XCTAssertNotNil(CXoneChat.customer.get())
     }
@@ -29,7 +29,7 @@ class CustomerProviderTests: CXoneXCTestCase {
     func testSetUserIdentityThrows() async throws {
         try await setUpConnection()
         
-        XCTAssertThrowsError(try CXoneChat.customer.set(customer: CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe")))
+        XCTAssertThrowsError(try CXoneChat.customer.set(customer: CustomerIdentity(id: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe")))
     }
     
     func testEmptyDeviceToken() {
@@ -79,7 +79,7 @@ class CustomerProviderTests: CXoneXCTestCase {
     }
     
     func testUpdateCustomerName() throws {
-        try CXoneChat.customer.set(customer: CustomerIdentity(id: UUID().uuidString, firstName: "John", lastName: "Doe"))
+        try CXoneChat.customer.set(customer: CustomerIdentity(id: LowercaseUUID().uuidString, firstName: "John", lastName: "Doe"))
         
         CXoneChat.customer.setName(firstName: "Peter", lastName: "Parker")
         

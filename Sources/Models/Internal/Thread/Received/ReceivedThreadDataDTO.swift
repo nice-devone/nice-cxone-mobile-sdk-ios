@@ -21,7 +21,7 @@ struct ReceivedThreadDataDTO: Equatable {
     // MARK: - Properties
 
     /// The unique identifier of the data in the external platform.
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: String
 
     /// The unique identifier of the channel.
     let channelId: String
@@ -47,7 +47,7 @@ extension ReceivedThreadDataDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
+        self.idOnExternalPlatform = try container.decode(String.self, forKey: .idOnExternalPlatform)
         self.channelId = try container.decode(String.self, forKey: .channelId)
         self.threadName = try container.decode(String.self, forKey: .threadName)
         self.canAddMoreMessages = try container.decode(Bool.self, forKey: .canAddMoreMessages)

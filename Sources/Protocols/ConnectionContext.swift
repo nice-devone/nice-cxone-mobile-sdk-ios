@@ -43,7 +43,7 @@ protocol ConnectionContext: AnyObject {
     var channelId: String { get set }
     
     /// The id generated for the destination.
-    var destinationId: UUID { get set }
+    var destinationId: String { get set }
     
     /// The environment/location to use for CXone.
     var environment: EnvironmentDetails { get set }
@@ -53,7 +53,7 @@ protocol ConnectionContext: AnyObject {
 
     var chatState: ChatState { get set }
     
-    var visitorId: UUID? { get set }
+    var visitorId: String? { get set }
 
     var visitDetails: CurrentVisitDetails? { get set }
 
@@ -76,7 +76,7 @@ protocol ConnectionContext: AnyObject {
 
 extension ConnectionContext {
 
-    var visitId: UUID? {
+    var visitId: String? {
         visitDetails?.visitId
     }
     

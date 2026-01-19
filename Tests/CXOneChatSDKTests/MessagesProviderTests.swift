@@ -42,16 +42,16 @@ class MessagesProviderTests: CXoneXCTestCase {
     // MARK: - Tests
     
     func testLoadMoreThrowsNoMoreMessages() {
-        XCTAssertThrowsError(try CXoneChat.threads.messages.loadMore(for: ChatThreadMapper.map(MockData.getThread(scrollToken: ""))))
+        XCTAssertThrowsError(try CXoneChat.threads.messages.loadMore(for: ChatThreadMapper.map(MockData.getThread(scrollToken: ""))!))
     }
     
     func testLoadMoreThrowsInvalidOldestDate() {
-        XCTAssertThrowsError(try CXoneChat.threads.messages.loadMore(for: ChatThreadMapper.map(MockData.getThread(withMessages: false))))
+        XCTAssertThrowsError(try CXoneChat.threads.messages.loadMore(for: ChatThreadMapper.map(MockData.getThread(withMessages: false))!))
     }
     
     func testLoadMoreNoThrow() throws {
-        var thread = ChatThreadMapper.map(MockData.getThread())
-        thread.messages.append(MessageMapper.map(MockData.getMessage(threadId: thread.id, isSenderAgent: false)))
+        var thread = ChatThreadMapper.map(MockData.getThread())!
+        thread.messages.append(MessageMapper.map(MockData.getMessage(threadId: thread.idString, isSenderAgent: false)))
         
         XCTAssertNoThrow(try CXoneChat.threads.messages.loadMore(for: thread))
     }
@@ -60,12 +60,12 @@ class MessagesProviderTests: CXoneXCTestCase {
         CXoneChat.connection.disconnect()
         
         await XCTAssertAsyncThrowsError(
-            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread()))
+            try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: ChatThreadMapper.map(MockData.getThread())!)
         )
     }
     
     func testSendMessageNoThrow() async throws {
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads = [thread]
         
         try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
@@ -74,7 +74,7 @@ class MessagesProviderTests: CXoneXCTestCase {
     func testSendMessagesWithPropertiesNoThrow() async throws {
         socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads = [thread]
         
         try await CXoneChat.threads.messages.send(OutboundMessage(text: "message"), for: thread)
@@ -86,13 +86,13 @@ class MessagesProviderTests: CXoneXCTestCase {
         await XCTAssertAsyncThrowsError(
             try await CXoneChat.threads.messages.send(
                 OutboundMessage(text: "message", attachments: [AttachmentUploadMapper.map(MockData.attachment)]),
-                for: ChatThreadMapper.map(MockData.getThread())
+                for: ChatThreadMapper.map(MockData.getThread())!
             )
         )
     }
     
     func testSendMessageWithAttachmentsThrowsMissingURL() async {
-        let thread = ChatThread(id: UUID(), state: .ready)
+        let thread = ChatThread(id: LowercaseUUID().uuidString, state: .ready)
         
         connectionContext.channelId = ""
         
@@ -121,7 +121,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         ) {
             socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
         
-            let thread = ChatThreadMapper.map(MockData.getThread())
+            let thread = ChatThreadMapper.map(MockData.getThread())!
             threadsService.threads = [thread]
             
             await XCTAssertAsyncThrowsError(
@@ -146,7 +146,7 @@ class MessagesProviderTests: CXoneXCTestCase {
                 throw CXoneChatError.attachmentError
             }
             
-            let thread = ChatThreadMapper.map(MockData.getThread())
+            let thread = ChatThreadMapper.map(MockData.getThread())!
             threadsService.threads = [thread]
             
             try await CXoneChat.threads.messages.send(
@@ -175,7 +175,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         ) {
             socketService.accessToken = AccessTokenDTO(token: "token", expiresIn: .max, currentDate: Date.provide())
             
-            let thread = ChatThreadMapper.map(MockData.getThread())
+            let thread = ChatThreadMapper.map(MockData.getThread())!
             threadsService.threads = [thread]
             
             try await CXoneChat.threads.messages.send(
@@ -202,7 +202,7 @@ class MessagesProviderTests: CXoneXCTestCase {
         
         CXoneChat.connection.disconnect()
         
-        let thread = ChatThreadMapper.map(MockData.getThread())
+        let thread = ChatThreadMapper.map(MockData.getThread())!
         threadsService.threads = [thread]
         
         do {
@@ -264,14 +264,6 @@ class MessagesProviderTests: CXoneXCTestCase {
 // MARK: - Helpers
 
 private extension MessagesProviderTests {
-
-    func getThread(by id: UUID) throws -> ChatThread {
-        guard let thread = CXoneChat.threads.get().first(where: { $0.id == id }) else {
-            throw XCTError("Thread does not exist")
-        }
-        
-        return thread
-    }
     
     func storeDataInDocuments(_ data: Data, fileName: String, mimeType: String) throws -> ContentDescriptor {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {

@@ -19,7 +19,7 @@ enum ChatThreadMapper {
     
     static func map(_ entity: ChatThread) throws -> ChatThreadDTO {
         ChatThreadDTO(
-            idOnExternalPlatform: entity.id,
+            idOnExternalPlatform: entity.idString,
             threadName: entity.name,
             messages: try entity.messages.map(MessageMapper.map),
             inboxAssignee: entity.assignedAgent.map(AgentMapper.map),
@@ -30,7 +30,7 @@ enum ChatThreadMapper {
         )
     }
     
-    static func map(_ entity: ChatThreadDTO) -> ChatThread {
+    static func map(_ entity: ChatThreadDTO) -> ChatThread? {
         ChatThread(
             id: entity.idOnExternalPlatform,
             name: entity.threadName,
@@ -43,7 +43,7 @@ enum ChatThreadMapper {
         )
     }
     
-    static func map(_ entity: ReceivedThreadDataDTO) -> ChatThread {
+    static func map(_ entity: ReceivedThreadDataDTO) -> ChatThread? {
         ChatThread(
             id: entity.idOnExternalPlatform,
             name: entity.threadName,

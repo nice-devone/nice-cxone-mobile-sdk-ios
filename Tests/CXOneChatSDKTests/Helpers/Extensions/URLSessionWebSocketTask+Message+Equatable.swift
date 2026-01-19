@@ -15,7 +15,7 @@
 
 import Foundation
 
-extension URLSessionWebSocketTask.Message: Equatable {
+extension URLSessionWebSocketTask.Message: Swift.Equatable {
     public static func == (lhs: URLSessionWebSocketTask.Message, rhs: URLSessionWebSocketTask.Message) -> Bool {
         switch (lhs, rhs) {
         case let (.data(lhs), .data(rhs)):

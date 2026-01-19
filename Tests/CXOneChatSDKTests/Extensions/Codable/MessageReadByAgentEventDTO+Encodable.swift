@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension MessageReadByAgentEventDTO: Encodable {
+extension MessageReadByAgentEventDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

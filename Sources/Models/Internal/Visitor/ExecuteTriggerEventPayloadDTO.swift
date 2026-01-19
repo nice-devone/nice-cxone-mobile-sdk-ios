@@ -27,11 +27,11 @@ struct ExecuteTriggerEventPayloadDTO {
     
     let customerIdentity: CustomerIdentityDTO
     
-    let eventId: LowerCaseUUID
+    let eventId: String
     
-    let visitorId: LowerCaseUUID
+    let visitorId: String
     
-    let triggerId: LowerCaseUUID
+    let triggerId: String
 }
 
 // MARK: - Encodable

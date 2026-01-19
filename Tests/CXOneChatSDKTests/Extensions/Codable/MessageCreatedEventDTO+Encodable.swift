@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension MessageCreatedEventDTO: Encodable {
+extension MessageCreatedEventDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

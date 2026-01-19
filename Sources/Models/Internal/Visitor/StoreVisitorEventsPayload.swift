@@ -21,9 +21,9 @@ struct StoreVisitorEventsPayloadDTO {
 
     let brand: BrandDTO
 
-    let visitorId: LowerCaseUUID
+    let visitorId: String
 
-    let id: LowerCaseUUID
+    let id: String
 
     let data: EventDataType
 

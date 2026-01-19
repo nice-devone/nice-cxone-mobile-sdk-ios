@@ -18,7 +18,7 @@ import Foundation
 struct EndContactEventDataDTO {
     
     /// The thread for which this change applies.
-    let thread: UUID
+    let thread: String
     
     /// The contact information 
     let contact: String

@@ -20,8 +20,8 @@ class MessageSenderInfoTest: XCTestCase {
 
     func testMessageSenderInfoAgent() throws {
         let message = Message(
-            id: UUID(),
-            threadId: UUID(),
+            id: LowercaseUUID().uuidString,
+            threadId: LowercaseUUID().uuidString,
             contentType: .text(MessagePayload(text: "", postback: nil)),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
@@ -47,15 +47,15 @@ class MessageSenderInfoTest: XCTestCase {
     
     func testMessageSenderInfoAuthor() throws {
         let message = Message(
-            id: UUID(),
-            threadId: UUID(),
+            id: LowercaseUUID().uuidString,
+            threadId: LowercaseUUID().uuidString,
             contentType: .text(MessagePayload(text: "", postback: nil)),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
             direction: .toAgent,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
+            authorEndUserIdentity: CustomerIdentity(id: LowercaseUUID().uuidString, firstName: "kjoe", lastName: "jim")
         )
         
         XCTAssertEqual(message.senderInfo.fullName, message.authorEndUserIdentity?.fullName)
@@ -63,15 +63,15 @@ class MessageSenderInfoTest: XCTestCase {
     
     func testMessageSenderInfoAgentUn() throws {
         let message = Message(
-            id: UUID(),
-            threadId: UUID(),
+            id: LowercaseUUID().uuidString,
+            threadId: LowercaseUUID().uuidString,
             contentType: .text(MessagePayload(text: "", postback: nil)),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],
             direction: .toClient,
             userStatistics: UserStatistics(seenAt: nil, readAt: nil),
             authorUser: nil,
-            authorEndUserIdentity: CustomerIdentity(id: UUID().uuidString, firstName: "kjoe", lastName: "jim")
+            authorEndUserIdentity: CustomerIdentity(id: LowercaseUUID().uuidString, firstName: "kjoe", lastName: "jim")
         )
         
         XCTAssertEqual(message.senderInfo.fullName, "Automated Agent")
@@ -79,8 +79,8 @@ class MessageSenderInfoTest: XCTestCase {
     
     func testMessageSenderInfoAuthorUnknownCustomer() throws {
         let message = Message(
-            id: UUID(),
-            threadId: UUID(),
+            id: LowercaseUUID().uuidString,
+            threadId: LowercaseUUID().uuidString,
             contentType: .text(MessagePayload(text: "", postback: nil)),
             createdAt: try Date.ISO8601(from: "2022-07-31T21:22:47+00:00"),
             attachments: [],

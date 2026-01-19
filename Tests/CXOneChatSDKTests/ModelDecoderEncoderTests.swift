@@ -166,11 +166,11 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - SetContactCustomFieldsEventDataDTO
     
     func testSetContactCustomFieldsEventDataDTODecodeCorrectly() throws {
-        let uuid = UUID()
+        let uuid = LowercaseUUID().uuidString
         let json = """
         {
             "thread": {
-                "idOnExternalPlatform": "\(uuid.uuidString)"
+                "idOnExternalPlatform": "\(uuid)"
             },
             "customFields": [
                 {
@@ -231,9 +231,9 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testSendMessageEventDataDTODecodeCorrectly() throws {
         var eventEntity = SendMessageEventDataDTO(
-            thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+            thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"),
             contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
-            idOnExternalPlatform: UUID(),
+            idOnExternalPlatform: LowercaseUUID().uuidString,
             customer: CustomerCustomFieldsDataDTO(customFields: []),
             contact: ContactCustomFieldsDataDTO(customFields: []),
             attachments: [],
@@ -258,9 +258,9 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testSendOutboundMessageEventDataDTODecodeCorrectly() throws {
         var eventEntity = SendOutboundMessageEventDataDTO(
-            thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+            thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"),
             contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
-            idOnExternalPlatform: UUID(),
+            idOnExternalPlatform: LowercaseUUID().uuidString,
             contactCustomFields: [],
             attachments: [],
             deviceFingerprint: DeviceFingerprintDTO(),
@@ -303,10 +303,10 @@ class ModelDecoderEncoderTests: XCTestCase {
     // MARK: - ExecuteTriggerEventPayloadDTO
     
     func testExecuteTriggerEventPayloadDTODecodeCorrectly() throws {
-        let customerIdentity = UUID().uuidString
-        let eventId = LowerCaseUUID()
-        let visitorId = LowerCaseUUID()
-        let triggerId = LowerCaseUUID()
+        let customerIdentity = LowercaseUUID().uuidString
+        let eventId = LowercaseUUID().uuidString
+        let visitorId = LowercaseUUID().uuidString
+        let triggerId = LowercaseUUID().uuidString
         
         var entity = ExecuteTriggerEventPayloadDTO(
             eventType: .executeTrigger,
@@ -325,22 +325,22 @@ class ModelDecoderEncoderTests: XCTestCase {
         XCTAssertEqual(entity.brand.id, 0)
         XCTAssertEqual(entity.channel.id, "channelId")
         XCTAssertEqual(entity.customerIdentity.idOnExternalPlatform, customerIdentity)
-        XCTAssertEqual(entity.eventId.uuid, eventId.uuid)
-        XCTAssertEqual(entity.visitorId.uuid, visitorId.uuid)
-        XCTAssertEqual(entity.triggerId.uuid, triggerId.uuid)
+        XCTAssertEqual(entity.eventId, eventId)
+        XCTAssertEqual(entity.visitorId, visitorId)
+        XCTAssertEqual(entity.triggerId, triggerId)
     }
     
     // MARK: - EventDataType
     
     func testEventDataTypeEncodeNoThrow() throws {
         let testCases: [EventDataType] = [
-            .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
-            .loadThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"))),
+            .loadThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"))),
             .sendMessageData(
                 SendMessageEventDataDTO(
-                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"),
                     contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
-                    idOnExternalPlatform: UUID(),
+                    idOnExternalPlatform: LowercaseUUID().uuidString,
                     customer: CustomerCustomFieldsDataDTO(customFields: []),
                     contact: ContactCustomFieldsDataDTO(customFields: []),
                     attachments: [],
@@ -350,9 +350,9 @@ class ModelDecoderEncoderTests: XCTestCase {
             ),
             .sendOutboundMessageData(
                 SendOutboundMessageEventDataDTO(
-                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"),
                     contentType: .text(MessagePayloadDTO(text: "text", postback: nil)),
-                    idOnExternalPlatform: UUID(),
+                    idOnExternalPlatform: LowercaseUUID().uuidString,
                     contactCustomFields: [],
                     attachments: [],
                     deviceFingerprint: DeviceFingerprintDTO(),
@@ -362,20 +362,20 @@ class ModelDecoderEncoderTests: XCTestCase {
             .loadMoreMessageData(
                 LoadMoreMessagesEventDataDTO(
                     scrollToken: "scrollToken",
-                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"),
+                    thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"),
                     oldestMessageDatetime: dateProvider.now
                 )
             ),
             .setContactCustomFieldsData(
                 SetContactCustomFieldsEventDataDTO(
-                    thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"), customFields: [], contactId: "contactId"
+                    thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"), customFields: [], contactId: "contactId"
                 )
             ),
             .setCustomerCustomFieldData(ContactCustomFieldsDataDTO(customFields: [])),
-            .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"))),
             .authorizeCustomerData(AuthorizeCustomerEventDataDTO(authorizationCode: "authCode", codeVerifier: "codeVerifier")),
             .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: "token")),
-            .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: UUID(), threadName: "name"))),
+            .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: LowercaseUUID().uuidString, threadName: "name"))),
             .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: "token"))
         ]
         
@@ -400,7 +400,7 @@ class ModelDecoderEncoderTests: XCTestCase {
                 VisitorsEventsDTO(
                     visitorEvents: [
                         VisitorEventDTO(
-                            id: LowerCaseUUID(),
+                            id: LowercaseUUID().uuidString,
                             type: .custom,
                             createdAtWithMilliseconds: dateProvider.now.iso8601withFractionalSeconds,
                             data: nil
@@ -429,15 +429,12 @@ class ModelDecoderEncoderTests: XCTestCase {
     
     func testStoreVisitorEventsPayloadDTOEncodeCorrectly() throws {
         let data = try loadBundleData(from: "StoreVisitorEventsPayloadDTO", type: "json")
-
-        let visitorId = UUID(uuidString: "c80f620c-7825-4695-aadd-cdfeb0bb7376")!
-        let eventId = UUID(uuidString: "5812e395-89d0-4680-a142-3f3d32b65bf0")!
         
         let entity = StoreVisitorEventsPayloadDTO(
             eventType: .storeVisitorEvents,
             brand: BrandDTO(id: 0),
-            visitorId: LowerCaseUUID(uuid: visitorId),
-            id: LowerCaseUUID(uuid: eventId),
+            visitorId: "c80f620c-7825-4695-aadd-cdfeb0bb7376",
+            id: "5812e395-89d0-4680-a142-3f3d32b65bf0",
             data: .storeVisitorPayload(VisitorDTO(customerIdentity: nil, browserFingerprint: DeviceFingerprintDTO(), journey: nil, customVariables: nil)),
             channel: ChannelIdentifierDTO(id: "channelId")
         )

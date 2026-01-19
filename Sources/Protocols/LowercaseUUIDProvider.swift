@@ -13,17 +13,22 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-@testable import CXoneChatSDK
+import Foundation
+import Mockable
 
-extension ContactInboxAssigneeChangedEventDTO: Swift.Encodable {
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(eventId, forKey: .eventId)
-        try container.encode(eventObject, forKey: .eventObject)
-        try container.encode(eventType, forKey: .eventType)
-        try container.encodeISODate(createdAt, forKey: .createdAt)
-        try container.encode(data, forKey: .data)
+@Mockable
+protocol LowercaseUUIDProvider {
+    var next: LowercaseUUID { get }
+}
+
+struct LowercaseUUIDProviderImpl: LowercaseUUIDProvider {
+    var next: LowercaseUUID {
+        LowercaseUUID()
     }
+}
+
+extension LowercaseUUID {
+    static var provider: LowercaseUUIDProvider = LowercaseUUIDProviderImpl()
+
+    static func provide() -> LowercaseUUID { provider.next }
 }

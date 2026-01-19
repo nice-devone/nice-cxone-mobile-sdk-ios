@@ -21,9 +21,9 @@ struct ServerError: LocalizedError, Codable, Equatable {
 
     let message: String
 
-    let connectionId: UUID
+    let connectionId: String
 
-    let requestId: UUID
+    let requestId: String
 
     var errorDescription: String? { message }
 }

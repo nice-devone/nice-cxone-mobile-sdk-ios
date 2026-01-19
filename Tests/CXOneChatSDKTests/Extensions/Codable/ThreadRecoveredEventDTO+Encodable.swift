@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension ThreadRecoveredEventDTO: Encodable {
+extension ThreadRecoveredEventDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventId
@@ -32,7 +32,7 @@ extension ThreadRecoveredEventDTO: Encodable {
 
 // MARK: - ThreadRecoveredEventPostbackDTO
 
-extension ThreadRecoveredEventPostbackDTO: Encodable {
+extension ThreadRecoveredEventPostbackDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case eventType
@@ -49,7 +49,7 @@ extension ThreadRecoveredEventPostbackDTO: Encodable {
 
 // MARK: - ThreadRecoveredEventPostbackDTO
 
-extension ThreadRecoveredEventPostbackDataDTO: Encodable {
+extension ThreadRecoveredEventPostbackDataDTO: Swift.Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

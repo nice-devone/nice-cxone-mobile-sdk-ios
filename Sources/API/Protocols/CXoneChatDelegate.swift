@@ -51,7 +51,14 @@ public protocol CXoneChatDelegate: AnyObject {
     ///
     /// - Parameter isTyping: An agent has started or ended typing.
     /// - Parameter threadId: The unique identifier of thread where typing state changed.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func onAgentTyping(_ isTyping: Bool, threadId: UUID)
+    
+    /// Callback to be called when the agent has stopped typing.
+    ///
+    /// - Parameter isTyping: An agent has started or ended typing.
+    /// - Parameter threadId: The unique identifier of thread where typing state changed.
+    func onAgentTyping(_ isTyping: Bool, threadId: String)
     
     /// Callback to be called when the custom fields are set for a contact.
     func onContactCustomFieldsSet()
@@ -72,7 +79,15 @@ public protocol CXoneChatDelegate: AnyObject {
     /// - Parameters:
     ///   -  data: The proactive popup action data
     ///   - actionId: The unique identifier of the action.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func onProactivePopupAction(data: [String: Any], actionId: UUID)
+    
+    /// Callback to be called when a custom popup proactive action is received.
+    ///
+    /// - Parameters:
+    ///   -  data: The proactive popup action data
+    ///   - actionId: The unique identifier of the action.
+    func onProactivePopupAction(data: [String: Any], actionId: String)
 }
 
 // MARK: - Default Implementation
@@ -85,9 +100,11 @@ public extension CXoneChatDelegate {
     func onThreadsUpdated(_ chatThreads: [ChatThread]) { }
     func onCustomEventMessage(_ messageData: Data) { }
     func onAgentTyping(_ isTyping: Bool, threadId: UUID) { }
+    func onAgentTyping(_ isTyping: Bool, threadId: String) { }
     func onContactCustomFieldsSet() { }
     func onCustomerCustomFieldsSet() { }
     func onError(_ error: Error) { }
     func onTokenRefreshFailed() { }
     func onProactivePopupAction(data: [String: Any], actionId: UUID) { }
+    func onProactivePopupAction(data: [String: Any], actionId: String) { }
 }

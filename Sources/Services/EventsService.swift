@@ -52,7 +52,7 @@ final class EventsService {
             customerIdentity: customer,
             eventType: eventType,
             data: eventData,
-            visitorId: connectionContext.visitorId?.asLowerCaseUUID
+            visitorId: connectionContext.visitorId
         )
     }
 

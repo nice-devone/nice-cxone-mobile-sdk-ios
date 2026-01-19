@@ -15,7 +15,7 @@
 
 @testable import CXoneChatSDK
 
-extension CustomerAuthorizedEventPostbackDataDTO: Encodable {
+extension CustomerAuthorizedEventPostbackDataDTO: Swift.Encodable {
     
     enum CodingKeys: CodingKey {
         case consumerIdentity

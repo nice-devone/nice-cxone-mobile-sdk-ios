@@ -18,8 +18,17 @@ import Foundation
 /// All information about a chat thread as well as the messages for the thread.
 public struct ChatThread: Identifiable {
 
+    // MARK: - Properties
+    
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
+    
+    /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the thread as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let idString: String
     
     /// The name given to the thread (for multi-thread channels only).
     public var name: String?
@@ -39,7 +48,7 @@ public struct ChatThread: Identifiable {
     var contactId: String?
     
     /// The token for the scroll position used to load more messages.
-    public var scrollToken: String = ""
+    public var scrollToken: String
     
     /// The thread state
     public var state: ChatThreadState
@@ -51,6 +60,54 @@ public struct ChatThread: Identifiable {
 
     /// The position in the queue
     public var positionInQueue: Int?
+    
+    // MARK: - Init
+    
+    @available(*, deprecated, message: "Use alternative with `String` parameter for `id`. It preserves the original case-sensitive identifier from the backend.")
+    init(
+        id: UUID,
+        idString: String,
+        name: String? = nil,
+        messages: [Message] = [],
+        assignedAgent: Agent? = nil,
+        lastAssignedAgent: Agent? = nil,
+        contactId: String? = nil,
+        scrollToken: String = "",
+        state: ChatThreadState,
+        positionInQueue: Int? = nil
+    ) {
+        self.id = id
+        self.idString = idString
+        self.messages = messages
+        self.assignedAgent = assignedAgent
+        self.lastAssignedAgent = lastAssignedAgent
+        self.contactId = contactId
+        self.scrollToken = scrollToken
+        self.state = state
+        self.positionInQueue = positionInQueue
+    }
+    
+    init(
+        id: String,
+        name: String? = nil,
+        messages: [Message] = [],
+        assignedAgent: Agent? = nil,
+        lastAssignedAgent: Agent? = nil,
+        contactId: String? = nil,
+        scrollToken: String = "",
+        state: ChatThreadState,
+        positionInQueue: Int? = nil
+    ) {
+        self.id = UUID() // replaced with `idString`
+        self.idString = id
+        self.messages = messages
+        self.assignedAgent = assignedAgent
+        self.lastAssignedAgent = lastAssignedAgent
+        self.contactId = contactId
+        self.scrollToken = scrollToken
+        self.state = state
+        self.positionInQueue = positionInQueue
+    }
 }
 
 // MARK: - Helpers
@@ -70,7 +127,7 @@ extension ChatThread {
 
     private func index(of message: Message) -> Int? {
         messages.firstIndex {
-            $0.id == message.id
+            $0.idString == message.idString
         }
     }
     
@@ -120,7 +177,7 @@ extension ChatThread {
         positionInQueue: Int? = nil
     ) -> ChatThread {
         var newThread = ChatThread(
-            id: self.id,
+            id: self.idString,
             name: name ?? self.name,
             messages: self.messages,
             assignedAgent: inboxAssignee ?? self.assignedAgent,
