@@ -20,11 +20,25 @@ public struct Message {
     
     // MARK: - Properties
     
-    /// The unique id for the message.
+    /// The unique id for the message. Refers to the `idOnExternalPlatform`.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
     
-    /// The thread id for the message.
+    /// The unique id for the message. Refers to the `idOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the message as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let idString: String
+    
+    /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
+    @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
     public let threadId: UUID
+    
+    /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the thread as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let threadIdString: String
     
     /// The content of the message
     public let contentType: MessageContentType
@@ -81,7 +95,7 @@ public struct Message {
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
     ///   - status: The delivery or read status of the message.
-    @available(*, deprecated, message: "Due to replacement of the `userStatistics` atrribute with `agentStatistics` and new attribute `customerStatistics`, this initializer will be removed in a future.") // swiftlint:disable:this line_length
+    @available(*, deprecated, message: "Due to replacement of the `userStatistics` attribute with `agentStatistics` and new attribute `customerStatistics`, this initializer will be removed in a future.") // swiftlint:disable:this line_length
     public init(
         id: UUID,
         threadId: UUID,
@@ -95,7 +109,9 @@ public struct Message {
         status: MessageStatus
     ) {
         self.id = id
+        self.idString = id.uuidString
         self.threadId = threadId
+        self.threadIdString = threadId.uuidString
         self.contentType = contentType
         self.createdAt = createdAt
         self.attachments = attachments
@@ -122,6 +138,7 @@ public struct Message {
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
     ///   - status: The delivery or read status of the message.
+    @available(*, deprecated, message: "Due to replacement of the `threadId` attribute with `threadIdString`, this initializer will be removed in a future.")
     public init(
         id: UUID,
         threadId: UUID,
@@ -136,7 +153,52 @@ public struct Message {
         status: MessageStatus
     ) {
         self.id = id
+        self.idString = id.uuidString
         self.threadId = threadId
+        self.threadIdString = threadId.uuidString
+        self.contentType = contentType
+        self.createdAt = createdAt
+        self.attachments = attachments
+        self.direction = direction
+        self.userStatistics = agentStatistics
+        self.agentStatistics = agentStatistics
+        self.customerStatistics = customerStatistics
+        self.authorUser = authorUser
+        self.authorEndUserIdentity = authorEndUserIdentity
+        self.status = status
+    }
+    
+    /// Initializer of the Message object
+    ///
+    /// - Parameters:
+    ///   - id: The unique id for the message.
+    ///   - threadIdString: The thread id for the message.
+    ///   - contentType: The content of the message
+    ///   - createdAt: The timestamp of when the message was created.
+    ///   - attachments: The attachments on the message.
+    ///   - direction: The direction that the message is being sent (in regards to the agent).
+    ///   - agentStatistics: An agent statistic information about the message (read status, viewed status, etc.).
+    ///   - customerStatistics: A customer statistic information about the message (read status, viewed status, etc.).
+    ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
+    ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
+    ///   - status: The delivery or read status of the message.
+    init(
+        id: String,
+        threadId: String,
+        contentType: MessageContentType,
+        createdAt: Date,
+        attachments: [Attachment],
+        direction: MessageDirection,
+        agentStatistics: UserStatistics?,
+        customerStatistics: UserStatistics?,
+        authorUser: Agent?,
+        authorEndUserIdentity: CustomerIdentity?,
+        status: MessageStatus
+    ) {
+        self.id = UUID() // `id` has been replaced with `idString` and since it's under the internal init we don't want to use it anymore
+        self.idString = id
+        self.threadId = UUID() // `threadId` has been replaced with `threadIdString` and since it's under the internal init we don't want to use it anymore
+        self.threadIdString = threadId
         self.contentType = contentType
         self.createdAt = createdAt
         self.attachments = attachments
@@ -155,13 +217,13 @@ public struct Message {
 extension Message: Equatable {
 
     public static func == (lhs: Message, rhs: Message) -> Bool {
-        lhs.id == rhs.id
-            && lhs.threadId == rhs.threadId
+        // `id`, `threadId` and `userStatistics` are ignored since they have been replaced
+        lhs.idString == rhs.idString
+            && lhs.threadIdString == rhs.threadIdString
             && lhs.contentType == rhs.contentType
             && lhs.createdAt == rhs.createdAt
             && lhs.attachments == rhs.attachments
             && lhs.direction == rhs.direction
-            && lhs.userStatistics == rhs.agentStatistics
             && lhs.agentStatistics == rhs.agentStatistics
             && lhs.customerStatistics == rhs.customerStatistics
             && lhs.authorUser == rhs.authorUser

@@ -247,12 +247,10 @@ CXoneChatSDK.shared.connection.disconnect()
 CXone platform can contain various triggers related to specific events. Host application can trigger it manually via `ConnectionProvider.executeTrigger(_:)` method based on its unique identifier.
 
 ```swift
-if let triggerId = UUID(uuidString: "1a2bc345-6789-12a3-4Bbc-d67890e12fhg") {
-    do {
-        try await CXoneChat.shared.connection.executeTrigger(triggerId)
-    } catch {
-        ...
-    }
+do {
+    try await CXoneChat.shared.connection.executeTrigger("1a2bc345-6789-12a3-4Bbc-d67890e12fhg")
+} catch {
+    ...
 }
 ```
 
@@ -287,7 +285,7 @@ customer.lastName = "Doe"
 try CXoneChat.shared.customer.set(customer: customer)
 
 // Create new
-let customer = Customer(id: UUID().uuidString, firstName: "John", lastName: "Doe")
+let customer = Customer(id: UUID().uuidString.lowercased(), firstName: "John", lastName: "Doe")
 try CXoneChat.shared.customer.set(customer: customer)
 
 // Reset current
@@ -457,7 +455,7 @@ The SDK automatically loads thread(s) when establishing connection to the CXone 
 > ⚠️ Important: `load(with:)` should no longer be used for loading thread after connection.
 
 ```swift
-func reloadThread(with id: UUID) {
+func reloadThread(with id: String) {
     ...
 
     Task {
@@ -477,7 +475,7 @@ func reloadThread(with id: UUID) {
 Obtain a `ChatThreadProvider `instance using either the thread's unique identifier or the `ChatThread` object itself. This provider enables thread management operations like sending messages, marking as read, or ending the conversation.
 Retrieve a `ChatThreadProvider` by calling the appropriate method on `ChatThreadListProvider`:
 
-- `provider(for threadId: UUID)`: Returns the provider for the chat thread with the specified unique identifier.
+- `provider(for threadId: String)`: Returns the provider for the chat thread with the specified unique identifier.
 - `provider(for thread: ChatThread)`: Returns the provider for the given `ChatThread` object.
 
 > ⚠️ Important: If the provided thread identifier or object is invalid, the SDK will throw the `CXoneChatError.invalidThread` error.
@@ -1017,7 +1015,7 @@ func onCustomEventMessage(_ messageData: Data) {
 Callback to be called when the agent has stared/stopped typing.
 
 ```swift
-func onAgentTyping(_ isTyping: Bool, threadId: UUID) {
+func onAgentTyping(_ isTyping: Bool, threadId: String) {
     ...
 }
 ```

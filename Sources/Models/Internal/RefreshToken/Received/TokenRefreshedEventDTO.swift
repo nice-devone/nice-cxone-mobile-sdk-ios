@@ -18,7 +18,7 @@ import Foundation
 /// Event received when a token has been successfully refreshed.
 struct TokenRefreshedEventDTO: Decodable, Equatable {
 
-    let eventId: UUID
+    let eventId: String
     
     /// Type of event
     let eventType: EventType?

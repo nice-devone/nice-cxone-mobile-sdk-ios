@@ -23,8 +23,8 @@ enum MessageMapper {
         }
         
         return Message(
-            id: entity.idOnExternalPlatform,
-            threadId: entity.threadIdOnExternalPlatform,
+            id: entity.idOnExternalPlatformString,
+            threadId: entity.threadIdOnExternalPlatformString,
             contentType: contentType,
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),

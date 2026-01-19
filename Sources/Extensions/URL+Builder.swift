@@ -79,15 +79,6 @@ extension URL? {
         url / "\(element)"
     }
 
-    /// Return a new URL by safely appending a UUID fragment.
-    /// - parameters:
-    ///     - lhs: base url to append to
-    ///     - rhs: path component/fragment to append
-    /// - returns a new url with `rhs` appended or nil if lhs is nil or an error occurs.
-    static func / (url: URL?, element: UUID) -> URL? {
-        url / element.uuidString
-    }
-
     /// Return a new URL by safely appending a single query parameter.
     /// - parameters:
     ///     - lhs: base URL

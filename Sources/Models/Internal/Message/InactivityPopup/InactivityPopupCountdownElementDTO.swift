@@ -21,7 +21,7 @@ struct InactivityPopupCountdownElementDTO: Equatable {
     // MARK: - Properties
     
     /// The unique identifier of the element.
-    let id: UUID
+    let id: String
     
     /// The start time of the countdown.
     let startedAt: Date
@@ -50,7 +50,7 @@ extension InactivityPopupCountdownElementDTO: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let variablesContainer = try container.nestedContainer(keyedBy: VariablesKeys.self, forKey: .variables)
         
-        self.id = try container.decode(UUID.self, forKey: .id)
+        self.id = try container.decode(String.self, forKey: .id)
         self.startedAt = try variablesContainer.decodeISODate(forKey: .startedAt)
         self.numberOfSeconds = try variablesContainer.decode(Int.self, forKey: .numberOfSeconds)
     }

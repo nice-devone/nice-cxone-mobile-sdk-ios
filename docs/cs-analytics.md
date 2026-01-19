@@ -191,7 +191,7 @@ class ProactiveChatManager {
     init() {
         // Create a proactive action definition
         self.proactiveAction = ProactiveActionDetails(
-            id: UUID(),
+            id: UUID().uuidString.lowercased(),
             name: "summer_promo_2023", 
             type: .customPopupBox,
             content: nil
@@ -251,7 +251,7 @@ class ProactiveChatManager {
 To access the unique visitor identifier:
 
 ```swift
-func getVisitorIdentifier() -> UUID? {
+func getVisitorIdentifier() -> String? {
     return CXoneChat.shared.analytics.visitorId
 }
 ```

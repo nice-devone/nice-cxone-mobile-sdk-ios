@@ -19,7 +19,7 @@ struct ProactiveEventDTO: Equatable {
 
     // MARK: - Properties
 
-    let id: UUID
+    let id: String
     let name: String
     let type: ActionType
 }
@@ -27,8 +27,9 @@ struct ProactiveEventDTO: Equatable {
 // MARK: - Mapper
 
 extension ProactiveEventDTO {
+    
     init(from: ProactiveActionDetails) {
-        id = from.id
+        id = from.idString
         name = from.name
         type = from.type
     }
@@ -37,6 +38,7 @@ extension ProactiveEventDTO {
 // MARK: - Encodable
 
 extension ProactiveEventDTO: Encodable {
+    
     enum CodingKeys: String, CodingKey {
         case id = "actionId"
         case name = "actionName"

@@ -21,7 +21,11 @@ struct InactivityPopupButtonElementDTO: Equatable {
     // MARK: - Properties
     
     /// The unique identifier of the element.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     let id: UUID
+    
+    /// The unique identifier of the element.
+    let idString: String
     
     /// The button text.
     let text: String
@@ -52,6 +56,7 @@ extension InactivityPopupButtonElementDTO: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.id = try container.decode(UUID.self, forKey: .id)
+        self.idString = try container.decode(String.self, forKey: .id)
         self.text = try container.decode(String.self, forKey: .text)
         self.postback = try container.decode(String.self, forKey: .postback)
         
@@ -67,7 +72,7 @@ extension InactivityPopupButtonElementDTO: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(id, forKey: .id)
+        try container.encode(idString, forKey: .id)
         try container.encode(ElementType.button.rawValue, forKey: .type)
         try container.encode(text, forKey: .text)
         try container.encode(postback, forKey: .postback)

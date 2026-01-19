@@ -21,7 +21,7 @@ struct MessageInactivityPopupDTO: Equatable {
     // MARK: - Properties
 
     /// Element identifier of the inactivity popup container.
-    let id: UUID
+    let id: String
 
     /// The title element of the popup.
     let title: InactivityPopupTitleElementDTO
@@ -54,7 +54,7 @@ extension MessageInactivityPopupDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.id = try container.decode(UUID.self, forKey: .id)
+        self.id = try container.decode(String.self, forKey: .id)
         
         var elements = try container.decode([MessagePluginSubElementDTOType].self, forKey: .elements)
         

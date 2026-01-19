@@ -46,15 +46,15 @@ extension Array where Element == ChatThread {
     /// Returns `ChatThread` based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
     /// - Returns: `ChatThread`, if it exists.
-    func getThread(with threadId: UUID) -> ChatThread? {
-        self.first { $0.id == threadId }
+    func getThread(with threadId: String) -> ChatThread? {
+        self.first { $0.idString == threadId }
     }
     
     /// Returns Index of thread based on given thread ID.
     /// - Parameter threadId: The unique id of the thread.
     /// - Returns: Index of found thread.
-    func index(of threadId: UUID) -> Int? {
-        self.firstIndex { $0.id == threadId }
+    func index(of threadId: String) -> Int? {
+        self.firstIndex { $0.idString == threadId }
     }
 }
 

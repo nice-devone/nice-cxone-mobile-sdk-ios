@@ -19,7 +19,7 @@ import Foundation
 struct MoreMessagesLoadedEventDTO: Decodable, Equatable {
 
     /// The unique identifier of the event.
-    let eventId: UUID
+    let eventId: String
 
     /// Type of event
     let eventType: EventType?

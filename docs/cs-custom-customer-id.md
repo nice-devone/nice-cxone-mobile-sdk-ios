@@ -65,7 +65,7 @@ class ChatManager {
     
     func initializeChat() async throws {
         // 1. Get customer ID (either from secure storage or create new one)
-        let customerId = secureStorage.retrieveCustomerId() ?? UUID().uuidString
+        let customerId = secureStorage.retrieveCustomerId() ?? UUID().uuidString.lowercased()
         
         // If this is a new ID, save it securely
         if secureStorage.retrieveCustomerId() == nil {
@@ -95,7 +95,7 @@ class ChatManager {
 
 If you choose to use custom customer IDs, follow these security practices:
 
-1. **Use High-Entropy IDs**: Generate IDs with sufficient randomness (like UUIDs)
+1. **Use High-Entropy IDs**: Generate IDs with sufficient randomness (like lowercased UUIDs)
 2. **Secure Storage**: Store IDs in secure storage like the Keychain
 3. **Authentication**: Tie customer IDs to authenticated users when possible
 4. **Don't Use Predictable IDs**: Never use sequential numbers, usernames, or emails as IDs

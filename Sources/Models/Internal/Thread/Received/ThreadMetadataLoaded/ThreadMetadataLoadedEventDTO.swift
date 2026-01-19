@@ -18,7 +18,7 @@ import Foundation
 /// Event received when thread metadata has been loaded.
 struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
 
-    let eventId: UUID
+    let eventId: String
 
     /// Type of event
     let eventType: EventType?

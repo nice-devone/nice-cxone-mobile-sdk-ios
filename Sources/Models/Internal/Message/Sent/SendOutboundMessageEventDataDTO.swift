@@ -23,7 +23,7 @@ struct SendOutboundMessageEventDataDTO {
 
     let contentType: MessageContentDTOType
 
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: String
 
     let contactCustomFields: [CustomFieldDTO]
 

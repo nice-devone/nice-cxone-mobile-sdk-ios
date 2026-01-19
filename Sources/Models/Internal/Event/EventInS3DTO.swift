@@ -19,7 +19,7 @@ struct EventInS3DTO: Equatable {
 
     // MARK: - Properties
     
-    let eventId: UUID
+    let eventId: String
     
     var eventType: EventType?
     
@@ -64,7 +64,7 @@ extension EventInS3DTO: Decodable {
         let eventTypeContainer = try dataContainer.nestedContainer(keyedBy: OriginEventTypeCodingKeys.self, forKey: .originEvent)
         let urlContainer = try dataContainer.nestedContainer(keyedBy: UrlCodingKeys.self, forKey: .s3Object)
 
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.originEventType = try eventTypeContainer.decode(EventType.self, forKey: .eventType)
         self.url = try urlContainer.decode(URL.self, forKey: .url)

@@ -17,7 +17,7 @@ import Foundation
 
 struct CurrentVisitDetails: Codable, Equatable {
     
-    let visitId: UUID
+    let visitId: String
     
     let expires: Date
 }

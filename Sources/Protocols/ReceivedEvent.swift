@@ -21,7 +21,7 @@ protocol ReceivedEvent {
     
     static var eventType: EventType? { get }
 
-    var eventId: UUID { get }
+    var eventId: String { get }
     var eventType: EventType? { get }
     var postbackEventType: EventType? { get }
     var postbackErrorCode: EventErrorCode? { get }

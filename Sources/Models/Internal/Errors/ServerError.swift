@@ -21,9 +21,9 @@ struct ServerError: LocalizedError {
 
     let message: String
 
-    let connectionId: UUID
+    let connectionId: String
 
-    let requestId: UUID
+    let requestId: String
 
     var errorDescription: String? { message }
 }
@@ -45,7 +45,7 @@ extension ServerError: ReceivedEvent {
     static let eventType: EventType? = nil
 
     /// - Warning: The value is initialized locally so it does not refer to the server one
-    var eventId: UUID { UUID() }
+    var eventId: String { LowercaseUUID().uuidString }
     var eventType: EventType? { nil }
     var postbackEventType: EventType? { nil }
 }
@@ -65,8 +65,8 @@ extension ServerError: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.message = try container.decode(String.self, forKey: .message)
-        self.connectionId = try container.decode(UUID.self, forKey: .connectionId)
-        self.requestId = try container.decode(UUID.self, forKey: .requestId)
+        self.connectionId = try container.decode(String.self, forKey: .connectionId)
+        self.requestId = try container.decode(String.self, forKey: .requestId)
     }
     
     func encode(to encoder: any Encoder) throws {

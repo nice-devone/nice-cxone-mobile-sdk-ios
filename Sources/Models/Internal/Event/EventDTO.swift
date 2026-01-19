@@ -24,7 +24,7 @@ struct EventDTO: Encodable {
     let action: EventActionType
 
     /// The unique id for the event.
-    let eventId: UUID
+    let eventId: String
 
     /// The event details.
     let payload: EventPayloadDTO
@@ -32,13 +32,13 @@ struct EventDTO: Encodable {
     // MARK: - Init
     
     init(
-        eventId: UUID = UUID(),
+        eventId: String = LowercaseUUID().uuidString,
         brandId: Int,
         channelId: String,
         customerIdentity: CustomerIdentityDTO,
         eventType: EventType,
         data: EventDataType?,
-        visitorId: LowerCaseUUID?
+        visitorId: String?
     ) {
         self.payload = EventPayloadDTO(
             brandId: brandId,

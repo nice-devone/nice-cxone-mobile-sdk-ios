@@ -21,7 +21,7 @@ struct GenericEventDTO: Equatable {
     // MARK: - Properties
     
     /// Event ID of this event (or original event we're responding to)
-    let eventId: UUID
+    let eventId: String
     /// The type of the event.
     let eventType: EventType?
     /// The postback of the event.
@@ -50,7 +50,7 @@ extension GenericEventDTO: Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.eventId = try container.decodeUUID(forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.eventType = try container.decodeIfPresent(EventType.self, forKey: .eventType)
         self.postback = try container.decodeIfPresent(GenericEventPostbackDTO.self, forKey: .postback)
     }

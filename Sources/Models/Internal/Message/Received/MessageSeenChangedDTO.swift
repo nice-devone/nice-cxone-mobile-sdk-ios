@@ -18,7 +18,7 @@ import Foundation
 struct MessageSeenChangedDTO: Equatable {
     
     /// The unique identifier of the event.
-    let eventId: UUID
+    let eventId: String
     
     /// The type of the event.
     let eventType: EventType?
@@ -54,7 +54,7 @@ extension MessageSeenChangedDTO: Decodable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.eventType = try container.decodeIfPresent(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         

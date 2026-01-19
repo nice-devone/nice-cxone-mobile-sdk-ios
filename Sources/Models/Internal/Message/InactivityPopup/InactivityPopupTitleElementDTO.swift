@@ -21,7 +21,7 @@ struct InactivityPopupTitleElementDTO: Equatable {
     // MARK: - Properties
     
     /// The unique identifier of the element.
-    let id: UUID
+    let id: String
     
     /// The title text.
     let text: String
@@ -42,7 +42,7 @@ extension InactivityPopupTitleElementDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.id = try container.decode(UUID.self, forKey: .id)
+        self.id = try container.decode(String.self, forKey: .id)
         self.text = try container.decode(String.self, forKey: .text)
     }
 } 

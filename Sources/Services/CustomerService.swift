@@ -117,10 +117,10 @@ extension CustomerService: CustomerProvider {
 
 extension CustomerService {
 
-    func createCustomer(customerId: UUID) {
+    func createCustomer(with customerId: String) {
         LogManager.trace("Creating a customer identitiy")
         
-        connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: customerId.uuidString, firstName: self.firstName, lastName: self.lastName)
+        connectionContext.customer = CustomerIdentityDTO(idOnExternalPlatform: customerId, firstName: self.firstName, lastName: self.lastName)
         
         self.firstName = nil
         self.lastName = nil

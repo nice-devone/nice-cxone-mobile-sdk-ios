@@ -46,7 +46,11 @@ public struct InactivityPopup: Equatable {
     public let startedAt: Date
     
     /// The thread ID associated with the popup.
+    @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
     public let threadId: UUID
+    
+    /// The thread ID associated with the popup.
+    public let threadIdString: String
     
     /// The button to refresh the session.
     public let refreshButton: InactivityPopupButton

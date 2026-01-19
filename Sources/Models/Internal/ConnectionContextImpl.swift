@@ -43,7 +43,7 @@ class ConnectionContextImpl: ConnectionContext {
     var channelId: String
     
     /// The id generated for the destination.
-    var destinationId: UUID
+    var destinationId: String
     
     /// The environment/location to use for CXone.
     var environment: EnvironmentDetails
@@ -56,8 +56,8 @@ class ConnectionContextImpl: ConnectionContext {
     /// The state defines whether it is necessary to set up the SDK, connect to the CXone services or start communication with an agent.
     var chatState: ChatState = .initial
     
-    var visitorId: UUID? {
-        get { UserDefaultsService.shared.get(UUID.self, for: .visitorId) }
+    var visitorId: String? {
+        get { UserDefaultsService.shared.get(String.self, for: .visitorId) }
         set { UserDefaultsService.shared.set(newValue, for: .visitorId) }
     }
 
@@ -117,7 +117,7 @@ class ConnectionContextImpl: ConnectionContext {
             liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
         ),
         channelId: String = "",
-        destinationId: UUID = UUID(),
+        destinationId: String = LowercaseUUID().uuidString,
         visitDetailsStore: CurrentVisitDetails? = nil
     ) {
         self.keychainService = keychainService

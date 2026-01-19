@@ -21,7 +21,7 @@ import Foundation
 struct ThreadDTO: Codable, Equatable {
     
     /// The unique id for the thread.
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: String
     
     /// The name given to the thread (for multi-chat channels only).
     let threadName: String?
