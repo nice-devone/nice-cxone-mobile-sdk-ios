@@ -17,6 +17,13 @@ custom_rules:
   implicit_init:
     regex: "\\W\\.init\\("
     message: "Don't use implicit init. Use explicit initializer of the object."
+  no_uuid:
+    included: # only in Swift files
+      - "**/*.swift"
+    name: "Avoid UUID"
+    message: "Do not create UUID() directly—prefer case-preserving idString or controlled parsing."
+    regex: "UUID"
+    severity: warning
 
 disabled_rules: # rule identifiers to exclude from running
   - nesting

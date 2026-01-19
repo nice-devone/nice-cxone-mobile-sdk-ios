@@ -19,20 +19,20 @@ struct AnalyticsEventDTO {
 
     // MARK: - Properties
 
-    let eventId: UUID
+    let eventId: String
     let type: AnalyticsEventType
-    let visitId: UUID
-    let destinationId: UUID
+    let visitId: String
+    let destinationId: String
     let createdAt: Date
     let data: Encodable
 
     // MARK: - Init
 
     init(
-        eventId: UUID = UUID(),
+        eventId: String = LowercaseUUID().uuidString,
         type: AnalyticsEventType,
-        visitId: UUID,
-        destinationId: UUID,
+        visitId: String,
+        destinationId: String,
         createdAt: Date,
         data: Encodable = [String: String]()
     ) {
@@ -45,7 +45,7 @@ struct AnalyticsEventDTO {
     }
 
     init(
-        eventId: UUID = UUID(),
+        eventId: String = LowercaseUUID().uuidString,
         type: AnalyticsEventType,
         connection: ConnectionContext,
         createdAt: Date,

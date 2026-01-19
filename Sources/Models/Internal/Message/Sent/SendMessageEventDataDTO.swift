@@ -23,7 +23,7 @@ struct SendMessageEventDataDTO {
 
     let contentType: MessageContentDTOType
 
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: String
 
     /// User specific custom fields
     let customer: CustomerCustomFieldsDataDTO
@@ -63,7 +63,7 @@ extension SendMessageEventDataDTO: Codable {
         
         self.thread = try container.decode(ThreadDTO.self, forKey: .thread)
         self.contentType = try container.decode(MessageContentDTOType.self, forKey: .messageContent)
-        self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
+        self.idOnExternalPlatform = try container.decode(String.self, forKey: .idOnExternalPlatform)
         self.customer = try container.decode(CustomerCustomFieldsDataDTO.self, forKey: .customer)
         self.contact = try container.decode(ContactCustomFieldsDataDTO.self, forKey: .contact)
         self.attachments = try container.decode([AttachmentDTO].self, forKey: .attachments)

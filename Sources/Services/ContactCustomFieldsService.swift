@@ -26,7 +26,7 @@ class ContactCustomFieldsService {
     var socketService: SocketService
     var eventsService: EventsService
 
-    var contactFields = [UUID: [CustomFieldDTO]]()
+    var contactFields = [String: [CustomFieldDTO]]()
     
     // MARK: - Init
     
@@ -41,6 +41,10 @@ class ContactCustomFieldsService {
 extension ContactCustomFieldsService: ContactCustomFieldsProvider {
     
     func get(for threadId: UUID) -> [String: String] {
+        get(for: threadId.uuidString)
+    }
+    
+    func get(for threadId: String) -> [String: String] {
         Dictionary(uniqueKeysWithValues: contactFields[threadId]?.lazy.map { ($0.ident, $0.value) } ?? [])
     }
     
@@ -50,6 +54,10 @@ extension ContactCustomFieldsService: ContactCustomFieldsProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func set(_ customFields: [String: String], for threadId: UUID) async throws {
+        try await set(customFields, for: threadId.uuidString)
+    }
+    
+    func set(_ customFields: [String: String], for threadId: String) async throws {
         LogManager.trace("Setting a custom fields on a contact (specific thread).")
 
         try socketService.checkForConnection()
@@ -77,7 +85,7 @@ extension ContactCustomFieldsService: ContactCustomFieldsProvider {
 
 extension ContactCustomFieldsService {
     
-    func updateFields(_ fields: [CustomFieldDTO], for threadId: UUID) {
+    func updateFields(_ fields: [CustomFieldDTO], for threadId: String) {
         let fields = fields.filter { newField in
             // Check if field exists in prechat survey configuration
             // If not found, include the field without validation

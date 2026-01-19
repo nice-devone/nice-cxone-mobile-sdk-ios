@@ -19,7 +19,7 @@ struct CaseStatusChangedEventDTO: Equatable {
     
     // MARK: - Properties
     
-    var eventId: UUID
+    var eventId: String
     
     var eventObject: EventObjectType
     
@@ -53,7 +53,7 @@ extension CaseStatusChangedEventDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.eventObject = try container.decode(EventObjectType.self, forKey: .eventObject)
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)

@@ -19,7 +19,7 @@ struct ExecuteTriggerEventDTO: Encodable {
     
     let action: EventActionType
 
-    let eventId: UUID
+    let eventId: String
 
     let payload: ExecuteTriggerEventPayloadDTO
 }

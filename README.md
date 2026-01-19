@@ -84,7 +84,7 @@ Use the [iOS SDK library](https://nice-devone.github.io/nice-cxone-mobile-sdk-io
 In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:
 
 1. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods in the manager. There are two scenarios:
-    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadListProvider.create(with:)` method.
+    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the backend. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadListProvider.create(with:)` method.
     ```swift
     extension Manager: CXoneChatDelegate {
 
@@ -151,7 +151,7 @@ Handling the CXone Mobile SDK thread list is up to you, based on used design pat
 As already mentioned, it is not necessary to load previously created threads because it is automatically handled with `ConnectionProvider.connect()` method. For multi thread continue with following steps:
 
 1. Register `onChatUpdated(_:mode:)` and `onThreadsUpdated(_:)` delegate methods in the manager. There are two scenarios:
-    a) No threads available – the SDK finished load process without receiving any threads from the BE -> Empty thread list should be presented.
+    a) No threads available – the SDK finished load process without receiving any threads from the backend -> Empty thread list should be presented.
     ```swift
     extension Manager: CXoneChatDelegate {
 
@@ -181,12 +181,12 @@ As already mentioned, it is not necessary to load previously created threads bec
     ```swift
     func createNewThread(with customFields: [String: String]? = nil) {
         do {
-            let threadId: UUID
+            let provider: ChatThreadProvider
             
             if let customFields {
-                threadId = try CXoneChat.shared.threads.create(with: customFields)
+                provider = try CXoneChat.shared.threads.create(with: customFields)
             } else {
-                threadId = try CXoneChat.shared.threads.create()
+                provider = try CXoneChat.shared.threads.create()
             }
             ...
         } catch {
@@ -204,7 +204,7 @@ Live chat channel may also be offline, based on the chat state `.offline` which 
 In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:
 
 1. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods in the manager. There are two scenarios:
-    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the BE. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadListProvider.create(with:)` method.
+    a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the backend. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadListProvider.create(with:)` method.
     ```swift
     extension Manager: CXoneChatDelegate {
 

@@ -118,7 +118,25 @@ public protocol ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func load(with id: UUID?) async throws
+    
+    /// Loads the a thread for the customer and gets messages.
+    ///
+    /// - Parameter id: The id of the thread to load. Optional, if omitted,
+    ///     it will attempt to load the customer's active thread. If there is no active thread, this returns an error.
+    ///
+    /// - Warning: If method receives `String` for a non existing thread, it throws ``CXoneChatError/invalidThread`` error.
+    /// - Warning: Should only be used when opening a thread for multithreaded channel configuration
+        /// or to reconnect after returning from the background.
+    ///
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    func load(with id: String?) async throws
     
     /// The delegate for the chat thread provider based on chat thread's unique identifier
     ///
@@ -127,7 +145,17 @@ public protocol ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     ///
     /// - Returns: The provider for the chat thread.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func provider(for threadId: UUID) throws -> any ChatThreadProvider
+    
+    /// The delegate for the chat thread provider based on chat thread's unique identifier
+    ///
+    /// - Parameter threadId: The chat thread's for which to retrieve the provider.
+    ///
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    ///
+    /// - Returns: The provider for the chat thread.
+    func provider(for threadId: String) throws -> any ChatThreadProvider
     
     /// The delegate for the chat thread provider based on the chat thread object.
     ///

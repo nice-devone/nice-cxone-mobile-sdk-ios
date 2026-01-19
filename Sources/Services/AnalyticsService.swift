@@ -45,9 +45,12 @@ class AnalyticsService {
 // interface while allowing tests to specify an additional date parameter.
 extension AnalyticsService: AnalyticsProvider {
     
+    public var visitorIdString: String? {
+        connectionContext.visitorId
+    }
+    
     public var visitorId: UUID? {
-        get { connectionContext.visitorId }
-        set { connectionContext.visitorId = newValue }
+        connectionContext.visitorId.flatMap(UUID.init)
     }
 
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
@@ -265,7 +268,7 @@ private extension AnalyticsService {
             // if there is no visit, or the current visit has expired
             // create a new visit expiring in 30 minutes.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: UUID(),
+                visitId: LowercaseUUID().uuidString,
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -274,7 +277,7 @@ private extension AnalyticsService {
             // if the visit is current, then we just update the visit
             // expiration date, maintaining the existing visit id.
             connectionContext.visitDetails = CurrentVisitDetails(
-                visitId: connectionContext.visitId ?? UUID(),
+                visitId: connectionContext.visitId ?? LowercaseUUID().uuidString,
                 expires: date.addingTimeInterval(visitValidInterval)
             )
 
@@ -341,7 +344,7 @@ private extension AnalyticsService {
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
-        guard let visitorId = visitorId else {
+        guard let visitorIdString else {
             throw CXoneChatError.missingVisitorId
         }
 
@@ -352,7 +355,7 @@ private extension AnalyticsService {
             data: data
         )
 
-        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorId, file: file, line: line)
+        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorIdString, file: file, line: line)
     }
 
     /// Post an event to the web-analytics service with specified brand and visitor ids.
@@ -373,7 +376,7 @@ private extension AnalyticsService {
     func post(
         event: AnalyticsEventDTO,
         brandId: Int,
-        visitorId: UUID,
+        visitorId: String,
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {

@@ -19,7 +19,14 @@ import Foundation
 public class ChatThread: Identifiable {
 
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
+    
+    /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
+    ///
+    /// The canonical, case-preserving identifier of the thread as provided by the backend.
+    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    public let idString: String
     
     /// The name given to the thread (for multi-thread channels only).
     public var name: String?
@@ -55,7 +62,7 @@ public class ChatThread: Identifiable {
     // MARK: - Init
     
     init(
-        id: UUID,
+        id: String,
         state: ChatThreadState,
         name: String? = nil,
         messages: [Message] = [],
@@ -65,7 +72,8 @@ public class ChatThread: Identifiable {
         scrollToken: String = "",
         positionInQueue: Int? = nil
     ) {
-        self.id = id
+        self.id = UUID() // `id` has been replaced with `idString`
+        self.idString = id
         self.state = state
         self.name = name
         self.messages = messages
@@ -94,7 +102,7 @@ extension ChatThread {
 
     private func index(of message: Message) -> Int? {
         messages.firstIndex {
-            $0.id == message.id
+            $0.idString == message.idString
         }
     }
     

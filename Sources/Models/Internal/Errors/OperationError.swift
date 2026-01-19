@@ -19,11 +19,11 @@ struct OperationError: LocalizedError {
 
     // MARK: - Properties
 
-    let eventId: UUID
+    let eventId: String
     
     let errorCode: EventErrorCode
 
-    let transactionId: LowerCaseUUID
+    let transactionId: String
 
     let errorMessage: String
 
@@ -31,7 +31,7 @@ struct OperationError: LocalizedError {
         """
         {
             "eventType": "\(errorCode.rawValue)"
-            "transactionId": "\(transactionId.uuid.uuidString)"
+            "transactionId": "\(transactionId)"
             "errorMessage" "\(errorMessage)"
         }
         """
@@ -76,11 +76,11 @@ extension OperationError: Codable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.eventId = try container.decodeUUIDIfPresent(forKey: .eventId) ?? UUID()
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         
         let errorContainer = try container.nestedContainer(keyedBy: ErrorKeys.self, forKey: .error)
         self.errorCode = try errorContainer.decode(EventErrorCode.self, forKey: .errorCode)
-        self.transactionId = try errorContainer.decode(LowerCaseUUID.self, forKey: .transactionId)
+        self.transactionId = try errorContainer.decode(String.self, forKey: .transactionId)
         self.errorMessage = try errorContainer.decode(String.self, forKey: .errorMessage)
     }
     

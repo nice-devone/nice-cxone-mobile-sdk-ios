@@ -107,7 +107,7 @@ extension ProactiveActionService: ProactiveActionProvider {
         switch action {
         case .refreshSession(let entity):
             // Use the button's postback directly (which contains the session expiration data)
-            guard let service = try threadsService?.provider(for: entity.threadId) as? ChatThreadService else {
+            guard let service = try threadsService?.provider(for: entity.threadIdString) as? ChatThreadService else {
                 throw CXoneChatError.invalidParameter("threadService")
             }
             
@@ -117,7 +117,7 @@ extension ProactiveActionService: ProactiveActionProvider {
             )
         case .expireSession(let entity):
             // Use the button's postback directly (which contains the session expiration data)
-            guard let service = try threadsService?.provider(for: entity.threadId) as? ChatThreadService else {
+            guard let service = try threadsService?.provider(for: entity.threadIdString) as? ChatThreadService else {
                 throw CXoneChatError.invalidParameter("threadService")
             }
             

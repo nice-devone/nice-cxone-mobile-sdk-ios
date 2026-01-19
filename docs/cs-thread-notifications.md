@@ -121,8 +121,7 @@ private func processNotificationAndNavigateToThread(notification: UNNotification
     // Check for local notification from SDK first
     let identifier = notification.request.identifier
     if identifier.hasPrefix(NotificationCenter.threadDeeplinkNotificationName) {
-        guard let threadIdString = userInfo["threadId"] as? String,
-              let threadId = UUID(uuidString: threadIdString) else {
+        guard let threadIdString = userInfo["threadId"] as? String else {
             return false
         }
         
@@ -137,8 +136,8 @@ private func processNotificationAndNavigateToThread(notification: UNNotification
     // your actual server payload structure
     if let aps = userInfo["aps"] as? [String: Any],
        let cxoneData = userInfo["cxone_data"] as? [String: Any],
-       let threadIdString = cxoneData["thread_id"] as? String,
-       let threadId = UUID(uuidString: threadIdString) {
+       let threadId = cxoneData["thread_id"] as? String
+   {
         
         // Navigate to thread using the same mechanism
         NotificationCenter.default.postThreadDeeplinkNotification(threadId: threadId)

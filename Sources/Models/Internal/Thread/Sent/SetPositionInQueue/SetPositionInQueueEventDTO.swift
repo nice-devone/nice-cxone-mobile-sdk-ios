@@ -22,7 +22,7 @@ struct SetPositionInQueueEventDTO: Decodable, Equatable {
     let eventType: EventType?
     
     /// The unique id for the event.
-    let eventId: UUID
+    let eventId: String
 
     /// The data of the event.
     let data: SetPositionInQueueEventDataDTO

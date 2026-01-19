@@ -53,7 +53,16 @@ public protocol CXoneChatDelegate: AnyObject {
     ///   - isTyping: A `Bool` indicating whether the agent is typing (`true`) or has stopped typing (`false`).
     ///   - agent: An instance of the `Agent` class representing the agent sending the typing status.
     ///   - threadId: A `UUID` identifying the chat thread associated with the typing event.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID)
+    
+    /// Notifies when an agent starts or stops typing in a specific chat thread.
+    ///
+    /// - Parameters:
+    ///   - isTyping: A `Bool` indicating whether the agent is typing (`true`) or has stopped typing (`false`).
+    ///   - agent: An instance of the `Agent` class representing the agent sending the typing status.
+    ///   - threadId: A `String` identifying the chat thread associated with the typing event.
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: String)
     
     /// Callback to be called when the custom fields are set for a contact.
     func onContactCustomFieldsSet()
@@ -77,6 +86,14 @@ public protocol CXoneChatDelegate: AnyObject {
     @available(*, deprecated, message: "Use onProactiveActionReceived(of:) instead. This method will be removed in a future version.")
     func onProactivePopupAction(data: [String: Any], actionId: UUID)
     
+    /// Callback to be called when a custom popup proactive action is received.
+    ///
+    /// - Parameters:
+    ///   -  data: The proactive popup action data
+    ///   - actionId: The unique identifier of the action.
+    @available(*, deprecated, message: "Use onProactiveActionReceived(of:) instead. This method will be removed in a future version.")
+    func onProactivePopupAction(data: [String: Any], actionId: String)
+    
     /// Callback to be called when a proactive action is received with typed data.
     ///
     /// This is the preferred method for handling inactivity popups and other proactive actions.
@@ -96,11 +113,13 @@ public extension CXoneChatDelegate {
     func onThreadsUpdated(_ chatThreads: [ChatThread]) { }
     func onCustomEventMessage(_ messageData: Data) { }
     func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) { }
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: String) { }
     func onContactCustomFieldsSet() { }
     func onCustomerCustomFieldsSet() { }
     func onError(_ error: Error) { }
     func onTokenRefreshFailed() { }
     func onProactivePopupAction(data: [String: Any], actionId: UUID) { }
+    func onProactivePopupAction(data: [String: Any], actionId: String) { }
     func onProactiveActionReceived(of type: ProactiveActionType) { }
     // swiftlint:enable missing_docs
 }

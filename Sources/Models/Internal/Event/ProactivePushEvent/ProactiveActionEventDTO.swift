@@ -19,7 +19,7 @@ struct ProactiveActionEventDTO: Equatable {
 
     // MARK: - Properties
     
-    let eventId: UUID
+    let eventId: String
 
     let eventObject: EventObjectType
 
@@ -53,7 +53,7 @@ extension ProactiveActionEventDTO: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         self.eventObject = try container.decode(EventObjectType.self, forKey: .eventObject)
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)

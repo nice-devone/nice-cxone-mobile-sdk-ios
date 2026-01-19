@@ -1,3 +1,29 @@
+<a name="3.1.3"></a>
+# [3.1.3] - 2026-01-19
+
+## CXoneChatSDK
+
+### Fixes
+- Migrate from UUID to String
+
+## CXoneChatUI
+
+### Fixes
+- Migrate from UUID to String
+
+### Dependencies
+- Update CXoneChatSDK from 3.1.2 to 3.1.3
+
+### Sample
+
+### Fixes
+- Migrate from UUID to String
+
+### Dependencies
+- Update CXoneChatSDK from 3.1.2 to 3.1.3
+- Update CXoneChatUI from 3.1.2 to 3.1.3
+
+
 <a name="3.1.1"></a>
 # [3.1.1] - 2025-11-18
 

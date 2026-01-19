@@ -17,8 +17,9 @@ import Foundation
 
 /// Event received when a customer is successfully authorized.
 struct CustomerAuthorizedEventDTO: Equatable {
+    
     /// The unique identifier of the event.
-    let eventId: UUID
+    let eventId: String
 
     /// Type of event
     let eventType: EventType?
@@ -49,7 +50,7 @@ extension CustomerAuthorizedEventDTO: Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let postback = try container.decode(CustomerAuthorizedEventPostbackDTO.self, forKey: .postback)
-        self.eventId = try container.decode(UUID.self, forKey: .eventId)
+        self.eventId = try container.decode(String.self, forKey: .eventId)
         // Use eventtype from postback if not available at top level
         self.eventType = try container.decodeIfPresent(EventType.self, forKey: .eventType) ?? postback.eventType
         self.postback = postback

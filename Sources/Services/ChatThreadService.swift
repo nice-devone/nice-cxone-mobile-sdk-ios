@@ -102,7 +102,7 @@ extension ChatThreadService: ChatThreadProvider {
             throw CXoneChatError.invalidOldestDate
         }
         
-        let thread = ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)
+        let thread = ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)
         let event = try eventsService.create(
             event: .loadMoreMessages,
             with: .loadMoreMessageData(LoadMoreMessagesEventDataDTO(scrollToken: chatThread.scrollToken, thread: thread, oldestMessageDatetime: oldestDate))
@@ -167,7 +167,7 @@ extension ChatThreadService: ChatThreadProvider {
         if chatThread.state == .ready {
             let data = try eventsService.create(
                 .updateThread,
-                with: .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: name)))
+                with: .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: name)))
             )
             
             try await socketService.send(data: data)
@@ -187,7 +187,7 @@ extension ChatThreadService: ChatThreadProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``OperationError`` if there is any operaton error received from the BE.
+    /// - Throws: ``OperationError`` if there is any operaton error received from the backend.
     func archive() async throws {
         LogManager.trace("Archiving thread")
         
@@ -205,7 +205,7 @@ extension ChatThreadService: ChatThreadProvider {
             
             let event = try eventsService.create(
                 event: .archiveThread,
-                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
             )
             
             try await events.sink(
@@ -217,7 +217,7 @@ extension ChatThreadService: ChatThreadProvider {
                 cancellables: &cancellables
             )
             
-            LogManager.trace("Thread Archived: \(chatThread.id)")
+            LogManager.trace("Thread Archived: \(chatThread.idString)")
         } else {
             LogManager.trace("Thread does not exist in BE")
         }
@@ -254,7 +254,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         connectionContext.chatState = .closed
         
-        let data = try eventsService.create(.endContact, with: .endContact(EndContactEventDataDTO(thread: chatThread.id, contact: contactId)))
+        let data = try eventsService.create(.endContact, with: .endContact(EndContactEventDataDTO(thread: chatThread.idString, contact: contactId)))
 
         try await socketService.send(data: data)
     }
@@ -279,7 +279,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             .messageSeenByCustomer,
-            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
         )
         
         try await socketService.send(data: data)
@@ -302,7 +302,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             didStart ? .senderTypingStarted : .senderTypingEnded,
-            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
         )
         
         try await socketService.send(data: data)
@@ -348,7 +348,7 @@ extension ChatThreadService {
 
         try socketService.checkForConnection()
 
-        let contactFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
+        let contactFields = contactCustomFieldsService?.contactFields[chatThread.idString]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
         let customerFields = customerCustomFieldsService?.customerFields.convertValueToIdentifier(
@@ -361,9 +361,9 @@ extension ChatThreadService {
         }
         
         let messageData = SendMessageEventDataDTO(
-            thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
+            thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name),
             contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback, parameters: parameters)),
-            idOnExternalPlatform: UUID(),
+            idOnExternalPlatform: LowercaseUUID().uuidString,
             customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
             contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
             attachments: try await message.attachments.map(with: connectionContext),
@@ -398,7 +398,7 @@ extension ChatThreadService {
                 cancellables: &cancellables
             )
             
-            LogManager.trace("Message \(messageData.idOnExternalPlatform) sucessfully added into thread \(chatThread.id)")
+            LogManager.trace("Message \(messageData.idOnExternalPlatform) sucessfully added into thread \(chatThread.idString)")
         } catch {
             LogManager.error("Failed to send message: \(error)")
             
@@ -439,15 +439,15 @@ extension ChatThreadService {
             throw CXoneChatError.customerAssociationFailure
         }
 
-        let contactFields = contactCustomFieldsService?.contactFields[chatThread.id] ?? []
+        let contactFields = contactCustomFieldsService?.contactFields[chatThread.idString] ?? []
         let customerFields = customerCustomFieldsService?.customerFields ?? []
         
         let parsedMessage = welcomeMessageManager.parse(welcomeMessage, contactFields: contactFields, customerFields: customerFields, customer: customer)
         self.parsedWelcomeMessage = parsedMessage
         
         return Message(
-            id: UUID(),
-            threadId: chatThread.id,
+            id: LowercaseUUID().uuidString,
+            threadId: chatThread.idString,
             contentType: .text(MessagePayload(text: parsedMessage, postback: nil)),
             createdAt: Date(),
             attachments: [],
@@ -526,7 +526,7 @@ extension ChatThreadService {
     }
     
     func sendUnsupportedMessageTypeAnswer(fallbackText: String?) async throws {
-        LogManager.trace("Sending hidden message to an agent about unsupported message received from the BE")
+        LogManager.trace("Sending hidden message to an agent about unsupported message received from the backend")
         
         let format = fallbackText?.isEmpty == true ? "%@" : "%@: %@"
         let text = String(format: format, ChatThreadService.unsupportedMessageTypeAnswerMessage, fallbackText ?? "")
@@ -543,7 +543,7 @@ extension ChatThreadService {
 extension ChatThreadService: EventReceiver {
     
     func processMoreMessagesLoaded(_ event: MoreMessagesLoadedEventDTO) {
-        LogManager.trace("More messages loaded for thread: \(chatThread.id)")
+        LogManager.trace("More messages loaded for thread: \(chatThread.idString)")
             
         if event.postback.data.messages.isEmpty {
             chatThread.scrollToken.removeAll()
@@ -561,7 +561,7 @@ extension ChatThreadService: EventReceiver {
     
     /// - Throws: ``CXoneChatError/invalidData`` if the message content type is not `.inactivityPopup`.
     func processInactivityPopup(_ message: MessageDTO) throws {
-        LogManager.trace("Processing inactivity popup message for thread: \(chatThread.id)")
+        LogManager.trace("Processing inactivity popup message for thread: \(chatThread.idString)")
         
         let inactivityPopup = try InactivityPopupMapper.map(from: message)
         
@@ -591,18 +591,18 @@ private extension ChatThreadService {
 
         try socketService.checkForConnection()
         
-        let customFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
+        let customFields = contactCustomFieldsService?.contactFields[chatThread.idString]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
         
         let eventData = EventDataType.sendOutboundMessageData(
             SendOutboundMessageEventDataDTO(
                 thread: ThreadDTO(
-                    idOnExternalPlatform: chatThread.id,
+                    idOnExternalPlatform: chatThread.idString,
                     threadName: chatThread.messages.isEmpty ? nil : chatThread.name
                 ),
                 contentType: .text(MessagePayloadDTO(text: message.text, postback: nil, parameters: [String: AnyValue]())),
-                idOnExternalPlatform: UUID(),
+                idOnExternalPlatform: LowercaseUUID().uuidString,
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),

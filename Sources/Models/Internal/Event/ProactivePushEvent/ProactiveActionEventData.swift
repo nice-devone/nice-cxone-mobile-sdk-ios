@@ -19,10 +19,10 @@ struct ProactiveActionEventDataDTO: Equatable {
     
     // MARK: - Properties
     
-    let eventId: LowerCaseUUID
+    let eventId: String
 
     /// The unique id of the action.
-    let actionId: LowerCaseUUID
+    let actionId: String
 
     /// The name of the action.
     let actionName: String
@@ -65,8 +65,8 @@ extension ProactiveActionEventDataDTO: Codable {
             .nestedContainer(keyedBy: ProactiveActionKeys.self, forKey: .proactiveAction)
             .nestedContainer(keyedBy: ProactiveActionDetailsKeys.self, forKey: .action)
         
-        self.eventId = try destinationContainer.decode(LowerCaseUUID.self, forKey: .eventId)
-        self.actionId = try actionContainer.decode(LowerCaseUUID.self, forKey: .actionId)
+        self.eventId = try destinationContainer.decode(String.self, forKey: .eventId)
+        self.actionId = try actionContainer.decode(String.self, forKey: .actionId)
         self.actionName = try actionContainer.decode(String.self, forKey: .actionName)
         self.actionType = try actionContainer.decode(ActionType.self, forKey: .actionType)
         self.data = try actionContainer.decodeIfPresent(ProactiveActionDataDTO.self, forKey: .data)

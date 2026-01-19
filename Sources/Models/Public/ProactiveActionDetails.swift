@@ -21,8 +21,12 @@ public struct ProactiveActionDetails {
     // MARK: - Properties
 
     /// The unique id of the action.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
-
+    
+    /// The unique id of the action.
+    public let idString: String
+    
     /// The name of the action.
     public let name: String
 
@@ -39,10 +43,26 @@ public struct ProactiveActionDetails {
     ///   - name: The name of the action.
     ///   - type: The type of proactive action.
     ///   - data: The data of the action.
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     public init(id: UUID, name: String, type: ActionType, content: ProactiveActionDataMessageContent?) {
         self.id = id
+        self.idString = id.uuidString
         self.name = name
         self.type = type
         self.content = content
     }
+    
+    /// - Parameters:
+    ///   - id: The unique id of the action.
+    ///   - name: The name of the action.
+    ///   - type: The type of proactive action.
+    ///   - data: The data of the action.
+    public init(id: String, name: String, type: ActionType, content: ProactiveActionDataMessageContent?) {
+        self.id = UUID() // `id` is no longer valid and has been replaced with `idString`
+        self.idString = id
+        self.name = name
+        self.type = type
+        self.content = content
+    }
+
 }

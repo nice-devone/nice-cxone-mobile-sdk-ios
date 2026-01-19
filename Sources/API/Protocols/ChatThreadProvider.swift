@@ -90,7 +90,7 @@ public protocol ChatThreadProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``OperationError`` if there is any operaton error received from the BE.
+    /// - Throws: ``OperationError`` if there is any operaton error received from the backend.
     func archive() async throws
     
     /// Reports that the most recent message of the specified thread was read by the customer.

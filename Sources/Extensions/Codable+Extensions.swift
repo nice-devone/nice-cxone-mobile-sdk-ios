@@ -19,26 +19,6 @@ import Foundation
 
 extension KeyedDecodingContainer {
     
-    func decodeUUID(forKey key: Key) throws -> UUID {
-        if let eventId = try decodeIfPresent(UUID.self, forKey: key) {
-            return eventId
-        } else if let eventId = try decodeIfPresent(LowerCaseUUID.self, forKey: key)?.uuid {
-            return eventId
-        } else {
-            throw DecodingError.valueNotFound(UUID.self, DecodingError.Context(codingPath: codingPath, debugDescription: key.stringValue))
-        }
-    }
-    
-    func decodeUUIDIfPresent(forKey key: Key) throws -> UUID? {
-        if let eventId = try decodeIfPresent(UUID.self, forKey: key) {
-            return eventId
-        } else if let eventId = try decodeIfPresent(LowerCaseUUID.self, forKey: key)?.uuid {
-            return eventId
-        } else {
-            return nil
-        }
-    }
-    
     func decodeISODate(forKey key: Key) throws -> Date {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone, .withColonSeparatorInTimeZone]

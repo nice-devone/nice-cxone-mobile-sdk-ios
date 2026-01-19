@@ -26,7 +26,7 @@ Contact custom fields are specific to individual conversation threads:
 
 ```swift
 // Get custom fields for a specific thread
-let threadId = UUID() // Your thread ID
+let threadId = UUID().uuidString.lowercased() // Your thread ID
 let contactFields = CXoneChat.shared.threads.customFields.get(for: threadId)
 
 // Set custom fields for a specific thread

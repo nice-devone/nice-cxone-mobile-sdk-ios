@@ -21,7 +21,11 @@ public struct InactivityPopupButton: Equatable {
     // MARK: - Properties
     
     /// The unique identifier of the button.
+    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
     public let id: UUID
+    
+    /// The unique identifier of the button.
+    public let idString: String
     
     /// The display text of the button.
     public let text: String

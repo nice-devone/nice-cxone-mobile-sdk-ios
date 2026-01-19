@@ -249,6 +249,18 @@ extension ConnectionService: ConnectionProvider {
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
     func executeTrigger(_ triggerId: UUID) async throws {
+        try await executeTrigger(triggerId.uuidString)
+    }
+    
+    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: An error if any value throws an error during encoding.
+    func executeTrigger(_ triggerId: String) async throws {
         guard connectionContext.chatState.isChatAvailable else {
             throw CXoneChatError.illegalChatState
         }
@@ -269,12 +281,12 @@ extension ConnectionService: ConnectionProvider {
             brand: BrandDTO(id: connectionContext.brandId),
             channel: ChannelIdentifierDTO(id: connectionContext.channelId),
             customerIdentity: customer,
-            eventId: LowerCaseUUID(uuid: connectionContext.destinationId),
-            visitorId: LowerCaseUUID(uuid: visitorId),
-            triggerId: LowerCaseUUID(uuid: triggerId)
+            eventId: connectionContext.destinationId,
+            visitorId: visitorId,
+            triggerId: triggerId
         )
 
-        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: UUID(), payload: payload))
+        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: LowercaseUUID().uuidString, payload: payload))
 
         try await socketService.send(data: data)
     }
@@ -371,21 +383,21 @@ private extension ConnectionService {
             
             LogManager.trace("Did set channel configuration for the SDK")
             
-            connectionContext.destinationId = UUID()
+            connectionContext.destinationId = LowercaseUUID().uuidString
             
-            let visitorId: UUID = connectionContext.visitorId ?? {
+            let visitorId: String = connectionContext.visitorId ?? {
                 LogManager.trace("Creating new visitor ID")
                 
-                let visitorId = UUID()
+                let visitorId = LowercaseUUID().uuidString
                 connectionContext.visitorId = visitorId
                 
                 return visitorId
             }()
             let customerId: String = connectionContext.customer?.idOnExternalPlatform ?? {
-                let customerId = UUID()
-                customerService?.createCustomer(customerId: customerId)
+                let customerId = LowercaseUUID().uuidString
+                customerService?.createCustomer(with: customerId)
                 
-                return customerId.uuidString
+                return customerId
             }()
             
             try await createOrUpdateVisitor(visitorId: visitorId, customerId: customerId)
@@ -410,7 +422,7 @@ private extension ConnectionService {
             queryItems: [
                 URLQueryItem(name: "brandId", value: connectionContext.brandId.description),
                 URLQueryItem(name: "channelId", value: connectionContext.channelId),
-                URLQueryItem(name: "visitorId", value: connectionContext.visitorId?.uuidString),
+                URLQueryItem(name: "visitorId", value: connectionContext.visitorId),
                 URLQueryItem(name: "sdkPlatform", value: "ios"),
                 URLQueryItem(name: "sdkVersion", value: CXoneChatSDKModule.version)
             ],
@@ -533,7 +545,7 @@ private extension ConnectionService {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
-    func createOrUpdateVisitor(visitorId: UUID, customerId: String) async throws {
+    func createOrUpdateVisitor(visitorId: String, customerId: String) async throws {
         LogManager.trace("Creating or updating visitor")
         
         guard let url = connectionContext.environment.webAnalyticsURL(brandId: connectionContext.brandId) / "visitors" / visitorId else {
