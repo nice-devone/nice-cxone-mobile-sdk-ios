@@ -22,6 +22,8 @@ protocol ConnectionContext: AnyObject {
     // periphery:ignore - false positive
     var keychainService: KeychainService { get }
     
+    var userDefaultsService: UserDefaultsService { get }
+    
     /// The token of the device for push notifications.
     var deviceToken: String? { get set }
     
@@ -61,7 +63,11 @@ protocol ConnectionContext: AnyObject {
     var customer: CustomerIdentityDTO? { get set }
     
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
-    var accessToken: AccessTokenDTO? { get set }
+    @available(*, deprecated, message: "Due to new authentication flow, `accessToken` has been replaced with `transactionToken`")
+    var accessToken: LegacyAccessTokenDTO? { get set }
+
+    /// The current transaction token for WebSocket authentication. Has a short lifetime (~10 minutes).
+    var transactionToken: TransactionTokenDTO? { get set }
     
     func clear()
 }

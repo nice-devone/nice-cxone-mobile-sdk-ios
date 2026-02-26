@@ -22,7 +22,7 @@ public struct InactivityPopupButton: Equatable {
     
     /// The unique identifier of the button.
     @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    public let id: UUID
+    public let id: UUID // swiftlint:disable:this no_uuid
     
     /// The unique identifier of the button.
     public let idString: String

@@ -26,6 +26,12 @@ struct ChannelSettingsDTO {
     /// Whether the channel supports proactive chat features.
     let isProactiveChatEnabled: Bool
 
+    /// Indicates if ``ChatThreadProvider/sendTranscript(to:)`` is enabled for the channel.
+    ///
+    /// - Note: The backend key `liveChatAllowTranscript` applies to both live chat
+    /// and messaging configurations.
+    var isSendTranscriptEnabled: Bool
+    
     /// Allowed file upload details.
     let fileRestrictions: FileRestrictionsDTO
     
@@ -44,6 +50,16 @@ struct ChannelSettingsDTO {
     var isRecoverLiveChatDoesNotFailEnabled: Bool {
         isEnabled(feature: "isRecoverLivechatDoesNotFailEnabled")
     }
+
+    /// Indicates whether secured sessions authentication is enabled.
+    ///
+    /// When enabled, ALL authentication types:
+    /// - Request transaction tokens before WebSocket connection
+    /// - Skip `authorizeCustomer`/`reconnectCustomer` events
+    /// - Perform authorization during WebSocket handshake via JWT validation
+    var isSecuredSessionsEnabled: Bool {
+        isEnabled(feature: "securedSessions")
+    }
 }
 
 // MARK: - Decodable
@@ -55,6 +71,7 @@ extension ChannelSettingsDTO: Decodable {
         case isProactiveChatEnabled
         case fileRestrictions
         case features
+        case liveChatAllowTranscript
     }
     
     init(from decoder: any Decoder) throws {
@@ -62,6 +79,7 @@ extension ChannelSettingsDTO: Decodable {
         
         self.hasMultipleThreadsPerEndUser = try container.decode(Bool.self, forKey: .hasMultipleThreadsPerEndUser)
         self.isProactiveChatEnabled = try container.decode(Bool.self, forKey: .isProactiveChatEnabled)
+        self.isSendTranscriptEnabled = try container.decodeIfPresent(Bool.self, forKey: .liveChatAllowTranscript) ?? false
         self.fileRestrictions = try container.decode(FileRestrictionsDTO.self, forKey: .fileRestrictions)
         self.features = try container.decode([String: Bool].self, forKey: .features)
     }

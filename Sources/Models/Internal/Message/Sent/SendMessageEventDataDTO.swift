@@ -82,7 +82,7 @@ extension SendMessageEventDataDTO: Codable {
         try container.encode(attachments, forKey: .attachments)
         try container.encode(deviceFingerprint, forKey: .deviceFingerprint)
         
-        if let token = token, !token.isEmpty {
+        if let token, !token.isEmpty {
             var accessTokenContainer = container.nestedContainer(keyedBy: AccessTokenCodingKey.self, forKey: .accessToken)
             
             try accessTokenContainer.encodeIfPresent(token, forKey: .token)

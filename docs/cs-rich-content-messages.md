@@ -43,7 +43,7 @@ When a user interacts with rich content (like clicking a button), you need to se
 ```swift
 // Handle button click in a rich message
 func onRichMessageButtonTapped(button: MessageReplyButton) {
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         LogManager.error("Unexpected nil thread")
         return
     }

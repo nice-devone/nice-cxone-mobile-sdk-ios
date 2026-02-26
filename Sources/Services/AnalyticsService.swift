@@ -49,8 +49,13 @@ extension AnalyticsService: AnalyticsProvider {
         connectionContext.visitorId
     }
     
-    public var visitorId: UUID? {
-        connectionContext.visitorId.flatMap(UUID.init)
+    @available(
+        *, deprecated,
+         renamed: "visitorIdString",
+         message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend."
+    )
+    public var visitorId: UUID? { // swiftlint:disable:this no_uuid
+        connectionContext.visitorId.flatMap(UUID.init) // swiftlint:disable:this no_uuid
     }
 
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
@@ -58,7 +63,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - title: The title or description of the page that was viewed.
     ///   - url: A URL uniquely identifying the page.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
@@ -101,7 +106,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - title: The title or description of the page that was left.
     ///   - url: A URL uniquely identifying the page.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -136,7 +141,7 @@ extension AnalyticsService: AnalyticsProvider {
 
     /// Reports to CXone that the chat window/view has been opened by the visitor.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -162,7 +167,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - type: The type of conversion. Can be any value.
     ///   - value: The value associated with the conversion (for example, unit amount). Can be any number.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -192,7 +197,7 @@ extension AnalyticsService: AnalyticsProvider {
     /// Reports to CXone that a proactive action was displayed to the visitor.
     /// - Parameter data: The proactive action that was displayed.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.
@@ -231,7 +236,7 @@ extension AnalyticsService: AnalyticsProvider {
     ///
     /// - Parameter data: The proactive action that was successful or fails.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
     /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
     /// method was not called before triggering analytics event.

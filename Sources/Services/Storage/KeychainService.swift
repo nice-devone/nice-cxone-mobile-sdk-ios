@@ -23,6 +23,7 @@ class KeychainService: KeychainSwift {
     enum Keys: String, CaseIterable {
         case customer = "com.nice.cxonechat.customer"
         case accessToken = "com.nice.cxonechat.accessToken"
+        case transactionToken = "com.nice.cxonechat.transactionToken"
     }
     
     // MARK: - Methods

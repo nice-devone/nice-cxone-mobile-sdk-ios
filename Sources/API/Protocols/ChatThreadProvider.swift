@@ -127,4 +127,18 @@ public protocol ChatThreadProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     func reportTypingStart(_ didStart: Bool) async throws
+    
+    /// Sends a transcript to the specified email address.
+    ///
+    /// This method validates the email and initiates delivery of the conversation transcript.
+    ///
+    /// - Parameter email: The recipient’s email address.
+    ///
+    /// - Throws: ``CXoneChatError/notConnected`` If the method is called before establishing a connection.
+    ///     Ensure you call the `connect()` method first.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` If the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/sendTranscriptFailed`` If the feature is disabled, the provided email is invalid, or an error occurs on the backend.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` If `contactID` is not set properly.
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` If the SDK cannot retrieve the customer identity, which may not have been set.
+    func sendTranscript(to email: String) async throws
 }

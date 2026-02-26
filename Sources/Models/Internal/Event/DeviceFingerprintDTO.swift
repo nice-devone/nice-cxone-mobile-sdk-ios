@@ -14,13 +14,15 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Represents fingerprint data about the customer.
 struct DeviceFingerprintDTO {
-    
+
     // MARK: - Properties
-    
+
     /// Country code per locale.
     let country: String?
 
@@ -49,15 +51,27 @@ struct DeviceFingerprintDTO {
     let deviceToken: String?
 
     // MARK: - Init
-    
+
     init(
         country: String? = Locale.current.countryCode,
         ipAddress: String? = nil,
         language: String? = Locale.current.languageCode,
         location: String? = nil,
         applicationType: String? = "native",
-        operatingSystem: String? = UIDevice.current.systemName,
-        osVersion: String? = UIDevice.current.systemVersion,
+        operatingSystem: String? = {
+            #if canImport(UIKit)
+            return UIDevice.current.systemName
+            #else
+            return "macOS"
+            #endif
+        }(),
+        osVersion: String? = {
+            #if canImport(UIKit)
+            return UIDevice.current.systemVersion
+            #else
+            return ProcessInfo.processInfo.operatingSystemVersionString
+            #endif
+        }(),
         deviceType: String? = "mobile",
         deviceToken: String? = nil
     ) {
@@ -112,11 +126,11 @@ extension DeviceFingerprintDTO: Codable {
 }
 
 // MARK: - Helpers
-    
+
 private extension Locale {
-    
+
     var countryCode: String? {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, macOS 13, *) {
             region?.identifier
         } else {
             regionCode

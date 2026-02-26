@@ -18,6 +18,8 @@ import Foundation
 /// The various options for how a channel is configured.
 public struct ChannelConfiguration {
     
+    // MARK: - Properties
+    
     /// Whether the channel supports multiple threads for the same user.
     public let hasMultipleThreadsPerEndUser: Bool
 
@@ -26,6 +28,9 @@ public struct ChannelConfiguration {
 
     /// Whether OAuth authorization is enabled for the channel.
     public let isAuthorizationEnabled: Bool
+    
+    /// Indicates whether the **Send Transcript** feature is enabled for the channel.
+    public let isSendTranscriptEnabled: Bool
     
     /// Details of attachment uploads allowed.
     public let fileRestrictions: FileRestrictions
@@ -40,4 +45,9 @@ public struct ChannelConfiguration {
 
     /// Whether the channel is liveChat vs messaging
     public let isLiveChat: Bool
+    
+    /// The authentication type for this channel.
+    ///
+    /// Determines which authentication method to use when connecting to this channel.
+    public let authenticationType: AuthenticationType
 }

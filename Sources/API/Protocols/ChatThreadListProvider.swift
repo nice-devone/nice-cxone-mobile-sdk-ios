@@ -108,7 +108,7 @@ public protocol ChatThreadListProvider {
     /// - Parameter id: The id of the thread to load. Optional, if omitted,
     ///     it will attempt to load the customer's active thread. If there is no active thread, this returns an error.
     ///
-    /// - Warning: If method receives `UUID` for a non existing thread, it throws ``CXoneChatError/invalidThread`` error.
+    /// - Warning: If method receives identifier for a non existing thread, it throws ``CXoneChatError/invalidThread`` error.
     /// - Warning: Should only be used when opening a thread for multithreaded channel configuration
         /// or to reconnect after returning from the background.
     ///
@@ -120,13 +120,14 @@ public protocol ChatThreadListProvider {
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func load(with id: UUID?) async throws
+    // swiftlint:disable:previous no_uuid
     
     /// Loads the a thread for the customer and gets messages.
     ///
     /// - Parameter id: The id of the thread to load. Optional, if omitted,
     ///     it will attempt to load the customer's active thread. If there is no active thread, this returns an error.
     ///
-    /// - Warning: If method receives `String` for a non existing thread, it throws ``CXoneChatError/invalidThread`` error.
+    /// - Warning: If method receives identifier for a non existing thread, it throws ``CXoneChatError/invalidThread`` error.
     /// - Warning: Should only be used when opening a thread for multithreaded channel configuration
         /// or to reconnect after returning from the background.
     ///
@@ -147,6 +148,7 @@ public protocol ChatThreadListProvider {
     /// - Returns: The provider for the chat thread.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func provider(for threadId: UUID) throws -> any ChatThreadProvider
+    // swiftlint:disable:previous no_uuid
     
     /// The delegate for the chat thread provider based on chat thread's unique identifier
     ///

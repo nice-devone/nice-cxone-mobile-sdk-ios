@@ -117,6 +117,10 @@ enum EventType: String, CaseIterable {
     
     case recoverLiveChat = "RecoverLivechat"
     
+    case sendTranscript = "SendTranscript"
+    
+    case transcriptSent = "TranscriptSent"
+    
     // MARK: Contact
     
     /// An event received when the assigned agent changes for a contact.

@@ -23,17 +23,24 @@ protocol EnvironmentDetails {
 
     /// The URL used for the WebSocket connection.
     var socketURL: String { get }
-    
+
     /// The URL used for internal logging.
     var loggerURL: String { get }
+
+    /// The base URL for the transaction token server (used to construct the transaction token endpoint).
+    var tokenURL: String { get }
 }
 
 // MARK: - Helpers
 
 extension EnvironmentDetails {
-    
+
     var chatServerUrl: URL? {
         URL(string: chatURL)
+    }
+
+    var tokenServerUrl: URL? {
+        URL(string: tokenURL)
     }
 
     func webAnalyticsURL(brandId: Int) -> URL? {

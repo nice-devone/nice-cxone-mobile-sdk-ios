@@ -17,8 +17,8 @@ import Foundation
 
 extension URLSessionProtocol {
 
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
+    /// - Throws: ``URLError`` or other errors from the underlying network request.
     @discardableResult
     func fetch(from url: URL, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
         let request = URLRequest(url: url, method: .get)
@@ -26,8 +26,8 @@ extension URLSessionProtocol {
         return try await fetch(for: request, file: file, line: line)
     }
     
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
+    /// - Throws: ``URLError`` or other errors from the underlying network request.
     @discardableResult
     func fetch(
         for request: URLRequest,
@@ -39,12 +39,13 @@ extension URLSessionProtocol {
         do {
             let (data, response) = try await data(for: request)
             
-            if let response = response as? HTTPURLResponse {
-                response.log(data: data, file: file, line: line)
-            }
-                        
-            if let apiError = try? JSONDecoder().decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
-                throw CXoneChatError.sdkVersionNotSupported
+            if let httpResponse = response as? HTTPURLResponse {
+                httpResponse.log(data: data, file: file, line: line)
+
+                // Check for SDK version not supported error
+                if let apiError = try? JSONDecoder().decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
+                    throw CXoneChatError.sdkVersionNotSupported
+                }
             }
             
             return (data, response)

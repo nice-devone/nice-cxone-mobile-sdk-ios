@@ -483,7 +483,7 @@ Retrieve a `ChatThreadProvider` by calling the appropriate method on `ChatThread
 ```swift
 Task { @MainActor in
     do {
-        let provider = try chatProvider.threads.provider(for: thread.id)
+        let provider = try chatProvider.threads.provider(for: thread.idString)
 
         try await provider.archive()
     } catch {
@@ -512,7 +512,7 @@ Key features include:
 func loadMoreMessages() async {
     LogManager.trace("Trying to load more messages")
         
-    guard let thread, thread.hasMoreMessagesToLoad, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, thread.hasMoreMessagesToLoad, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -533,7 +533,7 @@ Sends the contact's message string, via `ChatThreadProvider.send(_:)` method, th
 func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem], postback: String? = nil) {
     ...
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -573,7 +573,7 @@ Throws an error if any requirement is not met.
 func setThread(name: String) {
     ...
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -598,7 +598,7 @@ func onArchive(_ thread: CXoneChatUI.ChatThread) {
  
     Task { @MainActor in
         do {
-            let provider = try chatProvider.threads.provider(for: thread.id)
+            let provider = try chatProvider.threads.provider(for: thread.idString)
             
             try await provider.archive()
         } catch {
@@ -615,7 +615,7 @@ Use `ChatThreadListProvider.markRead(_:)` to mark the most recent message in a t
 ```swift
 func onAppear() {
     ...    
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -636,7 +636,7 @@ To be able to end live chat conversation from a customer's perspective, the SDK 
 
 ```swift
 func onEndConversation() {
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -663,7 +663,7 @@ func onEndConversation() {
 func onUserTyping() {
     LogManager.trace("User has \(isUserTyping ? "started" : "ended") typing")
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
         ...
         return
     }
@@ -714,7 +714,7 @@ func onEditPrechatField() {
         }
 
         do {
-            try await chatProvider.threads.customFields.set(answers, for: thread.id)
+            try await chatProvider.threads.customFields.set(answers, for: thread.idString)
         } catch {
             ...
         }

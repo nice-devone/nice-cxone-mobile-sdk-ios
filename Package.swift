@@ -21,7 +21,7 @@ let package = Package(
     name: "CXoneChatSDK",
     platforms: [
         .iOS(.v15),
-        .macOS(.v11)
+        .macOS(.v12)
     ],
     products: [
         .library(
@@ -32,7 +32,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "24.0.0"),
         .package(url: "https://github.com/Kolos65/Mockable", from: "0.0.11"),
-        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "3.1.0")
+        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "3.2.0")
     ],
     targets: [
         .target(

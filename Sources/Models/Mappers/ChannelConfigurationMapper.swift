@@ -22,10 +22,12 @@ enum ChannelConfigurationMapper {
             hasMultipleThreadsPerEndUser: entity.settings.hasMultipleThreadsPerEndUser,
             isProactiveChatEnabled: entity.settings.isProactiveChatEnabled,
             isAuthorizationEnabled: entity.isAuthorizationEnabled,
+            isSendTranscriptEnabled: entity.settings.isSendTranscriptEnabled,
             fileRestrictions: FileRestrictions(from: entity.settings.fileRestrictions),
             features: entity.settings.features,
             isOnline: entity.liveChatAvailability.isOnline,
-            isLiveChat: entity.liveChatAvailability.isChannelLiveChat
+            isLiveChat: entity.liveChatAvailability.isChannelLiveChat,
+            authenticationType: entity.authenticationType
         )
     }
 }

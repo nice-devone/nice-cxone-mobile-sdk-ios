@@ -16,15 +16,12 @@
 import Foundation
 
 /// An access token used by the customer for sending messages if OAuth authorization is on for the channel.
-struct AccessTokenDTO: Equatable, Expirable {
+struct LegacyAccessTokenDTO: Equatable, Expirable {
 
     // MARK: - Properties
 
-    /// The actual access token value.
-    let value: String
-
-    /// The token to refresh the actual access token value.
-    let refreshToken: String
+    /// The actual token value.
+    let token: String
     
     /// The number of seconds before the access token becomes invalid.
     let expiresIn: Int
@@ -35,30 +32,19 @@ struct AccessTokenDTO: Equatable, Expirable {
 
 // MARK: - Codable
 
-extension AccessTokenDTO: Codable {
+extension LegacyAccessTokenDTO: Codable {
     
     enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-        case refreshToken = "refresh_token"
-        case expiresIn = "expires_in"
-        case createdDate
+        case token
+        case createdDate = "currentDate"
+        case expiresIn
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.value = try container.decode(String.self, forKey: .accessToken)
-        self.refreshToken = try container.decode(String.self, forKey: .refreshToken)
+        self.token = try container.decode(String.self, forKey: .token)
         self.expiresIn = try container.decode(Int.self, forKey: .expiresIn)
         self.createdDate = try container.decodeIfPresent(Date.self, forKey: .createdDate) ?? Date()
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(value, forKey: .accessToken)
-        try container.encode(refreshToken, forKey: .refreshToken)
-        try container.encode(expiresIn, forKey: .expiresIn)
-        try container.encode(createdDate, forKey: .createdDate)
     }
 }

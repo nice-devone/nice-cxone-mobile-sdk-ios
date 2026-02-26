@@ -27,6 +27,7 @@ public protocol ContactCustomFieldsProvider {
     /// - Returns: Dictionary of custom fields for current chat case.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func get(for threadId: UUID) -> [String: String]
+    // swiftlint:disable:previous no_uuid
     
     /// Custom fields for current chat case.
     ///
@@ -55,6 +56,7 @@ public protocol ContactCustomFieldsProvider {
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func set(_ customFields: [String: String], for threadId: UUID) async throws
+    // swiftlint:disable:previous no_uuid
     
     /// Sets custom fields to be saved on a contact (specific thread).
     ///

@@ -47,7 +47,7 @@ public struct InactivityPopup: Equatable {
     
     /// The thread ID associated with the popup.
     @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
-    public let threadId: UUID
+    public let threadId: UUID // swiftlint:disable:this no_uuid
     
     /// The thread ID associated with the popup.
     public let threadIdString: String

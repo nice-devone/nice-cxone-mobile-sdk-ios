@@ -22,7 +22,7 @@ struct InactivityPopupButtonElementDTO: Equatable {
     
     /// The unique identifier of the element.
     @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    let id: UUID
+    let id: UUID // swiftlint:disable:this no_uuid
     
     /// The unique identifier of the element.
     let idString: String
@@ -55,7 +55,7 @@ extension InactivityPopupButtonElementDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.id = try container.decode(UUID.self, forKey: .id)
+        self.id = try container.decode(UUID.self, forKey: .id) // swiftlint:disable:this no_uuid
         self.idString = try container.decode(String.self, forKey: .id)
         self.text = try container.decode(String.self, forKey: .text)
         self.postback = try container.decode(String.self, forKey: .postback)

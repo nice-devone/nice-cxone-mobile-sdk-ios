@@ -39,4 +39,6 @@ enum EventErrorCode: String, Codable {
     case recoveringLivechatFailed = "RecoveringLivechatFailed"
     
     case inconsistentData = "InconsistentData"
+    
+    case sendingTranscriptFailed = "SendingTranscriptFailed"
 }

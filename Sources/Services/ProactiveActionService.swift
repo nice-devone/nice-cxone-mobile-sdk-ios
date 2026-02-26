@@ -24,6 +24,10 @@ class ProactiveActionService {
     private let customerCustomFieldsService: CustomerCustomFieldsService?
     private let threadsService: ChatThreadListService?
     
+    private var userDefaultsService: UserDefaultsService {
+        socketService.connectionContext.userDefaultsService
+    }
+    
     // MARK: - Protocol Properties
     
     var events: AnyPublisher<any ReceivedEvent, Never> {
@@ -71,7 +75,7 @@ extension ProactiveActionService: EventReceiver {
                 customerCustomFieldsService?.updateFields(fields)
             }
             
-            UserDefaultsService.shared.set(message, for: .welcomeMessage)
+            userDefaultsService.set(message, for: .welcomeMessage)
         case .customPopupBox:
             LogManager.trace("Ignoring proactive action of type custom popup box")
         }

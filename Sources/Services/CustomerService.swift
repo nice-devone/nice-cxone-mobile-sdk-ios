@@ -83,8 +83,9 @@ extension CustomerService: CustomerProvider {
     func setAuthorizationCode(_ code: String) {
         LogManager.trace("Setting authorization code")
 
-        // Reset `accessToken` with a new authorization code for fresh authorization
+        // Reset `accessToken` and `transactionToken` with a new authorization code for fresh authorization
         connectionContext.accessToken = nil
+        connectionContext.transactionToken = nil
         
         connectionContext.authorizationCode = code
     }
@@ -92,8 +93,9 @@ extension CustomerService: CustomerProvider {
     func setCodeVerifier(_ verifier: String) {
         LogManager.trace("Setting code verifier")
 
-        // Reset `accessToken` with a new authorization code for fresh authorization
+        // Reset `accessToken` and `transactionToken` with a new authorization code for fresh authorization
         connectionContext.accessToken = nil
+        connectionContext.transactionToken = nil
         
         connectionContext.codeVerifier = verifier
     }
@@ -141,7 +143,7 @@ extension CustomerService {
                 throw CXoneChatError.missingAccessToken
             }
             
-            socketService.accessToken = token
+            connectionContext.accessToken = token
             
             connectionContext.customer = CustomerIdentityDTO(
                 idOnExternalPlatform: response.postback.data.consumerIdentity.idOnExternalPlatform,

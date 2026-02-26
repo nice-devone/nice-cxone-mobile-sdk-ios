@@ -50,6 +50,9 @@ class ChatThreadListService {
     private var customerCustomFieldsService: CustomerCustomFieldsService? {
         customerCustomFields as? CustomerCustomFieldsService
     }
+    private var userDefaultsService: UserDefaultsService {
+        connectionContext.userDefaultsService
+    }
 
     // MARK: - Protocol Properties
 
@@ -179,11 +182,11 @@ extension ChatThreadListService: ChatThreadListProvider {
         
         let provider = try provider(for: thread)
         
-        if let service = provider as? ChatThreadService, let message = UserDefaultsService.shared.get(String.self, for: .welcomeMessage) {
+        if let service = provider as? ChatThreadService, let message = userDefaultsService.get(String.self, for: .welcomeMessage) {
             thread.merge(messages: [try service.getParsedWelcomeMessage(message)])
         }
         
-        if let message = UserDefaultsService.shared.get(String.self, for: .welcomeMessage), let threadService = provider as? ChatThreadService {
+        if let message = userDefaultsService.get(String.self, for: .welcomeMessage), let threadService = provider as? ChatThreadService {
             try threadService.handleWelcomeMessage(message)
         }
         
@@ -195,7 +198,7 @@ extension ChatThreadListService: ChatThreadListProvider {
         
         // Thread has been successfully created, store its ID for faster recovering
         if connectionContext.chatMode != .multithread {
-            UserDefaultsService.shared.set(thread.idString, for: .cachedThreadIdOnExternalPlatform)
+            userDefaultsService.set(thread.idString, for: .cachedThreadIdOnExternalPlatform)
         }
 
         if connectionContext.chatMode == .liveChat, let threadService = provider as? ChatThreadService {
@@ -214,7 +217,7 @@ extension ChatThreadListService: ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    func load(with threadId: UUID?) async throws {
+    func load(with threadId: UUID?) async throws { // swiftlint:disable:this no_uuid
         try await load(with: threadId?.uuidString)
     }
     
@@ -232,7 +235,7 @@ extension ChatThreadListService: ChatThreadListProvider {
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    func provider(for threadId: UUID) throws -> any ChatThreadProvider {
+    func provider(for threadId: UUID) throws -> any ChatThreadProvider { // swiftlint:disable:this no_uuid
         try provider(for: threadId.uuidString)
     }
     
@@ -284,7 +287,7 @@ extension ChatThreadListService {
     func handleForCurrentChatMode(_ mode: ChatMode) async throws {
         switch mode {
         case .singlethread, .liveChat:
-            let cachedThreadId: String? = UserDefaultsService.shared.get(String.self, for: .cachedThreadIdOnExternalPlatform)
+            let cachedThreadId: String? = userDefaultsService.get(String.self, for: .cachedThreadIdOnExternalPlatform)
 
             try await recoverThread(threadId: cachedThreadId)
         case .multithread:
@@ -903,7 +906,7 @@ private extension ChatThreadListService {
         // Clear cached thread ID for single-thread and LiveChat modes
         // Do this FIRST, regardless of threads array state
         if connectionContext.chatMode != .multithread {
-            UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
+            userDefaultsService.remove(.cachedThreadIdOnExternalPlatform)
         }
 
         guard !threads.isEmpty else {

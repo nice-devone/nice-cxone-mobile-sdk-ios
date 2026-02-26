@@ -28,8 +28,6 @@ protocol SocketService: AnyObject {
 
     var delegate: SocketDelegate? { get set }
 
-    var accessToken: AccessTokenDTO? { get set }
-
     var cancellables: [AnyCancellable] { get set }
     
     /// Opens a new WebSocket connection using the specified URL.
@@ -64,7 +62,7 @@ extension SocketService {
     ///   - shouldCheck: Whether to check for an expired access token.
     ///
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    func send(data: Data) async throws {
-        try await send(data: data, shouldCheck: true)
+    func send(data: Data, shouldCheck: Bool = true) async throws {
+        try await send(data: data, shouldCheck: shouldCheck)
     }
 }

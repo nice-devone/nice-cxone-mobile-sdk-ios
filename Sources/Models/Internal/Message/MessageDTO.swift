@@ -27,7 +27,7 @@ struct MessageDTO: Equatable {
          renamed: "idOnExternalPlatformString",
          message: "Use `idOnExternalPlatformString`. It preserves the original case-sensitive identifier from the backend."
     )
-    let idOnExternalPlatform: UUID
+    let idOnExternalPlatform: UUID // swiftlint:disable:this no_uuid
     
     /// The unique id for the message.
     let idOnExternalPlatformString: String
@@ -37,7 +37,7 @@ struct MessageDTO: Equatable {
          renamed: "threadIdOnExternalPlatformString",
          message: "Use `threadIdOnExternalPlatformString`. It preserves the original case-sensitive identifier from the backend."
     )
-    let threadIdOnExternalPlatform: UUID
+    let threadIdOnExternalPlatform: UUID // swiftlint:disable:this no_uuid
     
     /// The thread id for the message.
     let threadIdOnExternalPlatformString: String
@@ -80,9 +80,11 @@ struct MessageDTO: Equatable {
         authorUser: AgentDTO?,
         authorEndUserIdentity: CustomerIdentityDTO?
     ) {
-        self.idOnExternalPlatform = UUID() // Replaced with `idOnExternalPlatformString`
+        // swiftlint:disable:next no_uuid
+        self.idOnExternalPlatform = UUID() // replaced with `idOnExternalPlatformString`
         self.idOnExternalPlatformString = idOnExternalPlatform
-        self.threadIdOnExternalPlatform = UUID() // Replaced with `threadIdOnExternalPlatformString`
+        // swiftlint:disable:next no_uuid
+        self.threadIdOnExternalPlatform = UUID() // `threadIdOnExternalPlatformString`
         self.threadIdOnExternalPlatformString = threadIdOnExternalPlatform
         self.contentType = contentType
         self.createdAt = createdAt
@@ -114,8 +116,10 @@ extension MessageDTO: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        // swiftlint:disable:next no_uuid
         self.idOnExternalPlatform = try container.decode(UUID.self, forKey: .idOnExternalPlatform)
         self.idOnExternalPlatformString = try container.decode(String.self, forKey: .idOnExternalPlatform)
+        // swiftlint:disable:next no_uuid
         self.threadIdOnExternalPlatform = try container.decode(UUID.self, forKey: .threadIdOnExternalPlatform)
         self.threadIdOnExternalPlatformString = try container.decode(String.self, forKey: .threadIdOnExternalPlatform)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)

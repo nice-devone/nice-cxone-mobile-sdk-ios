@@ -25,7 +25,7 @@ public class CXoneChat: ChatProvider {
     /// The singleton instance of the CXone chat SDK.
     public static var shared: ChatProvider = CXoneChat(
         socketService: SocketServiceImpl(
-            connectionContext: ConnectionContextImpl(keychainService: KeychainService())
+            connectionContext: ConnectionContextImpl(keychainService: KeychainService(), userDefaultsService: UserDefaultsServiceImpl())
         )
     )
     
@@ -119,12 +119,9 @@ public class CXoneChat: ChatProvider {
         
         (shared.connection as? ConnectionService)?.signOut()
         
-        UserDefaultsService.shared.remove(.welcomeMessage)
-        UserDefaultsService.shared.remove(.cachedThreadIdOnExternalPlatform)
-        
         shared = CXoneChat(
             socketService: SocketServiceImpl(
-                connectionContext: ConnectionContextImpl(keychainService: KeychainService())
+                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), userDefaultsService: UserDefaultsServiceImpl())
             )
         )
     }

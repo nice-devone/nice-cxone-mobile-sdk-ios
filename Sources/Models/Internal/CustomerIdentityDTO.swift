@@ -29,3 +29,20 @@ struct CustomerIdentityDTO: Codable, Equatable {
     /// The last name of the customer. Use when sending a message to set the name in MAX.
     var lastName: String?
 }
+
+// MARK: - Methods
+
+extension CustomerIdentityDTO {
+    
+    func copy(from entity: TransactionTokenDTO) -> CustomerIdentityDTO {
+        guard let identity = entity.customerIdentity else {
+            return self
+        }
+        
+        return CustomerIdentityDTO(
+            idOnExternalPlatform: identity.idOnExternalPlatform, // always use id from the entity
+            firstName: identity.firstName ?? self.firstName,
+            lastName: identity.lastName ?? self.lastName
+        )
+    }
+}

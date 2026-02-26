@@ -27,6 +27,12 @@ struct ChannelConfigurationDTO {
     let prechatSurvey: PreChatSurveyDTO?
     
     let liveChatAvailability: CurrentLiveChatAvailability
+    
+    /// The authentication type for this channel.
+    ///
+    /// Determines which authentication method to use when connecting to this channel.
+    /// Defaults to anonymous if not specified by the backend.
+    let authenticationType: AuthenticationType
 }
 
 // MARK: - Methods
@@ -37,13 +43,15 @@ extension ChannelConfigurationDTO {
         settings: ChannelSettingsDTO? = nil,
         isAuthorizationEnabled: Bool? = nil,
         prechatSurvey: PreChatSurveyDTO? = nil,
-        liveChatAvailability: CurrentLiveChatAvailability? = nil
+        liveChatAvailability: CurrentLiveChatAvailability? = nil,
+        authenticationType: AuthenticationType? = nil
     ) -> ChannelConfigurationDTO {
         ChannelConfigurationDTO(
             settings: settings ?? self.settings,
             isAuthorizationEnabled: isAuthorizationEnabled ?? self.isAuthorizationEnabled,
             prechatSurvey: prechatSurvey ?? self.prechatSurvey,
-            liveChatAvailability: liveChatAvailability ?? self.liveChatAvailability
+            liveChatAvailability: liveChatAvailability ?? self.liveChatAvailability,
+            authenticationType: authenticationType ?? self.authenticationType
         )
     }
 }
@@ -57,6 +65,7 @@ extension ChannelConfigurationDTO: Decodable {
         case isAuthorizationEnabled
         case preContactForm
         case isLiveChat
+        case isSecuredCookieEnabled
     }
     
     enum PreContactFormCodingKeys: CodingKey {
@@ -74,6 +83,18 @@ extension ChannelConfigurationDTO: Decodable {
             isOnline: false,
             expires: .distantPast
         )
+        
+        // Derive authentication type from backend boolean flags
+        // Backend sends isSecuredCookieEnabled and isAuthorizationEnabled to indicate auth type
+        let isSecuredCookieEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSecuredCookieEnabled)
+
+        if isSecuredCookieEnabled == true {
+            self.authenticationType = .securedCookie
+        } else if self.isAuthorizationEnabled {
+            self.authenticationType = .thirdPartyOAuth
+        } else {
+            self.authenticationType = .anonymous
+        }
         
         if let prechatFormContainer = try? container.nestedContainer(keyedBy: PreContactFormCodingKeys.self, forKey: .preContactForm) {
             self.prechatSurvey = PreChatSurveyDTO(

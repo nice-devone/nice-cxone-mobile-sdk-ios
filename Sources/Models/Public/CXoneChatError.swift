@@ -144,6 +144,14 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case customerAssociationFailure
     
+    /// The SDK tried to send a transcript but something went wrong
+    ///
+    /// - Source of problem: SDK used incorrectly/BE issue
+    /// - Attention: Check if the feature is enabled via ``ChannelConfiguration/isSendTranscriptEnabled``
+    ///     and the provided e-mail is valid. Otherwise, gather any information about how the error was encountered
+    ///     and contact the CXoneChat SDK team.
+    case sendTranscriptFailed
+    
     // MARK: Errors when calling connect
 
     /// The WebSocket refused to connect.
@@ -169,6 +177,13 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case missingAccessToken
 
+    /// The transaction token has expired.
+    ///
+    /// The transaction token is used to be able to establish the web socket connection.
+    /// - Source of problem: -
+    /// - Attention: Re-trigger OAuth flow to retrieve new authorization code and code verifier.
+    case transactionTokenExpired
+    
     /// The customer could not be associated with a visitor.
     ///
     /// Some events, except customer identity, uses `visitorId` to match an user.
@@ -244,6 +259,19 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case eventTimeout
     
+    // MARK: Errors when using transaction token authentication
+    
+    /// The transaction token request failed.
+    ///
+    /// This error occurs when the SDK is unable to obtain a transaction token from the server.
+    /// The token is required for WebSocket authentication when using secured cookie or third-party OAuth authentication modes.
+    ///
+    /// - Parameter statusCode: The HTTP status code returned by the server.
+    /// - Source of problem: Network issue/Server issue/SDK issue
+    /// - Attention: Check network connectivity and ensure the channel is properly configured for transaction token authentication.
+    ///     Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
+    case transactionTokenRequestFailed(statusCode: Int)
+
     // MARK: - Properties
 
     public var errorDescription: String? {
@@ -270,6 +298,8 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Something went wrong and the channel configuration could not be retrieved."
         case .missingAccessToken:
             return "The customer was successfully authorized using OAuth, but an access token wasn’t returned."
+        case .transactionTokenExpired:
+            return "The transaction token has expired. Please try logging in again."
         case .customerVisitorAssociationFailure:
             return "The customer could not be successfully associated with a visitor."
         case .serverError:
@@ -308,6 +338,10 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Unable to trigger required method because thread is not in required state."
         case .eventTimeout:
             return "Did not receive a paired response from the server in the expected time."
+        case .sendTranscriptFailed:
+            return "Unable to send transcript. Please try again later."
+        case .transactionTokenRequestFailed:
+            return "Failed to obtain transaction token from the server."
         }
     }
 

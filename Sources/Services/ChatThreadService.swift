@@ -12,6 +12,7 @@
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
+// swiftlint:disable file_length
 
 import Combine
 import Foundation
@@ -307,6 +308,55 @@ extension ChatThreadService: ChatThreadProvider {
         
         try await socketService.send(data: data)
     }
+    
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/sendTranscriptFailed`` if the feature is not enabled, provided email is not valid or something went wrong on the BE side.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if contactID is not set properly
+    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
+    func sendTranscript(to email: String) async throws {
+        LogManager.trace("Sending transcript")
+        
+        try socketService.checkForConnection()
+        
+        guard chatThread.state != .pending else {
+            throw CXoneChatError.illegalThreadState
+        }
+        guard connectionContext.channelConfig.settings.isSendTranscriptEnabled else {
+            throw CXoneChatError.sendTranscriptFailed
+        }
+        guard !email.isEmpty, email.isValid(regex: String.emailRegEx) else {
+            throw CXoneChatError.sendTranscriptFailed
+        }
+        guard let consumerContact = chatThread.contactId, !consumerContact.isEmpty else {
+            throw CXoneChatError.missingParameter("consumerContact")
+        }
+        
+        let event = try eventsService.create(
+            event: .sendTranscript,
+            with: .sendTranscriptData(SendTranscriptDataDTO(consumerContact: consumerContact, consumerRecipient: email))
+        )
+        
+        do {
+            try await events.sink(
+                type: .transcriptSent,
+                as: GenericEventDTO.self,
+                origin: event,
+                socketService: socketService,
+                eventsService: eventsService,
+                cancellables: &cancellables
+            )
+        } catch {
+            if let error = error as? OperationError, error.errorCode == .sendingTranscriptFailed {
+                throw CXoneChatError.sendTranscriptFailed
+            } else {
+                throw error
+            }
+        }
+        
+        LogManager.trace("Transcript successfully sent")
+    }
 }
 
 // MARK: - Internal methods
@@ -368,7 +418,9 @@ extension ChatThreadService {
             contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
             attachments: try await message.attachments.map(with: connectionContext),
             deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-            token: socketService.accessToken.map(\.token)
+            token: connectionContext.channelConfig.settings.isSecuredSessionsEnabled
+                ? connectionContext.transactionToken?.accessToken?.value
+                : connectionContext.accessToken?.token
         )
         
         // Ignore the message if it contains specific parameter
@@ -606,7 +658,9 @@ private extension ChatThreadService {
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-                token: socketService.accessToken.map(\.token)
+                token: connectionContext.channelConfig.settings.isSecuredSessionsEnabled
+                    ? connectionContext.transactionToken?.accessToken?.value
+                    : connectionContext.accessToken?.token
             )
         )
         

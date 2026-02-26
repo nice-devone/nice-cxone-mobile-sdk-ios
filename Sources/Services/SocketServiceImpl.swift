@@ -46,12 +46,6 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
     var urlSession: URLSessionProtocol {
         connectionContext.session
     }
-    var accessToken: AccessTokenDTO? {
-        get { connectionContext.accessToken }
-        set {
-            connectionContext.accessToken = newValue
-        }
-    }
 
     /// The maximum number of retry attempts allowed for reconnecting.
     ///
@@ -135,8 +129,18 @@ class SocketServiceImpl: NSObject, SocketService, EventReceiver {
         LogManager.trace("Sending a message:\n\(message.formattedJSON ?? message)")
         #endif
         
-        if shouldCheck, accessToken?.isExpired(currentDate: Date()) ?? false {
-            try await delegate?.refreshToken()
+        if shouldCheck {
+            let isTokenExpired = connectionContext.channelConfig.settings.isSecuredSessionsEnabled
+                ? connectionContext.transactionToken?.accessToken?.isExpired == true
+                : connectionContext.accessToken?.isExpired == true
+            
+            if isTokenExpired {
+                LogManager.trace("The access token is expired -> refreshing")
+                
+                try await delegate?.refreshToken()
+                
+                LogManager.trace("The access token has been refreshed, continuing with the message send")
+            }
         }
 
         socket?.send(.string(message))
@@ -298,7 +302,7 @@ private extension SocketServiceImpl {
             delegateManager.onError(error)
         case .tokenRefreshFailed:
             delegateManager.onTokenRefreshFailed()
-        case .customerReconnectFailed, .consumerReconnectFailed, .recoveringThreadFailed, .recoveringLivechatFailed:
+        case .customerReconnectFailed, .consumerReconnectFailed, .recoveringThreadFailed, .recoveringLivechatFailed, .sendingTranscriptFailed:
             // these are handled elsewhere
             break
         }

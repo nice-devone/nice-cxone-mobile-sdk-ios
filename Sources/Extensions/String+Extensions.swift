@@ -19,6 +19,8 @@ extension String {
     
     // MARK: - Properties
     
+    static let emailRegEx = #"^[A-Za-z0-9_%+-]+(?:\.[A-Za-z0-9_%+-]+)*@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,9}$"#
+    
     var formattedJSON: String? {
         guard !self.isEmpty, let data = self.data(using: .utf8) else {
             return nil
@@ -75,5 +77,9 @@ extension String {
     
     func nilIfEmpty() -> String? {
         isEmpty ? nil : self
+    }
+    
+    func isValid(regex: String) -> Bool {
+        self.range(of: regex, options: [.regularExpression]) != nil
     }
 }

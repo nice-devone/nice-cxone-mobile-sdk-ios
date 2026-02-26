@@ -108,4 +108,22 @@ public enum Environment: String, CaseIterable, EnvironmentDetails, Codable {
             return "https://app-de-jp1.niceincontact.com/logger-public"
         }
     }
+
+    /// The base URL for the transaction token server (used to construct the transaction token endpoint).
+    public var tokenURL: String {
+        switch self {
+        case .NA1:
+            return "https://digital-oauth-de-na1.niceincontact.com/"
+        case .EU1:
+            return "https://digital-oauth-de-eu1.niceincontact.com/"
+        case .AU1:
+            return "https://digital-oauth-de-au1.niceincontact.com/"
+        case .CA1:
+            return "https://digital-oauth-de-ca1.niceincontact.com/"
+        case .UK1:
+            return "https://digital-oauth-de-uk1.niceincontact.com/"
+        case .JP1:
+            return "https://digital-oauth-de-jp1.niceincontact.com/"
+        }
+    }
 }

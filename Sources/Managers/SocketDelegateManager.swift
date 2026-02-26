@@ -106,7 +106,8 @@ extension SocketDelegateManager: CXoneChatDelegate {
         delegates.forEach { $0.onCustomEventMessage(messageData) }
     }
     
-    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) {
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) { // swiftlint:disable:this no_uuid
         delegates.forEach { $0.onAgentTyping(isTyping, agent: agent, threadId: threadId) }
     }
     
@@ -134,7 +135,8 @@ extension SocketDelegateManager: CXoneChatDelegate {
         delegates.forEach { $0.onProactiveActionReceived(of: type) }
     }
     
-    func onProactivePopupAction(data: [String: Any], actionId: UUID) {
+    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
+    func onProactivePopupAction(data: [String: Any], actionId: UUID) { // swiftlint:disable:this no_uuid
         delegates.forEach { $0.onProactivePopupAction(data: data, actionId: actionId) }
     }
     

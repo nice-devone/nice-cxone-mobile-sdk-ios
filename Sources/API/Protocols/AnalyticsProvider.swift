@@ -19,8 +19,13 @@ import Foundation
 public protocol AnalyticsProvider {
     
     /// The id for the visitor.
-    @available(*, deprecated, renamed: "visitorIdString", message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend.")
+    @available(
+        *, deprecated,
+         renamed: "visitorIdString",
+         message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend."
+    )
     var visitorId: UUID? { get }
+    // swiftlint:disable:previous no_uuid
     
     /// The id for the visitor.
     var visitorIdString: String? { get }

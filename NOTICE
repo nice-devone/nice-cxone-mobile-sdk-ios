@@ -1,0 +1,83 @@
+NOTICE
+
+CXone Mobile SDK for iOS
+Copyright (c) 2021-2026 NiCE. All rights reserved.
+https://github.com/nice-devone/nice-cxone-mobile-sdk-ios
+
+This product includes software developed by NiCE and its contributors.
+
+================================================================================
+
+THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
+
+This project incorporates components from the projects listed below. The original
+copyright notices and the licenses under which NiCE received such components are
+set forth below. NiCE reserves all rights not expressly granted herein, whether
+by implication, estoppel or otherwise.
+
+================================================================================
+
+1. keychain-swift
+    Copyright 2015-2024 Evgenii Neumerzhitckii
+    Licensed under the MIT License
+    https://github.com/evgenyneu/keychain-swift
+
+2. Mockable
+    Copyright 2023 Kolos Foltanyi
+    Licensed under the MIT License
+    https://github.com/Kolos65/Mockable
+
+3. SwiftLintPlugin
+    Copyright 2022 Lukas Pistrol
+    Licensed under the MIT License
+    https://github.com/lukepistrol/SwiftLintPlugin
+
+4. swift-syntax
+    Copyright (c) Apple Inc. and the Swift project authors
+    Licensed under the Apache License 2.0
+    https://github.com/swiftlang/swift-syntax
+
+5. xctest-dynamic-overlay
+    Copyright 2021 Point-Free, Inc.
+    Licensed under the MIT License
+    https://github.com/pointfreeco/xctest-dynamic-overlay
+
+6. CXoneGuideUtility
+    Copyright 2021-2026 NiCE
+    Licensed under the NiCE Licese
+    https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios
+
+================================================================================
+
+LICENSE SUMMARIES
+
+MIT License
+-----------
+The following components are licensed under the MIT License:
+- keychain-swift
+- Mockable
+- SwiftLintPlugin
+- xctest-dynamic-overlay
+
+The MIT License text can be found at: https://opensource.org/licenses/MIT
+
+Apache License 2.0
+------------------
+The following components are licensed under the Apache License 2.0:
+- swift-syntax
+
+The Apache License 2.0 text can be found at: https://www.apache.org/licenses/LICENSE-2.0
+
+NiCE License
+------------
+The following components are licensed under the NiCE License:
+- CXoneGuideUtility
+
+The NiCE License text can be found at: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios
+
+================================================================================
+
+Full license texts for all dependencies are available in their respective
+repositories linked above.
+
+For questions regarding this NOTICE file or licensing, please contact NiCE at https://www.nice.com/contact-us.

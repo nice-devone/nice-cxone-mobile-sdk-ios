@@ -28,6 +28,8 @@ enum EventDataType {
     
     case setContactCustomFieldsData(SetContactCustomFieldsEventDataDTO)
     
+    case sendTranscriptData(SendTranscriptDataDTO)
+    
     // MARK: - Customer
     
     case setCustomerCustomFieldData(CustomerCustomFieldsDataDTO)
@@ -94,6 +96,8 @@ extension EventDataType: Encodable {
         case .endContact(let data):
             try container.encode(data)
         case .loadLiveChatData(let data):
+            try container.encode(data)
+        case .sendTranscriptData(let data):
             try container.encode(data)
         }
     }

@@ -24,7 +24,7 @@ struct RefreshTokenPayloadDataDTO {
 
 // MARK: - Codable
 
-extension RefreshTokenPayloadDataDTO: Codable {
+extension RefreshTokenPayloadDataDTO: Encodable {
     
     enum CodingKeys: CodingKey {
         case accessToken
@@ -32,13 +32,6 @@ extension RefreshTokenPayloadDataDTO: Codable {
     
     enum AccessTokenCodingKeys: CodingKey {
         case token
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let accessTokenContainer = try container.nestedContainer(keyedBy: AccessTokenCodingKeys.self, forKey: .accessToken)
-        
-        self.token = try accessTokenContainer.decode(String.self, forKey: .token)
     }
     
     func encode(to encoder: Encoder) throws {

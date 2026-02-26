@@ -22,5 +22,5 @@ struct CustomerAuthorizedEventPostbackDataDTO: Decodable, Equatable {
     let consumerIdentity: CustomerIdentityDTO
 
     /// An access token used by the customer for sending messages if OAuth authorization is on for the channel.
-    let accessToken: AccessTokenDTO?
+    let accessToken: LegacyAccessTokenDTO?
 }

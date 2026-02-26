@@ -71,7 +71,7 @@ public protocol ConnectionProvider {
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -86,7 +86,7 @@ public protocol ConnectionProvider {
     
     /// Prepares the SDK for establishing connection to the CXone service.
     ///
-    /// In order to you use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
+    /// In order to use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
     ///
     /// - Parameters:
     ///   - chatURL: The URL to be used for chat requests (channel config and attachment upload).
@@ -94,7 +94,7 @@ public protocol ConnectionProvider {
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -110,7 +110,7 @@ public protocol ConnectionProvider {
     
     /// Prepares the SDK for establishing connection to the CXone service.
     ///
-    /// In order to you use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
+    /// In order to use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
     ///
     /// - Parameters:
     ///   - chatURL: The URL to be used for chat requests (channel config and attachment upload).
@@ -119,7 +119,7 @@ public protocol ConnectionProvider {
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
@@ -130,8 +130,35 @@ public protocol ConnectionProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
+    @available(*, deprecated, message: "Replaced with prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:) to support tokenURL parameter.")
     func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String) async throws
 
+    /// Prepares the SDK for establishing connection to the CXone service.
+    ///
+    /// In order to use any ``AnalyticsProvider`` methods, it is necessary to call this method before invoking any of them.
+    ///
+    /// - Parameters:
+    ///   - chatURL: The URL to be used for chat requests (channel config and attachment upload).
+    ///   - socketURL: The URL to be used for the WebSocket connection.
+    ///   - loggerURL: The URL to be use for internal chat logger.
+    ///   - brandId: The unique id of the brand for which to open the connection.
+    ///   - channelId: The unique id of the channel for the connection.
+    ///   - tokenURL: The URL to be used for transaction token requests. If nil, the URL will be automatically derived from chatURL.
+    ///
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
+    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
+    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
+    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
+    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
+    /// - Throws: An error if any value throws an error during encoding.
+    func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String, tokenURL: String?) async throws
+    // swiftlint:disable:previous function_parameter_count
+    
     /// Connects to the CXone service via web socket.
     ///
     /// This method establishes web socket connection to be able to receive chat events defined in ``CXoneChatDelegate``.
@@ -139,13 +166,17 @@ public protocol ConnectionProvider {
     /// - Precondition: Either ``prepare(environment:brandId:channelId:)`` or ``prepare(chatURL:socketURL:brandId:channelId:)`` method
     /// must be called before this method.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
+    /// - Throws: ``CXoneChatError/transactionTokenExpired`` if the transaction token is expired.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
-    /// - Throws: ``CXoneChatError/notConnected`` if the connection was not successfully established
+    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
+    /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to get cached transaction token.
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
@@ -158,7 +189,7 @@ public protocol ConnectionProvider {
     ///
     /// - Parameter triggerId: The id of the trigger to manually execute.
     /// 
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
@@ -168,12 +199,13 @@ public protocol ConnectionProvider {
     /// - Throws: An error if any value throws an error during encoding.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func executeTrigger(_ triggerId: UUID) async throws
+    // swiftlint:disable:previous no_uuid
     
     /// Manually executes a trigger that was defined in CXone. This can be used to test that proactive actions are displaying.
     ///
     /// - Parameter triggerId: The id of the trigger to manually execute.
     ///
-    /// - Throws: ``CXoneChatError/illegalChatState``if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.

@@ -22,16 +22,22 @@ extension AnyPublisher<any ReceivedEvent, Never> {
     func sink<Type: ReceivedEvent>(
         dataType: Type.Type,
         origin event: EventDTO,
+        checkTokenExpiration: Bool = true,
         socketService: SocketService,
         eventsService: EventsService,
-        cancellables: inout [AnyCancellable]
+        cancellables: inout [AnyCancellable],
+        file: StaticString = #file,
+        line: UInt = #line
     ) async throws -> `Type` {
         try await self.sink(
             publisher: self.with(type: dataType),
             origin: event,
+            checkTokenExpiration: checkTokenExpiration,
             socketService: socketService,
             eventsService: eventsService,
-            cancellables: &cancellables
+            cancellables: &cancellables,
+            file: file,
+            line: line
         )
     }
         
@@ -40,16 +46,22 @@ extension AnyPublisher<any ReceivedEvent, Never> {
         type: EventType,
         as dataType: Type.Type,
         origin event: EventDTO,
+        checkTokenExpiration: Bool = true,
         socketService: SocketService,
         eventsService: EventsService,
-        cancellables: inout [AnyCancellable]
+        cancellables: inout [AnyCancellable],
+        file: StaticString = #file,
+        line: UInt = #line
     ) async throws -> `Type` {
         try await self.sink(
             publisher: self.with(type: type, as: dataType),
             origin: event,
+            checkTokenExpiration: checkTokenExpiration,
             socketService: socketService,
             eventsService: eventsService,
-            cancellables: &cancellables
+            cancellables: &cancellables,
+            file: file,
+            line: line
         )
     }
 }
@@ -58,17 +70,20 @@ extension AnyPublisher<any ReceivedEvent, Never> {
 
 private extension AnyPublisher<any ReceivedEvent, Never> {
 
-    private func sink<Type: ReceivedEvent>(
+    private func sink<Type: ReceivedEvent>(  // swiftlint:disable:this function_parameter_count
         publisher: some Publisher<Type, Never>,
         origin event: EventDTO,
+        checkTokenExpiration: Bool,
         socketService: SocketService,
         eventsService: EventsService,
-        cancellables: inout [AnyCancellable]
+        cancellables: inout [AnyCancellable],
+        file: StaticString = #file,
+        line: UInt = #line
     ) async throws -> `Type` {
         var result: `Type`?
         var handleTimeout = true
         
-        async let request: () = socketService.send(data: try eventsService.serialize(event: event))
+        async let request: () = socketService.send(data: try eventsService.serialize(event: event), shouldCheck: checkTokenExpiration)
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(), any Error>) in
             publisher
@@ -81,14 +96,16 @@ private extension AnyPublisher<any ReceivedEvent, Never> {
                     // If a post is received it will hit the receive value block followed by the completion block -> skip the completion failure block.
                     // If a post is not received and it times out, it skips the receive value block -> handle the completion failure block.
                     if case .failure(let error) = completion, handleTimeout {
-                        LogManager.error("Did recieve error: \(error) for eventType: \(event.payload.eventType)")
+                        LogManager.error("Did receive error: \(error) for eventType: \(event.payload.eventType)", file: file, line: line)
                         
                         continuation.resume(throwing: error)
                     }
                 } receiveValue: { response in
                     if response.eventId == event.eventId {
                         LogManager.info(
-                            "Did recieve event with same eventId: \(response.eventId) for event: \(response.realEventType?.rawValue ?? "unknown")"
+                            "Did receive event with same eventId: \(response.eventId) for event: \(response.realEventType?.rawValue ?? "unknown")",
+                            file: file,
+                            line: line
                         )
                         
                         handleTimeout = false
@@ -103,7 +120,7 @@ private extension AnyPublisher<any ReceivedEvent, Never> {
                 .with(type: OperationError.self)
                 .sink { error in
                     if error.eventId == event.eventId {
-                        LogManager.error("Did recieve error: \(error) for eventType: \(event.payload.eventType)")
+                        LogManager.error("Did receive error: \(error) for eventType: \(event.payload.eventType)", file: file, line: line)
                         handleTimeout = false
                         
                         continuation.resume(throwing: error)

@@ -12,6 +12,7 @@
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
+// swiftlint:disable no_uuid
 
 import Foundation
 
@@ -58,6 +59,7 @@ extension LowercaseUUID: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         
-        try container.encode(self.uuidString.lowercased())
+        try container.encode(self.uuidString)
     }
 }
+// swiftlint:enable no_uuid

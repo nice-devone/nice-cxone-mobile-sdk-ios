@@ -52,9 +52,10 @@ public protocol CXoneChatDelegate: AnyObject {
     /// - Parameters:
     ///   - isTyping: A `Bool` indicating whether the agent is typing (`true`) or has stopped typing (`false`).
     ///   - agent: An instance of the `Agent` class representing the agent sending the typing status.
-    ///   - threadId: A `UUID` identifying the chat thread associated with the typing event.
+    ///   - threadId: An identifier identifying the chat thread associated with the typing event.
     @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
     func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID)
+    // swiftlint:disable:previous no_uuid
     
     /// Notifies when an agent starts or stops typing in a specific chat thread.
     ///
@@ -85,6 +86,7 @@ public protocol CXoneChatDelegate: AnyObject {
     ///   - actionId: The unique identifier of the action.
     @available(*, deprecated, message: "Use onProactiveActionReceived(of:) instead. This method will be removed in a future version.")
     func onProactivePopupAction(data: [String: Any], actionId: UUID)
+    // swiftlint:disable:previous no_uuid
     
     /// Callback to be called when a custom popup proactive action is received.
     ///
@@ -112,13 +114,13 @@ public extension CXoneChatDelegate {
     func onThreadUpdated(_ chatThread: ChatThread) { }
     func onThreadsUpdated(_ chatThreads: [ChatThread]) { }
     func onCustomEventMessage(_ messageData: Data) { }
-    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) { }
+    func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: UUID) { } // swiftlint:disable:this no_uuid
     func onAgentTyping(_ isTyping: Bool, agent: Agent, threadId: String) { }
     func onContactCustomFieldsSet() { }
     func onCustomerCustomFieldsSet() { }
     func onError(_ error: Error) { }
     func onTokenRefreshFailed() { }
-    func onProactivePopupAction(data: [String: Any], actionId: UUID) { }
+    func onProactivePopupAction(data: [String: Any], actionId: UUID) { } // swiftlint:disable:this no_uuid
     func onProactivePopupAction(data: [String: Any], actionId: String) { }
     func onProactiveActionReceived(of type: ProactiveActionType) { }
     // swiftlint:enable missing_docs

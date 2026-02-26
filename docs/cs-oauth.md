@@ -122,6 +122,14 @@ try await CXoneChat.shared.connection.connect()
 
 After successful connection, the SDK will automatically exchange the authorization code for an access token and manage the token lifecycle.
 
+> Warning: It is necessary to have the authorization ALWAYS freshly generated. It can't be reused for new secured sessions flow. 
+> The CXoneChatSDK now contains `CXoneChatError.transactionTokenExpired` error that requires to re-trigger OAuth flow to obtain new authorization code and
+> code verifier.
+
+> Warning: For every new secured session, you must generate a fresh authorization code and PKCE code verifier.
+> Previously issued codes and verifiers cannot be reused. If the SDK throws `CXoneChatError.transactionTokenExpired`,
+> handle it by restarting the OAuth flow to obtain a new authorization code and code verifier.
+
 ## Complete Code Example
 
 Below is a simplified example of how to implement the OAuth flow in your app:
@@ -166,3 +174,4 @@ class LoginWithAmazonUseCase {
 - **Missing Authorization Code**: If `CXoneChat.shared.customer.setAuthorizationCode()` is not called before connecting, you may receive an error.
 - **Missing Code Verifier**: If your OAuth provider requires PKCE and you don't set a code verifier, authentication will fail.
 - **Invalid Redirect URI**: Ensure your app's URL scheme is correctly configured in your Info.plist and matches what's registered with your OAuth provider.
+

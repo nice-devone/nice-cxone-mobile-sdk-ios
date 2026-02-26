@@ -20,12 +20,12 @@ public class ChatThread: Identifiable {
 
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
     @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    public let id: UUID
+    public let id: UUID // swiftlint:disable:this no_uuid
     
     /// The unique id of the thread. Refers to the `idOnExternalPlatform`.
     ///
     /// The canonical, case-preserving identifier of the thread as provided by the backend.
-    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    /// Stores the **exact** value from the backend, without altering case.
     public let idString: String
     
     /// The name given to the thread (for multi-thread channels only).
@@ -72,6 +72,7 @@ public class ChatThread: Identifiable {
         scrollToken: String = "",
         positionInQueue: Int? = nil
     ) {
+        // swiftlint:disable:next no_uuid
         self.id = UUID() // `id` has been replaced with `idString`
         self.idString = id
         self.state = state

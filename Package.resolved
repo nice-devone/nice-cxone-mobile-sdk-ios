@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kolos65/Mockable",
       "state" : {
-        "revision" : "55f846e4ea37ca37166a6d533b5144b956385b41",
-        "version" : "0.5.1"
+        "revision" : "92523c3c0623402e9600dcf99f63603f52a889d8",
+        "version" : "0.6.1"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git",
       "state" : {
-        "revision" : "0946769864509fbe7d48e12cfae51677213b8586",
-        "version" : "3.1.0"
+        "revision" : "a41bc92af76397a7d5b115cefd1df6dc6a5f4c49",
+        "version" : "3.2.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "34e463e98ab8541c604af706c99bed7160f5ec70",
-        "version" : "1.8.1"
+        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
+        "version" : "1.9.0"
       }
     }
   ],

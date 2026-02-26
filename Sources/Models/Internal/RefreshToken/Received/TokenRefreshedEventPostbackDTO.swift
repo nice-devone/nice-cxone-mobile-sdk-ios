@@ -21,7 +21,7 @@ struct TokenRefreshedEventPostbackDTO: Equatable {
     
     let eventType: EventType
     
-    let accessToken: AccessTokenDTO
+    let accessToken: LegacyAccessTokenDTO
 }
 
 // MARK: - Decodable
@@ -42,6 +42,6 @@ extension TokenRefreshedEventPostbackDTO: Decodable {
         let tokenRefreshedContainer = try container.nestedContainer(keyedBy: TokenRefreshedKeys.self, forKey: .data)
         
         self.eventType = try container.decode(EventType.self, forKey: .eventType)
-        self.accessToken = try tokenRefreshedContainer.decode(AccessTokenDTO.self, forKey: .accessToken)
+        self.accessToken = try tokenRefreshedContainer.decode(LegacyAccessTokenDTO.self, forKey: .accessToken)
     }
 }

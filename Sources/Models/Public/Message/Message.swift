@@ -22,22 +22,22 @@ public struct Message {
     
     /// The unique id for the message. Refers to the `idOnExternalPlatform`.
     @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    public let id: UUID
+    public let id: UUID // swiftlint:disable:this no_uuid
     
     /// The unique id for the message. Refers to the `idOnExternalPlatform`.
     ///
     /// The canonical, case-preserving identifier of the message as provided by the backend.
-    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    /// Stores the **exact** value from the backend, without altering case.
     public let idString: String
     
     /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
     @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
-    public let threadId: UUID
+    public let threadId: UUID // swiftlint:disable:this no_uuid
     
     /// The thread id for the message. Refers to the `threadIdOnExternalPlatform`.
     ///
     /// The canonical, case-preserving identifier of the thread as provided by the backend.
-    /// Stores the **exact** value from the backend (e.g., a UUID string), without altering case.
+    /// Stores the **exact** value from the backend, without altering case.
     public let threadIdString: String
     
     /// The content of the message
@@ -95,10 +95,10 @@ public struct Message {
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
     ///   - status: The delivery or read status of the message.
-    @available(*, deprecated, message: "Due to replacement of the `userStatistics` attribute with `agentStatistics` and new attribute `customerStatistics`, this initializer will be removed in a future.") // swiftlint:disable:this line_length
+    @available(*, deprecated, message: "Due to replacement of the `userStatistics` atrribute with `agentStatistics` and new attribute `customerStatistics`, this initializer will be removed in a future.") // swiftlint:disable:this line_length
     public init(
-        id: UUID,
-        threadId: UUID,
+        id: UUID, // swiftlint:disable:this no_uuid
+        threadId: UUID, // swiftlint:disable:this no_uuid
         contentType: MessageContentType,
         createdAt: Date,
         attachments: [Attachment],
@@ -138,10 +138,10 @@ public struct Message {
     ///   - authorUser: The agent that sent the message. Only present if the direction is to client (outbound).
     ///   - authorEndUserIdentity: The customer that sent the message. Only present if the direction is to agent (inbound).
     ///   - status: The delivery or read status of the message.
-    @available(*, deprecated, message: "Due to replacement of the `threadId` attribute with `threadIdString`, this initializer will be removed in a future.")
+    @available(*, deprecated, message: "Due to replacement of the `threadId` atrribute with `threadIdString`, this initializer will be removed in a future.")
     public init(
-        id: UUID,
-        threadId: UUID,
+        id: UUID, // swiftlint:disable:this no_uuid
+        threadId: UUID, // swiftlint:disable:this no_uuid
         contentType: MessageContentType,
         createdAt: Date,
         attachments: [Attachment],
@@ -195,8 +195,10 @@ public struct Message {
         authorEndUserIdentity: CustomerIdentity?,
         status: MessageStatus
     ) {
+        // swiftlint:disable:next no_uuid
         self.id = UUID() // `id` has been replaced with `idString` and since it's under the internal init we don't want to use it anymore
         self.idString = id
+        // swiftlint:disable:next no_uuid
         self.threadId = UUID() // `threadId` has been replaced with `threadIdString` and since it's under the internal init we don't want to use it anymore
         self.threadIdString = threadId
         self.contentType = contentType

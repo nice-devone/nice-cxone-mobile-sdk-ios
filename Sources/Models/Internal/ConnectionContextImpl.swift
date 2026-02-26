@@ -21,6 +21,8 @@ class ConnectionContextImpl: ConnectionContext {
     
     let keychainService: KeychainService
     
+    let userDefaultsService: UserDefaultsService
+    
     /// The token of the device for push notifications.
     var deviceToken: String?
 
@@ -57,15 +59,15 @@ class ConnectionContextImpl: ConnectionContext {
     var chatState: ChatState = .initial
     
     var visitorId: String? {
-        get { UserDefaultsService.shared.get(String.self, for: .visitorId) }
-        set { UserDefaultsService.shared.set(newValue, for: .visitorId) }
+        get { userDefaultsService.get(String.self, for: .visitorId) }
+        set { userDefaultsService.set(newValue, for: .visitorId) }
     }
 
     var visitDetailsStore: CurrentVisitDetails?
     var visitDetails: CurrentVisitDetails? {
         get {
             if visitDetailsStore == nil {
-                visitDetailsStore = UserDefaultsService.shared.get(CurrentVisitDetails.self, for: .visitDetails)
+                visitDetailsStore = userDefaultsService.get(CurrentVisitDetails.self, for: .visitDetails)
             }
 
             return visitDetailsStore
@@ -74,7 +76,7 @@ class ConnectionContextImpl: ConnectionContext {
             if visitDetailsStore != newValue {
                 visitDetailsStore = newValue
                 
-                UserDefaultsService.shared.set(newValue, for: .visitDetails)
+                userDefaultsService.set(newValue, for: .visitDetails)
             }
         }
     }
@@ -85,17 +87,24 @@ class ConnectionContextImpl: ConnectionContext {
     }
     
     /// The auth token received from authorizing the customer. Only present in OAuth flow.
-    var accessToken: AccessTokenDTO? {
-        get { keychainService.get(AccessTokenDTO.self, for: .accessToken) }
+    var accessToken: LegacyAccessTokenDTO? {
+        get { keychainService.get(LegacyAccessTokenDTO.self, for: .accessToken) }
         set { keychainService.set(newValue, for: .accessToken) }
+    }
+
+    /// The current transaction token for WebSocket authentication. Has a short lifetime (~10 minutes).
+    var transactionToken: TransactionTokenDTO? {
+        get { keychainService.get(TransactionTokenDTO.self, for: .transactionToken) }
+        set { keychainService.set(newValue, for: .transactionToken) }
     }
 
     // MARK: - Init
     
     init(
         keychainService: KeychainService,
+        userDefaultsService: UserDefaultsService,
         session: URLSession? = nil,
-        environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "", loggerURL: ""),
+        environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "", loggerURL: "", tokenURL: ""),
         brandId: Int = .min,
         deviceToken: String? = nil,
         authorizationCode: String = "",
@@ -105,6 +114,7 @@ class ConnectionContextImpl: ConnectionContext {
             settings: ChannelSettingsDTO(
                 hasMultipleThreadsPerEndUser: false,
                 isProactiveChatEnabled: false,
+                isSendTranscriptEnabled: false,
                 fileRestrictions: FileRestrictionsDTO(
                     allowedFileSize: 40,
                     allowedFileTypes: [],
@@ -114,13 +124,15 @@ class ConnectionContextImpl: ConnectionContext {
             ),
             isAuthorizationEnabled: false,
             prechatSurvey: nil,
-            liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast)
+            liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast),
+            authenticationType: .anonymous
         ),
         channelId: String = "",
         destinationId: String = LowercaseUUID().uuidString,
         visitDetailsStore: CurrentVisitDetails? = nil
     ) {
         self.keychainService = keychainService
+        self.userDefaultsService = userDefaultsService
         self.deviceToken = deviceToken
         self.authorizationCode = authorizationCode
         self.codeVerifier = codeVerifier
@@ -142,7 +154,7 @@ class ConnectionContextImpl: ConnectionContext {
     
     func clear() {
         keychainService.purge()
-        UserDefaultsService.purge()
+        userDefaultsService.purge()
     }
 }
 
