@@ -1,3 +1,15 @@
+<a name="Unreleased"></a>
+# [Unreleased]
+
+
+<a name="3.3.0"></a>
+# [3.3.0] - 2026-05-07
+
+
+## Features
+- Add rich message content type - `Time Picker`
+
+
 <a name="3.2.0"></a>
 # [3.2.0] - 2026-02-26
 
@@ -382,7 +394,9 @@
     - failure
   - typing start/end
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.2.0...HEAD
+
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.3.0...HEAD
+[3.3.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.3...3.3.0
 [3.1.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.1...3.1.3
 [3.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.1.0...3.1.1

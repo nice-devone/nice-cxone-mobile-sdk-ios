@@ -291,4 +291,4 @@ Analytics events can trigger automations in CXone:
 
 ## Sample Implementation
 
-For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Utilities/Manager/AnalyticsReporter.swift).
+For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/Sources/Utilities/Manager/AnalyticsReporter.swift).

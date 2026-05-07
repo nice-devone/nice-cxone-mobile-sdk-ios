@@ -118,7 +118,7 @@ Each field can be marked as `isRequired`, which means it must be filled in befor
 4. **Enable Logging**: Configure the SDK logger to catch custom field validation issues
 
 ```swift
-CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
+CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)
 ```
 
 ## Sample Code

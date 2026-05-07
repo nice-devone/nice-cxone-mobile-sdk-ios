@@ -36,7 +36,6 @@ if isOAuthEnabled {
 ```
 
 ### Step 3: Configure Your Application to Prompt the User to Sign In
-
 To begin the OAuth process, prompt the user to sign in with their chosen OAuth service provider. In this example, we'll use Login with Amazon, but the steps would be similar for other OAuth providers like Google, Facebook, or your own identity provider.
 
 The following code snippet initializes an OAuth request:
