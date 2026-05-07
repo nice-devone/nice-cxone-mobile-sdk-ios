@@ -13,6 +13,7 @@ Rich content messages come in several formats:
 - **Rich Link**: Message with a title, image and URL that can be a deeplink or standard web URL
 - **Quick Replies**: Message with a list of buttons where only one can be selected
 - **List Picker**: Message with title, body and list of buttons (optionally with images) that can be selected multiple times
+- **Time Picker**: Message presenting a list of available time slots for the customer to choose from
 
 The SDK handles proper rendering of these message types and manages the interactions with them.
 
@@ -29,6 +30,7 @@ func onThreadUpdated(_ chatThread: ChatThread) {
     // - .richLink(let content) - Rich links with title, image, and URL
     // - .quickReplies(let content) - Quick reply buttons (single selection)
     // - .listPicker(let content) - List picker with multiple options
+    // - .timePicker(let content) - Time slot picker with selectable time slots
     // - Standard message types (text, attachments, etc.)
     
     // Update your UI with the latest thread data
@@ -87,7 +89,8 @@ struct MessageReplyButton {
 1. **Always Include Postbacks**: Always send the postback value when responding to rich content interactions
 2. **Proper Rendering**: Ensure your UI can properly render all supported rich content types
 3. **Button States**: For Quick Replies, disable buttons after selection since they should only be used once
-4. **Error Handling**: Handle scenarios where rich content can't be displayed properly
+4. **Time Picker States**: Only allow slot selection on the most recent time picker message; display earlier ones as read-only
+5. **Error Handling**: Handle scenarios where rich content can't be displayed properly
 
 ## Related Resources
 

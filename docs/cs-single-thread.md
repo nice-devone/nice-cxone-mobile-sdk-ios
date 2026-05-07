@@ -98,7 +98,7 @@ The SDK automatically manages thread states:
 3. **Logging**: Configure the SDK logger to track issues and state changes
 
 ```swift
-CXoneChat.shared.configureLogger(level: .warning, verbosity: .verbose)
+CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)
 ```
 
 ## Sample Code

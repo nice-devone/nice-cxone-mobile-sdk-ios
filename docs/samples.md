@@ -180,7 +180,7 @@ func onSignOutTapped() {
 
 ## Connection
 
-Section with connection related methods and properties. These methods allows to get channel configuration, connect to the to the CXone service or send a ping to ensure connection connection is established.
+Section with connection related methods and properties. These methods allow getting the channel configuration, connecting to the CXone service, or sending a ping to ensure the connection is established.
 
 Following features are provided via `CXoneChat.shared.connection` provider.
 
@@ -216,7 +216,7 @@ The method throws `channelConfigFailure` or `DecodingError.dataCorrupted(_:)` er
 
 Before the SDK can be used for any functionality (analytics or chat communication features) it is necessary to prepare it for usage. This is achieved with `prepare(environment:brandId:channelId:)` method. It requires pre-defined `CXoneChat.Environment`,brand ID and channel ID.
 
-For example: Prepareusage of to the brand **1234**, channel **"chat_abcd_1234_efgh"** and located in the **Europe**.
+For example: Prepare for brand **1234**, channel **"chat_abcd_1234_efgh"** located in **Europe**.
 
 ```swift
 try await CXoneChat.shared.connection.prepare(
@@ -236,7 +236,7 @@ try await CXoneChat.shared.connection.connect()
 
 ### Disconnect from CXone Service
 
-Whenever host application should keep customer logged in and sign out from CXone service, use `ConnectionProvider.disconnect()`. It keep connection context and just invalides the web socket.
+Whenever host application should keep customer logged in and sign out from CXone service, use `ConnectionProvider.disconnect()`. It keeps the connection context and just invalidates the WebSocket.
 
 ```swift
 CXoneChatSDK.shared.connection.disconnect()
@@ -307,7 +307,7 @@ func application(_ application: UIApplication, didRegisterForRemoteNotifications
 
 The SDK supports OAuth user authorization. For this feature, application has to provide the code with `CustomerProvider.setAuthorizationCode(_:)` to be able to obtain an access token. It has to be obtained before establishing a connection via `connect()` methods. 
 
-Example from he sample application uses Amazon OAuth:
+Example from the sample application uses Amazon OAuth:
 
 ```swift
 AMZNAuthorizationManager.shared().authorize(request) { [weak self] result, _, error in
@@ -361,7 +361,7 @@ let controller = FormViewController(entity: entity) { [weak self] customFields i
 
 ## Customer Custom Fields
 
-Section with custom fields related methods. These methods allows to contact, specific thread, or customer, persists across all threads, custom fields.
+Section with custom fields related methods. These methods allow getting and setting custom fields for a specific thread (contact) or across all threads (customer).
 
 Following features are provided via `CXoneChat.shared.customFields` provider.
 
@@ -408,7 +408,7 @@ The Thread List provider allows you to get current threads, load existing thread
  
 Following features are provided via `CXoneChat.shared.threads` provider.
 
-> ⚠️ Important: Thread List provider also contain providers for chat thread and contact custom fields according to its context.
+> ⚠️ Important: Thread List provider also contains providers for chat thread and contact custom fields according to its context.
 
 ### Pre-chat Survey
 
@@ -630,7 +630,7 @@ func onAppear() {
 
 ### End Contact
 
-To be able to end live chat conversation from a customer's perspective, the SDK provides `endContact_:)` method.
+To be able to end live chat conversation from a customer's perspective, the SDK provides the `endContact(_:)` method.
 
 > ⚠️ Important: As mentioned above, this method is only available for live chat channel configuration. Otherwise, the SDK will throw an `CXoneChatError.illegalChatState` error.
 
@@ -830,7 +830,7 @@ func onChatUpdated(_ chatState: ChatState, mode: ChatMode) {
 
 ### Conversion
 
-`AnalyticsProvider.conversion(type:value:)` is an event which notifes the backend that a conversion has been made. Conversions are understood as a completed activities that are important to your business. It is necessary to have established connection; otherwise, it throws an error.is an event which notifes the backend that a conversion has been made. Conversions are completed activities as defined by your business requirements, typically this would be a completed sale or other "final" event. It is necessary to have established connection; otherwise, it throws an error.
+`AnalyticsProvider.conversion(type:value:)` is an event which notifies the backend that a conversion has been made. Conversions are completed activities as defined by your business requirements, typically a completed sale or other "final" event. It is necessary to have established connection; otherwise, it throws an error.
 
 ```swift
 @MainActor
@@ -952,7 +952,7 @@ The following are examples, from the sample application, of actions that can occ
 
 ### On Chat Updated
 
-Callback to be called when the chat state has been updated. it can handle loading while preparing or connecting to the CXone services or trigger new chat thread creation.
+Callback to be called when the chat state has been updated. It can handle loading while preparing or connecting to the CXone services or trigger new chat thread creation.
 
 ```swift
 func onChatUpdated(_ chatState: ChatState, mode: ChatMode) {
@@ -1012,7 +1012,7 @@ func onCustomEventMessage(_ messageData: Data) {
 
 ### On Agent Typing Started/Ended
 
-Callback to be called when the agent has stared/stopped typing.
+Callback to be called when the agent has started/stopped typing.
 
 ```swift
 func onAgentTyping(_ isTyping: Bool, threadId: String) {

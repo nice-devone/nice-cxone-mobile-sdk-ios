@@ -6,7 +6,7 @@ The CXoneChat Mobile SDK empowers developers to build real-time chat application
 
 ## Getting Started
 
-CXone Mobile SDK lets you integrate CXone into your enterprise iOS mobile phone application with operation system iOS 15 and later.
+CXone Mobile SDK lets you integrate CXone into your enterprise iOS mobile phone application with operating system iOS 15 and later.
 
 Developing an iOS app using the CXone Mobile package requires the following:
 - An Apple Mac computer
@@ -52,7 +52,7 @@ You need to connect your app to **CXone** to begin communication with the **CXon
     ```swift
     try await CXoneChat.shared.connection.connect()
     ```
-2. Register `onError(_ error:)` to be able to handle errors occured during thread/s load or other processes.
+2. Register `onError(_ error:)` to be able to handle errors occurred during thread/s load or other processes.
 
 
 ## Thread handling
@@ -61,7 +61,7 @@ You will handle the CXone Mobile SDK for iOS as an extension of a manager. You h
 
 Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.
 
-Use the [iOS SDK library](https://nice-devone.github.io/nice-cxone-mobile-sdk-ios) as you work.
+Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/index.html) as you work.
 
 > Important: The SDK utilizes a state-based architecture so it is not necessary to handle everything on your own. For example after establishing a connection, it is not necessary to load thread(s) on your own. The SDK automatically recovers existing or creates a new thread for single-threaded and loads thread metadata for multi-threaded channel configuration. However, if the chat channel contains a pre-chat survey, it is necessary to fill in the survey and manually create a new thread using the `ChatThreadListProvider.create(with:)` method, to which custom fields must be passed. 
 
@@ -199,9 +199,9 @@ As already mentioned, it is not necessary to load previously created threads bec
 
 ### LiveChat - Set Up the Thread Manager
 
-Live chat channel may also be offline, based on the chat state `.offline` which can be obtained via `onChatUpdated(_:mode:)` API method. It his case, there is no
+The live chat channel may also be offline when no agents are available. This is indicated by the `.offline` chat state received via the `onChatUpdated(_:mode:)` delegate method.
 
-In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For single thread continue with following steps:
+In this moment, you should be already connected to the Web Socket with SDK method `ConnectionProvider.connect()`. As already mentioned, it is not necessary to load previously created thread or create a new one without actual checking it. For live chat, continue with the following steps:
 
 1. Register `onChatUpdated(_:mode:)` and `onThreadUpdated(_:)` delegate methods in the manager. There are two scenarios:
     a) No thread available and pre-chat has to be completed before creating a new thread – the SDK finished recover process without receiving any thread from the backend. However, it was unable to create a new thread because channel configuration contains pre-chat to be completed. The host application is notified with `onChatUpdated(_:mode:)` delegate method so it can present a form of pre-chat survey custom fields and then provide it to the SDK via `ChatThreadListProvider.create(with:)` method.

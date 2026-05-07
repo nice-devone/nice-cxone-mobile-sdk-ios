@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
+// Copyright (c) 2021-2026. NICE Ltd. All rights reserved.
 //
 // Licensed under the NICE License;
 // you may not use this file except in compliance with the License.
@@ -8,7 +8,7 @@
 //    https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/LICENSE
 //
 // TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
-// AN “AS IS” BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+// AN "AS IS" BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
 // OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
@@ -26,6 +26,8 @@ enum MessageContentDTOType: Equatable {
     case quickReplies(MessageQuickRepliesDTO)
     
     case listPicker(MessageListPickerDTO)
+    
+    case timePicker(MessageTimePickerDTO)
     
     case inactivityPopup(MessageInactivityPopupDTO)
     
@@ -45,6 +47,8 @@ enum MessageContentDTOType: Equatable {
             return .quickReplies
         case .listPicker:
             return .listPicker
+        case .timePicker:
+            return .timePicker
         case .inactivityPopup:
             return .inactivityPopup
         case .postback:
@@ -100,6 +104,8 @@ extension MessageContentDTOType: Codable {
             self = .quickReplies(try container.decode(MessageQuickRepliesDTO.self, forKey: .payload))
         case .listPicker:
             self = .listPicker(try container.decode(MessageListPickerDTO.self, forKey: .payload))
+        case .timePicker:
+            self = .timePicker(try container.decode(MessageTimePickerDTO.self, forKey: .payload))
         case .plugin:
             let plugin = try container.decode(MessagePluginDTO.self, forKey: .payload)
             
@@ -138,6 +144,9 @@ extension MessageContentDTOType: Codable {
         case .listPicker(let listPicker):
             try container.encode(ElementType.listPicker.rawValue, forKey: .type)
             try container.encode(listPicker, forKey: .payload)
+        case .timePicker(let timePicker):
+            try container.encode(ElementType.timePicker.rawValue, forKey: .type)
+            try container.encode(timePicker, forKey: .payload)
         case .inactivityPopup(let popup):
             #if DEBUG
             try container.encode(ElementType.plugin.rawValue, forKey: .type)

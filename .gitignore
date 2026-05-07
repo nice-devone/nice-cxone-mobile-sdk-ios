@@ -7,6 +7,7 @@ xcuserdata/
 DerivedData/
 .swiftpm
 local.yml
+*.resolved
 
 # emacs temp files
 *~
@@ -37,9 +38,9 @@ amplifytools.xcconfig
 /* Generated Jazzy documentation
 jazzy_docs/
 
-# Cursor
-.claude
+# Cursor and Claude
+!.claude/instructions/
+!.claude/skills/
 .cursor
 .cursorignore
 .kb
-.claude

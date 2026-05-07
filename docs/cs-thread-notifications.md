@@ -126,7 +126,7 @@ private func processNotificationAndNavigateToThread(notification: UNNotification
         }
         
         // Navigate to thread
-        NotificationCenter.default.postThreadDeeplinkNotification(threadId: threadId)
+        NotificationCenter.default.postThreadDeeplinkNotification(threadId: threadIdString)
         return true
     }
     
@@ -138,7 +138,6 @@ private func processNotificationAndNavigateToThread(notification: UNNotification
        let cxoneData = userInfo["cxone_data"] as? [String: Any],
        let threadId = cxoneData["thread_id"] as? String
    {
-        
         // Navigate to thread using the same mechanism
         NotificationCenter.default.postThreadDeeplinkNotification(threadId: threadId)
         return true
