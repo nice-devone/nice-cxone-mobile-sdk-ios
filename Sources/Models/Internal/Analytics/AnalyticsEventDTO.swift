@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct AnalyticsEventDTO {
+struct AnalyticsEventDTO: Sendable {
 
     // MARK: - Properties
 
@@ -24,7 +24,7 @@ struct AnalyticsEventDTO {
     let visitId: String
     let destinationId: String
     let createdAt: Date
-    let data: Encodable
+    let data: any (Sendable & Encodable)
 
     // MARK: - Init
 
@@ -34,7 +34,7 @@ struct AnalyticsEventDTO {
         visitId: String,
         destinationId: String,
         createdAt: Date,
-        data: Encodable = [String: String]()
+        data: any (Sendable & Encodable) = [String: String]()
     ) {
         self.eventId = eventId
         self.type = type
@@ -49,7 +49,7 @@ struct AnalyticsEventDTO {
         type: AnalyticsEventType,
         connection: ConnectionContext,
         createdAt: Date,
-        data: Encodable = [String: String]()
+        data: any (Sendable & Encodable) = [String: String]()
     ) throws {
         guard let visitId = connection.visitId else {
             throw CXoneChatError.missingVisitId

@@ -16,7 +16,7 @@
 import Foundation
 
 /// The data of the message read by agent event.
-struct MessageReadByAgentEventDataDTO: Decodable, Equatable {
+struct MessageReadByAgentEventDataDTO: Decodable, Equatable, Sendable {
     
     /// The info about the brand.
     let brand: BrandDTO

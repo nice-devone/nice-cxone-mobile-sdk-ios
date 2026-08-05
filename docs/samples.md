@@ -5,7 +5,29 @@ The following sample code is provided to help configure and customize applicatio
 
 ## Chat Provider
 
-The SDK is available with shared instance via `CXoneChat.shared` which provides `ChatProvider` with available delegates, feature providers and more.
+The SDK is exposed as the `ChatProvider` protocol. Construct an instance of `CXoneChat()` yourself and keep a strong reference to it for the lifetime of the chat session — for example, as a stored property on your app/scene-level object. All feature providers (connection, customer, threads, analytics, etc.) are accessed through that instance.
+
+```swift
+@main
+struct MyApp: App {
+
+    @StateObject private var chatPresenter: ChatPresenter
+
+    init() {
+        let chatProvider = CXoneChat()
+        self._chatPresenter = StateObject(wrappedValue: ChatPresenter(chatProvider: chatProvider))
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+                .environmentObject(chatPresenter)
+        }
+    }
+}
+```
+
+> ⚠️ Important: There is no shared singleton. Pass the `chatProvider` instance to whichever objects need it (view models, coordinators, etc.) via dependency injection.
 
 ### SDK Version
 
@@ -49,11 +71,11 @@ CXoneChat.logWriter = ForkLogWriter(
 ).filter(minLevel: .warning)
 ```
 
-### Chat Delegates
+### Chat Events
 
-The host application triggers events for various situations: loading threads, sending messages, reporting typing status, etc. While these actions are triggered manually, some events are received as consequences of other actions. For example, when the host application loads threads, the SDK may receive a `proactiveAction` event with a welcome message that isn't directly related to the `load()` action. The SDK provides several delegate methods described in [Event Delegates](#event-delegates).
+The host application triggers operations for various situations: loading threads, sending messages, reporting typing status, etc. While these operations are triggered manually, some events are received as consequences of other actions. For example, when the host application loads threads, the SDK may emit a `.proactiveActionReceived` event with a welcome message that isn't directly related to the `load()` action.
 
-The host application doesn't need to register all delegate methods - the SDK provides default implementations. The chat delegate manager can register only those methods relevant to the current scene context.
+The SDK delivers all events through a single `AsyncStream<ChatEvent>` returned from `chatProvider.events()`. Subscribe by iterating the stream inside a `Task` and switch on the `ChatEvent` cases relevant to your scene — see [Observing Chat Events](#observing-chat-events).
 
 ### Logger Configuration
 
@@ -136,43 +158,57 @@ if chatProvider.mode == .liveChat, updatedThread?.state == .closed {
 ...
 ```
 
-### Add Delegate
+### Subscribe to Events
 
-To receive chat events and updates from the SDK, your application should register your delegate instance using the `add(delegate:)` method. This allows your app to respond to events such as thread updates, agent typing, errors, and more.
-
+To receive chat events and updates from the SDK, iterate the `AsyncStream<ChatEvent>` returned by `chatProvider.events()` inside a `Task`. Keep a reference to that `Task` so you can cancel it when your scene goes away. Each call to `events()` produces an independent stream, so multiple subscribers each see the full event sequence.
 
 ```swift
+private var eventTask: Task<Void, Never>?
+
 func onAppear() {
     ...
-    CXoneChat.shared.add(delegate: self)
-    ...
+    eventTask = Task { [weak self] in
+        guard let self else {
+            return
+        }
+        for await event in chatProvider.events() {
+            await self.handle(event: event)
+        }
+    }
 }
-...
-func onThreadUpdated(_ updatedThread: ChatThread) {
-    ...
+
+@MainActor
+private func handle(event: ChatEvent) async {
+    switch event {
+    case .threadUpdated(let updatedThread):
+        ...
+    default:
+        break
+    }
 }
 ```
 
-### Remove Delegate
+### Stop Observing Events
 
-When the user flow exits a screen or navigates to another context where chat events are no longer relevant, unregister your delegate instance using the `remove(delegate:)` method. This ensures your class stops receiving chat updates and prevents memory leaks or unwanted callbacks.
+When the user flow exits a screen or navigates to another context where chat events are no longer relevant, cancel the `Task` that is consuming the event stream. This ensures your class stops receiving chat updates and prevents memory leaks.
 
 ```swift
 func onDisappear() {
-    ... 
-    CXoneChat.shared.remove(delegate: self)
+    ...
+    eventTask?.cancel()
+    eventTask = nil
     ...
 }
 ```
 ### Sign Out
 
-When users log out or end the chat, use the SDK method that signs the customer out, disconnects from the WebSocket, and resets services.
+When users log out or end the chat, call `signOut()` on the chat provider instance. This signs the customer out, disconnects from the WebSocket, and resets services.
 
-> ⚠️ Important: This action removes all stored data (customer info, visitor ID, keychain, etc.) and creates a new SDK instance.
+> ⚠️ Important: This action removes all stored data (customer info, visitor ID, keychain, etc.). After signing out, the instance is **reusable** — you can connect and use it again without creating a new one. Discarding the current `chatProvider` and constructing a new `CXoneChat()` is only necessary if you want a complete hard reset.
 
 ```swift
 func onSignOutTapped() {
-    CXoneChat.signOut()
+    chatProvider.signOut()
     ...
 }
 ```
@@ -182,14 +218,14 @@ func onSignOutTapped() {
 
 Section with connection related methods and properties. These methods allow getting the channel configuration, connecting to the CXone service, or sending a ping to ensure the connection is established.
 
-Following features are provided via `CXoneChat.shared.connection` provider.
+Following features are provided via `chatProvider.connection` provider.
 
 ### Get Channel Configuration
 
 The SDK provides two ways for channel configuration. In case host application is already connected to the CXone service, it is possible to use `ConnectionProvider.channelConfiguration` which returns current configuration. If you call this property without established connection, it returns default configuration which is might not be related to required channel configuration.
 
 ```swift
-let configuration = CXoneChat.shared.connection.channelConfiguration
+let configuration = chatProvider.connection.channelConfiguration
 
 // Channel is a multi-thread
 if configuration.hasMultipleThreadsPerEndUser {
@@ -203,7 +239,7 @@ In case you need configuration before establishing connection or even preparing 
 For example: Get the configuration for brand **1234**, channel **"chat_abcd_1234_efgh"** and located in the **Europe**.
 
 ```swift
-let configuration = try await CXoneChat.shared.connection.getChannelConfiguration(
+let configuration = try await chatProvider.connection.getChannelConfiguration(
     environment: .EU1,
     brandId: 1234,
     channelId: "chat_abcd_1234_efgh"
@@ -219,7 +255,7 @@ Before the SDK can be used for any functionality (analytics or chat communicatio
 For example: Prepare for brand **1234**, channel **"chat_abcd_1234_efgh"** located in **Europe**.
 
 ```swift
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: .EU1, 
     brandId: 1234, 
     channelId: "chat_abcd_1234_efgh"
@@ -231,7 +267,7 @@ try await CXoneChat.shared.connection.prepare(
 The SDK uses state-based architecture, so it is necessary to have the SDK in the correct state. For establishing web socket connection, it is necessary to firstly call `ConnectionProvider.prepare(environment:brandId:channelId:)` which set the SDK to the `.prepared` state. With everything set, the web socket connection can be easily established with `ConnectionProvider.connect` method.
 
 ```swift
-try await CXoneChat.shared.connection.connect()
+try await chatProvider.connection.connect()
 ```
 
 ### Disconnect from CXone Service
@@ -239,7 +275,7 @@ try await CXoneChat.shared.connection.connect()
 Whenever host application should keep customer logged in and sign out from CXone service, use `ConnectionProvider.disconnect()`. It keeps the connection context and just invalidates the WebSocket.
 
 ```swift
-CXoneChatSDK.shared.connection.disconnect()
+chatProvider.connection.disconnect()
 ```
 
 ### Execute Trigger Manually
@@ -248,7 +284,7 @@ CXone platform can contain various triggers related to specific events. Host app
 
 ```swift
 do {
-    try await CXoneChat.shared.connection.executeTrigger("1a2bc345-6789-12a3-4Bbc-d67890e12fhg")
+    try await chatProvider.connection.executeTrigger("1a2bc345-6789-12a3-4Bbc-d67890e12fhg")
 } catch {
     ...
 }
@@ -259,14 +295,14 @@ do {
 
 Section with customer related methods and properties. These methods allows to retrieve or set current customer, set OAuth stuff or just update customer credentials.
 
-Following features are provided via `CXoneChat.shared.customer` provider.
+Following features are provided via `chatProvider.customer` provider.
 
 ### Get Current Customer
 
 The `CustomerProvider.get()` returns a customer who is currently using host application. When establishing a connection, the SDK initialize new customer with empty credentials, so this method returns a customer with nil first and last name.
 
 ```swift
-let customer = CXoneChat.shared.customer.get()
+let customer = chatProvider.customer.get()
 ```
 
 ### Set Current Customer
@@ -279,17 +315,17 @@ let customer = CXoneChat.shared.customer.get()
 
 ```swift
 // Update current
-var customer = CXoneChat.shared.customer.get()
+var customer = chatProvider.customer.get()
 customer.firstName = "John"
 customer.lastName = "Doe"
-try CXoneChat.shared.customer.set(customer: customer)
+try chatProvider.customer.set(customer: customer)
 
 // Create new
 let customer = Customer(id: UUID().uuidString.lowercased(), firstName: "John", lastName: "Doe")
-try CXoneChat.shared.customer.set(customer: customer)
+try chatProvider.customer.set(customer: customer)
 
 // Reset current
-try CXoneChat.shared.customer.set(customer: nil)
+try chatProvider.customer.set(customer: nil)
 ```
 
 > ⚠️ Important: Setting this feature can lead to security vulnerability. We don't take any responsibility if you will to use your own customer ID. It is recommended to use the SDK generated customer ID.
@@ -299,47 +335,33 @@ try CXoneChat.shared.customer.set(customer: nil)
 It is necessary to register the device to be able to use push notifications. For this case the SDK provides two methods `CustomerProvider.setDeviceToken(_:)` - the first one uses a `String` representation of the token, the second one uses the `Data` datatype.
 ```swift
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    CXoneChat.shared.customer.setDeviceToken(deviceToken)
+    chatProvider.customer.setDeviceToken(deviceToken)
 }
 ```
 
-### Set Authorization Code
+### Set Connection Token (Implicit OAuth Flow)
 
-The SDK supports OAuth user authorization. For this feature, application has to provide the code with `CustomerProvider.setAuthorizationCode(_:)` to be able to obtain an access token. It has to be obtained before establishing a connection via `connect()` methods. 
+The SDK supports OAuth user authorization via the implicit flow: the application performs the full OAuth exchange itself and hands the SDK a finished token with `CustomerProvider.setConnectionToken(_:expiresAt:)` before establishing a connection via `connect()`. Register a token-delegate listener with `CustomerProvider.setTokenDelegateListener(_:)` so the SDK can silently obtain a fresh token before the current one expires; without a listener, an expired or rejected token surfaces as `CXoneChatError.invalidAccessToken` from the failing call.
 
-Example from the sample application uses Amazon OAuth:
+Example from the sample application uses Google Sign-In (AppAuth):
 
 ```swift
-AMZNAuthorizationManager.shared().authorize(request) { [weak self] result, _, error in
-    ...
-    CXoneChat.shared.customer.setAuthorizationCode(result.authorizationCode)
-    ...
+chatProvider.customer.setConnectionToken(connectionToken, expiresAt: expiresAt)
+
+chatProvider.customer.setTokenDelegateListener { reason in
+    let refreshed = try await authenticator.refreshImplicitToken()
+
+    return OAuthToken(accessToken: refreshed.token, expiresAt: refreshed.expiresAt)
 }
 ```
 
-### Set Code Verifier
+See the [OAuth case study](cs-oauth.md) for the full integration flow.
 
-The SDK supports OAuth 2.0 which uses proof key for code exchange - [PKCE](https://oauth.net/2/pkce/). Above setting the authorization code, it is necessary to provide a code verifier with `CustomerProvider.setCodeVerifier(_:)`, which is forwarded in the request to the OAuth authorization manager. Code verifier has to be passed so CXone can retrieve an authorization token. 
+### Set Authorization Code & Code Verifier (Explicit OAuth Flow)
 
-The sample application uses third party framework [Swift-PKCE](https://github.com/hendrickson-tyler/swift-pkce) to be able to generate code verifier.
+The explicit flow ([PKCE](https://oauth.net/2/pkce/)) hands the SDK an authorization code via `CustomerProvider.setAuthorizationCode(_:)` and a code verifier via `CustomerProvider.setCodeVerifier(_:)`; the CXone backend finishes the token exchange.
 
-```swift
-let request = AMZNAuthorizeRequest()
-...
-
-do {
-    let codeVerifier = try generateCodeVerifier()
-    request.codeChallenge = try generateCodeChallenge(for: codeVerifier)
-
-    CXoneChat.shared.customer.setCodeVerifier(codeVerifier)
-} catch {
-    ...
-}
-
-AMZNAuthorizationManager.shared().authorize(request) { [weak self] result, _, error in
-    ...
-}
-```
+> ⚠️ The explicit flow is currently unavailable — the setters store the values, but `connect()` throws `CXoneChatError.featureUnavailable("Explicit OAuth")` during the token exchange. Use the implicit flow instead.
 
 ### Set Customer Name
 
@@ -349,7 +371,7 @@ In the sample application, user credentials are provided with pre-chat survey an
 
 ```swift
 let controller = FormViewController(entity: entity) { [weak self] customFields in
-    CXoneChat.shared.customer.setName(
+    chatProvider.customer.setName(
         firstName: customFields.first { $0.key == "firstName" }.map(\.value) ?? "",
         lastName: customFields.first { $0.key == "lastName" }.map(\.value) ?? ""
     )
@@ -363,14 +385,14 @@ let controller = FormViewController(entity: entity) { [weak self] customFields i
 
 Section with custom fields related methods. These methods allow getting and setting custom fields for a specific thread (contact) or across all threads (customer).
 
-Following features are provided via `CXoneChat.shared.customFields` provider.
+Following features are provided via `chatProvider.customFields` provider.
 
 ### Get Customer Custom Fields
 
 Method `CustomerCustomFieldsProvider.get()` returns array of `CustomFieldType`, that can be a textfield, selector or hierarchical type, if any customer custom fields exists; otherwise, it returns empty array.
 
 ```swift
-let customerCustomFields: [CustomFieldType] = CXoneChat.shared.customerCustomFields.get()
+let customerCustomFields: [CustomFieldType] = chatProvider.customerCustomFields.get()
 let ageCustomField = customerCustomFields.first { type in
     guard case .textField(let entity) = type else {
         return false
@@ -406,7 +428,7 @@ The application can be single- or multi-threaded. If your app is single-threaded
 
 The Thread List provider allows you to get current threads, load existing threads, create new threads, or obtain a provider to manage individual chat threads.
  
-Following features are provided via `CXoneChat.shared.threads` provider.
+Following features are provided via `chatProvider.threads` provider.
 
 > ⚠️ Important: Thread List provider also contains providers for chat thread and contact custom fields according to its context.
 
@@ -415,7 +437,7 @@ Following features are provided via `CXoneChat.shared.threads` provider.
 Object representing the form that must be filled in before a new chat thread is created. It contains several fields to be filled in by a customer to be able to get some additional stuff that may solve the reason why the customer wants to communicate with an agent. These fields are both required and optional.
 
 ```swift
-if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+if let preChatSurvey = chatProvider.threads.preChatSurvey {
     promptContactCustomFields(with: preChatSurvey)
 } else {
     createNewThread()
@@ -427,7 +449,7 @@ if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
 Use `ChatThreadListProvider.get()` to retrieve an array of current threads. Returns existing threads or an empty array if none exist.
 
 ```swift
-chatThreads = CXoneChat.shared.threads
+chatThreads = chatProvider.threads
     .get()
     .filter { $0.state != .closed }
 ```
@@ -450,7 +472,7 @@ func createNewThread(with customFields: [String: String]? = nil) async throws ->
 
 ### Load Thread(s)
 
-The SDK automatically loads thread(s) when establishing connection to the CXone services and it is not necessary to handle it manually. However, it is necessary to manually load thread for multi-threaded channel configuration because thread list does not contain all previously sent/received messages. When any thread from thread list is selected, host application should use `ChatThreadListProvider.load(with:)` method to recover thread data. The SDK will then notify the application with `onThreadUpdated(_:)` delegate method about recovered thread with all possible data and thread is ready for usage.
+The SDK automatically loads thread(s) when establishing connection to the CXone services and it is not necessary to handle it manually. However, it is necessary to manually load thread for multi-threaded channel configuration because thread list does not contain all previously sent/received messages. When any thread from thread list is selected, host application should use `ChatThreadListProvider.load(with:)` method to recover thread data. The SDK will then emit a `.threadUpdated(_:)` event on the `chatProvider.events()` stream with the recovered thread and all of its data, signalling that the thread is ready for usage.
 
 > ⚠️ Important: `load(with:)` should no longer be used for loading thread after connection.
 
@@ -483,7 +505,7 @@ Retrieve a `ChatThreadProvider` by calling the appropriate method on `ChatThread
 ```swift
 Task { @MainActor in
     do {
-        let provider = try chatProvider.threads.provider(for: thread.idString)
+        let provider = try chatProvider.threads.provider(for: thread.id)
 
         try await provider.archive()
     } catch {
@@ -512,7 +534,7 @@ Key features include:
 func loadMoreMessages() async {
     LogManager.trace("Trying to load more messages")
         
-    guard let thread, thread.hasMoreMessagesToLoad, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, thread.hasMoreMessagesToLoad, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -533,7 +555,7 @@ Sends the contact's message string, via `ChatThreadProvider.send(_:)` method, th
 func onSendMessage(_ messageType: ChatMessageType, attachments: [AttachmentItem], postback: String? = nil) {
     ...
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -573,7 +595,7 @@ Throws an error if any requirement is not met.
 func setThread(name: String) {
     ...
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -598,7 +620,7 @@ func onArchive(_ thread: CXoneChatUI.ChatThread) {
  
     Task { @MainActor in
         do {
-            let provider = try chatProvider.threads.provider(for: thread.idString)
+            let provider = try chatProvider.threads.provider(for: thread.id)
             
             try await provider.archive()
         } catch {
@@ -615,7 +637,7 @@ Use `ChatThreadListProvider.markRead(_:)` to mark the most recent message in a t
 ```swift
 func onAppear() {
     ...    
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -636,7 +658,7 @@ To be able to end live chat conversation from a customer's perspective, the SDK 
 
 ```swift
 func onEndConversation() {
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -663,7 +685,7 @@ func onEndConversation() {
 func onUserTyping() {
     LogManager.trace("User has \(isUserTyping ? "started" : "ended") typing")
 
-    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.idString) else {
+    guard let thread, let threadProvider = try? chatProvider.threads.provider(for: thread.id) else {
         ...
         return
     }
@@ -683,14 +705,14 @@ func onUserTyping() {
 
 Section with contact custom fields related methods. These methods allows to get and set contact, specific thread, custom fields.
 
-Following features are provided via `CXoneChat.shared.threads.customFields` provider.
+Following features are provided via `chatProvider.threads.customFields` provider.
 
 ### Get Customer Custom Fields
 
 Method `ContactCustomFieldsProvider.get(for:)` returns array of `CustomFieldType`, that can be a textfield, selector or hierarchical type, if any customer custom fields exists; otherwise, it returns empty array.
 
 ```swift
-let contactCustomFields: [CustomFieldType] = CXoneChat.shared.threads.customFields.get()
+let contactCustomFields: [CustomFieldType] = chatProvider.threads.customFields.get()
 let locationCustomField = contactCustomFields.first { type in
     guard case .textField(let entity) = type else {
         return false
@@ -714,7 +736,7 @@ func onEditPrechatField() {
         }
 
         do {
-            try await chatProvider.threads.customFields.set(answers, for: thread.idString)
+            try await chatProvider.threads.customFields.set(answers, for: thread.id)
         } catch {
             ...
         }
@@ -727,7 +749,7 @@ func onEditPrechatField() {
 
 The SDK can report several events from the client side. You can report opening the application, page view, proactive actions or even when customer did start typing.
 
-Following features are provided via `CXoneChat.shared.analytics` provider.
+Following features are provided via `chatProvider.analytics` provider.
 
 > ⚠️ Important: For Analytics usage, it is necessary to have chat at least in `.prepared` state!
 
@@ -736,7 +758,7 @@ Following features are provided via `CXoneChat.shared.analytics` provider.
 Whenever you need customer visitor identifier, this provider allows it. In order to create it, it is necessary to previously establish connection or call one of the available analytics methods. Otherwise, it returns nil.
 
 ```swift
-let visitorId = CXoneChat.shared.analytics.visitorId
+let visitorId = chatProvider.analytics.visitorId
 ```
 
 ### View Page
@@ -766,7 +788,7 @@ class AnalyticsReporter {
 
         Task {
             do {
-                try await CXoneChat.shared.analytics.viewPage(title: analyticsTitle, url: analyticsUrl)
+                try await chatProvider.analytics.viewPage(title: analyticsTitle, url: analyticsUrl)
             } catch {
                 ...
             }
@@ -790,7 +812,7 @@ func didEnterBackground() {
 
     Task {
         do {
-            try await CXoneChat.shared.analytics.viewPageEnded(title: analyticsTitle, url: analyticsUrl)
+            try await chatProvider.analytics.viewPageEnded(title: analyticsTitle, url: analyticsUrl)
         } catch {
             ...
         }
@@ -803,26 +825,35 @@ func didEnterBackground() {
 `AnalyticsProvider.chatWindowOpen()` reports to CXone the chat window has been opened by the visitor. It is necessary to have established connection; otherwise, it throws an error.
 
 ```swift
-func onChatUpdated(_ chatState: ChatState, mode: ChatMode) {
-    LogManager.scope {
-        ...
-            
-        switch chatState {
-            ...
-            case .connected:
-                ...
+func observeEvents() {
+    eventTask = Task {
+        for await event in chatProvider.events() {
+            switch event {
+            case .chatUpdated(let chatState, let mode):
+                LogManager.scope {
+                    ...
 
-                Task {
-                    do {
+                    switch chatState {
                         ...
-                        
-                        try await self.chatProvider.analytics.chatWindowOpen()
-                    } catch {
+                        case .connected:
+                            ...
+
+                            Task {
+                                do {
+                                    ...
+
+                                    try await self.chatProvider.analytics.chatWindowOpen()
+                                } catch {
+                                    ...
+                                }
+                            }
                         ...
+                    ...
                     }
                 }
-            ...
-        ...
+            default:
+                break
+            }
         }
     }
 }
@@ -839,7 +870,7 @@ func checkout() async {
     
     Task {
         do {
-            try await CXoneChat.shared.analytics.conversion(type: "purchase", value: totalAmount)
+            try await chatProvider.analytics.conversion(type: "purchase", value: totalAmount)
         } catch {
             ...
         }
@@ -858,7 +889,7 @@ func setup() {
     ...
     Task {
         do {
-            try await CXoneChat.shared.analytics.proactiveActionDisplay(data: actionDetails)
+            try await chatProvider.analytics.proactiveActionDisplay(data: actionDetails)
         } catch {
             ...
         }
@@ -882,7 +913,7 @@ func onProactiveActionClicked() {
     
     Task {
         do {
-            try await CXoneChat.shared.analytics.proactiveActionClick(data: self.actionDetails)
+            try await chatProvider.analytics.proactiveActionClick(data: self.actionDetails)
         } catch {
             ...
         }
@@ -902,7 +933,7 @@ func reportProactiveAction(successful: Bool) {
 
     Task {
         do {
-            try await CXoneChat.shared.analytics.proactiveActionSuccess(successful, data: self.actionDetails)
+            try await chatProvider.analytics.proactiveActionSuccess(successful, data: self.actionDetails)
         } catch {
             ...
         }
@@ -920,7 +951,7 @@ The SDK provides a modern API for handling proactive actions like inactivity pop
 
 ```swift
 // Get the proactive action provider
-let proactiveAction = CXoneChat.shared.proactiveAction
+let proactiveAction = chatProvider.proactiveAction
 
 // Handle different action types
 Task {
@@ -946,28 +977,65 @@ Task {
 
 For complete implementation details, see our [Inactivity Popup Case Study](cs-inactivity-popup.md).
 
-## Event Delegates
+## Observing Chat Events
 
-The following are examples, from the sample application, of actions that can occur during a chat that you might want to have trigger an action. These `CXoneChatDelegate` events might cause a notification to appear, a new page to open, or some other action to occur.
+The following are examples, from the sample application, of actions that can occur during a chat that you might want to have trigger an action. These `ChatEvent` cases might cause a notification to appear, a new page to open, or some other action to occur.
 
-### On Chat Updated
-
-Callback to be called when the chat state has been updated. It can handle loading while preparing or connecting to the CXone services or trigger new chat thread creation.
+All events are delivered as cases of `ChatEvent` through the `AsyncStream<ChatEvent>` returned by `chatProvider.events()`. Subscribe once and handle the cases you care about in a single `switch`:
 
 ```swift
-func onChatUpdated(_ chatState: ChatState, mode: ChatMode) {
-    ...
+private var eventTask: Task<Void, Never>?
+
+func startObservingEvents() {
+    eventTask = Task { [weak self] in
+        guard let self else {
+            return
+        }
+        for await event in chatProvider.events() {
+            switch event {
+            case .chatUpdated(let state, let mode):
+                ...
+            case .threadUpdated(let thread):
+                ...
+            case .threadsUpdated(let threads):
+                ...
+            case .unexpectedDisconnect:
+                ...
+            case .customEventMessage(let data):
+                ...
+            case .agentTyping(let isTyping, let agent, let threadId):
+                ...
+            case .contactCustomFieldsSet:
+                ...
+            case .customerCustomFieldsSet:
+                ...
+            case .error(let error):
+                ...
+            case .proactiveActionReceived(let type):
+                ...
+            }
+        }
+    }
 }
 ```
 
+The following subsections describe each individual case in more detail.
 
-### On Unexpected Disconnect
-Callback to be called when the connection unexpectedly drops. If possible, you can immediately reconnect to the CXone services.
+### Chat Updated
+
+Emitted when the chat state has been updated. It can handle loading while preparing or connecting to the CXone services or trigger new chat thread creation.
 
 ```swift
-func onUnexpectedDisconnect() {
+case .chatUpdated(let state, let mode):
     ...
+```
 
+
+### Unexpected Disconnect
+Emitted when the connection unexpectedly drops. If possible, you can immediately reconnect to the CXone services.
+
+```swift
+case .unexpectedDisconnect:
     Task { @MainActor in
         do {
             try await connect()
@@ -975,114 +1043,90 @@ func onUnexpectedDisconnect() {
             ...
         }
     }
-}
 ```
 
-### On Thread Updated
+### Thread Updated
 
-Callback to be called when a thread has been recovered with all data. This event is fired whenever a chat thread is modified, e.g. thread name updated, agent changed, more messages loaded or received/sent message.
+Emitted when a thread has been recovered with all data. This event fires whenever a chat thread is modified, e.g. thread name updated, agent changed, more messages loaded or received/sent message.
 
-It is necessary to handle everything that was previously handled via `onAgentChanged(_:for:)`, `onThreadUpdate()`, `onAgentReadMessage(threadId:)`, etc. within this delegate method.
+It is necessary to handle everything that was previously handled via `onAgentChanged(_:for:)`, `onThreadUpdate()`, `onAgentReadMessage(threadId:)`, etc. within this case.
 
 ```swift
-func onThreadUpdated(_ chatThread: ChatThread) {
+case .threadUpdated(let chatThread):
     ...
-}
 ```
 
-### On Threads Updated
+### Threads Updated
 
-Callback to be called when a threads have been loaded with metadata and ready to use. This event is fired whenever a chat threads are modified, e.g. thread archived.
+Emitted when threads have been loaded with metadata and are ready to use. This event fires whenever chat threads are modified, e.g. thread archived.
 
 ```swift
-func onThreadsUpdated(_ chatThreads: [ChatThread]) {
+case .threadsUpdated(let chatThreads):
     ...
-}
 ```
 
-### On Custom Message
+### Custom Event Message
 
-Callback to be called when a custom message is received.
+Emitted when a custom message is received.
 
 ```swift
-func onCustomEventMessage(_ messageData: Data) {
+case .customEventMessage(let messageData):
     ...
-}
 ```
 
-### On Agent Typing Started/Ended
+### Agent Typing Started/Ended
 
-Callback to be called when the agent has started/stopped typing.
+Emitted when the agent has started/stopped typing.
 
 ```swift
-func onAgentTyping(_ isTyping: Bool, threadId: String) {
+case .agentTyping(let isTyping, let agent, let threadId):
     ...
-}
 ```
 
-### On Contact Custom Fields Set
+### Contact Custom Fields Set
 
-Callback to be called when the custom fields are set for a contact.
+Emitted when the custom fields are set for a contact.
 
 ```swift
-func onContactCustomFieldsSet() {
+case .contactCustomFieldsSet:
     ...
-}
 ```
 
-### On Customer Custom Fields Set
+### Customer Custom Fields Set
 
-Callback to be called when the custom fields are set for a customer.
+Emitted when the custom fields are set for a customer.
 
 ```swift
-func onCustomerCustomFieldsSet() {
+case .customerCustomFieldsSet:
     ...
-}
 ```
 
-### On Error
+### Error
 
-Callback to be called when an error occurs.
+Emitted when an error occurs.
 
 ```swift
-func onError(_ error: Error) {
+case .error(let error):
     ...
-}
 ```
 
-### On Token Refresh Failed
+### Proactive Action Received
 
-Callback to be called when refreshing the token has failed.
-
-```swift
-func onTokenRefreshFailed() {
-    ...
-}
-```
-
-### On Proactive Action Received
-
-Callback to be called when a proactive action with typed data is received.
+Emitted when a proactive action with typed data is received.
 
 ```swift
-func onProactiveActionReceived(of type: ProactiveActionType) {
-    switch type {
-    case .inactivityPopup(let popup):
-        // Handle inactivity popup
-        handleInactivityPopup(popup)
-    case .customPopupBox:
-        ...
-    }
-}
+case .proactiveActionReceived(.inactivityPopup(let popup)):
+    // Handle inactivity popup
+    handleInactivityPopup(popup)
 
-private func handleInactivityPopup(_ popup: InactivityPopup) {
+func handleInactivityPopup(_ popup: InactivityPopup) {
     ...
 }
 ```
 
 **Important Notes:**
 - The inactivity popup feature works for live chat channels only (not available for messaging)
-- You must implement this delegate method to handle inactivity popups
+- You must subscribe to `chatProvider.events()` and handle the `.proactiveActionReceived(.inactivityPopup(_:))` case to display the popup
 - Use the `ProactiveActionTrigger` enum for type-safe responses
 - The SDK automatically handles the response formatting and server communication
 - **Architecture**: The backend handles session timing and expiration - don't implement custom timers

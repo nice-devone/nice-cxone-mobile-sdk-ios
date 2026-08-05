@@ -18,10 +18,16 @@ In multi-thread configurations:
 
 ### 1. Initialize the SDK
 
-Start by preparing the SDK with your environment configuration:
+Construct a `CXoneChat` instance and hold a reference to it for the lifetime of your chat integration (the previous `CXoneChat.shared` singleton has been removed):
 
 ```swift
-try await CXoneChat.shared.connection.prepare(
+let chatProvider = CXoneChat()
+```
+
+Then prepare the SDK with your environment configuration:
+
+```swift
+try await chatProvider.connection.prepare(
     environment: env,
     brandId: configuration.brandId,
     channelId: configuration.channelId
@@ -33,40 +39,36 @@ try await CXoneChat.shared.connection.prepare(
 Establish a connection to CXone services:
 
 ```swift
-try await CXoneChat.shared.connection.connect()
+try await chatProvider.connection.connect()
 ```
 
-### 3. Set Up Delegates
+### 3. Subscribe to SDK Events
 
-Register as a delegate to receive SDK updates:
-
-```swift
-CXoneChat.shared.add(delegate: self)
-```
-
-### 4. Implement Thread List Management
-
-Implement the delegate methods to handle thread list updates:
+The previous `CXoneChatDelegate` protocol has been removed. Instead, observe SDK events through the `events()` async stream:
 
 ```swift
-// Track chat state changes
-func onChatUpdated(_ state: ChatState, mode: ChatMode) {
-    switch state {
-    case .ready:
-        // Chat is ready - show thread list or empty state
-    default:
-        // Handle other states
+Task { [chatProvider] in
+    for await event in chatProvider.events() {
+        switch event {
+        case .chatUpdated(let state, let mode):
+            // Track chat state / mode changes
+            if state == .ready {
+                // Chat is ready - show thread list or empty state
+            }
+        case .threadsUpdated(let chatThreads):
+            // Update UI with the latest threads
+            updateThreadList(chatThreads)
+        case .threadUpdated(let chatThread):
+            // Update UI with the latest thread data
+            updateThreadView(chatThread)
+        default:
+            break
+        }
     }
 }
-
-// Handle updates to the thread list
-func onThreadsUpdated(_ chatThreads: [ChatThread]) {
-    // Update UI with the latest threads
-    updateThreadList(chatThreads)
-}
 ```
 
-### 5. Creating New Threads
+### 4. Creating New Threads
 
 Implement thread creation functionality:
 
@@ -76,11 +78,11 @@ func createNewThread(with customFields: [String: String]? = nil) {
         do {
             if let customFields {
                 // Create thread with pre-chat survey fields
-                let threadProvider = try await CXoneChat.shared.threads.create(with: customFields)
+                let threadProvider = try await chatProvider.threads.create(with: customFields)
                 // Handle the newly created thread
             } else {
                 // Create thread without pre-chat
-                let threadProvider = try await CXoneChat.shared.threads.create()
+                let threadProvider = try await chatProvider.threads.create()
                 // Handle the newly created thread
             }
         } catch {
@@ -90,7 +92,7 @@ func createNewThread(with customFields: [String: String]? = nil) {
 }
 ```
 
-### 6. Thread Selection and Loading
+### 5. Thread Selection and Loading
 
 When a user selects a thread from the list, load its full content:
 
@@ -107,16 +109,9 @@ func onThreadSelected(_ thread: ChatThread) {
 }
 ```
 
-### 7. Thread View Implementation
+### 6. Thread View Implementation
 
-In the thread view, implement the necessary delegate method:
-
-```swift
-func onThreadUpdated(_ chatThread: ChatThread) {
-    // Update UI with the latest thread data
-    ...
-}
-```
+In the thread view, react to `threadUpdated` events from the events stream (shown in step 3) to keep the UI in sync with the latest thread data.
 
 ## Handling App State Changes
 
@@ -126,23 +121,23 @@ For optimal performance in multi-thread configurations:
 // When app enters foreground
 func applicationWillEnterForeground() {
     Task {
-        try await CXoneChat.shared.connection.connect()
+        try await chatProvider.connection.connect()
     }
 }
 
 // When app enters background
 func applicationDidEnterBackground() {
-    CXoneChat.shared.connection.disconnect()
+    chatProvider.connection.disconnect()
 }
 ```
 
 ## Best Practices
 
-1. **Thread List Management**: Keep the thread list up-to-date by responding to `onThreadsUpdated` events
+1. **Thread List Management**: Keep the thread list up-to-date by handling `.threadsUpdated` events from `chatProvider.events()`
 2. **Thread Creation**: Check for pre-chat requirements before creating new threads
 3. **Thread Selection**: Load thread details when a user selects a thread from the list
 4. **Connection Management**: Connect only when needed and disconnect when the app is in the background
-5. **Logging**: Configure the SDK logger to track issues and state changes
+5. **Logging**: Configure the SDK logger to track issues and state changes by assigning a `LogWriter` to the static `CXoneChat.logWriter` property
 
 ```swift
 CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)

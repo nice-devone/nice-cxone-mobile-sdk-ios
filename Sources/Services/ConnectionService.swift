@@ -13,39 +13,38 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import CXoneGuideUtility
 import Foundation
 
-class ConnectionService {
+final class ConnectionService: Sendable {
 
     // MARK: - Properties
-    
-    // To be able to retry getting channel configuration in case of transient errors
-    static var getChannelRetryAttempts = 3
-    
-    let delegate: CXoneChatDelegate
+
+    let broadcaster: EventBroadcaster
     let transactionTokenService: TransactionTokenService
-    var socketService: SocketService
-    var eventsService: EventsService
-    var customerService: CustomerService?
-    var threadsService: ChatThreadListService?
-    var customerFieldsService: CustomerCustomFieldsService?
-    var registerListeners: (() -> Void)?
+    let socketService: SocketService
+    let eventsService: EventsService
+    let customerService: CustomerService?
+    let threadsService: ChatThreadListService?
+    let customerFieldsService: CustomerCustomFieldsService?
     
+    let registerListeners = SafeAccessContainer<(@Sendable () -> Void)?>(nil)
+
+    /// Serialises implicit-flow token refreshes so concurrent outbound operations queue behind one refresh.
+    private let tokenRefreshCoordinator = TokenRefreshCoordinator()
+
+    /// HTTP status the backend returns when it rejects the connection token, triggering a delegate refresh.
+    /// Matches the Android SDK's token-rejection check (`httpStatusCode == 401`).
+    private static let tokenRejectionStatusCode = 401
+
     var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
+
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+    private let getChannelRetryAttempts: Int
     
-    // MARK: - Protocol Properties
-    
-    var events: AnyPublisher<any ReceivedEvent, Never> {
-        socketService.events
-    }
-    var cancellables: [AnyCancellable] {
-        get { socketService.cancellables }
-        set { socketService.cancellables = newValue }
-    }
     var channelConfiguration: ChannelConfiguration {
         ChannelConfigurationMapper.map(connectionContext.channelConfig)
     }
@@ -58,15 +57,17 @@ class ConnectionService {
         customerFields: CustomerCustomFieldsProvider,
         socketService: SocketService,
         eventsService: EventsService,
-        delegate: CXoneChatDelegate
+        broadcaster: EventBroadcaster,
+        retryAttempts: Int = 3
     ) {
         self.customerService = customer as? CustomerService
         self.threadsService = threads as? ChatThreadListService
         self.customerFieldsService = customerFields as? CustomerCustomFieldsService
         self.socketService = socketService
         self.eventsService = eventsService
-        self.delegate = delegate
+        self.broadcaster = broadcaster
         self.transactionTokenService = TransactionTokenService(connectionContext: socketService.connectionContext)
+        self.getChannelRetryAttempts = retryAttempts
 
         socketService.delegate = self
     }
@@ -137,38 +138,6 @@ extension ConnectionService: ConnectionProvider {
         
         try await prepare(brandId: brandId, channelId: channelId)
     }
-    
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Replaced with prepare(chatURL:socketURL:brandId:channelId:loggerURL:) to be able to use additional logger.")
-    func prepare(chatURL: String, socketURL: String, brandId: Int, channelId: String) async throws {
-        try await prepare(chatURL: chatURL, socketURL: socketURL, loggerURL: "", brandId: brandId, channelId: channelId)
-    }
-    
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Replaced with prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:) to support tokenURL parameter.")
-    func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String) async throws {
-        try await prepare(chatURL: chatURL, socketURL: socketURL, loggerURL: loggerURL, brandId: brandId, channelId: channelId, tokenURL: nil)
-    }
 
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
@@ -204,9 +173,10 @@ extension ConnectionService: ConnectionProvider {
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
+    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/transactionTokenExpired`` if the transaction token is expired.
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the OAuth token was rejected or is missing.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -223,27 +193,36 @@ extension ConnectionService: ConnectionProvider {
             return
         }
         if connectionContext.chatState.isChatAvailable {
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
             return
         }
         
         guard connectionContext.chatState == .prepared else {
             throw CXoneChatError.illegalChatState
         }
-        
+
         if connectionContext.chatMode == .liveChat, try await !isLiveChatAvailable() {
             LogManager.trace("Chat mode is live chat but the chat is offline")
             
             connectionContext.chatState = .offline
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
         } else {
             LogManager.trace("Setting `state` to `connecting` and connecting to the CXone service")
-            
+
             connectionContext.chatState = .connecting
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
-            
-            try await connectToSocket()
-            
+            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+
+            do {
+                try await connectToSocket()
+            } catch {
+                // Any failure while connecting (token refresh, transaction-token exchange, or the WebSocket
+                // handshake itself) must reset the state machine to `.prepared`, or the `.prepared` guard
+                // above rejects every subsequent `connect()` and the SDK is stranded at `.connecting`.
+                connectionContext.chatState = .prepared
+
+                throw error
+            }
+
             try await startAutomatedConnectionFlow()
         }
     }
@@ -262,19 +241,6 @@ extension ConnectionService: ConnectionProvider {
 
             socketService.disconnect(unexpectedly: false)
         }
-    }
-    
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    func executeTrigger(_ triggerId: UUID) async throws { // swiftlint:disable:this no_uuid
-        try await executeTrigger(triggerId.uuidString)
     }
     
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
@@ -311,36 +277,9 @@ extension ConnectionService: ConnectionProvider {
             triggerId: triggerId
         )
 
-        let data = try JSONEncoder().encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: LowercaseUUID().uuidString, payload: payload))
+        let data = try encoder.encode(ExecuteTriggerEventDTO(action: .chatWindowEvent, eventId: LowercaseUUID().uuidString, payload: payload))
 
         try await socketService.send(data: data)
-    }
-}
-
-// MARK: - EventReceiver
-
-extension ConnectionService: EventReceiver {
-    
-    func addListeners() {
-        addListener(onOperationError)
-    }
-    
-    func onOperationError(_ error: OperationError) {
-        switch error.errorCode {
-        case .customerReconnectFailed, .consumerReconnectFailed:
-            Task { [weak self] in
-                do {
-                    try await self?.refreshToken()
-                } catch {
-                    error.logError()
-                    
-                    self?.delegate.onError(error)
-                }
-            }
-        default:
-            // Other errors are handled in the SocketService
-            break
-        }
     }
 }
 
@@ -350,17 +289,19 @@ extension ConnectionService {
     
     func signOut() {
         LogManager.trace("Signing out an user")
-        
+
         socketService.disconnect(unexpectedly: false)
-        
+
         connectionContext.clear()
+
+        broadcaster.invalidate()
     }
 }
 
 // MARK: - Private methods
 
 private extension ConnectionService {
-    
+
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
     /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
     /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
@@ -370,10 +311,10 @@ private extension ConnectionService {
     /// - Throws: ``NSError`` object that indicates why the request failed
     func getChannelConfiguration(url: URL) async throws -> ChannelConfigurationDTO {
         try await Task
-            .retrying(attempts: Self.getChannelRetryAttempts) {
+            .retrying(attempts: getChannelRetryAttempts) {
                 let (data, _) = try await self.connectionContext.session.fetch(from: url)
 
-                return try JSONDecoder().decode(ChannelConfigurationDTO.self, from: data)
+                return try self.decoder.decode(ChannelConfigurationDTO.self, from: data)
             }
             .value
     }
@@ -404,7 +345,7 @@ private extension ConnectionService {
             connectionContext.channelId = channelId
             
             // Configure the client logger since all necessary paramenters are set
-            LogManager.configureInternalLogger(connectionContext: connectionContext)
+            await LogManager.configureInternalLogger(connectionContext: connectionContext)
             
             LogManager.trace("Did set channel configuration for the SDK")
             
@@ -428,8 +369,8 @@ private extension ConnectionService {
             try await createOrUpdateVisitor(visitorId: visitorId, customerId: customerId)
             
             connectionContext.chatState = .prepared
-            
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+
+            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
         } catch {
             connectionContext.chatState = .initial
             
@@ -437,103 +378,206 @@ private extension ConnectionService {
         }
     }
     
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
-    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
-    /// - Throws: ``CXoneChatError/transactionTokenExpired`` if the transaction token is expired.
-    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed`` if the transaction token request fails
+    /// - Parameter forceRefresh: When `true`, bypass the local-expiry cache and mint a fresh transaction
+    ///   token even if the cached one is still valid by the device clock. Used by the reconnect path
+    ///   (``recreateSocketURL(forceRefresh:)``) to recover from a server-side token invalidation the local
+    ///   expiry check cannot see. Skipped for explicit OAuth, which needs a fresh authorization code the
+    ///   SDK cannot obtain silently.
     /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to get cached transaction token.
-    func connectToSocket() async throws {
-        LogManager.trace("Connecting to the socket")
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the OAuth token was rejected by the backend.
+    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
+    func getAndStoreTransactionTokenIfNeeded(for authenticationType: AuthenticationTypeDTO, forceRefresh: Bool = false) async throws -> String {
+        // On reconnect the server may have invalidated a token that is still valid by the device clock.
+        // Bypass the local-expiry cache so a fresh token is minted instead of the rejected one being replayed.
+        // Skipped for explicit OAuth: it needs a fresh authorization code the SDK cannot obtain silently,
+        // so it must fall through to the re-auth path rather than force-mint.
+        let shouldForceMint = forceRefresh && authenticationType != .oAuthExplicit
 
-        // Log channel information for debugging
+        if !shouldForceMint, let token = connectionContext.reusableTransactionToken {
+            LogManager.info("Cached transaction token is still valid")
+
+            return token.value
+        }
+
+        do {
+            LogManager.trace("Transaction token is not available or expired, requesting a new one")
+
+            return try await requestAndStoreTransactionToken(for: authenticationType)
+        } catch CXoneChatError.transactionTokenRequestFailed(let statusCode)
+            where statusCode == Self.tokenRejectionStatusCode && authenticationType == .oAuthImplicit {
+            // Implicit OAuth: the backend rejected the connection token (HTTP 401) even though it hadn't
+            // timed out. With a listener, ask for a fresh token and retry the exchange once; without one
+            // there is nothing to refresh with, so surface the documented invalid-token error either way
+            // rather than leaking the raw HTTP failure (keeps the connect path consistent with the send path).
+            guard connectionContext.tokenDelegateListener != nil else {
+                LogManager.warning("Implicit OAuth: backend rejected the connection token (HTTP \(statusCode)) and no token delegate listener is registered")
+
+                throw CXoneChatError.invalidAccessToken
+            }
+
+            LogManager.trace("Implicit OAuth: backend rejected the connection token (HTTP \(statusCode)) — refreshing via delegate and retrying")
+
+            return try await refreshImplicitConnectionToken(reason: .tokenInvalid)
+        } catch {
+            error.logError()
+
+            throw error
+        }
+    }
+
+    /// Requests a transaction token for `authenticationType`, stores it, and refreshes the cached customer identity.
+    func requestAndStoreTransactionToken(for authenticationType: AuthenticationTypeDTO) async throws -> String {
+        let entity = try await transactionTokenService.requestTransactionToken(for: authenticationType)
+
+        connectionContext.transactionToken = entity
+        connectionContext.customer = connectionContext.customer?.copy(from: entity)
+
+        return entity.value
+    }
+
+    /// Builds the WebSocket URL, re-minting the transaction token when the cached one is missing or
+    /// expired. Shared by the initial connect (``connectToSocket()``) and the automatic reconnect
+    /// (``recreateSocketURL(forceRefresh:)``) so both go through the same token handling.
+    ///
+    /// For the implicit OAuth flow, this also proactively refreshes the connection token (JWT) via the
+    /// integrator's token delegate when the JWT is near expiry, before it is exchanged for a transaction
+    /// token. Skipped when a still-valid transaction token is cached and no refresh is forced, since
+    /// ``getAndStoreTransactionTokenIfNeeded(for:forceRefresh:)`` reuses it and never touches the JWT.
+    ///
+    /// - Parameter forceRefresh: When `true`, mint a fresh transaction token even if the cached one is still
+    ///   valid by the device clock, and (for implicit OAuth) also refresh the JWT if it is near expiry.
+    ///   Used by the reconnect path to recover from a server-side token invalidation the local expiry check
+    ///   cannot see. Skipped for explicit OAuth, which needs a fresh authorization code the SDK cannot
+    ///   obtain silently. The initial connect leaves this at its default (`false`).
+    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` if the transaction-token exchange fails.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL cannot be built.
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the OAuth token was rejected or is missing.
+    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
+    func buildSocketURL(forceRefresh: Bool = false) async throws -> URL {
         LogManager.trace("Channel info - brandId: \(connectionContext.brandId), channelId: \(connectionContext.channelId)")
 
-        // Build base query items
-        var queryItems: [URLQueryItem] = [
+        // On a forced refresh (reconnect retry) also treat the token as needing refresh, so an implicit-OAuth
+        // JWT that is near expiry is refreshed before the transaction-token exchange rather than replayed.
+        //
+        // The refresh-implicit path already mints and stores a fresh transaction token internally, so its
+        // return value is used directly to skip a redundant `/oauth/token` round-trip on the reconnect hot
+        // path. Falling through to `getAndStoreTransactionTokenIfNeeded` would otherwise bypass the just-
+        // populated `reusableTransactionToken` cache when `forceRefresh == true`.
+        let needsFreshTransactionToken = forceRefresh || connectionContext.reusableTransactionToken == nil
+        let transactionToken: String
+        if needsFreshTransactionToken,
+           connectionContext.isImplicitConnectionTokenExpiring,
+           connectionContext.tokenDelegateListener != nil {
+            transactionToken = try await refreshImplicitConnectionToken(reason: .tokenExpired)
+        } else {
+            transactionToken = try await getAndStoreTransactionTokenIfNeeded(
+                for: connectionContext.authenticationType,
+                forceRefresh: forceRefresh
+            )
+        }
+        let queryItems: [URLQueryItem] = [
             URLQueryItem(name: "brandId", value: connectionContext.brandId.description),
             URLQueryItem(name: "channelId", value: connectionContext.channelId),
             URLQueryItem(name: "visitorId", value: connectionContext.visitorId),
             URLQueryItem(name: "sdkPlatform", value: "ios"),
-            URLQueryItem(name: "sdkVersion", value: CXoneChatSDKModule.version)
+            URLQueryItem(name: "sdkVersion", value: CXoneChatSDKModule.version),
+            URLQueryItem(name: "transactionToken", value: transactionToken)
         ]
 
-        // Request transaction token when secured sessions feature is enabled
-        // When enabled, ALL authentication types require transaction tokens for WebSocket connection
-        if connectionContext.channelConfig.settings.isSecuredSessionsEnabled {
-            let authenticationType = connectionContext.channelConfig.authenticationType
-            LogManager.trace("`SecuredSessions` toggle enabled -> requesting transaction token for \(authenticationType)")
-            
-            // Add transaction token to WebSocket query parameters
-            queryItems.append(
-                URLQueryItem(
-                    name: "transactionToken",
-                    value: try await getAndStoreTransactionTokenIfNeeded(for: authenticationType)
-                )
-            )
-        } else {
-            LogManager.trace("`SecuredSessions` toggle disabled -> using traditional authentication flow")
-        }
-        
-        let socketEndpoint = SocketEndpointDTO(
-            environment: connectionContext.environment,
-            queryItems: queryItems,
-            method: .get
-        )
-        
+        let socketEndpoint = SocketEndpointDTO(environment: connectionContext.environment, queryItems: queryItems, method: .get)
+
         guard let url = socketEndpoint.url else {
             throw CXoneChatError.invalidParameter("Configuration has invalid websocket url")
         }
 
-        LogManager.trace("Connecting to WebSocket")
-
-        try await socketService.connect(socketURL: url)
+        return url
     }
     
-    /// - Throws: ``CXoneChatError/transactionTokenExpired`` if the transaction token is expired.
-    /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
-    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to get cached transaction token.
-    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` if the request fails with a non-2xx status code.
-    func getAndStoreTransactionTokenIfNeeded(for authenticationType: AuthenticationType) async throws -> String {
-        // If the token is available & not expired -> return it's value
-        if let token = connectionContext.transactionToken, !token.isExpired {
-            LogManager.info("Cached transaction token is still valid")
-            
+    /// Refreshes the implicit-flow connection token via the integrator's token delegate, single-flighted so
+    /// concurrent callers await one in-flight refresh rather than each triggering their own.
+    ///
+    /// On success the fresh token is applied and re-exchanged for a new transaction token. When no listener
+    /// is registered, or the listener or exchange fails, ``CXoneChatError/invalidAccessToken`` is thrown so
+    /// the caller can abort the pending operation.
+    ///
+    /// - Parameter reason: Why the token is being refreshed; forwarded to the integrator's listener.
+    /// - Returns: The refreshed transaction-token value.
+    @discardableResult
+    func refreshImplicitConnectionToken(reason: TokenRequestReason) async throws -> String {
+        // A reactive refresh (the backend rejected the token) must run fresh rather than inherit an
+        // in-flight proactive refresh's result, which may be the very token that was just rejected.
+        try await tokenRefreshCoordinator.refresh(force: reason == .tokenInvalid) {
+            try await self.performImplicitTokenRefresh(reason: reason)
+        }
+    }
+
+    /// - Returns: The refreshed transaction-token value.
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if no token delegate listener is registered, it fails,
+    ///     or the backend rejects the refreshed token during the transaction-token exchange.
+    func performImplicitTokenRefresh(reason: TokenRequestReason) async throws -> String {
+        // A concurrent refresh may have already renewed the token while this call waited for the single-flight
+        // slot. For a proactive (expiry-driven) refresh, reuse the fresh transaction token instead of calling
+        // the delegate again. A reactive (`.tokenInvalid`) refresh always re-runs — the token was rejected.
+        if reason == .tokenExpired,
+           !connectionContext.isConnectionTokenExpiring,
+           let token = connectionContext.transactionToken,
+           !token.isExpired {
+            LogManager.trace("Implicit OAuth: connection token already refreshed by a concurrent request")
+
             return token.value
         }
-        // If the token is not available -> request a new one
-        // If the token is available, expired and authentication type is not `.OAuth` -> request a new one
-        else if connectionContext.transactionToken == nil || authenticationType != .thirdPartyOAuth {
-            LogManager.trace("Transaction token is not available or expired, requesting a new one")
-            
-            let entity = try await transactionTokenService.requestTransactionToken(for: authenticationType)
-            
-            connectionContext.transactionToken = entity
-            connectionContext.customer = connectionContext.customer?.copy(from: entity)
-            
-            return entity.value
-        } else {
-            LogManager.trace("Stored OAuth transaction is no longer valid. Resetting the chat state to allow OAuth flow re-trigger.")
-            
-            // We are not able to get the token based on previously stored authorization code and code verifier,
-            // Set state from `.connecting` to `.prepared` so the connection flow can be retriggered
-            connectionContext.chatState = .prepared
-            
-            throw CXoneChatError.transactionTokenExpired
+
+        guard let listener = connectionContext.tokenDelegateListener else {
+            LogManager.warning("Implicit OAuth token needs refresh but no token delegate listener is registered")
+
+            throw CXoneChatError.invalidAccessToken
         }
+
+        LogManager.trace("Requesting a fresh implicit connection token from the token delegate")
+
+        // The listener is integrator code — map whatever it throws to the documented
+        // ``CXoneChatError/invalidAccessToken`` so provider-specific errors never leak
+        // through the SDK's public API (see ``CustomerProvider/setTokenDelegateListener(_:)``).
+        let token: OAuthToken
+        do {
+            token = try await listener(reason)
+        } catch {
+            error.logError()
+
+            throw CXoneChatError.invalidAccessToken
+        }
+
+        connectionContext.connectionToken = token.accessToken
+        connectionContext.connectionTokenExpiresAt = token.expiresAt
+
+        // The freshly-delegated token can still be rejected by the backend — surface the documented
+        // invalid-token error rather than the raw HTTP failure, so integrators recover via one
+        // contract on every entry point (connect and send).
+        let value: String
+        do {
+            value = try await requestAndStoreTransactionToken(for: .oAuthImplicit)
+        } catch CXoneChatError.transactionTokenRequestFailed(let statusCode) where statusCode == Self.tokenRejectionStatusCode {
+            LogManager.error("Implicit OAuth: the refreshed connection token was rejected (HTTP \(statusCode))")
+
+            throw CXoneChatError.invalidAccessToken
+        }
+
+        LogManager.trace("Implicit connection token refreshed successfully")
+
+        return value
     }
-    
+
     func startAutomatedConnectionFlow() async throws {
         LogManager.trace("Starting automated connection flow")
-        
+
         connectionContext.chatState = .connected
-        delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+        broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
         
         do {
             // Setup websocket event listeners
-            if let registerListeners {
+            if let registerListeners = registerListeners.content {
                 registerListeners()
             } else {
                 LogManager.error("Unable to register listeners for the socket events")
@@ -542,104 +586,16 @@ private extension ConnectionService {
                 return
             }
             
-            try await checkForAuthorization()
+            guard let threadsService else {
+                throw CXoneChatError.invalidParameter("threadService")
+            }
+            
+            try await threadsService.handleForCurrentChatMode(connectionContext.chatMode)
         } catch {
             socketService.disconnect(unexpectedly: true)
             
             throw error
         }
-    }
-    
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func checkForAuthorization() async throws {
-        LogManager.trace("Checking authorization")
-
-        // When secured sessions feature is enabled, authorization happens during WebSocket handshake
-        // via digital-oauth service for ALL authentication types
-        // No need to send authorizeCustomer event - proceed directly to thread loading
-        if connectionContext.channelConfig.settings.isSecuredSessionsEnabled {
-            LogManager.trace("`SecuredSessions` toggle enabled -> proceed directly to thread loading")
-
-            // Proceed directly to loading threads/reconnecting (same as after successful authorization)
-            try await customerService?.processCustomerReconnectedEvent()
-        } else {
-            LogManager.trace("`SecuredSessions` toggle disabled -> continue with legacy authorization flow")
-
-            // Traditional authorization flow (secured sessions feature disabled)
-            if connectionContext.accessToken != nil {
-                try await reconnectCustomer()
-            } else {
-                try await authorizeCustomer()
-            }
-        }
-    }
-    
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func authorizeCustomer() async throws {
-        LogManager.trace("Authorizing customer")
-        
-        let event = try eventsService.create(
-            event: .authorizeCustomer,
-            with: .authorizeCustomerData(
-                AuthorizeCustomerEventDataDTO(
-                    authorizationCode: connectionContext.authorizationCode,
-                    codeVerifier: connectionContext.codeVerifier
-                )
-            )
-        )
-        
-        let response = try await events.sink(
-            type: .customerAuthorized,
-            as: CustomerAuthorizedEventDTO.self,
-            origin: event,
-            socketService: socketService,
-            eventsService: eventsService,
-            cancellables: &cancellables
-        )
-        
-        try await customerService?.processCustomerAuthorizedEvent(response)
-    }
-    
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func reconnectCustomer() async throws {
-        LogManager.trace("Reconnecting customer")
-        
-        guard let token = connectionContext.accessToken?.token else {
-            throw CXoneChatError.missingAccessToken
-        }
-        
-        let event = try eventsService.create(
-            event: .reconnectCustomer,
-            with: .reconnectCustomerData(ReconnectCustomerEventDataDTO(token: token))
-        )
-        
-        try await events.sink(
-            type: .customerReconnected,
-            as: GenericEventDTO.self,
-            origin: event,
-            socketService: socketService,
-            eventsService: eventsService,
-            cancellables: &cancellables
-        )
-        
-        try await customerService?.processCustomerReconnectedEvent()
     }
     
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -656,16 +612,19 @@ private extension ConnectionService {
 
         try await Task
             .retrying {
+                // DeviceFingerprintDTO.init reads UIDevice.current — must run on @MainActor.
+                // JSONEncoder.encode and the network fetch are done outside to avoid blocking the main thread.
+                let fingerprint = await MainActor.run { DeviceFingerprintDTO(deviceToken: self.connectionContext.deviceToken) }
                 var request = URLRequest(url: url, method: .put, contentType: "application/json")
-                request.httpBody = try JSONEncoder().encode(
+                request.httpBody = try self.encoder.encode(
                     VisitorDTO(
                         customerIdentity: CustomerIdentityDTO(idOnExternalPlatform: customerId),
-                        browserFingerprint: DeviceFingerprintDTO(deviceToken: self.connectionContext.deviceToken),
+                        browserFingerprint: fingerprint,
                         journey: nil,
                         customVariables: nil
                     )
                 )
-                
+
                 try await self.connectionContext.session.fetch(for: request, file: #file)
             }
             .value
@@ -688,7 +647,7 @@ private extension ConnectionService {
         let isOnline = try await Task
             .retrying {
                 let (data, _) = try await self.connectionContext.session.fetch(from: url)
-                let response = try JSONDecoder().decode(LiveChatAvailabilityDTO.self, from: data)
+                let response = try self.decoder.decode(LiveChatAvailabilityDTO.self, from: data)
                 
                 return response.isOnline
             }
@@ -724,7 +683,24 @@ private extension URL {
 extension ConnectionService: SocketDelegate {
     
     func didReceive(error: any Error) {
-        delegate.onError(error)
+        broadcaster.send(.error(error))
+    }
+
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
+    /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the OAuth token was rejected or is missing.
+    /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to get cached transaction token.
+    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
+    func connectToSocket() async throws {
+        LogManager.trace("Connecting to the socket")
+
+        let url = try await buildSocketURL()
+
+        LogManager.trace("Connecting to WebSocket")
+
+        try await socketService.connect(socketURL: url)
     }
 
     func didCloseConnection(unexpectedly: Bool) {
@@ -733,54 +709,38 @@ extension ConnectionService: SocketDelegate {
         connectionContext.chatState = .prepared
 
         if unexpectedly {
-            delegate.onUnexpectedDisconnect()
+            broadcaster.send(.unexpectedDisconnect)
         } else {
-            delegate.onChatUpdated(connectionContext.chatState, mode: connectionContext.chatMode)
+            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
         }
     }
 
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn’t returned.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if a refresh token is not available.
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the implicit flow has no token delegate listener registered.
     func refreshToken() async throws {
         LogManager.trace("Refreshing a token")
 
-        if connectionContext.channelConfig.settings.isSecuredSessionsEnabled {
-            let entity = try await transactionTokenService.refreshAccessToken()
-            
-            LogManager.trace("Updating OAuth access token within transaction token")
-            
-            connectionContext.transactionToken = connectionContext.transactionToken?.copy(accessToken: entity)
-        } else {
-            guard let expiredToken = connectionContext.accessToken?.token else {
-                throw CXoneChatError.missingAccessToken
-            }
+        guard connectionContext.authenticationType == .oAuthImplicit else {
+            let entity = try await transactionTokenService.refreshTransactionToken()
 
-            let event = try eventsService.create(
-                event: .refreshToken,
-                with: .refreshTokenPayload(RefreshTokenPayloadDataDTO(token: expiredToken))
-            )
-            
-            let response = try await events.sink(
-                type: .tokenRefreshed,
-                as: TokenRefreshedEventDTO.self,
-                origin: event,
-                checkTokenExpiration: false,
-                socketService: socketService,
-                eventsService: eventsService,
-                cancellables: &cancellables
-            )
-            
-            LogManager.trace("Saving an access token")
-            
-            connectionContext.accessToken = response.postback.accessToken
+            LogManager.trace("Explicit PKCE: transaction token refreshed successfully")
+
+            connectionContext.transactionToken = entity
+            return
         }
+
+        try await refreshImplicitConnectionToken(reason: .tokenExpired)
     }
-    
+
     func reconnect() async throws {
         LogManager.trace("Reconnecting to the web socket")
-        
+
         try await startAutomatedConnectionFlow()
+    }
+
+    func recreateSocketURL(forceRefresh: Bool) async throws -> URL {
+        LogManager.trace("Rebuilding socket URL for reconnect (re-minting the transaction token if needed)")
+
+        return try await buildSocketURL(forceRefresh: forceRefresh)
     }
 }

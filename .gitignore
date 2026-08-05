@@ -38,9 +38,19 @@ amplifytools.xcconfig
 /* Generated Jazzy documentation
 jazzy_docs/
 
+# Local secrets — never commit
+.env
+
 # Cursor and Claude
 !.claude/instructions/
 !.claude/skills/
 .cursor
 .cursorignore
 .kb
+.publish_work/
+
+# Git worktrees
+.worktrees/
+
+# Local MCP config (generated from .mcp.json.dist)
+.mcp.json

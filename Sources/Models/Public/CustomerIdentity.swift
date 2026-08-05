@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents information about a customer identity to be sent on events.
-public struct CustomerIdentity: Equatable {
+public struct CustomerIdentity: Equatable, Sendable {
     
     // MARK: - Properties
     
@@ -26,10 +26,10 @@ public struct CustomerIdentity: Equatable {
     public let id: String
     
     /// The first name of the customer. Use when sending a message to set the name in MAX.
-    public var firstName: String?
+    public let firstName: String?
     
     /// The last name of the customer. Use when sending a message to set the name in MAX.
-    public var lastName: String?
+    public let lastName: String?
     
     /// The full name of the customer.
     public var fullName: String? {

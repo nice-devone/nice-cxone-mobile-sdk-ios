@@ -18,22 +18,6 @@ import Foundation
 /// The different types of error that can be received from the WebSocket.
 enum EventErrorCode: String, Codable {
     
-    case customerAuthorizationFailed = "CustomerAuthorizationFailed"
-    
-    /// Legacy error code for customer authorization failure.
-    ///
-    /// This error code will be replaced by `customerAuthorizationFailed` in the future.
-    case consumerAuthorizationFailed = "ConsumerAuthorizationFailed"
-    
-    case customerReconnectFailed = "CustomerReconnectionFailed"
-    
-    /// Legacy error code for customer reconnection failure.
-    ///
-    /// This error code will be replaced by `customerReconnectFailed` in the future.
-    case consumerReconnectFailed = "ConsumerReconnectionFailed"
-    
-    case tokenRefreshFailed = "TokenRefreshingFailed"
-    
     case recoveringThreadFailed = "RecoveringThreadFailed"
     
     case recoveringLivechatFailed = "RecoveringLivechatFailed"
@@ -41,4 +25,19 @@ enum EventErrorCode: String, Codable {
     case inconsistentData = "InconsistentData"
     
     case sendingTranscriptFailed = "SendingTranscriptFailed"
+
+    /// Fallback for backend error codes the SDK does not recognize.
+    ///
+    /// Without this, an unrecognized code would make ``OperationError`` decoding throw,
+    /// the event would be silently dropped, and any `waitFor` awaiting its `eventId`
+    /// would hang until timeout instead of surfacing the error.
+    case unknown = "Unknown"
+
+    // MARK: - Init
+
+    init(from decoder: any Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(String.self)
+
+        self = EventErrorCode(rawValue: rawValue) ?? .unknown
+    }
 }

@@ -50,4 +50,40 @@ public struct ChannelConfiguration {
     ///
     /// Determines which authentication method to use when connecting to this channel.
     public let authenticationType: AuthenticationType
+
+    // MARK: - Init
+    
+    /// Creates a new channel configuration with the provided options and capabilities.
+    ///
+    /// - Parameters:
+    ///   - hasMultipleThreadsPerEndUser: Whether the channel supports multiple concurrent threads for the same end user.
+    ///   - isProactiveChatEnabled: Indicates if proactive chat features are enabled.
+    ///   - isAuthorizationEnabled: Indicates if OAuth-based authorization is required/enabled for the channel.
+    ///   - isSendTranscriptEnabled: Whether the Send Transcript feature is enabled.
+    ///   - fileRestrictions: Constraints describing allowed uploads for this channel.
+    ///   - features: A dictionary of feature flags currently handled by the client; if a feature is not present, it is considered on by default.
+    ///   - isOnline: Whether the service is currently available.
+    ///   - isLiveChat: Whether the channel operates as live chat (as opposed to messaging).
+    ///   - authenticationType: The authentication method required for this channel.
+    public init(
+        hasMultipleThreadsPerEndUser: Bool,
+        isProactiveChatEnabled: Bool,
+        isAuthorizationEnabled: Bool,
+        isSendTranscriptEnabled: Bool,
+        fileRestrictions: FileRestrictions,
+        features: [String: Bool],
+        isOnline: Bool,
+        isLiveChat: Bool,
+        authenticationType: AuthenticationType
+    ) {
+        self.hasMultipleThreadsPerEndUser = hasMultipleThreadsPerEndUser
+        self.isProactiveChatEnabled = isProactiveChatEnabled
+        self.isAuthorizationEnabled = isAuthorizationEnabled
+        self.isSendTranscriptEnabled = isSendTranscriptEnabled
+        self.fileRestrictions = fileRestrictions
+        self.features = features
+        self.isOnline = isOnline
+        self.isLiveChat = isLiveChat
+        self.authenticationType = authenticationType
+    }
 }

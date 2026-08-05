@@ -16,7 +16,7 @@
 import Foundation
 
 /// The direction that the message is being sent in regards to an agent.
-public enum MessageDirection {
+public enum MessageDirection: Sendable {
     
     /// Agent is receiving the message (inbound message).
     case toAgent

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MoreMessagesLoadedEventPostbackDTO: Decodable, Equatable {
+struct MoreMessagesLoadedEventPostbackDTO: Decodable, Equatable, Sendable {
     
     let eventType: EventType
 

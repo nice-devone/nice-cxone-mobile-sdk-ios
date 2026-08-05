@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CustomVariableDTO: Encodable {
+struct CustomVariableDTO: Encodable, Sendable {
     
     let identifier: String
 

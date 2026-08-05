@@ -18,34 +18,40 @@ import Foundation
 // UserView
 
 /// Represents all info about an agent.
-struct AgentDTO: Equatable {
+struct AgentDTO: Equatable, Sendable {
 
     /// The id of the agent.
     let id: Int
 
     /// The first name of the agent.
-    let firstName: String
+    let firstName: String?
 
     /// The surname of the agent.
-    let surname: String
+    let surname: String?
 
     /// The nickname of the agent.
     let nickname: String?
 
     /// Whether the agent is a bot.
-    let isBotUser: Bool
+    let isBotUser: Bool?
 
     /// Whether the agent is for automated surveys.
-    let isSurveyUser: Bool
+    let isSurveyUser: Bool?
+
+    /// The (public) URL for the profile photo of the agent.
+    let publicImageUrl: String?
 
     /// The URL for the profile photo of the agent.
-    let publicImageUrl: String
+    let imageUrl: String?
 }
 
 // MARK: - Codable
 
 extension AgentDTO: Codable {
-    
+
+    // All properties except `id` are optional, so the compiler-synthesized `Codable`
+    // conformance already uses `decodeIfPresent`/`encodeIfPresent` for them: missing or
+    // hidden fields decode to `nil`, and `nil` values are omitted on encode.
     enum CodingKeys: String, CodingKey {
         case id
         case firstName
@@ -54,5 +60,6 @@ extension AgentDTO: Codable {
         case isBotUser
         case isSurveyUser
         case publicImageUrl
+        case imageUrl
     }
 }

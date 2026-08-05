@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents all info about data of a message created event.
-struct MessageCreatedEventDataDTO: Decodable, Equatable {
+struct MessageCreatedEventDataDTO: Decodable, Equatable, Sendable {
     
     /// The unique id of the brand.
     let brand: BrandDTO

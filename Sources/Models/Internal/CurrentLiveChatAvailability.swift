@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CurrentLiveChatAvailability: Equatable {
+struct CurrentLiveChatAvailability: Equatable, Sendable {
     
     // MARK: - Static Properties
     

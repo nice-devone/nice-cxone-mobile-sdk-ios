@@ -18,7 +18,7 @@ import Foundation
 // ThreadView
 
 /// Represents info about a thread from the socket.
-struct ThreadDTO: Codable, Equatable {
+struct ThreadDTO: Codable, Equatable, Sendable {
     
     /// The unique id for the thread.
     let idOnExternalPlatform: String

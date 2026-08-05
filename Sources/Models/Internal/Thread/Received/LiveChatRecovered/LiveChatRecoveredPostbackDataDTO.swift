@@ -15,16 +15,22 @@
 
 import Foundation
 
-struct LiveChatRecoveredPostbackDataDTO: Equatable {
+struct LiveChatRecoveredPostbackDataDTO: Equatable, Sendable {
     
     // MARK: - Properties
     
     /// The info about a contact (case).
     let contact: ContactDTO
-    
+
     /// The info about an agent.
     let inboxAssignee: AgentDTO?
-    
+
+    /// The agent the case is owned by — the last agent the case was actually assigned to.
+    ///
+    /// Unlike `inboxAssignee` (who currently has the case open), the owner persists across
+    /// unassignment, so it is the signal used to keep the customer out of the queue overlay on recover.
+    let ownerAssignee: AgentDTO?
+
     /// The last agent that has been assigned to the thread
     let previousInboxAssignee: AgentDTO?
     
@@ -46,6 +52,7 @@ extension LiveChatRecoveredPostbackDataDTO: Decodable {
     enum CodingKeys: CodingKey {
         case contact
         case inboxAssignee
+        case ownerAssignee
         case previousInboxAssignee
         case messages
         case messagesScrollToken
@@ -63,6 +70,7 @@ extension LiveChatRecoveredPostbackDataDTO: Decodable {
         
         self.contact = try container.decode(ContactDTO.self, forKey: .contact)
         self.inboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .inboxAssignee)
+        self.ownerAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .ownerAssignee)
         self.previousInboxAssignee = try container.decodeIfPresent(AgentDTO.self, forKey: .previousInboxAssignee)
         self.messages = try container.decode([MessageDTO].self, forKey: .messages)
         self.messagesScrollToken = try container.decode(String.self, forKey: .messagesScrollToken)

@@ -16,7 +16,7 @@
 import Foundation
 
 /// Title element within an inactivity popup.
-struct InactivityPopupTitleElementDTO: Equatable {
+struct InactivityPopupTitleElementDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

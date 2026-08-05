@@ -16,7 +16,7 @@
 import Foundation
 
 /// Response given when an attachment is not successfully uploaded.
-struct AttachmentUploadFailResponseDTO {
+struct AttachmentUploadFailResponseDTO: Sendable {
     
     // MARK: - Sub Objects
     

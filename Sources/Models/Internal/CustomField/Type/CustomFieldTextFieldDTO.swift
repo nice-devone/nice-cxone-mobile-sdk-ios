@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CustomFieldTextFieldDTO {
+struct CustomFieldTextFieldDTO: Sendable {
     
     // MARK: - Properties
     

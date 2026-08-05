@@ -18,7 +18,7 @@ import Mockable
 
 /// The provider for customer related properties and methods.
 @Mockable
-public protocol CustomerProvider {
+public protocol CustomerProvider: Sendable {
     
     /// The customer currently using the app.
     ///
@@ -49,23 +49,60 @@ public protocol CustomerProvider {
     /// - Parameter tokenData: The unique token for the device to be registered.
     func setDeviceToken(_ tokenData: Data)
     
-    /// Sets the authorization code from an OAuth provider in order to authorize the customer with authentication code.
+    /// Provides a connection token and its expiry to the SDK for the implicit OAuth flow.
     ///
-    /// This code must be provided before ``connect(environment:brandId:channelId:)`` or  ``connect(chatURL:socketURL:brandId:channelId:)``.
-    ///     if the channel is configured to use OAuth.
+    /// Call this before ``ConnectionProvider/connect()`` with the JWT obtained from your OAuth provider,
+    /// and again whenever the SDK reports the token is no longer valid by throwing
+    /// ``CXoneChatError/invalidAccessToken`` from an outbound method — obtain a fresh token, provide it
+    /// here, and retry the operation that threw.
     ///
-    /// - Parameter code: The authorization code from an OAuth provider.
+    /// The SDK uses `expiresAt` to detect an expired token before sending an event (a backend rejection of
+    /// an already-open socket is not otherwise observable) and to signal you to refresh in time. The SDK
+    /// never sources tokens on its own — it always obtains them from the integrator, either via this call
+    /// or via the listener registered with ``setTokenDelegateListener(_:)``.
     ///
-    /// - Note: This is not an access token. This is the authorization code that one would use to obtain an access token.
+    /// - Parameters:
+    ///   - token: A valid JWT obtained from the OAuth provider.
+    ///   - expiresAt: The absolute time at which `token` expires (e.g. derived from the provider's `expires_in`).
+    func setConnectionToken(_ token: String, expiresAt: Date)
+
+    /// Registers a listener the SDK calls to obtain a fresh connection token for the implicit OAuth flow.
+    ///
+    /// When registered, the SDK requests a fresh token automatically — shortly before the current one expires
+    /// (``TokenRequestReason/tokenExpired``) or after the backend rejects it at connect (``TokenRequestReason/tokenInvalid``).
+    /// It pauses the pending operation, obtains the token, and resumes it, so outbound events are not interrupted.
+    /// Concurrent operations queue behind a single refresh. The listener obtains a token from your OAuth provider
+    /// and returns an ``OAuthToken``; if it throws, the pending operation fails with ``CXoneChatError/invalidAccessToken``.
+    ///
+    /// The initial token is still provided via ``setConnectionToken(_:expiresAt:)``; this listener handles
+    /// subsequent refreshes. When no listener is registered, an expired token surfaces reactively as
+    /// ``CXoneChatError/invalidAccessToken`` from the outbound method.
+    ///
+    /// - Parameter listener: The token listener, or `nil` to remove a previously registered one.
+    func setTokenDelegateListener(_ listener: TokenDelegateListener?)
+
+    /// Sets the authorization code for the explicit OAuth flow (PKCE).
+    ///
+    /// Call this before ``ConnectionProvider/connect()`` when using an explicit OAuth flow.
+    ///
+    /// - Important: This setter stores the value without validating flow availability. While the
+    ///   explicit flow is unavailable, the failure surfaces later — ``ConnectionProvider/connect()``
+    ///   throws ``CXoneChatError/featureUnavailable(_:)`` during the token exchange.
+    ///
+    /// - Parameter code: The authorization code received from the OAuth provider.
     func setAuthorizationCode(_ code: String)
-    
-    /// Sets the code verifier to be used for OAuth if the OAuth provider uses PKCE.
+
+    /// Sets the PKCE code verifier for the explicit OAuth flow.
     ///
-    /// This must be passed so that CXone can retrieve an auth token.
+    /// Call this before ``ConnectionProvider/connect()`` when using an explicit OAuth flow.
     ///
-    /// - Parameter verifier: The generated code verifier.
+    /// - Important: This setter stores the value without validating flow availability. While the
+    ///   explicit flow is unavailable, the failure surfaces later — ``ConnectionProvider/connect()``
+    ///   throws ``CXoneChatError/featureUnavailable(_:)`` during the token exchange.
+    ///
+    /// - Parameter verifier: The PKCE code verifier generated locally before the authorization request.
     func setCodeVerifier(_ verifier: String)
-    
+
     /// Sets the name to be used for the customer in the chat.
     /// 
     /// - Parameters:

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct SocketEndpointDTO: Endpoint {
+struct SocketEndpointDTO: Endpoint, Sendable {
     
     let environment: EnvironmentDetails
 

@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents all data about a single custom field.
-struct CustomFieldDTO: Equatable {
+struct CustomFieldDTO: Equatable, Sendable {
 
     // MARK: - Properties
 

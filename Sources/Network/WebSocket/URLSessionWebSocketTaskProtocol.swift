@@ -20,7 +20,7 @@ import Mockable
 // MARK: - URLSessionWebSocketTaskProtocol
 
 @Mockable
-protocol URLSessionWebSocketTaskProtocol: AnyObject {
+protocol URLSessionWebSocketTaskProtocol: AnyObject, Sendable {
     var delegate: URLSessionTaskDelegate? { get set }
     
     @preconcurrency

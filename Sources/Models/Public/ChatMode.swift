@@ -24,7 +24,7 @@ import Foundation
 /// | ``singlethread`` | Indicates a single-threaded chat mode.
 /// | ``multithread``   | Indicates a multi-threaded chat mode.
 /// | ``liveChat``          | Indicates a live chat mode.
-public enum ChatMode {
+public enum ChatMode: Sendable {
     
     /// Indicates a single-threaded chat mode.
     case singlethread

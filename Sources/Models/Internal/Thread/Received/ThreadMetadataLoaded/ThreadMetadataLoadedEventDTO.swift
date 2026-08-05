@@ -16,7 +16,7 @@
 import Foundation
 
 /// Event received when thread metadata has been loaded.
-struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
+struct ThreadMetadataLoadedEventDTO: Decodable, Equatable, Sendable {
 
     let eventId: String
 
@@ -30,7 +30,7 @@ struct ThreadMetadataLoadedEventDTO: Decodable, Equatable {
 
 extension ThreadMetadataLoadedEventDTO: ReceivedEvent {
     
-    static let eventType: EventType? = .threadMetadataLoaded
+    static let associatedEventType: EventType? = .threadMetadataLoaded
 
     var postbackEventType: EventType? { postback.eventType }
 }

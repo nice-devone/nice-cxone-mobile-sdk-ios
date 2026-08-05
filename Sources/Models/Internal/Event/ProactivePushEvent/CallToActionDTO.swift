@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CallToActionDTO: Codable, Equatable {
+struct CallToActionDTO: Codable, Equatable, Sendable {
     
     let isVisible: Bool
 

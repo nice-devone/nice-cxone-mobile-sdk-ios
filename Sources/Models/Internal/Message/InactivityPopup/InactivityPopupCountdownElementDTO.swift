@@ -16,7 +16,7 @@
 import Foundation
 
 /// Countdown element within an inactivity popup.
-struct InactivityPopupCountdownElementDTO: Equatable {
+struct InactivityPopupCountdownElementDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

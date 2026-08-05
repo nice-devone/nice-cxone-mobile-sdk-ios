@@ -21,8 +21,7 @@ enum ChatThreadMapper {
         ChatThread(
             id: entity.idOnExternalPlatform,
             state: entity.canAddMoreMessages ? .received : .closed,
-            name: entity.threadName,
-            contactId: entity.channelId
+            name: entity.threadName
         )
     }
 }

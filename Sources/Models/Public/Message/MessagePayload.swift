@@ -16,11 +16,22 @@
 import Foundation
 
 /// All info about a payload of a message.
-public struct MessagePayload: Equatable {
+public struct MessagePayload: Equatable, Sendable {
 
     /// The content of the payload.
     public let text: String
-    
+
     /// The postback  of the payload.
     public let postback: String?
+
+    /// Creates a message payload.
+    ///
+    /// - Parameters:
+    ///   - text: The visible message text shown in the conversation.
+    ///   - postback: Optional opaque payload echoed back to the agent/bot when this
+    ///     message is part of a rich-content reply.
+    public init(text: String, postback: String? = nil) {
+        self.text = text
+        self.postback = postback
+    }
 }

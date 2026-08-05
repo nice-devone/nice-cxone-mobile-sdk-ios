@@ -17,15 +17,31 @@ import Foundation
 
 /// Details about a file type allowed to be uploaded
 public struct AllowedFileType {
+    
+    // MARK: - Properties
+
     /// Allowed mime type.
     ///
     /// This may be of the form [type/*] in which case any subtype is allowed
     /// as long as the mime type type portion matches "type".
     public let mimeType: String
-
     /// Description of the allowed mime type.
     public let details: String
+
+    // MARK: - Init
+    
+    /// Creates a new allowed file type description.
+    ///
+    /// - Parameters:
+    ///   - mimeType: The MIME type string (e.g., "image/png" or a wildcard like "image/*").
+    ///   - details: A human-readable description of the MIME type.
+    public init(mimeType: String, details: String) {
+        self.mimeType = mimeType
+        self.details = details
+    }
 }
+
+// MARK: - Mapper
 
 internal extension AllowedFileType {
     /// Construct from [AllowedFileTypeDTO] for internal use only.

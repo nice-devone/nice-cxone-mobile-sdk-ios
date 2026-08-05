@@ -23,10 +23,27 @@ enum LogManager: StaticLogger {
 
     // MARK: - StaticLogger implementation
 
-    nonisolated(unsafe) static var instance: LogWriter? = PrintLogWriter()
+    private static let _instance = SafeAccessContainer<LogWriter?>(PrintLogWriter())
+    static var instance: LogWriter? {
+        get { _instance.content }
+        set {
+            _instance.mutate { content in
+                content = newValue
+            }
+        }
+    }
+
     static let category: String? = "CORE"
 
-    private static var internalLogger: ClientLogManager?
+    private static let _internalLogger = SafeAccessContainer<ClientLogManager?>(nil)
+    private static var internalLogger: ClientLogManager? {
+        get { _internalLogger.content }
+        set {
+            _internalLogger.mutate { content in
+                content = newValue
+            }
+        }
+    }
     
     // MARK: - Lifecycle
     
@@ -37,12 +54,13 @@ enum LogManager: StaticLogger {
     ///
     /// - Warning: This logger can be used only if the SDK has been already prepared, ie. ``ConnectionService.prepared(brandId:channelId:)`` has been called.
     /// - Parameter connectionContext: The `ConnectionContext` used to create the logger.
-    static func configureInternalLogger(connectionContext: ConnectionContext) {
+    @MainActor
+    static func configureInternalLogger(connectionContext: ConnectionContext) async {
         guard let manager = ClientLogManager(connectionContext: connectionContext) else {
             LogManager.error("Failed to create ClientLogManager")
             return
         }
-        
+
         internalLogger = manager
     }
     
@@ -61,8 +79,8 @@ enum LogManager: StaticLogger {
             line: line
         )
         
-        Task { [weak internalLogger] in
-            await internalLogger?.error(message, file: file, line: line)
+        Task {
+            await LogManager.internalLogger?.error(message, file: file, line: line)
         }
     }
 }

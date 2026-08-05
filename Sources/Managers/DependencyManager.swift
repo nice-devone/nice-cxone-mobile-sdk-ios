@@ -13,159 +13,166 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import CXoneGuideUtility
 import Foundation
 
-class DependencyManager {
-    
+final class DependencyManager: Sendable {
+
     // MARK: - Services
-    
-    private let socketService: SocketService
+
+    let socketService: SocketService
     private let eventsService: EventsService
     private let welcomeMessageManager: WelcomeMessageManager
 
-    private var connection: ConnectionProvider?
-    private var customer: CustomerProvider?
-    private var customerFields: CustomerCustomFieldsProvider?
-    private var contactFields: ContactCustomFieldsProvider?
-    private var threads: ChatThreadListProvider?
-    private var analytics: AnalyticsProvider?
-    private var proactiveActions: ProactiveActionProvider?
-    
+    private let connection = SafeAccessContainer<ConnectionProvider?>(nil)
+    private let customer = SafeAccessContainer<CustomerProvider?>(nil)
+    private let customerFields = SafeAccessContainer<CustomerCustomFieldsProvider?>(nil)
+    private let contactFields = SafeAccessContainer<ContactCustomFieldsProvider?>(nil)
+    private let threads = SafeAccessContainer<ChatThreadListProvider?>(nil)
+    private let analytics = SafeAccessContainer<AnalyticsProvider?>(nil)
+    private let proactiveActions = SafeAccessContainer<ProactiveActionProvider?>(nil)
+
     // MARK: - Properties
     
-    var socketDelegateManager: SocketDelegateManager {
-        socketService.delegateManager
+    var broadcaster: EventBroadcaster {
+        socketService.broadcaster
     }
     var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
-    
+
     // MARK: - Init
-    
+
     init(socketService: SocketService) {
         self.socketService = socketService
         self.welcomeMessageManager = WelcomeMessageManager()
         self.eventsService = EventsService(connectionContext: socketService.connectionContext)
     }
-    
+
     // MARK: - Methods
-    
+
     func resolve() -> ConnectionProvider {
-        if let provider = connection {
+        connection.mutate { stored -> ConnectionProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = ConnectionService(
+                customer: resolve(),
+                threads: resolve(),
+                customerFields: resolve(),
+                socketService: socketService,
+                eventsService: eventsService,
+                broadcaster: broadcaster
+            )
+            provider.registerListeners.mutate { content in
+                content = { [weak self] in self?.registerListeners() }
+            }
+
+            stored = provider
             return provider
         }
-        
-        let provider = ConnectionService(
-            customer: resolve(),
-            threads: resolve(),
-            customerFields: resolve(),
-            socketService: socketService,
-            eventsService: eventsService,
-            delegate: socketDelegateManager
-        )
-        provider.registerListeners = self.registerListeners
-        self.connection = provider
-        
-        return provider
     }
-    
+
     func resolve() -> CustomerProvider {
-        if let provider = customer {
+        customer.mutate { stored -> CustomerProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = CustomerService(
+                socketService: socketService,
+                threads: resolve(),
+                broadcaster: broadcaster
+            )
+            stored = provider
             return provider
         }
-        
-        let provider = CustomerService(
-            socketService: socketService,
-            threads: resolve(),
-            delegate: socketDelegateManager
-        )
-        self.customer = provider
-        
-        return provider
     }
-    
+
     func resolve() -> CustomerCustomFieldsProvider {
-        if let provider = customerFields {
+        customerFields.mutate { stored -> CustomerCustomFieldsProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = CustomerCustomFieldsService(
+                socketService: socketService,
+                eventsService: eventsService
+            )
+            stored = provider
             return provider
         }
-        
-        let provider = CustomerCustomFieldsService(
-            socketService: socketService,
-            eventsService: eventsService
-        )
-        self.customerFields = provider
-        
-        return provider
     }
-    
+
     func resolve() -> ContactCustomFieldsProvider {
-        if let provider = contactFields {
+        contactFields.mutate { stored -> ContactCustomFieldsProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = ContactCustomFieldsService(
+                socketService: socketService,
+                eventsService: eventsService
+            )
+            stored = provider
             return provider
         }
-        
-        let provider = ContactCustomFieldsService(
-            socketService: socketService,
-            eventsService: eventsService
-        )
-        self.contactFields = provider
-        
-        return provider
     }
-    
+
     func resolve() -> ChatThreadListProvider {
-        if let provider = threads {
+        threads.mutate { stored -> ChatThreadListProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = ChatThreadListService(
+                contactCustomFields: resolve(),
+                customerCustomFields: resolve(),
+                socketService: socketService,
+                eventsService: eventsService,
+                welcomeMessageManager: welcomeMessageManager,
+                broadcaster: broadcaster
+            )
+            stored = provider
             return provider
         }
-        
-        let provider = ChatThreadListService(
-            contactCustomFields: resolve(),
-            customerCustomFields: resolve(),
-            socketService: socketService,
-            eventsService: eventsService,
-            welcomeMessageManager: welcomeMessageManager,
-            delegate: socketDelegateManager
-        )
-        self.threads = provider
-        
-        return provider
     }
-    
+
     func resolve() -> AnalyticsProvider {
-        if let provider = analytics {
+        analytics.mutate { stored -> AnalyticsProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = AnalyticsService(socketService: socketService)
+            stored = provider
             return provider
         }
-        
-        let provider = AnalyticsService(socketService: socketService)
-        self.analytics = provider
-        
-        return provider
     }
-    
+
     func resolve() -> ProactiveActionProvider {
-        if let proactiveActions {
-            return proactiveActions
+        proactiveActions.mutate { stored -> ProactiveActionProvider in
+            if let stored {
+                return stored
+            }
+
+            let provider = ProactiveActionService(socketService: socketService, customerCustomFields: resolve(), threads: resolve())
+            stored = provider
+            return provider
         }
-        
-        let provider = ProactiveActionService(socketService: socketService, customerCustomFields: resolve(), threads: resolve())
-        self.proactiveActions = provider
-        
-        return provider
     }
 }
 
 // MARK: - Private methods
 
 private extension DependencyManager {
-    
+
     func registerListeners() {
-        // Register listeners for thread list service
-        let connection: ConnectionProvider = resolve()
-        (connection as? ConnectionService)?.addListeners()
-        
         // Register listeners for thread list service
         let threads: ChatThreadListProvider = resolve()
         (threads as? ChatThreadListService)?.addListeners()
-        
+
         let proactiveActions: ProactiveActionProvider = resolve()
         (proactiveActions as? ProactiveActionService)?.addListeners()
     }

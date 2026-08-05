@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct LiveChatAvailabilityDTO: Equatable {
+struct LiveChatAvailabilityDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

@@ -15,15 +15,15 @@
 
 import Foundation
 
-class CustomFieldHierarchicalNodeDTO {
+struct CustomFieldHierarchicalNodeDTO: Sendable {
     
     // MARK: - Properties
     
-    var key: String
+    let key: String
     
-    var value: String
+    let value: String
     
-    var children: [CustomFieldHierarchicalNodeDTO]
+    let children: [CustomFieldHierarchicalNodeDTO]
     
     // MARK: - Init
     
@@ -35,8 +35,11 @@ class CustomFieldHierarchicalNodeDTO {
     
     // MARK: - Methods
     
-    func add(child: CustomFieldHierarchicalNodeDTO) {
-        children.append(child)
+    func add(child: CustomFieldHierarchicalNodeDTO) -> CustomFieldHierarchicalNodeDTO {
+        var result = self.children
+        result.append(child)
+        
+        return CustomFieldHierarchicalNodeDTO(key: self.key, value: self.value, children: result)
     }
 }
 

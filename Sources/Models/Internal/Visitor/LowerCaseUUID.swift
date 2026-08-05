@@ -21,7 +21,7 @@ import Foundation
 /// This is required because with Swift, all `UUID` values are uppercase and cannot be
 /// changed while keeping the `UUID` type. Currently, the back end doesn't support these
 /// uppercase values on certain events (visitor events), so this is done as a workaround.
-struct LowercaseUUID: Equatable {
+struct LowercaseUUID: Equatable, Hashable, Sendable {
 
     // MARK: - Properties
 

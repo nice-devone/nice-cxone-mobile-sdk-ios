@@ -16,54 +16,17 @@
 import Foundation
 
 /// Represents all info about details of a proactive action.
-public struct ProactiveActionDetails {
-    
-    // MARK: - Properties
+struct ProactiveActionDetails {
     
     /// The unique id of the action.
-    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    public let id: UUID // swiftlint:disable:this no_uuid
-    
-    /// The unique id of the action.
-    public let idString: String
+    let id: String
     
     /// The name of the action.
-    public let name: String
+    let name: String
     
     /// The type of proactive action.
-    public let type: ActionType
+    let type: ActionType
     
     /// Proactive action data message content.
-    public let content: ProactiveActionDataMessageContent?
-    
-    // MARK: - Init
-    
-    /// - Parameters:
-    ///   - id: The unique id of the action.
-    ///   - name: The name of the action.
-    ///   - type: The type of proactive action.
-    ///   - data: The data of the action.
-    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    public init(id: UUID, name: String, type: ActionType, content: ProactiveActionDataMessageContent?) { // swiftlint:disable:this no_uuid
-        self.id = id
-        self.idString = id.uuidString
-        self.name = name
-        self.type = type
-        self.content = content
-    }
-    
-    /// - Parameters:
-    ///   - id: The unique id of the action.
-    ///   - name: The name of the action.
-    ///   - type: The type of proactive action.
-    ///   - data: The data of the action.
-    public init(id: String, name: String, type: ActionType, content: ProactiveActionDataMessageContent?) {
-        // swiftlint:disable:next no_uuid
-        self.id = UUID() // `id` is no longer valid and has been replaced with `idString`
-        self.idString = id
-        self.name = name
-        self.type = type
-        self.content = content
-    }
-
+    let content: ProactiveActionDataMessageContent?
 }

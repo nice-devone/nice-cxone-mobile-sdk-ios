@@ -25,7 +25,7 @@ enum AgentMapper {
             nickname: entity.nickname,
             isBotUser: entity.isBotUser,
             isSurveyUser: entity.isSurveyUser,
-            imageUrl: entity.publicImageUrl
+            imageUrl: entity.publicImageUrl ?? entity.imageUrl
         )
     }
 }

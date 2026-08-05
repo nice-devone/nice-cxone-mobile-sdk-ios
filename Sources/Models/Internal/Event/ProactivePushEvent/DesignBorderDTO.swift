@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct DesignBorderDTO: Codable, Equatable {
+struct DesignBorderDTO: Codable, Equatable, Sendable {
     
     let size: Int?
 

@@ -53,7 +53,7 @@ Then the inactivity popup feature is **already working**. The UI module automati
 - Sends responses to the server
 - Handles session management
 
-**Note**: You do NOT need to implement `CXoneChatDelegate` or add any additional code when using the UI module - it handles everything internally.
+**Note**: When using the UI module, inactivity-popup events are handled internally; no `events()` subscription is required.
 
 ### Option 2: Custom UI Implementation
 
@@ -62,15 +62,11 @@ If you want to create your own UI, you'll need to handle the popup display and u
 #### Step 1: Handle the Popup Event
 
 ```swift
-extension YourViewController: CXoneChatDelegate {
-    
-    func onProactiveActionReceived(of type: ProactiveActionType) {
-        switch action {
-        case .inactivityPopup(let popup):
+Task { [chatProvider] in
+    for await event in chatProvider.events() {
+        if case .proactiveActionReceived(.inactivityPopup(let popup)) = event {
             // Show your custom popup UI
             showCustomInactivityPopup(popup)
-        case .customPopupBox:
-            ...
         }
     }
 }
@@ -94,10 +90,10 @@ func handleInactivityPopupResponse(continueSession: Bool, popup: InactivityPopup
         do {
             if continueSession {
                 // User chose to continue
-                try await CXoneChat.shared.proactiveAction.trigger(.refreshSession(popup))
+                try await chatProvider.proactiveAction.trigger(.refreshSession(popup))
             } else {
                 // User chose to close
-                try await CXoneChat.shared.proactiveAction.trigger(.expireSession(popup))
+                try await chatProvider.proactiveAction.trigger(.expireSession(popup))
             }
         } catch {
             print("Failed to handle inactivity popup response: \(error)")
@@ -112,7 +108,7 @@ func handleInactivityPopupResponse(continueSession: Bool, popup: InactivityPopup
 
 ```swift
 // User taps "Continue Session"
-try await CXoneChat.shared.proactiveAction.trigger(.refreshSession(popup))
+try await chatProvider.proactiveAction.trigger(.refreshSession(popup))
 // Session continues normally
 ```
 
@@ -120,7 +116,7 @@ try await CXoneChat.shared.proactiveAction.trigger(.refreshSession(popup))
 
 ```swift
 // User taps "Close Session"  
-try await CXoneChat.shared.proactiveAction.trigger(.expireSession(popup))
+try await chatProvider.proactiveAction.trigger(.expireSession(popup))
 ```
 
 ## Troubleshooting
@@ -133,7 +129,7 @@ try await CXoneChat.shared.proactiveAction.trigger(.expireSession(popup))
 3. **Check chat setup**: Ensure ChatCoordinator is properly initialized
 
 **For Custom UI implementation:**
-1. **Check delegate implementation**: Ensure `onProactiveActionReceived` is implemented
+1. **Check events subscription**: Ensure your `for await event in chatProvider.events()` loop is running and handles `.proactiveActionReceived`
 2. **Verify connection**: Make sure the SDK is connected  
 3. **Check portal configuration**: Inactivity popup must be enabled in the CXone web portal
 
@@ -147,7 +143,7 @@ try await CXoneChat.shared.proactiveAction.trigger(.expireSession(popup))
 
 1. **Check main thread**: Ensure UI updates happen on the main thread
 2. **Verify state management**: Make sure your UI state is properly managed
-3. **Check delegate calls**: Ensure the delegate method is being called
+3. **Check events delivery**: Ensure your `chatProvider.events()` loop is receiving `.proactiveActionReceived` events
 
 ## Summary
 

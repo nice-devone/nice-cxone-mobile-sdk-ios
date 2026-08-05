@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MessageRichLinkDTO: Equatable {
+struct MessageRichLinkDTO: Equatable, Sendable {
     
     let title: String
     

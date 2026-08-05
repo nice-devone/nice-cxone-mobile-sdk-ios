@@ -43,4 +43,23 @@ internal extension URL {
             return try access(self)
         }
     }
+
+    // MARK: - Logging
+
+    /// The URL string with the `transactionToken` query value masked, safe for logging.
+    ///
+    /// The socket URL carries the transaction token (a credential) as a query item; this replaces its
+    /// value with a placeholder so the token never reaches the logs.
+    var redactingTransactionToken: String {
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false),
+              let queryItems = components.queryItems else {
+            return absoluteString
+        }
+
+        components.queryItems = queryItems.map { item in
+            item.name == "transactionToken" ? URLQueryItem(name: item.name, value: "<redacted>") : item
+        }
+
+        return components.string ?? absoluteString
+    }
 }

@@ -18,28 +18,6 @@ import Foundation
 /// The different types of WebSocket events.
 enum EventType: String, CaseIterable {
     
-    // MARK: - Connection
-    
-    /// An event sent to refresh an access token.
-    case refreshToken = "RefreshToken"
-    
-    /// An event received when the token has been successfully refreshed.
-    case tokenRefreshed = "TokenRefreshed"
-    
-    // MARK: - Customer
-    
-    /// An event sent to authorize a customer.
-    case authorizeCustomer = "AuthorizeCustomer"
-    
-    /// An event received when the customer has been successfully authorized.
-    case customerAuthorized = "ConsumerAuthorized"
-    
-    /// An event sent to reconnect a returning customer.
-    case reconnectCustomer = "ReconnectCustomer"
-    
-    /// An event received when the customer has been successfully reconnected.
-    case customerReconnected = "ConsumerReconnected"
-    
     // MARK: Message
     
     /// An event to send a message in a chat thread.

@@ -17,7 +17,7 @@
 ///
 /// Use this enum to specify which proactive action should be performed, such as refreshing or expiring a session
 /// in response to an inactivity popup.
-public enum ProactiveActionTriggerType: Equatable {
+public enum ProactiveActionTriggerType: Equatable, Sendable {
     
     /// Triggers a session refresh, typically when an inactivity popup appears.
     ///

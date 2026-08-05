@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ProactiveEventDTO: Equatable {
+struct ProactiveEventDTO: Equatable, Sendable {
 
     // MARK: - Properties
 
@@ -29,7 +29,7 @@ struct ProactiveEventDTO: Equatable {
 extension ProactiveEventDTO {
     
     init(from: ProactiveActionDetails) {
-        id = from.idString
+        id = from.id
         name = from.name
         type = from.type
     }
@@ -47,6 +47,7 @@ extension ProactiveEventDTO: Encodable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(type, forKey: .type)

@@ -13,10 +13,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import Foundation
 
-class ProactiveActionService {
+final class ProactiveActionService: Sendable {
     
     // MARK: - Properties
     
@@ -29,13 +28,11 @@ class ProactiveActionService {
     }
     
     // MARK: - Protocol Properties
-    
-    var events: AnyPublisher<any ReceivedEvent, Never> {
-        socketService.events
-    }
-    var cancellables: [AnyCancellable] {
-        get { socketService.cancellables }
-        set { socketService.cancellables = newValue }
+
+    var eventBroadcast: EventBroadcast { socketService.eventBroadcast }
+    var listenerTasks: [Task<Void, Never>] {
+        get { socketService.listenerTasks }
+        set { socketService.listenerTasks = newValue }
     }
     
     // MARK: - Init
@@ -52,7 +49,9 @@ class ProactiveActionService {
 extension ProactiveActionService: EventReceiver {
     
     func addListeners() {
-        addListener(processProactiveActionEvent)
+        addListener { [weak self] event in
+            try self?.processProactiveActionEvent(event)
+        }
     }
     
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
@@ -111,7 +110,7 @@ extension ProactiveActionService: ProactiveActionProvider {
         switch action {
         case .refreshSession(let entity):
             // Use the button's postback directly (which contains the session expiration data)
-            guard let service = try threadsService?.provider(for: entity.threadIdString) as? ChatThreadService else {
+            guard let service = try threadsService?.provider(for: entity.threadId) as? ChatThreadService else {
                 throw CXoneChatError.invalidParameter("threadService")
             }
             
@@ -121,7 +120,7 @@ extension ProactiveActionService: ProactiveActionProvider {
             )
         case .expireSession(let entity):
             // Use the button's postback directly (which contains the session expiration data)
-            guard let service = try threadsService?.provider(for: entity.threadIdString) as? ChatThreadService else {
+            guard let service = try threadsService?.provider(for: entity.threadId) as? ChatThreadService else {
                 throw CXoneChatError.invalidParameter("threadService")
             }
             

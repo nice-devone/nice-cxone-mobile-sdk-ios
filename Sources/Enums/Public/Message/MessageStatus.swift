@@ -20,7 +20,7 @@ import Foundation
 /// This enum is designed for categorizing the status of chat messages,
 /// providing information about whether a message has been sent, delivered, or seen by the recipient.
 /// It is valuable for tracking and displaying the communication status in messaging and chat applications.
-public enum MessageStatus: Comparable {
+public enum MessageStatus: Comparable, Sendable {
     
     /// Indicates that the message has been sent but not yet delivered.
     case sent

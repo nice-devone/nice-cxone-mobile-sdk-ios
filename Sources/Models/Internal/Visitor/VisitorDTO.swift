@@ -18,7 +18,7 @@ import Foundation
 // Visitor
 
 /// All information about a visitor.
-struct VisitorDTO: Encodable {
+struct VisitorDTO: Encodable, Sendable {
     
     let customerIdentity: CustomerIdentityDTO?
 

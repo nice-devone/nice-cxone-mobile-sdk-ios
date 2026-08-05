@@ -18,11 +18,12 @@ import Mockable
 
 /// The provider for customer chat fields related properties and methods.
 @Mockable
-public protocol CustomerCustomFieldsProvider {
+public protocol CustomerCustomFieldsProvider: Sendable {
     
-    /// Custom fields for all chat threads.
-    /// 
-    /// - Returns: Array of ustom fields for a customer.
+    /// Returns the customer-scoped custom fields that persist across every thread this
+    /// customer participates in.
+    ///
+    /// - Returns: A dictionary keyed by custom-field identifier with the current stored value.
     func get() -> [String: String]
     
     /// Sets custom fields to be saved for a customer (persists across all threads involving the customer).

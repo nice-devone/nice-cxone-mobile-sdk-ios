@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CustomFieldSelectorDTO {
+struct CustomFieldSelectorDTO: Sendable {
     
     // MARK: - Properties
     

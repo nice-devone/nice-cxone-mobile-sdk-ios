@@ -16,7 +16,7 @@
 import Foundation
 
 /// Data for the SetPositionInQueue event.
-struct SetPositionInQueueEventDTO: Decodable, Equatable {
+struct SetPositionInQueueEventDTO: Decodable, Equatable, Sendable {
 
     /// The type of event to be sent.
     let eventType: EventType?
@@ -31,7 +31,7 @@ struct SetPositionInQueueEventDTO: Decodable, Equatable {
 // MARK: - ReceivedEvent
 
 extension SetPositionInQueueEventDTO: ReceivedEvent {
-    static let eventType: EventType? = .setPositionInQueue
+    static let associatedEventType: EventType? = .setPositionInQueue
 
     var postbackEventType: EventType? { nil }
 }

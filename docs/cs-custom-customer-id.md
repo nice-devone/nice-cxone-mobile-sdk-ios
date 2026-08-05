@@ -26,7 +26,7 @@ To set a custom customer ID, call the following method **before** initializing t
 
 ```swift
 // Must be called before prepare()
-try CXoneChat.shared.customer.set(
+try chatProvider.customer.set(
     customer: CustomerIdentity(
         id: yourUniqueCustomerId,
         firstName: userFirstName,  // Optional
@@ -35,7 +35,7 @@ try CXoneChat.shared.customer.set(
 )
 
 // Then prepare the SDK
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: yourEnvironment,
     brandId: yourBrandId,
     channelId: yourChannelId
@@ -73,14 +73,14 @@ class ChatManager {
         }
         
         // 2. Set the customer ID in the SDK
-        try CXoneChat.shared.customer.set(customer: CustomerIdentity(
+        try chatProvider.customer.set(customer: CustomerIdentity(
             id: customerId,
             firstName: secureStorage.retrieveFirstName(),
             lastName: secureStorage.retrieveLastName()
         ))
         
         // 3. Initialize the SDK
-        try await CXoneChat.shared.connection.prepare(
+        try await chatProvider.connection.prepare(
             environment: .NA1,
             brandId: 12345,
             channelId: "your_channel_id"
@@ -107,7 +107,7 @@ The `set(customer:)` method will throw an `illegalChatState` error if called aft
 
 ```swift
 do {
-    try CXoneChat.shared.customer.set(customer: yourCustomerIdentity)
+    try chatProvider.customer.set(customer: yourCustomerIdentity)
 } catch CXoneChatError.illegalChatState {
     // Handle the error - you're trying to set the ID too late
 } catch {

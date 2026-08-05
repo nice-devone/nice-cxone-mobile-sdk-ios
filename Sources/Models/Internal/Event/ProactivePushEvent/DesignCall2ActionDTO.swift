@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct DesignCall2ActionDTO: Codable, Equatable {
+struct DesignCall2ActionDTO: Codable, Equatable, Sendable {
     
     let textColor: String?
 

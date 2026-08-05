@@ -16,7 +16,7 @@
 import Foundation
 
 /// The initial decoding of a message from the WebSocket.
-struct GenericEventDTO: Equatable {
+struct GenericEventDTO: Equatable, Sendable {
     
     // MARK: - Properties
     
@@ -32,7 +32,7 @@ struct GenericEventDTO: Equatable {
 
 extension GenericEventDTO: ReceivedEvent {
     
-    static let eventType: EventType? = nil
+    static let associatedEventType: EventType? = nil
 
     var postbackEventType: EventType? { postback?.eventType }
 }

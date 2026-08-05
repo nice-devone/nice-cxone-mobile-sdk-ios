@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents data about a thread recovered event postback.
-struct ThreadRecoveredEventPostbackDataDTO: Equatable {
+struct ThreadRecoveredEventPostbackDataDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

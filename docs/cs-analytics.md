@@ -13,7 +13,7 @@ Analytics events allow you to track the customer's journey through your applicat
 
 ## Key Analytics Events
 
-The SDK provides the following analytics events via `CXoneChat.shared.analytics`:
+The SDK provides the following analytics events via `chatProvider.analytics`:
 
 | Method | Description | Use Case |
 |--------|-------------|----------|
@@ -42,7 +42,7 @@ class ProductScreenViewModel {
         Task {
             do {
                 // Report page view when screen appears
-                try await CXoneChat.shared.analytics.viewPage(
+                try await chatProvider.analytics.viewPage(
                     title: analyticsTitle, 
                     url: analyticsUrl
                 )
@@ -56,7 +56,7 @@ class ProductScreenViewModel {
         Task {
             do {
                 // Report page exit when screen disappears
-                try await CXoneChat.shared.analytics.viewPageEnded(
+                try await chatProvider.analytics.viewPageEnded(
                     title: analyticsTitle,
                     url: analyticsUrl
                 )
@@ -100,31 +100,31 @@ class AnalyticsManager {
         
         Task {
             do {
-                try await CXoneChat.shared.analytics.viewPage(title: title, url: url)
+                try await chatProvider.analytics.viewPage(title: title, url: url)
             } catch {
                 print("Analytics error: \(error)")
             }
         }
     }
     
-    @objc private func appDidEnterBackground() {
+    @objc func appDidEnterBackground() {
         guard let title = currentPageTitle, let url = currentPageUrl else { return }
         
         Task {
             do {
-                try await CXoneChat.shared.analytics.viewPageEnded(title: title, url: url)
+                try await chatProvider.analytics.viewPageEnded(title: title, url: url)
             } catch {
                 print("Analytics error: \(error)")
             }
         }
     }
     
-    @objc private func appWillEnterForeground() {
+    @objc func appWillEnterForeground() {
         guard let title = currentPageTitle, let url = currentPageUrl else { return }
         
         Task {
             do {
-                try await CXoneChat.shared.analytics.viewPage(title: title, url: url)
+                try await chatProvider.analytics.viewPage(title: title, url: url)
             } catch {
                 print("Analytics error: \(error)")
             }
@@ -142,7 +142,7 @@ func showChatUI() {
     Task {
         do {
             // Report chat window opening
-            try await CXoneChat.shared.analytics.chatWindowOpen()
+            try await chatProvider.analytics.chatWindowOpen()
             
             // Present chat UI
             chatCoordinator.start(
@@ -166,7 +166,7 @@ func completePurchase(orderId: String, amount: Double) {
     Task {
         do {
             // Record a purchase conversion
-            try await CXoneChat.shared.analytics.conversion(
+            try await chatProvider.analytics.conversion(
                 type: "purchase", 
                 value: amount
             )
@@ -180,71 +180,6 @@ func completePurchase(orderId: String, amount: Double) {
 }
 ```
 
-### Proactive Actions
-
-Track the lifecycle of proactive chat offers:
-
-```swift
-class ProactiveChatManager {
-    private var proactiveAction: ProactiveActionDetails
-    
-    init() {
-        // Create a proactive action definition
-        self.proactiveAction = ProactiveActionDetails(
-            id: UUID().uuidString.lowercased(),
-            name: "summer_promo_2023", 
-            type: .customPopupBox,
-            content: nil
-        )
-    }
-    
-    func showProactiveOffer() {
-        Task {
-            do {
-                // Record that offer was displayed
-                try await CXoneChat.shared.analytics.proactiveActionDisplay(
-                    data: proactiveAction
-                )
-                
-                // Show the UI
-                displayProactiveUI()
-            } catch {
-                print("Error recording proactive display: \(error)")
-            }
-        }
-    }
-    
-    func onProactiveOfferClicked() {
-        Task {
-            do {
-                // Record that offer was clicked
-                try await CXoneChat.shared.analytics.proactiveActionClick(
-                    data: proactiveAction
-                )
-                
-                // Start chat or show more details
-                startChat()
-            } catch {
-                print("Error recording proactive click: \(error)")
-            }
-        }
-    }
-    
-    func reportConversionResult(didConvert: Bool) {
-        Task {
-            do {
-                // Record final outcome
-                try await CXoneChat.shared.analytics.proactiveActionSuccess(
-                    didConvert,
-                    data: proactiveAction
-                )
-            } catch {
-                print("Error recording proactive result: \(error)")
-            }
-        }
-    }
-}
-```
 
 ## Getting the Visitor ID
 
@@ -252,7 +187,7 @@ To access the unique visitor identifier:
 
 ```swift
 func getVisitorIdentifier() -> String? {
-    return CXoneChat.shared.analytics.visitorId
+    return chatProvider.analytics.visitorId
 }
 ```
 

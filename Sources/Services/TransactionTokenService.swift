@@ -16,7 +16,7 @@
 import Foundation
 
 /// Service for transaction token exchange with the backend.
-class TransactionTokenService {
+final class TransactionTokenService: Sendable {
     
     // MARK: - Properties
     
@@ -36,22 +36,58 @@ class TransactionTokenService {
     ///
     /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if required credentials are missing.
     /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` if the request fails with a non-2xx status code.
+    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
     ///
     /// - Returns: A `TransactionTokenDTO` containing the access token and expiration time.
-    func requestTransactionToken(for type: AuthenticationType) async throws -> TransactionTokenDTO {
+    func requestTransactionToken(for type: AuthenticationTypeDTO) async throws -> TransactionTokenDTO {
         LogManager.trace("Requesting transaction token for \(type)")
+
+        // Explicit PKCE is scope-locked in 4.0 — fail fast before any credential is consulted so a
+        // stored refresh token cannot bypass the lock via the refresh-grant path.
+        guard type != .oAuthExplicit else {
+            throw CXoneChatError.featureUnavailable("Explicit OAuth")
+        }
 
         let url = try buildTokenURL()
         let request = try buildTransactionTokenRequest(url: url, authenticationType: type)
 
-        // Do NOT use fetch(for:) - it logs request/response bodies which contain sensitive tokens.
-        // Use data(for:) to avoid logging sensitive authentication data.
-        #if DEBUG
-        let (data, response) = try await connectionContext.session.fetch(for: request)
-        #else
+        // Do NOT use fetch(for:) — it logs request/response bodies which contain sensitive tokens.
+        // Use data(for:) unconditionally so DEBUG builds don't leak credentials into logs.
         let (data, response) = try await connectionContext.session.data(for: request)
-        #endif
+
+        // Validate HTTP status code
+        if let httpResponse = response as? HTTPURLResponse {
+            guard (200...299).contains(httpResponse.statusCode) else {
+                LogManager.error("Transaction token request failed with HTTP \(httpResponse.statusCode)")
+                throw CXoneChatError.transactionTokenRequestFailed(statusCode: httpResponse.statusCode)
+            }
+        }
+
+        return try JSONDecoder().decode(TransactionTokenDTO.self, from: data)
+    }
+
+    /// Exchanges a stored refresh token for a new transaction token and OAuth access token.
+    ///
+    /// Called automatically by ``requestTransactionToken(for:)`` when the explicit PKCE flow
+    /// has a valid refresh token on hand. On failure the error propagates unchanged — there is
+    /// no silent fallback.
+    ///
+    /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if no refresh token is stored or the URL cannot be built.
+    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` on a non-2xx HTTP response.
+    ///
+    /// - Returns: A fresh `TransactionTokenDTO` with updated WebSocket and OAuth tokens.
+    func refreshTransactionToken() async throws -> TransactionTokenDTO {
+        LogManager.trace("Refreshing transaction token")
+
+        let url = try buildTokenURL()
+        let request = try buildRefreshTokenRequest(url: url)
+
+        // Do NOT use fetch(for:) — it logs request/response bodies which contain sensitive tokens.
+        // Use data(for:) unconditionally so DEBUG builds don't leak credentials into logs.
+        let (data, response) = try await connectionContext.session.data(for: request)
 
         // Validate HTTP status code
         if let httpResponse = response as? HTTPURLResponse {
@@ -61,30 +97,6 @@ class TransactionTokenService {
         }
 
         return try JSONDecoder().decode(TransactionTokenDTO.self, from: data)
-    }
-    
-    func refreshAccessToken() async throws -> AccessTokenDTO {
-        LogManager.trace("Refreshing access token")
-
-        let url = try buildTokenURL()
-        let request = try buildRefreshTokenRequest(url: url)
-
-        // Do NOT use fetch(for:) - it logs request/response bodies which contain sensitive tokens.
-        // Use data(for:) to avoid logging sensitive authentication data.
-        #if DEBUG
-        let (data, response) = try await connectionContext.session.fetch(for: request)
-        #else
-        let (data, response) = try await connectionContext.session.data(for: request)
-        #endif
-
-        // Validate HTTP status code
-        if let httpResponse = response as? HTTPURLResponse {
-            guard (200...299).contains(httpResponse.statusCode) else {
-                throw CXoneChatError.transactionTokenRequestFailed(statusCode: httpResponse.statusCode)
-            }
-        }
-
-        return try JSONDecoder().decode(AccessTokenDTO.self, from: data)
     }
 }
 
@@ -125,7 +137,7 @@ private extension TransactionTokenService {
     }
 
     /// Builds the token request with appropriate body structure for the authentication type.
-    func buildTransactionTokenRequest(url: URL, authenticationType: AuthenticationType) throws -> URLRequest {
+    func buildTransactionTokenRequest(url: URL, authenticationType: AuthenticationTypeDTO) throws -> URLRequest {
         var request = URLRequest(url: url, method: .post, contentType: "application/json")
         let requestBody: [String: Any]
 
@@ -147,22 +159,23 @@ private extension TransactionTokenService {
 
             requestBody = body
 
-        case .thirdPartyOAuth:
-            guard let authorizationCode = connectionContext.authorizationCode.nilIfEmpty() else {
-                throw CXoneChatError.missingParameter("authorizationCode")
+        case .oAuthImplicit:
+            LogManager.trace("Building implicit OAuth token request (grant_type: implicit)")
+
+            guard let connectionToken = connectionContext.connectionToken?.nilIfEmpty() else {
+                throw CXoneChatError.invalidAccessToken
             }
-            guard let codeVerifier = connectionContext.codeVerifier.nilIfEmpty() else {
-                throw CXoneChatError.missingParameter("codeVerifier")
-            }
-            
-            // Third-party OAuth: Authorization code flow with PKCE code verifier
+
+            // Implicit flow: exchange integrator-provided JWT for a transaction token
             let thirdPartyBody: [String: Any] = [
-                "grant_type": "authorization_code",
-                "authorization_code": authorizationCode,
-                "code_verifier": codeVerifier
+                "grant_type": "implicit",
+                "access_token": connectionToken
             ]
 
             requestBody = ["thirdParty": thirdPartyBody]
+
+        case .oAuthExplicit:
+            throw CXoneChatError.featureUnavailable("Explicit OAuth")
         }
 
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)

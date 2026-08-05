@@ -21,6 +21,87 @@ While the UI module handles most of this functionality internally, your applicat
 
 ## Implementation Guide
 
+### Prerequisite: make `chatProvider` reachable from `AppDelegate`
+
+`UIApplicationDelegate` and `UNUserNotificationCenterDelegate` callbacks run on
+`AppDelegate` — possibly **before any SwiftUI scene has appeared**. Cold-launch
+pushes will invoke `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`
+and `userNotificationCenter(_:didReceive:)` immediately on launch, so your
+`AppDelegate` must already hold the `chatProvider` reference at that point.
+
+Two patterns work; pick the one that matches your app architecture:
+
+#### UIKit — hold `chatProvider` on `AppDelegate` directly
+
+```swift
+@MainActor
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    let chatProvider = CXoneChat()
+
+    // ... rest of AppDelegate
+}
+```
+
+The `let` is initialized before any push callback can fire, so subsequent
+references in the delegate methods (e.g.
+`chatProvider.customer.setDeviceToken(_:)`,
+`chatProvider.state.isChatAvailable`) are always valid.
+
+#### SwiftUI — hand the reference to `AppDelegate` at scene construction
+
+If you hold `chatProvider` in SwiftUI (e.g. on your `App` struct), expose an
+optional property on `AppDelegate` and assign it from `App.init()` — the
+earliest point at which your own code runs. The sample app does this in
+`sample/iOSSDKExample/Sources/SDKDemoApp.swift`:
+
+```swift
+@MainActor
+final class AppDelegate: UIResponder, UIApplicationDelegate, @unchecked Sendable {
+
+    var chatProvider: ChatProvider?
+
+    // delegate callbacks use `chatProvider?...` and bail if nil
+}
+
+@main
+struct MyApp: App {
+
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    private let chatProvider = CXoneChat()
+
+    init() {
+        // Assign through the adaptor's wrapped value — see the warning below.
+        appDelegate.chatProvider = chatProvider
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+                .environment(\.chatProvider, chatProvider)
+        }
+    }
+}
+```
+
+> ⚠️ **Inside `App.init()`, assign through `appDelegate` — not
+> `UIApplication.shared.delegate`.** `App.init()` runs *before* `UIApplicationMain`
+> installs the app delegate, so `UIApplication.shared.delegate` is still `nil` at
+> that point (it is populated normally later in the lifecycle). A cast-and-assign
+> such as `(UIApplication.shared.delegate as? AppDelegate)?.chatProvider = ...`
+> silently no-ops — no crash, no error — and the device token never reaches
+> `setDeviceToken(_:)`. Outbound events then carry an empty
+> `deviceFingerprint.deviceToken` and the backend has no APNs target to dispatch
+> to. The `@UIApplicationDelegateAdaptor` wrapped value is the instance that will
+> be installed, so assigning through it is safe this early.
+
+> ⚠️ **Do not defer the assignment to `.onAppear`.** It fires after the scene
+> mounts, which may happen *after*
+> `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` on a cold
+> launch. Use `App.init()` as shown above, or the UIKit pattern, to eliminate the
+> race.
+
 ### 1. Request Notification Permissions
 
 Request permission to show notifications when your app launches:
@@ -52,6 +133,8 @@ func application(
 
 Add notification handling by implementing `UNUserNotificationCenterDelegate` to handle both local and remote notifications:
 
+> **Note:** The `guard let chatProvider` below handles both the UIKit pattern (non-optional `let chatProvider`) and the SwiftUI pattern (`var chatProvider: ChatProvider?`). If `chatProvider` is nil (e.g. during a cold launch before the scene has appeared), the guard falls through and treats the notification as if chat is unavailable — showing all notification options.
+
 ```swift
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // Handle both local and remote notifications when app is in foreground
@@ -62,13 +145,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let identifier = notification.request.identifier
         let userInfo = notification.request.content.userInfo
         
+        // Guard handles both UIKit (non-optional let) and SwiftUI (optional var) patterns.
+        // Falls through to show all options on cold launch before chatProvider is assigned.
+        guard let chatProvider else {
+            return [.list, .banner, .badge, .sound]
+        }
+        
         // Show remote push notification when chat is not available
-        if !CXoneChat.shared.state.isChatAvailable {
+        if !chatProvider.state.isChatAvailable {
             return [.list, .banner, .badge, .sound]
         }
         // Show local push notification when chat is available and it's a thread notification
-        else if CXoneChat.shared.state.isChatAvailable && 
-                identifier.hasPrefix(NotificationCenter.threadDeeplinkNotificationName) {
+        else if chatProvider.state.isChatAvailable && identifier.hasPrefix(NotificationCenter.threadDeeplinkNotificationName) {
             return [.list, .banner, .badge, .sound]
         }
         
@@ -100,8 +188,9 @@ func application(
 ) {
     // 3. Pass the device token to the SDK
     // This allows the SDK to register the device for push notifications
-    // with CXone's notification service
-    CXoneChat.shared.customer.setDeviceToken(deviceToken)
+    // with CXone's notification service.
+    // `chatProvider` is your `CXoneChat` instance, held from earlier in your integration.
+    chatProvider.customer.setDeviceToken(deviceToken)
 }
 ```
 
@@ -110,7 +199,7 @@ func application(
 Implement a method to process both local and remote thread notifications:
 
 ```swift
-private func processNotificationAndNavigateToThread(notification: UNNotification) -> Bool {
+func processNotificationAndNavigateToThread(notification: UNNotification) -> Bool {
     let userInfo = notification.request.content.userInfo
     
     // 4. Process thread notification
@@ -121,7 +210,7 @@ private func processNotificationAndNavigateToThread(notification: UNNotification
     // Check for local notification from SDK first
     let identifier = notification.request.identifier
     if identifier.hasPrefix(NotificationCenter.threadDeeplinkNotificationName) {
-        guard let threadIdString = userInfo["threadId"] as? String else {
+        guard let threadId = userInfo["threadId"] as? String else {
             return false
         }
         

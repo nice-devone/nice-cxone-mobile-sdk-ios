@@ -15,7 +15,7 @@
 
 import Foundation
 
-final class EventsService {
+final class EventsService: Sendable {
 
     // MARK: - Properties
 

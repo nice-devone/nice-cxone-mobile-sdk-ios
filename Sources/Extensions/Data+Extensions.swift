@@ -31,14 +31,13 @@ extension Data {
     /// - Returns: The decoded data.
     func decode<T>() throws -> T where T: Decodable {
         let decoder = JSONDecoder()
-        
         do {
             return try decoder.decode(T.self, from: self)
         } catch {
-            if let anotherError = try? decoder.decode(ServerError.self, from: self) {
+            if let anotherError = try? JSONDecoder().decode(ServerError.self, from: self) {
                 throw anotherError
             }
-            
+
             throw error
         }
     }

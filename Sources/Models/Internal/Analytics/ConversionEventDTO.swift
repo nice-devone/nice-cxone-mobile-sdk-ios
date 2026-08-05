@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ConversionEventDTO {
+struct ConversionEventDTO: Sendable {
     
     // MARK: - Properties
     

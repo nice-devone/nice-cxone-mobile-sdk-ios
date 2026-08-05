@@ -16,7 +16,7 @@
 import Foundation
 
 /// Settings on a channel.
-struct ChannelSettingsDTO {
+struct ChannelSettingsDTO: Sendable {
     
     // MARK: - Properties
     
@@ -49,16 +49,6 @@ struct ChannelSettingsDTO {
     /// - Disabled – the error indicates non existing thread –> soft error.
     var isRecoverLiveChatDoesNotFailEnabled: Bool {
         isEnabled(feature: "isRecoverLivechatDoesNotFailEnabled")
-    }
-
-    /// Indicates whether secured sessions authentication is enabled.
-    ///
-    /// When enabled, ALL authentication types:
-    /// - Request transaction tokens before WebSocket connection
-    /// - Skip `authorizeCustomer`/`reconnectCustomer` events
-    /// - Perform authorization during WebSocket handshake via JWT validation
-    var isSecuredSessionsEnabled: Bool {
-        isEnabled(feature: "securedSessions")
     }
 }
 

@@ -16,7 +16,7 @@
 import Foundation
 
 /// POSTBACK message content payload.
-struct MessagePostbackDTO: Codable, Equatable {
+struct MessagePostbackDTO: Codable, Equatable, Sendable {
     
     // MARK: - Properties
     

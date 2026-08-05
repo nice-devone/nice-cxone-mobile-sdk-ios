@@ -16,7 +16,7 @@
 import Foundation
 
 /// A custom environment with user-defined URLs for both chat and socket connections.
-struct CustomEnvironment: EnvironmentDetails {
+struct CustomEnvironment: EnvironmentDetails, Sendable {
     
     // MARK: - Properties
 

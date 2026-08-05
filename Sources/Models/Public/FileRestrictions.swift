@@ -15,8 +15,18 @@
 
 import Foundation
 
-/// Details about file uploads allowed.
+/// A value type describing the constraints applied to file uploads.
+///
+/// This model is used to determine whether attachments can be uploaded,
+/// the maximum allowed file size (in MiB, where 1 MiB = 1024×1024 bytes),
+/// and the list of permitted MIME types.
+///
+/// - Note: If `isAttachmentsEnabled` is `false`, uploads should be disabled
+///   regardless of size or type.
 public struct FileRestrictions {
+
+    // MARK: - Properties
+
     /// Maximum size of allowed uploads in megabytes (1024x1024).
     public let allowedFileSize: Int32
 
@@ -25,14 +35,31 @@ public struct FileRestrictions {
 
     /// True iff attachment uploads are allowed.  If false, no uploads are allowed.
     public let isAttachmentsEnabled: Bool
+
+    // MARK: - Init
+
+    /// Creates a new set of file upload restrictions.
+    ///
+    /// - Parameters:
+    ///   - allowedFileSize: The maximum allowed file size in mebibytes (MiB, 1024x1024 bytes).
+    ///   - allowedFileTypes: The list of permitted MIME types for uploads.
+    ///   - isAttachmentsEnabled: A Boolean value indicating whether attachment uploads are allowed at all.
+    public init(allowedFileSize: Int32, allowedFileTypes: [AllowedFileType], isAttachmentsEnabled: Bool) {
+        self.allowedFileSize = allowedFileSize
+        self.allowedFileTypes = allowedFileTypes
+        self.isAttachmentsEnabled = isAttachmentsEnabled
+    }
 }
 
+// MARK: - Mappers
+
 extension FileRestrictions {
+    
     /// Construct from [FileRestrictionsDTO] for internal use only.
     init(from: FileRestrictionsDTO) {
         self.init(
             allowedFileSize: from.allowedFileSize,
-            allowedFileTypes: from.allowedFileTypes.map(AllowedFileType.init(from: )),
+            allowedFileTypes: from.allowedFileTypes.map(AllowedFileType.init),
             isAttachmentsEnabled: from.isAttachmentsEnabled
         )
     }

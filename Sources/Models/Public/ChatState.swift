@@ -29,7 +29,7 @@ import Foundation
 /// | ``connected``    | Socket connection has been established
 /// | ``ready``             | Chat is ready to use based on it's configuration status
 /// | ``closed``           | An agent or customer has closed the thread
-public enum ChatState: Comparable {
+public enum ChatState: Comparable, Sendable {
     
     // MARK: - Cases
     

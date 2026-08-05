@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents data of a thread recovered event.
-struct ThreadRecoveredEventPostbackDTO: Decodable, Equatable {
+struct ThreadRecoveredEventPostbackDTO: Decodable, Equatable, Sendable {
     
     /// The type of the event.
     let eventType: EventType

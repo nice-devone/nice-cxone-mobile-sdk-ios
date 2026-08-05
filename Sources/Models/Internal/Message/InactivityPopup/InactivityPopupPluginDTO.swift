@@ -16,7 +16,7 @@
 import Foundation
 
 /// Strongly-typed payload for an inactivity popup inside a plugin message
-struct MessageInactivityPopupDTO: Equatable {
+struct MessageInactivityPopupDTO: Equatable, Sendable {
     
     // MARK: - Properties
 

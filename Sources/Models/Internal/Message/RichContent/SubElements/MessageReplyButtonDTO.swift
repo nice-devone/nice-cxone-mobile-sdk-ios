@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MessageReplyButtonDTO: Equatable {
+struct MessageReplyButtonDTO: Equatable, Sendable {
     
     let text: String
     

@@ -13,20 +13,38 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
+import CXoneGuideUtility
 import Foundation
 
-class CustomerService {
+final class CustomerService: Sendable {
 
     // MARK: - Properties
     
-    let delegate: CXoneChatDelegate
+    let broadcaster: EventBroadcaster
     let socketService: SocketService
     
     private let threadsService: ChatThreadListService?
     
-    private var firstName: String?
-    private var lastName: String?
+    private let _firstName = SafeAccessContainer<String?>(nil)
+    private let _lastName = SafeAccessContainer<String?>(nil)
+
+    private var firstName: String? {
+        get { _firstName.content }
+        set {
+            _firstName.mutate { content in
+                content = newValue
+            }
+        }
+    }
+
+    private var lastName: String? {
+        get { _lastName.content }
+        set {
+            _lastName.mutate { content in
+                content = newValue
+            }
+        }
+    }
     
     private var connectionContext: ConnectionContext {
         socketService.connectionContext
@@ -37,11 +55,11 @@ class CustomerService {
     init(
         socketService: SocketService,
         threads: ChatThreadListProvider,
-        delegate: CXoneChatDelegate
+        broadcaster: EventBroadcaster
     ) {
         self.socketService = socketService
         self.threadsService = threads as? ChatThreadListService
-        self.delegate = delegate
+        self.broadcaster = broadcaster
     }
 }
 
@@ -80,26 +98,54 @@ extension CustomerService: CustomerProvider {
             .joined()
     }
     
-    func setAuthorizationCode(_ code: String) {
-        LogManager.trace("Setting authorization code")
+    func setConnectionToken(_ token: String, expiresAt: Date) {
+        guard !token.isEmpty else {
+            LogManager.warning("setConnectionToken called with empty token — ignoring")
+            return
+        }
 
-        // Reset `accessToken` and `transactionToken` with a new authorization code for fresh authorization
-        connectionContext.accessToken = nil
+        LogManager.trace("Providing fresh connection token")
+
+        // Clear any lingering explicit-flow credentials so `ConnectionContext.authenticationType`
+        // deterministically resolves to `.oAuthImplicit` — otherwise switching from an explicit
+        // session back to implicit could leave stale `authorizationCode` / `codeVerifier` in place.
+        connectionContext.authorizationCode = ""
+        connectionContext.codeVerifier = ""
         connectionContext.transactionToken = nil
-        
+        connectionContext.connectionToken = token
+        connectionContext.connectionTokenExpiresAt = expiresAt
+    }
+
+    func setTokenDelegateListener(_ listener: TokenDelegateListener?) {
+        LogManager.trace("\(listener == nil ? "Removing" : "Setting") token delegate listener")
+
+        connectionContext.tokenDelegateListener = listener
+    }
+
+    func setAuthorizationCode(_ code: String) {
+        LogManager.trace("Setting authorization code for explicit OAuth flow")
+
+        // Clear any lingering implicit-flow connection token so `ConnectionContext.authenticationType`
+        // deterministically resolves to `.oAuthExplicit` — otherwise a previously-set `connectionToken`
+        // (non-empty) forces the resolver into `.oAuthImplicit` and this explicit credential is ignored.
+        connectionContext.connectionToken = nil
+        connectionContext.connectionTokenExpiresAt = nil
+        connectionContext.transactionToken = nil
         connectionContext.authorizationCode = code
     }
-    
-    func setCodeVerifier(_ verifier: String) {
-        LogManager.trace("Setting code verifier")
 
-        // Reset `accessToken` and `transactionToken` with a new authorization code for fresh authorization
-        connectionContext.accessToken = nil
+    func setCodeVerifier(_ verifier: String) {
+        LogManager.trace("Setting code verifier for explicit OAuth flow")
+
+        // Clear any lingering implicit-flow connection token so `ConnectionContext.authenticationType`
+        // deterministically resolves to `.oAuthExplicit` — otherwise a previously-set `connectionToken`
+        // (non-empty) forces the resolver into `.oAuthImplicit` and this explicit credential is ignored.
+        connectionContext.connectionToken = nil
+        connectionContext.connectionTokenExpiresAt = nil
         connectionContext.transactionToken = nil
-        
         connectionContext.codeVerifier = verifier
     }
-    
+
     func setName(firstName: String, lastName: String) {
         if connectionContext.customer == nil {
             LogManager.trace("Caching firstName and lastName for future setting customer identity")
@@ -126,49 +172,5 @@ extension CustomerService {
         
         self.firstName = nil
         self.lastName = nil
-    }
-    
-    /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func processCustomerAuthorizedEvent(_ response: CustomerAuthorizedEventDTO) async throws {
-        LogManager.trace("Processing customer authorized")
-        
-        if connectionContext.channelConfig.isAuthorizationEnabled {
-            guard let token = response.postback.data.accessToken else {
-                throw CXoneChatError.missingAccessToken
-            }
-            
-            connectionContext.accessToken = token
-            
-            connectionContext.customer = CustomerIdentityDTO(
-                idOnExternalPlatform: response.postback.data.consumerIdentity.idOnExternalPlatform,
-                firstName: response.postback.data.consumerIdentity.firstName?.nilIfEmpty() ?? connectionContext.customer?.firstName,
-                lastName: response.postback.data.consumerIdentity.lastName?.nilIfEmpty() ?? connectionContext.customer?.lastName
-            )
-        }
-        
-        try await processCustomerReconnectedEvent()
-    }
-    
-    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    func processCustomerReconnectedEvent() async throws {
-        LogManager.trace("Processing customer reconnect")
-        
-        guard let threadsService else {
-            throw CXoneChatError.invalidParameter("threadService")
-        }
-        
-        try await threadsService.handleForCurrentChatMode(connectionContext.chatMode)
     }
 }

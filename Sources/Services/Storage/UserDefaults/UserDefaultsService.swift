@@ -13,7 +13,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-protocol UserDefaultsService {
+protocol UserDefaultsService: Sendable {
     func purge()
     func remove(_ key: String)
     func set<T: Encodable>(_ obj: T?, for key: String)
@@ -27,6 +27,13 @@ enum UserDefaultKeys: String, CaseIterable {
     case cachedThreadIdOnExternalPlatform = "com.nice.cxonechat.cachedThreadIdOnExternalPlatform"
     case visitorId = "com.nice.cxonechat.visitorId"
     case visitDetails = "com.nice.cxonechat.visitDetails"
+    /// Sentinel marking that a marker-aware SDK version has run at least once on this installation.
+    ///
+    /// UserDefaults is wiped when the app is uninstalled, so this marker's absence means either a
+    /// genuine fresh install or the first launch after upgrading from a pre-marker SDK version. The
+    /// two are told apart by the stored identity fingerprint before purging keychain data that may
+    /// have survived an uninstall (see ``ConnectionContextImpl``).
+    case installationMarker = "com.nice.cxonechat.installationMarker"
 }
 
 // MARK: - Helpers

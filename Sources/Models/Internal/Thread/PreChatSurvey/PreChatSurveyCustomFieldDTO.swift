@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct PreChatSurveyCustomFieldDTO {
+struct PreChatSurveyCustomFieldDTO: Sendable {
     
     let isRequired: Bool
     

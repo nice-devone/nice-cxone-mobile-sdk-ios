@@ -17,11 +17,8 @@ import CXoneGuideUtility
 import Foundation
 
 /// The interface for interacting with chat features of the CXone platform.
-public protocol ChatProvider: AnyObject {
-    
-    /// The singleton instance of the CXone chat SDK.
-    static var shared: ChatProvider { get set }
-    
+@MainActor
+public protocol ChatProvider: AnyObject, Sendable {
     /// The handler for the logs occured in CXone chat.
     static var logWriter: LogWriter? { get set }
 
@@ -54,19 +51,48 @@ public protocol ChatProvider: AnyObject {
     /// Use this provider to send user interaction results (e.g., "Continue", "Close", etc.) for proactive UI elements back to the backend.
     var proactiveAction: ProactiveActionProvider { get }
     
-    /// Add a ``CXoneChatDelegate``
+    /// Returns a new ``AsyncStream`` of all SDK events.
     ///
-    /// Future delegate messages will be routed to the newly added delegate.
+    /// Each call produces an **independent** stream — multiple components in your app can
+    /// each subscribe and all receive every event. There is no fan-in or de-duplication
+    /// across subscribers; cancelling one task does not affect the others.
     ///
-    /// Note: No strong reference to the delegate is maintained so the caller
-    /// is responsible for its lifecycle.
-    func add(delegate: CXoneChatDelegate)
+    /// ```swift
+    /// let observation = Task { [chatProvider] in
+    ///     for await event in chatProvider.events() {
+    ///         switch event {
+    ///         case .threadUpdated(let thread): /* handle */ break
+    ///         case .error(let error): /* surface to user */ break
+    ///         default: break
+    ///         }
+    ///     }
+    /// }
+    /// // Later, to stop observing:
+    /// observation.cancel()
+    /// ```
+    ///
+    /// ## Lifecycle
+    /// - The stream **never finishes with an error.** SDK errors arrive as the
+    ///   ``ChatEvent/error(_:)`` case — handle it as you would any business-level
+    ///   error (surface to the user, log, retry, etc.).
+    /// - Calling ``signOut()`` finishes every active stream cleanly — each
+    ///   `for await` loop exits normally with no error.
+    /// - To stop observing without signing out, cancel the wrapping `Task`.
+    /// - Each stream buffers at most 64 events; if the consuming `Task` falls
+    ///   behind, the **oldest** buffered events are silently dropped. Keep the
+    ///   `for await` body lightweight or hand off heavy work via `Task { }`.
+    func events() -> AsyncStream<ChatEvent>
 
-    /// Remove a `CXoneChatDelegate``
+    /// Signs the customer out, disconnects from the CXone service, and clears persistent state.
     ///
-    /// No future delegate messages will be routed to the removed delegate.
-    func remove(delegate: CXoneChatDelegate)
-
-    /// Signs the customer out and disconnects from the CXone service.
-    static func signOut()
+    /// Calling this method:
+    /// 1. Disconnects the WebSocket cleanly (does **not** emit ``ChatEvent/unexpectedDisconnect``).
+    /// 2. Purges the SDK's keychain entries and UserDefaults state.
+    /// 3. Finishes every active ``events()`` stream — observers see their `for await` loop exit normally.
+    ///
+    /// The instance remains alive and **reusable** after `signOut()`. You can call
+    /// ``ConnectionProvider/prepare(environment:brandId:channelId:)`` and
+    /// ``ConnectionProvider/connect()`` again to start a new session with fresh credentials.
+    /// If you prefer a clean slate, discard this instance and construct a new ``CXoneChat``.
+    func signOut()
 }

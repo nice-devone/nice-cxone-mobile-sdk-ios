@@ -15,8 +15,8 @@ The SDK supports two types of custom fields:
 
 Each type of custom field is accessed through a different provider:
 
-- `ContactCustomFieldsProvider`: Available via `CXoneChat.shared.threads.customFields`
-- `CustomerCustomFieldsProvider`: Available directly via `CXoneChat.shared.customerCustomFields`
+- `ContactCustomFieldsProvider`: Available via `chatProvider.threads.customFields`
+- `CustomerCustomFieldsProvider`: Available directly via `chatProvider.customerCustomFields`
 
 ## Implementation Steps
 
@@ -27,7 +27,7 @@ Contact custom fields are specific to individual conversation threads:
 ```swift
 // Get custom fields for a specific thread
 let threadId = UUID().uuidString.lowercased() // Your thread ID
-let contactFields = CXoneChat.shared.threads.customFields.get(for: threadId)
+let contactFields = chatProvider.threads.customFields.get(for: threadId)
 
 // Set custom fields for a specific thread
 let newContactFields = [
@@ -37,7 +37,7 @@ let newContactFields = [
 
 Task {
     do {
-        try await CXoneChat.shared.threads.customFields.set(newContactFields, for: threadId)
+        try await chatProvider.threads.customFields.set(newContactFields, for: threadId)
     } catch {
         // Handle error
     }
@@ -50,7 +50,7 @@ Customer custom fields are associated with the customer across all conversations
 
 ```swift
 // Get customer custom fields
-let customerFields = CXoneChat.shared.customerCustomFields.get()
+let customerFields = chatProvider.customerCustomFields.get()
 
 // Set customer custom fields
 let newCustomerFields = [
@@ -60,7 +60,7 @@ let newCustomerFields = [
 
 Task {
     do {
-        try await CXoneChat.shared.customerCustomFields.set(newCustomerFields)
+        try await chatProvider.customerCustomFields.set(newCustomerFields)
     } catch {
         // Handle error
     }
@@ -73,7 +73,7 @@ Pre-chat surveys are forms that collect custom field values before a conversatio
 
 ```swift
 // Check if pre-chat survey is required
-if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
+if let preChatSurvey = chatProvider.threads.preChatSurvey {
     // Display pre-chat form to collect required information
     // preChatSurvey.name contains the form title
     // preChatSurvey.customFields contains field definitions
@@ -88,7 +88,7 @@ if let preChatSurvey = CXoneChat.shared.threads.preChatSurvey {
     // Create thread with pre-chat survey fields
     Task {
         do {
-            let threadProvider = try await CXoneChat.shared.threads.create(with: customFields)
+            let threadProvider = try await chatProvider.threads.create(with: customFields)
             // Continue with the created thread
         } catch {
             // Handle error (e.g., CXoneChatError.missingPreChatCustomFields)
@@ -118,6 +118,7 @@ Each field can be marked as `isRequired`, which means it must be filled in befor
 4. **Enable Logging**: Configure the SDK logger to catch custom field validation issues
 
 ```swift
+// Plug in your own LogWriter (or any custom implementation) to capture SDK logs.
 CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)
 ```
 

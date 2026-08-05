@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ExecuteTriggerEventDTO: Encodable {
+struct ExecuteTriggerEventDTO: Encodable, Sendable {
     
     let action: EventActionType
 

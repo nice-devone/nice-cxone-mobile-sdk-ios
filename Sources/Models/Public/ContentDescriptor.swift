@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info about an attachment data to be uploaded.
-public struct ContentDescriptor {
+public struct ContentDescriptor: Sendable {
     
     // MARK: - Properties
 

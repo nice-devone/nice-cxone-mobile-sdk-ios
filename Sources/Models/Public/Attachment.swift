@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info about an uploaded attachment.
-public struct Attachment: Equatable {
+public struct Attachment: Equatable, Sendable {
     
     /// The URL where the attachment can be found.
     public let url: String
@@ -29,4 +29,20 @@ public struct Attachment: Equatable {
 
     /// The name of the attachment file.
     public let fileName: String
+
+    // MARK: - Init
+
+    /// Creates an `Attachment` value.
+    ///
+    /// - Parameters:
+    ///   - url: The remote URL the file is hosted at.
+    ///   - friendlyName: A human-readable name suitable for display in the UI.
+    ///   - mimeType: The MIME type (e.g. `image/png`).
+    ///   - fileName: The original on-disk filename.
+    public init(url: String, friendlyName: String, mimeType: String, fileName: String) {
+        self.url = url
+        self.friendlyName = friendlyName
+        self.mimeType = mimeType
+        self.fileName = fileName
+    }
 }

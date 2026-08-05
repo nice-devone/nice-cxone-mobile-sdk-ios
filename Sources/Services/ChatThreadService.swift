@@ -14,11 +14,11 @@
 //
 // swiftlint:disable file_length
 
-import Combine
+import CXoneGuideUtility
 import Foundation
 import UniformTypeIdentifiers
 
-class ChatThreadService {
+final class ChatThreadService: Sendable {
     
     // MARK: - Properties
     
@@ -28,14 +28,23 @@ class ChatThreadService {
     let socketService: SocketService
     let eventsService: EventsService
     
-    let delegate: CXoneChatDelegate
-    
+    let broadcaster: EventBroadcaster
+
     private let contactCustomFieldsProvider: ContactCustomFieldsProvider
     private let customerCustomFieldsProvider: CustomerCustomFieldsProvider
     private let welcomeMessageManager: WelcomeMessageManager
     
-    private var parsedWelcomeMessage: String?
-    
+    private let _parsedWelcomeMessage = SafeAccessContainer<String?>(nil)
+
+    private var parsedWelcomeMessage: String? {
+        get { _parsedWelcomeMessage.content }
+        set {
+            _parsedWelcomeMessage.mutate { content in
+                content = newValue
+            }
+        }
+    }
+
     private var connectionContext: ConnectionContext {
         socketService.connectionContext
     }
@@ -47,15 +56,21 @@ class ChatThreadService {
     }
     
     // MARK: - Protocol Properties
-    
-    var chatThread: ChatThread
-    
-    var events: AnyPublisher<any ReceivedEvent, Never> {
-        socketService.events
+
+    private let _chatThread: SafeAccessContainer<ChatThread>
+    var chatThread: ChatThread {
+        get { _chatThread.content }
+        set {
+            _chatThread.mutate { content in
+                content = newValue
+            }
+        }
     }
-    var cancellables: [AnyCancellable] {
-        get { socketService.cancellables }
-        set { socketService.cancellables = newValue }
+
+    var eventBroadcast: EventBroadcast { socketService.eventBroadcast }
+    var listenerTasks: [Task<Void, Never>] {
+        get { socketService.listenerTasks }
+        set { socketService.listenerTasks = newValue }
     }
     
     // MARK: - Init
@@ -67,15 +82,15 @@ class ChatThreadService {
         socketService: SocketService,
         eventsService: EventsService,
         welcomeMessageManager: WelcomeMessageManager,
-        delegate: CXoneChatDelegate
+        broadcaster: EventBroadcaster
     ) {
-        self.chatThread = chatThread
+        self._chatThread = SafeAccessContainer(chatThread)
         self.contactCustomFieldsProvider = contactFieldsProvider
         self.customerCustomFieldsProvider = customerFieldsProvider
         self.socketService = socketService
         self.eventsService = eventsService
         self.welcomeMessageManager = welcomeMessageManager
-        self.delegate = delegate
+        self.broadcaster = broadcaster
     }
 }
 
@@ -103,19 +118,18 @@ extension ChatThreadService: ChatThreadProvider {
             throw CXoneChatError.invalidOldestDate
         }
         
-        let thread = ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)
+        let thread = ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)
         let event = try eventsService.create(
             event: .loadMoreMessages,
             with: .loadMoreMessageData(LoadMoreMessagesEventDataDTO(scrollToken: chatThread.scrollToken, thread: thread, oldestMessageDatetime: oldestDate))
         )
         
-        let response = try await events.sink(
-            type: .moreMessagesLoaded,
-            as: MoreMessagesLoadedEventDTO.self,
+        let response = try await eventBroadcast.waitFor(
+            MoreMessagesLoadedEventDTO.self,
+            eventType: .moreMessagesLoaded,
             origin: event,
             socketService: socketService,
-            eventsService: eventsService,
-            cancellables: &cancellables
+            eventsService: eventsService
         )
         
         processMoreMessagesLoaded(response)
@@ -140,6 +154,7 @@ extension ChatThreadService: ChatThreadProvider {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
+    @MainActor
     func send(_ message: OutboundMessage) async throws {
         try await send(message: message, parameters: [:])
     }
@@ -162,23 +177,23 @@ extension ChatThreadService: ChatThreadProvider {
         guard chatThread.state != .closed else {
             throw CXoneChatError.illegalThreadState
         }
-        
-        chatThread.name = name
-        
+
+        chatThread = chatThread.copy(name: name)
+
         if chatThread.state == .ready {
             let data = try eventsService.create(
                 .updateThread,
-                with: .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: name)))
+                with: .updateThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: name)))
             )
-            
+
             try await socketService.send(data: data)
         } else {
             LogManager.info("Thread does not contain any messages. Skipping message sending")
         }
 
-        delegate.onThreadUpdated(chatThread)
+        broadcaster.send(.threadUpdated(chatThread))
     }
-    
+
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
@@ -206,28 +221,27 @@ extension ChatThreadService: ChatThreadProvider {
             
             let event = try eventsService.create(
                 event: .archiveThread,
-                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
+                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
             )
             
-            try await events.sink(
-                type: .threadArchived,
-                as: GenericEventDTO.self,
+            try await eventBroadcast.waitFor(
+                GenericEventDTO.self,
+                eventType: .threadArchived,
                 origin: event,
                 socketService: socketService,
-                eventsService: eventsService,
-                cancellables: &cancellables
+                eventsService: eventsService
             )
             
-            LogManager.trace("Thread Archived: \(chatThread.idString)")
+            LogManager.trace("Thread Archived: \(chatThread.id)")
         } else {
             LogManager.trace("Thread does not exist in BE")
         }
-        
-        chatThread.state = .closed
-        
-        delegate.onThreadUpdated(chatThread)
+
+        chatThread = chatThread.copy(state: .closed)
+
+        broadcaster.send(.threadUpdated(chatThread))
     }
-    
+
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
@@ -246,7 +260,7 @@ extension ChatThreadService: ChatThreadProvider {
         guard chatThread.state != .closed else {
             LogManager.info("Conversation has been already closed -> ignoring this request")
             
-            delegate.onThreadUpdated(chatThread)
+            broadcaster.send(.threadUpdated(chatThread))
             return
         }
         guard let contactId = chatThread.contactId else {
@@ -255,7 +269,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         connectionContext.chatState = .closed
         
-        let data = try eventsService.create(.endContact, with: .endContact(EndContactEventDataDTO(thread: chatThread.idString, contact: contactId)))
+        let data = try eventsService.create(.endContact, with: .endContact(EndContactEventDataDTO(thread: chatThread.id, contact: contactId)))
 
         try await socketService.send(data: data)
     }
@@ -280,7 +294,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             .messageSeenByCustomer,
-            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
+            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
         )
         
         try await socketService.send(data: data)
@@ -303,7 +317,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             didStart ? .senderTypingStarted : .senderTypingEnded,
-            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name)))
+            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
         )
         
         try await socketService.send(data: data)
@@ -339,13 +353,12 @@ extension ChatThreadService: ChatThreadProvider {
         )
         
         do {
-            try await events.sink(
-                type: .transcriptSent,
-                as: GenericEventDTO.self,
+            try await eventBroadcast.waitFor(
+                GenericEventDTO.self,
+                eventType: .transcriptSent,
                 origin: event,
                 socketService: socketService,
-                eventsService: eventsService,
-                cancellables: &cancellables
+                eventsService: eventsService
             )
         } catch {
             if let error = error as? OperationError, error.errorCode == .sendingTranscriptFailed {
@@ -382,6 +395,7 @@ extension ChatThreadService {
     /// - Throws: ``NSError`` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
+    @MainActor
     func send(message: OutboundMessage, parameters: [MessageParameter: AnyValue]) async throws { // swiftlint:disable:this function_body_length
         LogManager.trace("Sending a message in the specified chat thread.")
 
@@ -398,7 +412,10 @@ extension ChatThreadService {
 
         try socketService.checkForConnection()
 
-        let contactFields = contactCustomFieldsService?.contactFields[chatThread.idString]?.convertValueToIdentifier(
+        // Ensure the implicit-flow JWT is fresh BEFORE it is embedded into the outbound payload below.
+        try await refreshConnectionTokenIfNeeded()
+
+        let contactFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
         let customerFields = customerCustomFieldsService?.customerFields.convertValueToIdentifier(
@@ -411,59 +428,72 @@ extension ChatThreadService {
         }
         
         let messageData = SendMessageEventDataDTO(
-            thread: ThreadDTO(idOnExternalPlatform: chatThread.idString, threadName: chatThread.name),
+            thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
             contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback, parameters: parameters)),
             idOnExternalPlatform: LowercaseUUID().uuidString,
             customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
             contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
             attachments: try await message.attachments.map(with: connectionContext),
             deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-            token: connectionContext.channelConfig.settings.isSecuredSessionsEnabled
-                ? connectionContext.transactionToken?.accessToken?.value
-                : connectionContext.accessToken?.token
+            token: connectionContext.connectionToken ?? connectionContext.transactionToken?.accessToken?.value
         )
         
         // Ignore the message if it contains specific parameter
         let isIgnoredMessage = parameters.hasOneOf(.isBeginLiveChatConversation, .isUnsupportedMessageTypeAnswer, .isInactivityPopupAnswer)
         
         let newMessage: Message? = !isIgnoredMessage ? {
-            chatThread.messages.append(
-                MessageMapper.map(
-                    from: messageData,
-                    payload: MessagePayload(text: message.text, postback: message.postback),
-                    authorUser: chatThread.assignedAgent,
-                    customer: connectionContext.customer.map(CustomerIdentityMapper.map)
-                )
+            let mappedMessage = MessageMapper.map(
+                from: messageData,
+                payload: MessagePayload(text: message.text, postback: message.postback),
+                authorUser: chatThread.assignedAgent,
+                customer: connectionContext.customer.map(CustomerIdentityMapper.map)
             )
-            
-            delegate.onThreadUpdated(chatThread)
-            
-            return chatThread.messages.last
+
+            chatThread = chatThread.appending(message: mappedMessage)
+
+            broadcaster.send(.threadUpdated(chatThread))
+
+            return mappedMessage
         }() : nil
         
         do {
-            try await events.sink(
-                dataType: GenericEventDTO.self,
+            try await eventBroadcast.waitFor(
+                GenericEventDTO.self,
                 origin: try eventsService.create(event: .sendMessage, with: .sendMessageData(messageData)),
+                // The JWT was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
+                // `messageData`; skip the choke-point re-check so a single refresh runs per event.
+                checkTokenExpiration: false,
                 socketService: socketService,
-                eventsService: eventsService,
-                cancellables: &cancellables
+                eventsService: eventsService
             )
             
-            LogManager.trace("Message \(messageData.idOnExternalPlatform) sucessfully added into thread \(chatThread.idString)")
+            LogManager.trace("Message \(messageData.idOnExternalPlatform) successfully added into thread \(chatThread.id)")
         } catch {
             LogManager.error("Failed to send message: \(error)")
-            
+
             // Update it only when the message was appended to the thread
-            if var newMessage {
-                newMessage.status = .failed
-                
-                chatThread.messages.removeLast()
-                chatThread.messages.append(newMessage)
-                
-                delegate.onThreadUpdated(chatThread)
+            if let newMessage {
+                // Create a new Message with failed status since Message is immutable
+                let failedMessage = Message(
+                    id: newMessage.id,
+                    threadId: newMessage.threadId,
+                    contentType: newMessage.contentType,
+                    createdAt: newMessage.createdAt,
+                    attachments: newMessage.attachments,
+                    direction: newMessage.direction,
+                    agentStatistics: newMessage.agentStatistics,
+                    customerStatistics: newMessage.customerStatistics,
+                    authorUser: newMessage.authorUser,
+                    authorEndUserIdentity: newMessage.authorEndUserIdentity,
+                    status: .failed
+                )
+
+                // Replace the message by ID to ensure we're updating the correct message
+                chatThread = chatThread.replacingMessage(withId: newMessage.id, with: failedMessage)
+
+                broadcaster.send(.threadUpdated(chatThread))
             }
-            
+
             throw error
         }
     }
@@ -479,10 +509,10 @@ extension ChatThreadService {
             // Thread already contains some messages -> no need to append welcome message because it has been already added
             return
         }
-        
-        chatThread.merge(messages: [try getParsedWelcomeMessage(message)])
-        
-        delegate.onThreadUpdated(chatThread)
+
+        chatThread = chatThread.merged(with: [try getParsedWelcomeMessage(message)])
+
+        broadcaster.send(.threadUpdated(chatThread))
     }
     
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
@@ -491,7 +521,7 @@ extension ChatThreadService {
             throw CXoneChatError.customerAssociationFailure
         }
 
-        let contactFields = contactCustomFieldsService?.contactFields[chatThread.idString] ?? []
+        let contactFields = contactCustomFieldsService?.contactFields[chatThread.id] ?? []
         let customerFields = customerCustomFieldsService?.customerFields ?? []
         
         let parsedMessage = welcomeMessageManager.parse(welcomeMessage, contactFields: contactFields, customerFields: customerFields, customer: customer)
@@ -499,7 +529,7 @@ extension ChatThreadService {
         
         return Message(
             id: LowercaseUUID().uuidString,
-            threadId: chatThread.idString,
+            threadId: chatThread.id,
             contentType: .text(MessagePayload(text: parsedMessage, postback: nil)),
             createdAt: Date(),
             attachments: [],
@@ -595,41 +625,72 @@ extension ChatThreadService {
 extension ChatThreadService: EventReceiver {
     
     func processMoreMessagesLoaded(_ event: MoreMessagesLoadedEventDTO) {
-        LogManager.trace("More messages loaded for thread: \(chatThread.idString)")
+        LogManager.trace("More messages loaded for thread: \(chatThread.id)")
             
         if event.postback.data.messages.isEmpty {
-            chatThread.scrollToken.removeAll()
+            chatThread = chatThread.copy(scrollToken: "")
         } else {
             let messages = event.postback.data.messages
                 .filter { !shouldIgnoreMessage($0) }
                 .compactMap(MessageMapper.map)
 
-            chatThread.merge(messages: messages)
-            chatThread.scrollToken = event.postback.data.scrollToken
+            chatThread = chatThread.merged(with: messages).copy(scrollToken: event.postback.data.scrollToken)
         }
-        
-        delegate.onThreadUpdated(chatThread)
+
+        broadcaster.send(.threadUpdated(chatThread))
     }
-    
+
     /// - Throws: ``CXoneChatError/invalidData`` if the message content type is not `.inactivityPopup`.
     func processInactivityPopup(_ message: MessageDTO) throws {
-        LogManager.trace("Processing inactivity popup message for thread: \(chatThread.idString)")
+        LogManager.trace("Processing inactivity popup message for thread: \(chatThread.id)")
         
         let inactivityPopup = try InactivityPopupMapper.map(from: message)
-        
-        delegate.onProactiveActionReceived(of: .inactivityPopup(inactivityPopup))
+
+        broadcaster.send(.proactiveActionReceived(.inactivityPopup(inactivityPopup)))
     }
 }
 
 // MARK: - Private methods
 
 private extension ChatThreadService {
-    
+
+    /// Refreshes an expiring implicit-flow connection token before it is embedded into an outbound payload.
+    ///
+    /// No-op for non-implicit flows or when the token isn't near expiry. Routes through the socket delegate's
+    /// single-flighted refresh so concurrent sends coalesce. Throws ``CXoneChatError/invalidAccessToken`` when
+    /// the implicit token is expiring but no token delegate listener is registered to refresh it.
+    func refreshConnectionTokenIfNeeded() async throws {
+        // TODO: DE-173276 — Explicit PKCE gap: this helper is implicit-only. Message sends bypass the
+        // SocketServiceImpl choke point (`shouldCheck: false` / `checkTokenExpiration: false`), which is the
+        // only place an expired explicit transaction token (`needsProactiveTokenRefresh`) is refreshed. That
+        // trigger is dormant while explicit OAuth is blocked (DE-164006); when explicit is unblocked, refresh
+        // the explicit token here too (or stop passing `false` for the explicit flow), or message sends won't
+        // refresh it.
+        guard connectionContext.isImplicitConnectionTokenExpiring else {
+            return
+        }
+        guard connectionContext.tokenDelegateListener != nil else {
+            LogManager.warning("Implicit OAuth connection token is expiring but no token delegate listener is registered")
+
+            throw CXoneChatError.invalidAccessToken
+        }
+        guard let socketDelegate = socketService.delegate else {
+            LogManager.warning("Implicit OAuth connection token is expiring but the socket delegate is unavailable to refresh it")
+
+            throw CXoneChatError.invalidAccessToken
+        }
+
+        LogManager.trace("Implicit OAuth: refreshing an expiring connection token before sending")
+
+        try await socketDelegate.refreshToken()
+    }
+
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    @MainActor
     func sendWelcomeMessageIfNeeded() async throws {
         guard let parsedWelcomeMessage,
               chatThread.messages.count == 1,
@@ -642,15 +703,18 @@ private extension ChatThreadService {
         LogManager.trace("Sending an outbound message.")
 
         try socketService.checkForConnection()
-        
-        let customFields = contactCustomFieldsService?.contactFields[chatThread.idString]?.convertValueToIdentifier(
+
+        // Ensure the implicit-flow JWT is fresh BEFORE it is embedded into the outbound payload below.
+        try await refreshConnectionTokenIfNeeded()
+
+        let customFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
             with: connectionContext.channelConfig.prechatSurvey?.customFields
         )
-        
+
         let eventData = EventDataType.sendOutboundMessageData(
             SendOutboundMessageEventDataDTO(
                 thread: ThreadDTO(
-                    idOnExternalPlatform: chatThread.idString,
+                    idOnExternalPlatform: chatThread.id,
                     threadName: chatThread.messages.isEmpty ? nil : chatThread.name
                 ),
                 contentType: .text(MessagePayloadDTO(text: message.text, postback: nil, parameters: [String: AnyValue]())),
@@ -658,15 +722,15 @@ private extension ChatThreadService {
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-                token: connectionContext.channelConfig.settings.isSecuredSessionsEnabled
-                    ? connectionContext.transactionToken?.accessToken?.value
-                    : connectionContext.accessToken?.token
+                token: connectionContext.connectionToken ?? connectionContext.transactionToken?.accessToken?.value
             )
         )
         
         let data = try eventsService.create(.sendOutbound, with: eventData)
-        
-        try await socketService.send(data: data)
+
+        // The JWT was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
+        // `eventData`; skip the choke-point re-check so a single refresh runs per event.
+        try await socketService.send(data: data, shouldCheck: false)
     }
 }
 
@@ -764,6 +828,7 @@ private extension ContentDescriptorSource {
 private extension ContentDescriptor {
 
     static let megabyte: Int32 = 1024 * 1024
+    static let encoder = JSONEncoder()
     
     /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
@@ -784,7 +849,7 @@ private extension ContentDescriptor {
             throw CXoneChatError.invalidFileType
         }
         
-        return try JSONEncoder().encode([
+        return try Self.encoder.encode([
             "content": fileData.base64EncodedString(),
             "fileName": self.fileName,
             "mimeType": self.mimeType

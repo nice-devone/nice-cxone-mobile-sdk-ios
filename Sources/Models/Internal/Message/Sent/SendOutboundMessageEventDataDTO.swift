@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct SendOutboundMessageEventDataDTO {
+struct SendOutboundMessageEventDataDTO: Sendable {
     
     // MARK: - Properties
     

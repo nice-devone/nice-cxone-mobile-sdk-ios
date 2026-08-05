@@ -70,9 +70,11 @@ extension URLRequest {
 // MARK: - Helpers
 
 private extension Data {
-    
+
+    static let formattedJSONDecoder = JSONDecoder()
+
     var formattedJSON: String? {
-        if var dictionary = try? JSONDecoder().decode([String: String].self, from: self), dictionary["content"] != nil {
+        if var dictionary = try? Self.formattedJSONDecoder.decode([String: String].self, from: self), dictionary["content"] != nil {
             // Content is used for uploading attachments and logging base64EncodedString causes Xcode lagging
             dictionary.updateValue("base64EncodedString", forKey: "content")
             

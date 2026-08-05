@@ -13,21 +13,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import CXoneGuideUtility
 import Foundation
 
-/// The implementation of the interface for interacting with chat features of the CXone platform.
-public class CXoneChat: ChatProvider {
-
-    // MARK: - Static properties
-    
-    /// The singleton instance of the CXone chat SDK.
-    public static var shared: ChatProvider = CXoneChat(
-        socketService: SocketServiceImpl(
-            connectionContext: ConnectionContextImpl(keychainService: KeychainService(), userDefaultsService: UserDefaultsServiceImpl())
-        )
-    )
+/// Entry point of the CXone Chat SDK and the canonical conformer of ``ChatProvider``.
+///
+/// Construct one `CXoneChat` instance at app start with ``init()`` and hold the reference for
+/// the lifetime of your chat experience. Pass it through your app as the protocol type
+/// ``ChatProvider`` to keep code testable. Use the provider properties (``connection``,
+/// ``customer``, ``threads``, ``analytics``, ``customerCustomFields``, ``proactiveAction``) to
+/// drive the SDK; subscribe to ``events()`` for state changes, thread updates, and errors.
+///
+/// `CXoneChat` is `@MainActor`-isolated — call sites from background contexts must hop to the
+/// main actor (see the ``ChatProvider`` protocol docs and the
+/// [Migration Guide](doc:migration-from-singleton) for details).
+///
+/// > Important: Earlier SDK versions exposed `CXoneChat.shared` and `CXoneChatDelegate`. Both
+///   are removed. See [migration-from-singleton.md](doc:migration-from-singleton) for the
+///   upgrade walkthrough.
+@MainActor
+public final class CXoneChat: ChatProvider {
     
     // MARK: - Public properties
     
@@ -42,12 +47,12 @@ public class CXoneChat: ChatProvider {
     /// The state defines if the SDK is prepared for API services (analytics), connected for chat features
     /// or if it needs to be prepared or connected for proper usage.
     public var state: ChatState {
-        connectionContext.chatState
+        resolver.connectionContext.chatState
     }
     
     /// Chat mode defining available functionality.
     public var mode: ChatMode {
-        connectionContext.chatMode
+        resolver.connectionContext.chatMode
     }
     
     // MARK: - API providers
@@ -65,26 +70,41 @@ public class CXoneChat: ChatProvider {
     /// The provider for proactive action related properties and methods.
     public let proactiveAction: ProactiveActionProvider
 
+    // MARK: - Private properties
+
+    private let resolver: DependencyManager
+
     // MARK: - Internal properties
     
-    let socketService: SocketService
-
-    var connectionContext: ConnectionContext {
-        resolver.connectionContext
+    /// Forwarding accessor used by the test target via `@testable import`.
+    var socketService: SocketService {
+        resolver.socketService
     }
-    var socketDelegateManager: SocketDelegateManager {
-        resolver.socketDelegateManager
+    /// Forwarding accessor used by the test target via `@testable import`.
+    var broadcaster: EventBroadcaster {
+        resolver.broadcaster
     }
-    
-    // MARK: - Private properties
-    
-    private let resolver: DependencyManager
 
     // MARK: - Init
 
+    /// Creates a new `CXoneChat` instance with default SDK-internal services
+    /// (keychain-backed token storage, `UserDefaults`-backed visitor state, real WebSocket
+    /// transport).
+    ///
+    /// Construct once at app start and hold the reference for the lifetime of the chat
+    /// experience — see ``CXoneChat`` for the ownership and lifecycle rules.
+    public convenience init() {
+        self.init(
+            socketService: SocketServiceImpl(
+                connectionContext: ConnectionContextImpl(
+                    keychainService: KeychainService(),
+                    userDefaultsService: UserDefaultsServiceImpl()
+                )
+            )
+        )
+    }
+    
     init(socketService: SocketService) {
-        self.socketService = socketService
-
         self.resolver = DependencyManager(socketService: socketService)
         self.connection = resolver.resolve()
         self.customer = resolver.resolve()
@@ -93,36 +113,60 @@ public class CXoneChat: ChatProvider {
         self.analytics = resolver.resolve()
         self.proactiveAction = resolver.resolve()
     }
+}
 
-    /// Add a ``CXoneChatDelegate``
+// MARK: - Public methods
+
+public extension CXoneChat {
+
+    /// Returns a new ``AsyncStream`` of all SDK events.
     ///
-    /// Future delegate messages will be routed to the newly added delegate.
+    /// Each call produces an **independent** stream — multiple components in your app can
+    /// each subscribe and all receive every event. There is no fan-in or de-duplication
+    /// across subscribers; cancelling one task does not affect the others.
     ///
-    /// Note: No strong reference to the delegate is maintained so the caller
-    /// is responsible for its lifecycle.
-    public func add(delegate: CXoneChatDelegate) {
-        socketDelegateManager.add(delegate: delegate)
+    /// ```swift
+    /// let observation = Task { [chatProvider] in
+    ///     for await event in chatProvider.events() {
+    ///         switch event {
+    ///         case .threadUpdated(let thread): /* handle */ break
+    ///         case .error(let error): /* surface to user */ break
+    ///         default: break
+    ///         }
+    ///     }
+    /// }
+    /// // Later, to stop observing:
+    /// observation.cancel()
+    /// ```
+    ///
+    /// ## Lifecycle
+    /// - The stream **never finishes with an error.** SDK errors arrive as the
+    ///   ``ChatEvent/error(_:)`` case — handle it as you would any business-level
+    ///   error (surface to the user, log, retry, etc.).
+    /// - Calling ``signOut()`` finishes every active stream cleanly — each
+    ///   `for await` loop exits normally with no error.
+    /// - To stop observing without signing out, cancel the wrapping `Task`.
+    /// - Each stream buffers at most 64 events; if the consuming `Task` falls
+    ///   behind, the **oldest** buffered events are silently dropped. Keep the
+    ///   `for await` body lightweight or hand off heavy work via `Task { }`.
+    func events() -> AsyncStream<ChatEvent> {
+        resolver.broadcaster.makeStream()
     }
 
-    /// Remove a `CXoneChatDelegate``
+    /// Signs the customer out, disconnects from the CXone service, and clears persistent state.
     ///
-    /// No future delegate messages will be routed to the removed delegate.
-    public func remove(delegate: CXoneChatDelegate) {
-        socketDelegateManager.remove(delegate: delegate)
-    }
+    /// Calling this method:
+    /// 1. Disconnects the WebSocket cleanly (does **not** emit ``ChatEvent/unexpectedDisconnect``).
+    /// 2. Purges the SDK's keychain entries and UserDefaults state.
+    /// 3. Finishes every active ``events()`` stream — observers see their `for await` loop exit normally.
+    ///
+    /// The instance remains alive and **reusable** after `signOut()`. You can call
+    /// ``ConnectionProvider/prepare(environment:brandId:channelId:)`` and
+    /// ``ConnectionProvider/connect()`` again to start a new session with fresh credentials.
+    /// If you prefer a clean slate, discard this instance and construct a new ``CXoneChat``.
+    func signOut() {
+        LogManager.trace("Signing out of the current brand and channel configuration")
 
-    // MARK: - Static methods
-    
-    /// Signs the customer out and disconnects from the CXone service.
-    public static func signOut() {
-        LogManager.trace("Signing out of the current brand and channel configuration and refreshing chat instance")
-        
-        (shared.connection as? ConnectionService)?.signOut()
-        
-        shared = CXoneChat(
-            socketService: SocketServiceImpl(
-                connectionContext: ConnectionContextImpl(keychainService: KeychainService(), userDefaultsService: UserDefaultsServiceImpl())
-            )
-        )
+        (connection as? ConnectionService)?.signOut()
     }
 }

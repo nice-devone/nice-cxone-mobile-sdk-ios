@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct OperationError: LocalizedError {
+struct OperationError: LocalizedError, Sendable {
 
     // MARK: - Properties
 
@@ -52,10 +52,9 @@ extension OperationError: Equatable {
 // MARK: - ReceivedEvent
 
 extension OperationError: ReceivedEvent {
-    static let eventType: EventType? = nil
+    static let associatedEventType: EventType? = nil
 
     var postbackEventType: EventType? { nil }
-    var postbackErrorCode: EventErrorCode? { errorCode }
     var eventType: EventType? { nil }
 }
 

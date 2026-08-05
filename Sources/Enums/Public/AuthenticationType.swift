@@ -18,7 +18,7 @@ import Foundation
 /// Authentication type for chat connection.
 ///
 /// Defines the authentication method used when establishing a connection to CXone services.
-public enum AuthenticationType: String, Codable {
+public enum AuthenticationType: String, Codable, Sendable {
     
     /// Anonymous authentication mode.
     ///

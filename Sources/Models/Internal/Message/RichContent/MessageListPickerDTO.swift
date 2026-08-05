@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MessageListPickerDTO: Equatable {
+struct MessageListPickerDTO: Equatable, Sendable {
     
     let title: String
     
