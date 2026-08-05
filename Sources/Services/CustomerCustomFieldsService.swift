@@ -13,18 +13,28 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import CXoneGuideUtility
 import Foundation
 
-final class CustomerCustomFieldsService {
-    
-    // MARK: - Properties
-    
-    var socketService: SocketService
-    var eventsService: EventsService
+final class CustomerCustomFieldsService: Sendable {
 
-    // MARK: - Protocol Properties
+    // MARK: - Properties
+
+    let socketService: SocketService
+    let eventsService: EventsService
+
+    private let _customerFields = SafeAccessContainer<[CustomFieldDTO]>([])
     
-    var customerFields = [CustomFieldDTO]()
+    // MARK: - Protocol Properties
+
+    var customerFields: [CustomFieldDTO] {
+        get { _customerFields.content }
+        set {
+            _customerFields.mutate { content in
+                content = newValue
+            }
+        }
+    }
     
     // MARK: - Init
     

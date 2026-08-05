@@ -75,7 +75,6 @@ extension PluginMessageDTOType: Encodable {
             .button(
                 InactivityPopupButtonElementDTO(
                     id: popup.expireButton.id,
-                    idString: popup.expireButton.idString,
                     text: popup.expireButton.text,
                     postback: popup.expireButton.postback,
                     isSessionRefresh: false
@@ -84,7 +83,6 @@ extension PluginMessageDTOType: Encodable {
             .button(
                 InactivityPopupButtonElementDTO(
                     id: popup.refreshButton.id,
-                    idString: popup.refreshButton.idString,
                     text: popup.refreshButton.text,
                     postback: popup.refreshButton.postback,
                     isSessionRefresh: false

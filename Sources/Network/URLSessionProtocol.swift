@@ -19,7 +19,7 @@ import Mockable
 // MARK: - URLSessionProtocol
 
 @Mockable
-protocol URLSessionProtocol {
+protocol URLSessionProtocol: Sendable {
     /// Async load data from a remote URL specified by a URLRequest.
     ///
     /// - Parameter request: The URLRequest for which to load data.

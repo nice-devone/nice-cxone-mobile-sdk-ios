@@ -26,7 +26,7 @@ import Foundation
 /// | ``closed``         | Thread has been archived or closed.
 ///
 /// Each case corresponds to a specific state of the chat thread, providing clarity on its current status.
-public enum ChatThreadState: Comparable {
+public enum ChatThreadState: Comparable, Sendable {
 
     // MARK: - Cases
     

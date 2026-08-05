@@ -13,20 +13,30 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import CXoneGuideUtility
 import Foundation
 
-class ContactCustomFieldsService {
-    
+final class ContactCustomFieldsService: Sendable {
+
     // MARK: - Properties
-    
+
     private var channelConfig: ChannelConfigurationDTO {
         socketService.connectionContext.channelConfig
     }
-    
-    var socketService: SocketService
-    var eventsService: EventsService
 
-    var contactFields = [String: [CustomFieldDTO]]()
+    private let _contactFields = SafeAccessContainer<[String: [CustomFieldDTO]]>([:])
+    
+    let socketService: SocketService
+    let eventsService: EventsService
+
+    var contactFields: [String: [CustomFieldDTO]] {
+        get { _contactFields.content }
+        set {
+            _contactFields.mutate { content in
+                content = newValue
+            }
+        }
+    }
     
     // MARK: - Init
     
@@ -40,23 +50,8 @@ class ContactCustomFieldsService {
     
 extension ContactCustomFieldsService: ContactCustomFieldsProvider {
     
-    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    func get(for threadId: UUID) -> [String: String] { // swiftlint:disable:this no_uuid
-        get(for: threadId.uuidString)
-    }
-    
     func get(for threadId: String) -> [String: String] {
         Dictionary(uniqueKeysWithValues: contactFields[threadId]?.lazy.map { ($0.ident, $0.value) } ?? [])
-    }
-    
-    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
-    ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    @available(*, deprecated, message: "Use alternative with `String` parameter. It preserves the original case-sensitive identifier from the backend.")
-    func set(_ customFields: [String: String], for threadId: UUID) async throws { // swiftlint:disable:this no_uuid
-        try await set(customFields, for: threadId.uuidString)
     }
     
     func set(_ customFields: [String: String], for threadId: String) async throws {

@@ -16,7 +16,7 @@
 import Foundation
 
 /// An access token used by the customer for sending messages if OAuth authorization is on for the channel.
-struct AccessTokenDTO: Equatable, Expirable {
+struct AccessTokenDTO: Equatable, Sendable, Expirable {
 
     // MARK: - Properties
 
@@ -24,7 +24,9 @@ struct AccessTokenDTO: Equatable, Expirable {
     let value: String
 
     /// The token to refresh the actual access token value.
-    let refreshToken: String
+    ///
+    /// `nil` for implicit grant flows where the integrator supplies a fresh token directly.
+    let refreshToken: String?
     
     /// The number of seconds before the access token becomes invalid.
     let expiresIn: Int
@@ -48,7 +50,7 @@ extension AccessTokenDTO: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.value = try container.decode(String.self, forKey: .accessToken)
-        self.refreshToken = try container.decode(String.self, forKey: .refreshToken)
+        self.refreshToken = try container.decodeIfPresent(String.self, forKey: .refreshToken)
         self.expiresIn = try container.decode(Int.self, forKey: .expiresIn)
         self.createdDate = try container.decodeIfPresent(Date.self, forKey: .createdDate) ?? Date()
     }
@@ -57,7 +59,7 @@ extension AccessTokenDTO: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(value, forKey: .accessToken)
-        try container.encode(refreshToken, forKey: .refreshToken)
+        try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
         try container.encode(expiresIn, forKey: .expiresIn)
         try container.encode(createdDate, forKey: .createdDate)
     }

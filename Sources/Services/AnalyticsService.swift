@@ -15,7 +15,7 @@
 
 import Foundation
 
-class AnalyticsService {
+final class AnalyticsService: Sendable {
 
     // MARK: - Properties
 
@@ -25,7 +25,10 @@ class AnalyticsService {
     /// Visit valid interval is 30 minutes
     let visitValidInterval: TimeInterval = 30 * 60
     
-    var lastPageViewed: PageViewEventDTO?
+    var lastPageViewed: PageViewEventDTO? {
+        get { connectionContext.lastPageViewed }
+        set { connectionContext.lastPageViewed = newValue }
+    }
     
     var connectionContext: ConnectionContext {
         socketService.connectionContext
@@ -45,17 +48,8 @@ class AnalyticsService {
 // interface while allowing tests to specify an additional date parameter.
 extension AnalyticsService: AnalyticsProvider {
     
-    public var visitorIdString: String? {
+    public var visitorId: String? {
         connectionContext.visitorId
-    }
-    
-    @available(
-        *, deprecated,
-         renamed: "visitorIdString",
-         message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend."
-    )
-    public var visitorId: UUID? { // swiftlint:disable:this no_uuid
-        connectionContext.visitorId.flatMap(UUID.init) // swiftlint:disable:this no_uuid
     }
 
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
@@ -193,68 +187,6 @@ extension AnalyticsService: AnalyticsProvider {
             data: ConversionEventDTO(type: type, value: value, timeStamp: date)
         )
     }
-
-    /// Reports to CXone that a proactive action was displayed to the visitor.
-    /// - Parameter data: The proactive action that was displayed.
-    ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    public func proactiveActionDisplay(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionDisplayed, data: data, date: Date())
-    }
-
-    /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
-    ///
-    /// - Parameter data: The proactive action that was successful or fails.
-    ///
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    public func proactiveActionClick(data: ProactiveActionDetails) async throws {
-        try await proactiveAction(.proactiveActionClicked, data: data, date: Date())
-    }
-    
-    /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
-    ///
-    /// - Parameter data: The proactive action that was successful or fails.
-    ///
-    /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: An error if any value throws an error during encoding.
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    public func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws {
-        try await proactiveAction(
-            isSuccess ? .proactiveActionSuccess : .proactiveActionFailed,
-            data: data,
-            date: Date()
-        )
-    }
 }
 
 // MARK: - Private Implementation Utilities
@@ -290,38 +222,6 @@ private extension AnalyticsService {
         }
     }
 
-    /// Generate a ProactiveAction based event.
-    /// - Parameter type: type of proactive action based event.  Only `.proactiveActionDisplayed`, `.proactiveActionClicked`,
-    ///     `.proactiveActionSuccess`, or `.proactiveActionFailed` should be passed.
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    /// - Throws: An error if any value throws an error during encoding.
-    func proactiveAction(_ type: AnalyticsEventType, data: ProactiveActionDetails, date: Date) async throws {
-        guard connectionContext.chatState.isAnalyticsAvailable else {
-            throw CXoneChatError.illegalChatState
-        }
-        
-        assert(
-            [
-                .proactiveActionDisplayed,
-                .proactiveActionClicked,
-                .proactiveActionSuccess,
-                .proactiveActionFailed
-            ].contains(type)
-        )
-
-        LogManager.trace("Reporting proactive action \(type) details=\(data)")
-
-        try await trigger(type, date: date, data: ProactiveEventDTO(from: data))
-    }
-
     /// Trigger an analytics event by sending it to the analytics service.
     ///
     /// - Parameters:
@@ -345,11 +245,11 @@ private extension AnalyticsService {
     func trigger(
         _ type: AnalyticsEventType,
         date: Date,
-        data: Encodable = [String: String](),
+        data: any (Sendable & Encodable) = [String: String](),
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
-        guard let visitorIdString else {
+        guard let visitorId else {
             throw CXoneChatError.missingVisitorId
         }
 
@@ -360,7 +260,7 @@ private extension AnalyticsService {
             data: data
         )
 
-        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorIdString, file: file, line: line)
+        try await post(event: data, brandId: connectionContext.brandId, visitorId: visitorId, file: file, line: line)
     }
 
     /// Post an event to the web-analytics service with specified brand and visitor ids.

@@ -175,18 +175,22 @@ private extension MessageContentDTOType {
     
     static func getFallbackForUnsupportedMessage(from container: KeyedDecodingContainer<MessageContentDTOType.CodingKeys>) throws -> String? {
         let unsupportedElementsContainer = try container.nestedContainer(keyedBy: UnsupportedElementsKeys.self, forKey: .payload)
-        let elements = try unsupportedElementsContainer.decode([UnsupportedElement].self, forKey: .elements)
+        let messageType = try container.decode(String.self, forKey: .type)
+        let fallbackText = try container.decodeIfPresent(String.self, forKey: .fallbackText)
+        
+        LogManager.warning("Message type: \(messageType) is not supported.")
+        
+        guard let pluginElements = try? unsupportedElementsContainer.decode([UnsupportedElement].self, forKey: .elements) else {
+            return fallbackText
+        }
         
         let nestedElementType: String = {
-            if elements.count > 1 {
+            if pluginElements.count > 1 {
                 Self.galleryType
             } else {
-                elements.first?.type ?? Self.unknownType
+                pluginElements.first?.type ?? Self.unknownType
             }
         }()
-        
-        let fallbackText = try container.decodeIfPresent(String.self, forKey: .fallbackText)
-        let messageType = try container.decode(String.self, forKey: .type)
         
         if let fallbackText {
             return String(format: "%@:\n%@ – %@", fallbackText, messageType, nestedElementType)

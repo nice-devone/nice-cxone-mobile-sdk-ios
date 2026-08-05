@@ -18,7 +18,7 @@ import Foundation
 /// It is a URL link with an image preview and a defined title.
 ///
 /// The customer is able to click on it to be forwarded to the particular page.
-public struct MessageRichLink: Equatable {
+public struct MessageRichLink: Equatable, Sendable {
     
     /// Title of the Rich Link in the conversation
     public let title: String
@@ -34,4 +34,22 @@ public struct MessageRichLink: Equatable {
     
     /// The image MIME type that will be displayed in the rich link​ (256 KiB)
     public let mimeType: String
+
+    // MARK: - Init
+
+    /// Creates a `MessageRichLink`.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the rich link as shown in the conversation.
+    ///   - url: The destination URL the user navigates to on tap.
+    ///   - fileName: Filename of the preview image (256 KiB cap).
+    ///   - fileUrl: URL of the preview image (256 KiB cap).
+    ///   - mimeType: MIME type of the preview image (e.g. `image/png`).
+    public init(title: String, url: URL, fileName: String, fileUrl: URL, mimeType: String) {
+        self.title = title
+        self.url = url
+        self.fileName = fileName
+        self.fileUrl = fileUrl
+        self.mimeType = mimeType
+    }
 }

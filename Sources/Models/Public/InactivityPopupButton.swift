@@ -16,16 +16,12 @@
 import Foundation
 
 /// A button within an inactivity popup.
-public struct InactivityPopupButton: Equatable {
+public struct InactivityPopupButton: Equatable, Sendable {
     
     // MARK: - Properties
     
     /// The unique identifier of the button.
-    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    public let id: UUID // swiftlint:disable:this no_uuid
-    
-    /// The unique identifier of the button.
-    public let idString: String
+    public let id: String
     
     /// The display text of the button.
     public let text: String

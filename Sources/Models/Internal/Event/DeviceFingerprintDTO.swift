@@ -14,12 +14,10 @@
 //
 
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#endif
 
 /// Represents fingerprint data about the customer.
-struct DeviceFingerprintDTO {
+struct DeviceFingerprintDTO: Sendable {
 
     // MARK: - Properties
 
@@ -52,26 +50,15 @@ struct DeviceFingerprintDTO {
 
     // MARK: - Init
 
+    @MainActor
     init(
         country: String? = Locale.current.countryCode,
         ipAddress: String? = nil,
-        language: String? = Locale.current.languageCode,
+        language: String? = Locale.current.language.languageCode?.identifier,
         location: String? = nil,
         applicationType: String? = "native",
-        operatingSystem: String? = {
-            #if canImport(UIKit)
-            return UIDevice.current.systemName
-            #else
-            return "macOS"
-            #endif
-        }(),
-        osVersion: String? = {
-            #if canImport(UIKit)
-            return UIDevice.current.systemVersion
-            #else
-            return ProcessInfo.processInfo.operatingSystemVersionString
-            #endif
-        }(),
+        operatingSystem: String? = UIDevice.current.systemName,
+        osVersion: String? = UIDevice.current.systemVersion,
         deviceType: String? = "mobile",
         deviceToken: String? = nil
     ) {
@@ -130,11 +117,7 @@ extension DeviceFingerprintDTO: Codable {
 private extension Locale {
 
     var countryCode: String? {
-        if #available(iOS 16, macOS 13, *) {
-            region?.identifier
-        } else {
-            regionCode
-        }
+        region?.identifier
     }
 }
 

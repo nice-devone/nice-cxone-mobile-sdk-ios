@@ -17,10 +17,16 @@ In single-thread configurations:
 
 ### 1. Initialize the SDK
 
-Start by preparing the SDK with your environment configuration:
+Construct a `CXoneChat` instance and hold a reference to it for the lifetime of your chat integration (the previous `CXoneChat.shared` singleton has been removed):
 
 ```swift
-try await CXoneChat.shared.connection.prepare(
+let chatProvider = CXoneChat()
+```
+
+Then prepare the SDK with your environment configuration:
+
+```swift
+try await chatProvider.connection.prepare(
     environment: env,
     brandId: configuration.brandId,
     channelId: configuration.channelId
@@ -32,41 +38,42 @@ try await CXoneChat.shared.connection.prepare(
 Establish a connection to CXone services:
 
 ```swift
-try await CXoneChat.shared.connection.connect()
+try await chatProvider.connection.connect()
 ```
 
-### 3. Set Up Delegates
+### 3. Subscribe to SDK Events
 
-Register as a delegate to receive SDK updates:
-
-```swift
-CXoneChat.shared.add(delegate: self)
-```
-
-### 4. Implement Delegate Methods
+The previous `CXoneChatDelegate` protocol has been removed. Instead, observe SDK events through the `events()` async stream:
 
 ```swift
-// Track chat state changes
-func onChatUpdated(_ state: ChatState, mode: ChatMode) {
-    switch state {
-    case .connecting:
-        // Show loading indicator
-    case .connected:
-        // Connection established
-    case .ready:
-        // Chat is ready for interaction
-    default:
-        break
+Task { [chatProvider] in
+    for await event in chatProvider.events() {
+        switch event {
+        case .chatUpdated(let state, _):
+            switch state {
+            case .connecting:
+                // Show loading indicator
+                break
+            case .connected:
+                // Connection established
+                break
+            case .ready:
+                // Chat is ready for interaction
+                break
+            default:
+                break
+            }
+        case .threadUpdated(let chatThread):
+            // Update UI with thread data
+            updateThreadView(chatThread)
+        default:
+            break
+        }
     }
 }
-
-// Handle thread updates
-func onThreadUpdated(_ chatThread: ChatThread) {
-    // Update UI with thread data
-}
 ```
 
-### 5. Handle Pre-Chat Survey (If Configured)
+### 4. Handle Pre-Chat Survey (If Configured)
 
 If your channel has a pre-chat survey configured, implement the form handling:
 
@@ -75,7 +82,7 @@ func submitPreChat(with fields: [String: String]) {
     Task {
         do {
             // Create thread with pre-chat survey fields
-            let threadProvider = try await CXoneChat.shared.threads.create(with: fields)
+            let threadProvider = try await chatProvider.threads.create(with: fields)
             // Continue with the created thread
         } catch {
             // Handle error
@@ -95,7 +102,7 @@ The SDK automatically manages thread states:
 
 1. **Error Handling**: Always implement proper error handling for SDK operations
 2. **Loading States**: Show appropriate loading indicators during connection and thread creation
-3. **Logging**: Configure the SDK logger to track issues and state changes
+3. **Logging**: Configure the SDK logger to track issues and state changes by assigning a `LogWriter` to the static `CXoneChat.logWriter` property
 
 ```swift
 CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)

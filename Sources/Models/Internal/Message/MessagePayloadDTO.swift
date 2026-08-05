@@ -22,7 +22,7 @@ enum MessageParameter: String {
 }
 
 /// All info about a message payload.
-struct MessagePayloadDTO: Equatable {
+struct MessagePayloadDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

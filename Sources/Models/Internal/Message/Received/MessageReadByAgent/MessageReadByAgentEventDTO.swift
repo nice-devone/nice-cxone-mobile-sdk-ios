@@ -16,7 +16,7 @@
 import Foundation
 
 /// Event received when an agent has read a message.
-struct MessageReadByAgentEventDTO: Equatable {
+struct MessageReadByAgentEventDTO: Equatable, Sendable {
 
     // MARK: - Properties
     
@@ -39,7 +39,7 @@ struct MessageReadByAgentEventDTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension MessageReadByAgentEventDTO: ReceivedEvent {
-    static let eventType: EventType? = .messageReadChanged
+    static let associatedEventType: EventType? = .messageReadChanged
 
     var postbackEventType: EventType? { nil }
 }

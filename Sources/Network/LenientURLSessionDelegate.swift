@@ -16,7 +16,7 @@
 import Foundation
 
 #if DEBUG
-class LenientURLSessionDelegate: NSObject, URLSessionDelegate {
+final class LenientURLSessionDelegate: NSObject, URLSessionDelegate, Sendable {
     /// Allows for inspecting traffic in tools like Proxyman or CharlesApp.
     public func urlSession(
         _ session: URLSession,

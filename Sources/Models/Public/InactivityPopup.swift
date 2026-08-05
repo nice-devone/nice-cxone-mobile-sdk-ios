@@ -24,7 +24,7 @@ import Foundation
 /// This struct is typically used to prompt the user to take action before their session expires due to inactivity.
 ///
 /// - Note: The countdown is managed using `numberOfSeconds` and `startedAt`, allowing calculation of the remaining time.
-public struct InactivityPopup: Equatable {
+public struct InactivityPopup: Equatable, Sendable {
     
     // MARK: - Properties
     
@@ -46,11 +46,7 @@ public struct InactivityPopup: Equatable {
     public let startedAt: Date
     
     /// The thread ID associated with the popup.
-    @available(*, deprecated, renamed: "threadIdString", message: "Use `threadIdString`. It preserves the original case-sensitive identifier from the backend.")
-    public let threadId: UUID // swiftlint:disable:this no_uuid
-    
-    /// The thread ID associated with the popup.
-    public let threadIdString: String
+    public let threadId: String
     
     /// The button to refresh the session.
     public let refreshButton: InactivityPopupButton

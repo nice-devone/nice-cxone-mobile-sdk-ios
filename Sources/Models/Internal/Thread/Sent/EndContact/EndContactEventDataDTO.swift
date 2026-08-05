@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct EndContactEventDataDTO {
+struct EndContactEventDataDTO: Sendable {
     
     /// The thread for which this change applies.
     let thread: String

@@ -15,9 +15,11 @@
 
 import Foundation
 
-struct ServerError: LocalizedError {
+struct ServerError: LocalizedError, Sendable {
 
     // MARK: - Properties
+
+    let eventId: String
 
     let message: String
 
@@ -42,10 +44,8 @@ extension ServerError: Equatable {
 // MARK: - ReceivedEvent
 
 extension ServerError: ReceivedEvent {
-    static let eventType: EventType? = nil
+    static let associatedEventType: EventType? = nil
 
-    /// - Warning: The value is initialized locally so it does not refer to the server one
-    var eventId: String { LowercaseUUID().uuidString }
     var eventType: EventType? { nil }
     var postbackEventType: EventType? { nil }
 }
@@ -63,7 +63,10 @@ extension ServerError: Codable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
+        // ServerError is a transport-level envelope; the server may omit `eventId`.
+        // Fall back to a generated LowercaseUUID so the field is always populated.
+        self.eventId = (try? container.decode(String.self, forKey: .eventId)) ?? LowercaseUUID().uuidString
         self.message = try container.decode(String.self, forKey: .message)
         self.connectionId = try container.decode(String.self, forKey: .connectionId)
         self.requestId = try container.decode(String.self, forKey: .requestId)

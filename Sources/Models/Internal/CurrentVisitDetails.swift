@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CurrentVisitDetails: Codable, Equatable {
+struct CurrentVisitDetails: Codable, Equatable, Sendable {
     
     let visitId: String
     

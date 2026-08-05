@@ -20,7 +20,7 @@ github_url: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios
 min_acl: public
 clean: true
 module: CXoneChatSDK
-module_version: 3.3.1
+module_version: 4.0.0
 swift_build_tool: xcodebuild
 output: jazzy_docs
 xcodebuild_arguments:

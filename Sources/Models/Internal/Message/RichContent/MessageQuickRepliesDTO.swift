@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MessageQuickRepliesDTO: Equatable {
+struct MessageQuickRepliesDTO: Equatable, Sendable {
     
     let title: String
     

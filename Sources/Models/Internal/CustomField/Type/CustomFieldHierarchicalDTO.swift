@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CustomFieldHierarchicalDTO {
+struct CustomFieldHierarchicalDTO: Sendable {
     
     // MARK: - Properties
     
@@ -73,35 +73,74 @@ extension CustomFieldHierarchicalDTO: Decodable {
 
 private extension CustomFieldHierarchicalDTO {
     
+    /// Builds a hierarchical tree of `CustomFieldHierarchicalNodeDTO` from a flat list of `NodeDTO`.
+    ///
+    /// This implementation performs a single pass over the input, lazily creating nodes as they are
+    /// encountered and immediately attaching them to their parent when a `parentId` is present.
+    /// Root nodes (those with no `parentId`) are collected and returned.
+    ///
+    /// - Parameter values: Flat list of nodes containing a `name`, `value`, and optional `parentId`.
+    /// - Returns: An array of root-level `CustomFieldHierarchicalNodeDTO` representing the forest.
+    ///
+    /// - Complexity: O(n) expected time and O(n) space, where n is `values.count`.
+    ///
+    /// - Note: If a node references a `parentId` that has not yet been encountered, a placeholder parent
+    ///   (with the parent's `key` and empty `value`) is created so that the relationship is preserved
+    ///   when/if the actual parent appears later in the input. If multiple nodes share the same `name`,
+    ///   the last one encountered will overwrite the previous entry in the lookup dictionary.
     static func decodeNodes(from values: [NodeDTO]) -> [CustomFieldHierarchicalNodeDTO] {
-        var remaining = values
-        var result = [CustomFieldHierarchicalNodeDTO]()
-        
-        while !remaining.isEmpty {
-            let node = remaining.remove(at: 0)
-            
+        // Phase 1: collect flat data — separate relationship tracking from struct construction
+        // so that updating a child's children doesn't require updating all ancestor copies
+        // (which would be needed with value-type structs built incrementally).
+        var nodeValues = [String: String]()           // name → value
+        var childrenOf = [String: [String]]()        // parentName → ordered child names
+        var rootNames = [String]()
+        var seenRootNames = Set<String>()            // O(1) deduplication for rootNames
+
+        nodeValues.reserveCapacity(values.count)
+
+        for node in values {
+            nodeValues[node.name] = node.value
+
             if let parentId = node.parentId {
-                guard result.first(where: { $0.find(by: parentId) != nil }) != nil else {
-                    remaining.append(node)
-                    
-                    continue
-                }
-                
-                result.add(child: CustomFieldHierarchicalNodeDTO(key: node.name, value: node.value), to: parentId)
-            } else {
-                result.append(CustomFieldHierarchicalNodeDTO(key: node.name, value: node.value))
+                childrenOf[parentId, default: []].append(node.name)
+            } else if seenRootNames.insert(node.name).inserted {
+                rootNames.append(node.name)
             }
         }
-        
-        return result
+
+        // Phase 2: recursively build the tree from the final relationship snapshot.
+        func build(_ name: String) -> CustomFieldHierarchicalNodeDTO? {
+            guard let value = nodeValues[name] else {
+                return nil
+            }
+            
+            return CustomFieldHierarchicalNodeDTO(
+                key: name,
+                value: value,
+                children: (childrenOf[name] ?? []).compactMap { build($0) }
+            )
+        }
+
+        return rootNames.compactMap { build($0) }
     }
 }
 
-private extension Array<CustomFieldHierarchicalNodeDTO> {
+private extension [CustomFieldHierarchicalNodeDTO] {
 
-    func add(child: Element, to id: String) {
-        self.forEach { node in
-            node.find(by: id)?.add(child: child)
+    func add(child: Element, to id: String) -> [CustomFieldHierarchicalNodeDTO] {
+        map { node in
+            if node.key == id {
+                return node.add(child: child)
+            } else if node.find(by: id) != nil {
+                return CustomFieldHierarchicalNodeDTO(
+                    key: node.key,
+                    value: node.value,
+                    children: node.children.add(child: child, to: id)
+                )
+            } else {
+                return node
+            }
         }
     }
 }

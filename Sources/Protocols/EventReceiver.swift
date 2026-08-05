@@ -13,59 +13,111 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import Foundation
 
 protocol EventReceiver: AnyObject {
-    
-    var events: AnyPublisher<ReceivedEvent, Never> { get }
-    var cancellables: [AnyCancellable] { get set }
+
+    var eventBroadcast: EventBroadcast { get }
+    var listenerTasks: [Task<Void, Never>] { get set }
 }
 
 extension EventReceiver {
-    
+
     func addListener<Type: ReceivedEvent>(
         for type: EventType,
         file: StaticString = #file,
         line: UInt = #line,
-        with handler: @escaping (Type) throws -> Void
+        with handler: @escaping @Sendable (Type) throws -> Void
     ) {
         LogManager.trace(
             "Add listener for \(type): \(String(describing: Type.self))",
             file: file,
             line: line
         )
-        events
-            .with(type: type, as: Type.self)
-            .sink { event in
+        // Subscribe synchronously before the task starts so no events are missed.
+        let stream = eventBroadcast.makeStream()
+        let task = Task {
+            for await event in stream {
+                guard event.realEventType == type, let typed = event as? Type else {
+                    continue
+                }
+
                 do {
-                    try handler(event)
+                    try handler(typed)
                 } catch {
                     LogManager.error(error)
                 }
             }
-            .store(in: &cancellables)
+        }
+
+        listenerTasks.append(task)
     }
 
     func addListener<Type: ReceivedEvent>(
         file: StaticString = #file,
         line: UInt = #line,
-        _ handler: @escaping (Type) throws -> Void
+        _ handler: @escaping @Sendable (Type) throws -> Void
     ) {
         LogManager.trace(
             "Add listener for: \(String(describing: Type.self))",
             file: file,
             line: line
         )
-        events
-            .with(type: Type.self)
-            .sink { event in
+
+        let stream = eventBroadcast.makeStream()
+        let eventType = Type.associatedEventType
+        let task = Task {
+            for await event in stream {
+                if let eventType, event.realEventType != eventType {
+                    continue
+                }
+
+                guard let typed = event as? Type else {
+                    continue
+                }
+
                 do {
-                    try handler(event)
+                    try handler(typed)
                 } catch {
                     LogManager.error(error)
                 }
             }
-            .store(in: &cancellables)
+        }
+
+        listenerTasks.append(task)
+    }
+
+    func addListener<Type: ReceivedEvent>(
+        file: StaticString = #file,
+        line: UInt = #line,
+        _ handler: @escaping @Sendable (Type) async throws -> Void
+    ) {
+        LogManager.trace(
+            "Add listener for: \(String(describing: Type.self))",
+            file: file,
+            line: line
+        )
+
+        let stream = eventBroadcast.makeStream()
+        let eventType = Type.associatedEventType
+        let task = Task {
+            for await event in stream {
+                if let eventType, event.realEventType != eventType {
+                    continue
+                }
+
+                guard let typed = event as? Type else {
+                    continue
+                }
+
+                do {
+                    try await handler(typed)
+                } catch {
+                    LogManager.error(error)
+                }
+            }
+        }
+
+        listenerTasks.append(task)
     }
 }

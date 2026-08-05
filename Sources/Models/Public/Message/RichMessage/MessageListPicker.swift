@@ -20,7 +20,7 @@ import Foundation
 /// It is a list of options, that customers can choose multiple times and are persistent in the conversation.
 /// The options/items are usually shown in overlay with richer formatting capabilities (icon, title, subtitle, sections, etc. in future)
 /// and with a bigger count than buttons or quick replies.
-public struct MessageListPicker: Equatable {
+public struct MessageListPicker: Equatable, Sendable {
     
     /// Title of the List Picker in the conversation
     public let title: String
@@ -30,4 +30,18 @@ public struct MessageListPicker: Equatable {
     
     /// The list picker replies button options.
     public let buttons: [MessageSubElementType]
+
+    // MARK: - Init
+
+    /// Creates a `MessageListPicker`.
+    ///
+    /// - Parameters:
+    ///   - title: Title of the list picker shown inline in the conversation.
+    ///   - text: Additional descriptive text displayed when the user opens the picker.
+    ///   - buttons: The selectable options presented in the picker sheet.
+    public init(title: String, text: String, buttons: [MessageSubElementType]) {
+        self.title = title
+        self.text = text
+        self.buttons = buttons
+    }
 }

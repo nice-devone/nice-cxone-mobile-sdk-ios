@@ -33,7 +33,7 @@
 ///
 /// - Note: The decoding initializer attempts to infer the correct case by trying each supported
 ///   type in a specific order. If none match, it throws a `DecodingError`.
-enum AnyValue: Equatable {
+enum AnyValue: Equatable, Sendable {
     
     // MARK: - Cases
     

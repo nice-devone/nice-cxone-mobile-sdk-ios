@@ -16,7 +16,7 @@
 import Foundation
 
 /// A reply button rich message sub element.
-public struct MessageReplyButton: Hashable, Equatable {
+public struct MessageReplyButton: Hashable, Equatable, Sendable {
     
     /// The text displayed in the button
     public let text: String
@@ -40,5 +40,24 @@ public struct MessageReplyButton: Hashable, Equatable {
     
     /// The MIME type of an image that will be displayed as part of the options​ (256 KiB)
     public let iconMimeType: String?
-    
+
+    // MARK: - Init
+
+    /// Creates a `MessageReplyButton`.
+    ///
+    /// - Parameters:
+    ///   - text: The button label shown to the user.
+    ///   - description: Optional secondary description displayed alongside the button.
+    ///   - postback: Optional opaque payload echoed back to the agent/bot when the user taps the button.
+    ///   - iconName: Filename of an optional icon (256 KiB cap).
+    ///   - iconUrl: URL of an optional icon (256 KiB cap).
+    ///   - iconMimeType: MIME type of the optional icon.
+    public init(text: String, description: String? = nil, postback: String? = nil, iconName: String? = nil, iconUrl: URL? = nil, iconMimeType: String? = nil) {
+        self.text = text
+        self.description = description
+        self.postback = postback
+        self.iconName = iconName
+        self.iconUrl = iconUrl
+        self.iconMimeType = iconMimeType
+    }
 }

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct APIError {
+struct APIError: Sendable {
     
     let errorCode: APIErrorCode
     let errorMessage: String

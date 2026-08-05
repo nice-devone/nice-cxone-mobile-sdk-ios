@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct LiveChatRecoveredDTO: Decodable, Equatable {
+struct LiveChatRecoveredDTO: Decodable, Equatable, Sendable {
 
     let eventId: String
     
@@ -28,7 +28,7 @@ struct LiveChatRecoveredDTO: Decodable, Equatable {
 // MARK: - ReceivedEvent
 
 extension LiveChatRecoveredDTO: ReceivedEvent {
-    static let eventType: EventType? = .liveChatRecovered
+    static let associatedEventType: EventType? = .liveChatRecovered
 
     var postbackEventType: EventType? { postback.eventType }
 }

@@ -23,8 +23,8 @@ enum MessageMapper {
         }
         
         return Message(
-            id: entity.idOnExternalPlatformString,
-            threadId: entity.threadIdOnExternalPlatformString,
+            id: entity.idOnExternalPlatform,
+            threadId: entity.threadIdOnExternalPlatform,
             contentType: contentType,
             createdAt: entity.createdAt,
             attachments: entity.attachments.map(AttachmentMapper.map),
@@ -39,7 +39,8 @@ enum MessageMapper {
             ),
             authorUser: entity.authorUser.map(AgentMapper.map),
             authorEndUserIdentity: entity.authorEndUserIdentity.map(CustomerIdentityMapper.map),
-            status: entity.agentStatistics.readAt != nil ? .seen : .delivered
+            status: entity.agentStatistics.readAt != nil ? .seen : .delivered,
+            isAiGenerated: entity.isAiGenerated
         )
     }
     

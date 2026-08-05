@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents info about a postback of a generic event.
-struct GenericEventPostbackDTO: Equatable {
+struct GenericEventPostbackDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct CustomerTypingEventDataDTO: Codable {
+struct CustomerTypingEventDataDTO: Codable, Sendable {
     
     let thread: ThreadDTO
 }

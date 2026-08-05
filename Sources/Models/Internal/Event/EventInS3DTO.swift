@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct EventInS3DTO: Equatable {
+struct EventInS3DTO: Equatable, Sendable {
 
     // MARK: - Properties
     
@@ -31,7 +31,7 @@ struct EventInS3DTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension EventInS3DTO: ReceivedEvent {
-    static let eventType: EventType? = .eventInS3
+    static let associatedEventType: EventType? = .eventInS3
 
     var postbackEventType: EventType? { nil }
 }

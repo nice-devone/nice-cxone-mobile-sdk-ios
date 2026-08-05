@@ -18,7 +18,7 @@ import Foundation
 // SenderTypingStarted
 
 /// Event received when the agent begins typing or stops typing.
-struct AgentTypingEventDTO: Equatable {
+struct AgentTypingEventDTO: Equatable, Sendable {
 
     // MARK: - Properties
     
@@ -40,7 +40,7 @@ struct AgentTypingEventDTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension AgentTypingEventDTO: ReceivedEvent {
-    static let eventType: EventType? = nil
+    static let associatedEventType: EventType? = nil
 
     var postbackEventType: EventType? { nil }
 }

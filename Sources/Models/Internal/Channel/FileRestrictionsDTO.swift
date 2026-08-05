@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct FileRestrictionsDTO {
+struct FileRestrictionsDTO: Sendable {
     
     // MARK: - Properties
     

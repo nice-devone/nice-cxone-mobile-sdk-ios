@@ -42,6 +42,32 @@ extension String {
             return nil
         }
     }
+
+    /// Returns the string with the values of well-known credential-bearing JSON keys masked, safe for logging.
+    ///
+    /// Outbound WebSocket payloads embed the connection/transaction token (see
+    /// ``SendMessageEventDataDTO`` and related event DTOs). Logging the raw payload — even under
+    /// `#if DEBUG` — leaks the credential into device/console logs where it may end up in support
+    /// bundles or crash reports. This mirrors ``URL/redactingTransactionToken`` for the URL query
+    /// path and covers the field names most commonly used for credentials in this SDK's payloads:
+    /// `token`, `accessToken`, `refreshToken`, `authorization`.
+    ///
+    /// - Note: Regex-based redaction (not JSON parsing) so it works on both pretty-printed and
+    ///   compact JSON, and so it's safe to call on strings that fail JSON parsing.
+    var redactingJSONCredentials: String {
+        let keys = ["token", "accessToken", "refreshToken", "authorization"]
+        var result = self
+        for key in keys {
+            // Match: "<key>" : "<any non-quote chars>"  — replace the value with <redacted>.
+            let pattern = #""\#(key)"\s*:\s*"[^"]*""#
+            result = result.replacingOccurrences(
+                of: pattern,
+                with: "\"\(key)\": \"<redacted>\"",
+                options: [.regularExpression]
+            )
+        }
+        return result
+    }
     
     // MARK: - Methods
     

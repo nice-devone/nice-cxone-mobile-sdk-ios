@@ -15,7 +15,7 @@
 
 import Foundation
 
-class WelcomeMessageManager {
+final class WelcomeMessageManager: Sendable {
     
     // MARK: - Properties
     

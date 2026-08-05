@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct JourneyDTO {
+struct JourneyDTO: Sendable {
     
     let url: String
     

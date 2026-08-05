@@ -16,7 +16,7 @@
 import Foundation
 
 /// Data payload for the load more messages event.
-struct LoadMoreMessagesEventDataDTO {
+struct LoadMoreMessagesEventDataDTO: Sendable {
     
     let scrollToken: String
     

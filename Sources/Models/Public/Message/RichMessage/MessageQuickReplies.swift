@@ -23,11 +23,23 @@ import Foundation
 ///
 /// When a quick reply is tapped, the buttons are dismissed,
 ///  and the title of the tapped button is posted to the conversation as a message.
-public struct MessageQuickReplies: Equatable {
+public struct MessageQuickReplies: Equatable, Sendable {
     
     /// Title of the Quick Replies in the conversation
     public let title: String
     
     /// The quick replies button options.
     public let buttons: [MessageReplyButton]
+
+    // MARK: - Init
+
+    /// Creates a `MessageQuickReplies`.
+    ///
+    /// - Parameters:
+    ///   - title: The title displayed above the quick-reply buttons in the conversation.
+    ///   - buttons: The selectable reply buttons; typically two to five per channel configuration.
+    public init(title: String, buttons: [MessageReplyButton]) {
+        self.title = title
+        self.buttons = buttons
+    }
 }

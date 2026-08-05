@@ -22,15 +22,26 @@ The Core SDK uses a service-based architecture with distinct components:
 - `CustomerCustomFieldsProvider`: Handles customer custom fields across all threads
 - `AnalyticsProvider`: Handles analytics and reporting
 
-Each component is accessed through the singleton `CXoneChat.shared`.
+Each component is accessed through an instance of `CXoneChat` that you construct and hold yourself.
 
 ## Detailed Integration Steps
 
-### 1. Initialize and Prepare the SDK
+### 1. Construct the Chat Provider
+
+The SDK no longer exposes a global singleton. Create a `CXoneChat` instance once and retain it for the lifetime of the chat session (for example, on your app delegate, scene delegate, or a dedicated chat manager).
+
+```swift
+// Construct the chat provider once and hold it
+let chatProvider = CXoneChat()
+```
+
+All subsequent calls in this guide assume you have a `chatProvider` reference in scope.
+
+### 2. Initialize and Prepare the SDK
 
 ```swift
 // Initialize and prepare the SDK early in your app lifecycle
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: yourEnvironment, 
     brandId: yourBrandId, 
     channelId: yourChannelId
@@ -51,7 +62,7 @@ For optimal performance:
 ```swift
 // OPTIONAL: Set customer identity BEFORE prepare() only if needed
 if let userProfile = getCurrentUser() {
-    try CXoneChat.shared.customer.set(customer: CustomerIdentity(
+    try chatProvider.customer.set(customer: CustomerIdentity(
         id: userProfile.id,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName
@@ -59,7 +70,7 @@ if let userProfile = getCurrentUser() {
 }
 
 // Then prepare the SDK
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: yourEnvironment, 
     brandId: yourBrandId, 
     channelId: yourChannelId
@@ -68,37 +79,51 @@ try await CXoneChat.shared.connection.prepare(
 
 > **Note**: Setting customer identity is **not necessary at all**. It's only required if you want to present a specific customer name or maintain a consistent customer identity (e.g., for OAuth scenarios or when providing your own specific customer ID). However, using custom customer IDs comes with security risks and should be used at your own discretion. If not set, the SDK will generate an anonymous customer ID automatically.
 
-### 2. Implement Chat Delegate
+### 3. Observe Chat Events
 
-The sample app demonstrates basic delegate implementation:
+The SDK exposes events through an `AsyncStream<ChatEvent>` returned by `chatProvider.events()`. Start a long-lived `Task` that iterates the stream and switches on the cases your app cares about.
+
+The `ChatEvent` enum covers every event the SDK emits:
+
+- `chatUpdated(state:mode:)` — chat state or mode changed
+- `threadUpdated(_:)` — a single thread changed (messages, agent, name, etc.)
+- `threadsUpdated(_:)` — the full list of threads changed
+- `unexpectedDisconnect` — the connection dropped unexpectedly
+- `customEventMessage(_:)` — a custom plugin message arrived
+- `agentTyping(isTyping:agent:threadId:)` — agent started or stopped typing
+- `contactCustomFieldsSet` — custom fields for the current contact were set
+- `customerCustomFieldsSet` — custom fields for the customer were set
+- `error(_:)` — an SDK error occurred
+- `proactiveActionReceived(_:)` — a proactive action (e.g. inactivity popup) was received
 
 ```swift
-// From the sample app - basic delegate setup
-extension Manager: CXoneChatDelegate {
-    
-    func onChatUpdated(_ chatState: ChatState, mode: ChatMode) {
-        guard chatState >= .ready else {
-            return
-        }
-        // Handle chat ready state
-    }
-    
-    func onThreadUpdated(_ chatThread: ChatThread) {
-        // Handle thread updates - messages, agent changes, etc.
-    }
-    
-    func onUnexpectedDisconnect() {
-        Task { @MainActor in
+// Subscribe to SDK events. Retain the Task if you need to cancel it later.
+Task { [chatProvider] in
+    for await event in chatProvider.events() {
+        switch event {
+        case .chatUpdated(let chatState, _):
+            guard chatState >= .ready else {
+                continue
+            }
+            // Handle chat ready state
+        case .threadUpdated(let chatThread):
+            // Handle thread updates - messages, agent changes, etc.
+            _ = chatThread
+        case .agentTyping(let isTyping, let agent, let threadId):
+            // Handle typing indicators
+            _ = (isTyping, agent, threadId)
+        case .unexpectedDisconnect:
             do {
-                try await connect()
+                try await chatProvider.connection.connect()
             } catch {
                 // Handle connection error
             }
+        case .error(let error):
+            // Handle SDK errors
+            _ = error
+        default:
+            break
         }
-    }
-    
-    func onError(_ error: Error) {
-        // Handle SDK errors
     }
 }
 ```
@@ -112,9 +137,11 @@ For optimal performance and resource usage:
 1. **Early Preparation**:
    ```swift
    // In AppDelegate or initialization sequence
+   let chatProvider = CXoneChat()
+
    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-       Task {
-           try? await CXoneChat.shared.connection.prepare(environment: env, brandId: brandId, channelId: channelId)
+       Task { [chatProvider] in
+           try? await chatProvider.connection.prepare(environment: env, brandId: brandId, channelId: channelId)
        }
        return true
    }
@@ -124,8 +151,8 @@ For optimal performance and resource usage:
    ```swift
    // When user navigates to chat interface
    func chatButtonTapped() {
-       Task {
-           try await CXoneChat.shared.connection.connect()
+       Task { [chatProvider] in
+           try await chatProvider.connection.connect()
            // Show chat UI
        }
    }
@@ -135,7 +162,7 @@ For optimal performance and resource usage:
    ```swift
    // When user leaves chat or closes chat interface
    func onDisconnectTapped() {
-       CXoneChat.shared.connection.disconnect()
+       chatProvider.connection.disconnect()
    }
    ```
 
@@ -143,7 +170,7 @@ For optimal performance and resource usage:
    ```swift
    // When user logs out
    func onUserLogout() {
-       CXoneChat.signOut()
+       chatProvider.signOut()
    }
    ```
 

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ExecuteTriggerEventPayloadDTO {
+struct ExecuteTriggerEventPayloadDTO: Sendable {
     
     // MARK: - Properties
     

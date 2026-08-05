@@ -217,13 +217,49 @@ CXoneChat.logWriter = fileWriter
 
 ### Creating a Log Share Feature
 
+`ShareLink` (iOS 16+) takes the log file URLs directly and renders the system share sheet without a UIKit bridge:
+
 ```swift
-func shareLogFiles() throws -> UIActivityViewController {
-    let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    let logsUrl = documentDirectory.appendingPathComponent("Logs")
-    let filePaths = try FileManager.default.contentsOfDirectory(at: logsUrl, includingPropertiesForKeys: nil)
-    
-    return UIActivityViewController(activityItems: filePaths, applicationActivities: nil)
+// MARK: - Sample Application's SettingsView
+
+struct SettingsView: View {
+    ...
+        var logsSectionView: some View {
+        Section(header: Text(L10n.Settings.Logs.title)) {
+            HStack {
+                ...
+
+                let logFileUrls = Log.logFileUrls
+
+                ShareLink(items: logFileUrls) {
+                    Text(L10n.Settings.Logs.Share.button)
+                }
+                .disabled(logFileUrls.isEmpty)
+            }
+            
+            ...
+        }
+    }
+    ...
+}
+...
+
+
+// MARK: - Custom Logger
+
+class Log: StaticLogger {
+    ...
+    @MainActor
+    class var logFileUrls: [URL] {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return []
+        }
+
+        let logsUrl = documentDirectory.appendingPathComponent("Logs")
+
+        return (try? FileManager.default.contentsOfDirectory(at: logsUrl, includingPropertiesForKeys: nil)) ?? []
+    }
+    ...
 }
 ```
 

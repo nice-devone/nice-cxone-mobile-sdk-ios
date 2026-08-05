@@ -18,7 +18,7 @@ import Foundation
 /// A single selectable time slot used by ``MessageTimePicker``
 ///
 /// It contains an identifier, duration, and the start date/time for the slot
-public struct MessageTimePickerTimeSlot: Equatable {
+public struct MessageTimePickerTimeSlot: Equatable, Sendable {
     
     /// Unique identifier for the time slot.
     public let id: String
@@ -28,4 +28,18 @@ public struct MessageTimePickerTimeSlot: Equatable {
     
     /// Start date and time of the slot.
     public let startTime: Date
+
+    // MARK: - Init
+
+    /// Creates a `MessageTimePickerTimeSlot`.
+    ///
+    /// - Parameters:
+    ///   - id: Unique identifier for the slot, used to correlate the user's selection.
+    ///   - duration: Slot duration in seconds.
+    ///   - startTime: Absolute start date/time of the slot.
+    public init(id: String, duration: Int, startTime: Date) {
+        self.id = id
+        self.duration = duration
+        self.startTime = startTime
+    }
 }

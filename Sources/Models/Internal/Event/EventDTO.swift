@@ -16,7 +16,7 @@
 import Foundation
 
 /// An event to be sent through the WebSocket.
-struct EventDTO: Encodable {
+struct EventDTO: Encodable, Sendable {
 
     // MARK: - Properties
 
@@ -49,6 +49,6 @@ struct EventDTO: Encodable {
             visitorId: visitorId
         )
         self.eventId = eventId
-        self.action = eventType == .authorizeCustomer ? .register : .chatWindowEvent
+        self.action = .chatWindowEvent
     }
 }

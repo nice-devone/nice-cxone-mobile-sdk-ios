@@ -13,25 +13,24 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import Foundation
 import Mockable
 
 @Mockable
-protocol SocketService: AnyObject {
+protocol SocketService: AnyObject, Sendable {
     
-    var delegateManager: SocketDelegateManager { get }
-    
+    var broadcaster: EventBroadcaster { get }
+
     var connectionContext: ConnectionContext { get }
 
-    var events: AnyPublisher<any ReceivedEvent, Never> { get }
+    var eventBroadcast: EventBroadcast { get }
 
     var delegate: SocketDelegate? { get set }
 
-    var cancellables: [AnyCancellable] { get set }
-    
+    var listenerTasks: [Task<Void, Never>] { get set }
+
     /// Opens a new WebSocket connection using the specified URL.
-    /// 
+    ///
     /// - Parameter socketURL: The URL for the location of the WebSocket.
     ///
     /// - Throws: ``CXoneChatError/notConnected`` if the pulse was not received
@@ -54,7 +53,7 @@ protocol SocketService: AnyObject {
 }
 
 extension SocketService {
-    
+
     /// Sends a message through the WebSocket.
     ///
     /// - Parameters:

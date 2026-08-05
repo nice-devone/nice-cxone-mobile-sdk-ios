@@ -20,6 +20,16 @@ public enum CXoneChatError: LocalizedError, Equatable {
 
     // MARK: Errors when calling any method
 
+    /// The feature is intentionally disabled in this version of the SDK and is not available for use.
+    ///
+    /// This error indicates that the feature has been deliberately disabled in the current release
+    /// (for example, the explicit OAuth flow) and will be re-enabled in a future version. The
+    /// associated value carries the human-readable feature name (for example, `"Explicit OAuth"`)
+    /// so it can be surfaced in integrator-facing error messaging and logs.
+    /// - Source of problem: Feature intentionally disabled in the current SDK version.
+    /// - Attention: Don't use the feature, wait for a new release of the SDK.
+    case featureUnavailable(String)
+
     /// The SDK version being used is no longer supported.
     ///
     /// This error occurs when the SDK version is outdated and incompatible with the current API.
@@ -90,16 +100,6 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Check if channel environment works correctly
     ///     or gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case serverError
-
-    /// The server experienced an error during recovering a messaging thread or server does not contain any existing chat thread.
-    ///
-    /// This error indicates that thread recovery failed, either because the thread does not exist or for some other server-specific cause.
-    /// - Source of problem: Information error/DFO issue
-    /// - Warning: The SDK throws this error even in case of empty thread list.
-    /// - Attention: Can be ignored in case of empty thread list.
-    ///     Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
-    @available(*, deprecated, message: "Error is no longer forwarded to the host application – it is handled internally from version 1.3.0")
-    case recoveringThreadFailed
     
     /// The parameter has not been set properly or it was unable to unwrap it as a required type.
     ///
@@ -177,13 +177,6 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case missingAccessToken
 
-    /// The transaction token has expired.
-    ///
-    /// The transaction token is used to be able to establish the web socket connection.
-    /// - Source of problem: -
-    /// - Attention: Re-trigger OAuth flow to retrieve new authorization code and code verifier.
-    case transactionTokenExpired
-    
     /// The customer could not be associated with a visitor.
     ///
     /// Some events, except customer identity, uses `visitorId` to match an user.
@@ -272,10 +265,23 @@ public enum CXoneChatError: LocalizedError, Equatable {
     ///     Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case transactionTokenRequestFailed(statusCode: Int)
 
+    // MARK: Errors related to OAuth token handling
+
+    /// The provided access token is invalid.
+    ///
+    /// This error occurs when the token supplied via ``CustomerProvider/setConnectionToken(_:expiresAt:)``
+    /// is empty, expired, or rejected by the backend.
+    ///
+    /// - Source of problem: SDK used incorrectly / OAuth provider issue
+    /// - Attention: Obtain a fresh token from your OAuth provider and supply it to the SDK.
+    case invalidAccessToken
+
     // MARK: - Properties
 
     public var errorDescription: String? {
         switch self {
+        case .featureUnavailable(let feature):
+            return "The '\(feature)' feature is intentionally disabled in the current version of the SDK and is not available for use."
         case .sdkVersionNotSupported:
             return "Your version of SDK is not supported anymore, please do upgrade."
         case .notConnected:
@@ -298,8 +304,6 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Something went wrong and the channel configuration could not be retrieved."
         case .missingAccessToken:
             return "The customer was successfully authorized using OAuth, but an access token wasn’t returned."
-        case .transactionTokenExpired:
-            return "The transaction token has expired. Please try logging in again."
         case .customerVisitorAssociationFailure:
             return "The customer could not be successfully associated with a visitor."
         case .serverError:
@@ -312,8 +316,6 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Parameter is invalid: \(param)"
         case .missingParameter(let param):
             return "Parameter \"\(param)\" was in an unexpected format or missing."
-        case .recoveringThreadFailed:
-            return "Could not get any existing chat thread."
         case .missingPreChatCustomFields:
             return "Could not create a new thread; need to fill out some contact custom fields with pre-chat survey."
         case .noSuchFile(let url):
@@ -342,6 +344,8 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Unable to send transcript. Please try again later."
         case .transactionTokenRequestFailed:
             return "Failed to obtain transaction token from the server."
+        case .invalidAccessToken:
+            return "The provided access token is invalid, expired, or empty. Obtain a fresh token from your OAuth provider."
         }
     }
 

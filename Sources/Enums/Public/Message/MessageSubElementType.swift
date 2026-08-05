@@ -16,7 +16,7 @@
 import Foundation
 
 /// The different types of elements that can be present in the content of a rich message.
-public enum MessageSubElementType: Equatable {
+public enum MessageSubElementType: Equatable, Sendable {
     
     /// A reply button rich message sub element.
     case replyButton(MessageReplyButton)

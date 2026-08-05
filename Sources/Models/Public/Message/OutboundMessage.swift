@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents outbound message which is send to an agent.
-public struct OutboundMessage {
+public struct OutboundMessage: Sendable {
     
     // MARK: - Properties
     

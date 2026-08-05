@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents statistics about the user.
-public struct UserStatistics: Equatable {
+public struct UserStatistics: Equatable, Sendable {
     
     /// The date at which the message was seen. Will be null if not yet seen.
     public let seenAt: Date?

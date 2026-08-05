@@ -16,16 +16,11 @@
 import Foundation
 
 /// Button element within an inactivity popup.
-struct InactivityPopupButtonElementDTO: Equatable {
+struct InactivityPopupButtonElementDTO: Equatable, Sendable {
     
     // MARK: - Properties
     
-    /// The unique identifier of the element.
-    @available(*, deprecated, renamed: "idString", message: "Use `idString`. It preserves the original case-sensitive identifier from the backend.")
-    let id: UUID // swiftlint:disable:this no_uuid
-    
-    /// The unique identifier of the element.
-    let idString: String
+    let id: String
     
     /// The button text.
     let text: String
@@ -55,11 +50,10 @@ extension InactivityPopupButtonElementDTO: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.id = try container.decode(UUID.self, forKey: .id) // swiftlint:disable:this no_uuid
-        self.idString = try container.decode(String.self, forKey: .id)
+        self.id = try container.decode(String.self, forKey: .id)
         self.text = try container.decode(String.self, forKey: .text)
         self.postback = try container.decode(String.self, forKey: .postback)
-        
+
         self.isSessionRefresh = self.postback.range(of: Self.regexPattern, options: .regularExpression) != nil
     }
 } 
@@ -72,7 +66,7 @@ extension InactivityPopupButtonElementDTO: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(idString, forKey: .id)
+        try container.encode(id, forKey: .id)
         try container.encode(ElementType.button.rawValue, forKey: .type)
         try container.encode(text, forKey: .text)
         try container.encode(postback, forKey: .postback)

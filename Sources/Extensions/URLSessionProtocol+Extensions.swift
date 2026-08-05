@@ -15,6 +15,9 @@
 
 import Foundation
 
+/// Reused across all `fetch` calls to avoid per-request allocation.
+private let _apiErrorDecoder = JSONDecoder()
+
 extension URLSessionProtocol {
 
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
@@ -43,7 +46,7 @@ extension URLSessionProtocol {
                 httpResponse.log(data: data, file: file, line: line)
 
                 // Check for SDK version not supported error
-                if let apiError = try? JSONDecoder().decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
+                if let apiError = try? _apiErrorDecoder.decode(APIError.self, from: data), apiError.errorCode == .sdkVersionNotSupported {
                     throw CXoneChatError.sdkVersionNotSupported
                 }
             }

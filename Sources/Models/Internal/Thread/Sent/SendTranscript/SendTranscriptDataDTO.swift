@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct SendTranscriptDataDTO {
+struct SendTranscriptDataDTO: Sendable {
 
     // MARK: - Properties
     

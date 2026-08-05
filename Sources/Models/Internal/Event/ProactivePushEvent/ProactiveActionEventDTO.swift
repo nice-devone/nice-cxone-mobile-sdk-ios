@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ProactiveActionEventDTO: Equatable {
+struct ProactiveActionEventDTO: Equatable, Sendable {
 
     // MARK: - Properties
     
@@ -33,7 +33,7 @@ struct ProactiveActionEventDTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension ProactiveActionEventDTO: ReceivedEvent {
-    static let eventType: EventType? = .fireProactiveAction
+    static let associatedEventType: EventType? = .fireProactiveAction
 
     var postbackEventType: EventType? { nil }
 }

@@ -16,7 +16,7 @@
 import Foundation
 
 /// The various options for how a channel is configured.
-struct ChannelConfigurationDTO {
+struct ChannelConfigurationDTO: Sendable {
     
     // MARK: - Properties
     

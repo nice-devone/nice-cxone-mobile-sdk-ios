@@ -16,7 +16,7 @@
 import Foundation
 
 /// Details required about an environment.
-protocol EnvironmentDetails {
+protocol EnvironmentDetails: Sendable {
 
     /// The URL used for chat requests (channel config and attachment upload).
     var chatURL: String { get }

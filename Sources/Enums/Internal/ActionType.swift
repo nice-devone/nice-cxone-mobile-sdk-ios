@@ -15,29 +15,12 @@
 
 import Foundation
 
-struct RefreshTokenPayloadDataDTO {
+/// Supported proactive action types.
+enum ActionType: String, Codable {
     
-    // MARK: - Properties
-    
-    let token: String
-}
+    /// Proactive action Welcome message.
+    case welcomeMessage = "WelcomeMessage"
 
-// MARK: - Codable
-
-extension RefreshTokenPayloadDataDTO: Encodable {
-    
-    enum CodingKeys: CodingKey {
-        case accessToken
-    }
-    
-    enum AccessTokenCodingKeys: CodingKey {
-        case token
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        var accessTokenContainer = container.nestedContainer(keyedBy: AccessTokenCodingKeys.self, forKey: .accessToken)
-        
-        try accessTokenContainer.encode(token, forKey: .token)
-    }
+    /// Proactive action Custom popup box.
+    case customPopupBox = "CustomPopupBox"
 }

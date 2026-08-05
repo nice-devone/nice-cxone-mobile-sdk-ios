@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct PreChatSurveyDTO {
+struct PreChatSurveyDTO: Sendable {
     
     let name: String
     

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ThreadMetadataLoadedEventPostbackDataDTO: Decodable, Equatable {
+struct ThreadMetadataLoadedEventPostbackDataDTO: Decodable, Equatable, Sendable {
     
     /// The agent assigned to the thread.
     let ownerAssignee: AgentDTO?

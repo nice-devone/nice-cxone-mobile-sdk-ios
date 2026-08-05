@@ -18,7 +18,7 @@ import Mockable
 
 /// The provider for proactive action related properties and methods.
 @Mockable
-public protocol ProactiveActionProvider {
+public protocol ProactiveActionProvider: Sendable {
     
     /// Triggers a proactive action with the specified action type and associated data.
     ///

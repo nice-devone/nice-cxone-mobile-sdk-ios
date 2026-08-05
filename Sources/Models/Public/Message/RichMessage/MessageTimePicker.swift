@@ -19,7 +19,7 @@ import Foundation
 ///
 /// A model representing a time picker message, including the text shown in the conversation,
 /// the sheet title, and the available time slots. Used to configure UI that presents time slot selection to the user.
-public struct MessageTimePicker: Equatable {
+public struct MessageTimePicker: Equatable, Sendable {
     
     /// Text displayed in the conversation cell.
     public let title: String
@@ -29,4 +29,18 @@ public struct MessageTimePicker: Equatable {
     
     /// List of available time slot options.
     public let timeSlots: [MessageTimePickerTimeSlot]
+
+    // MARK: - Init
+
+    /// Creates a `MessageTimePicker`.
+    ///
+    /// - Parameters:
+    ///   - title: Text displayed in the conversation cell.
+    ///   - sheetTitle: Title shown at the top of the picker sheet when the user opens it.
+    ///   - timeSlots: The selectable time slots offered to the user.
+    public init(title: String, sheetTitle: String, timeSlots: [MessageTimePickerTimeSlot]) {
+        self.title = title
+        self.sheetTitle = sheetTitle
+        self.timeSlots = timeSlots
+    }
 }

@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct SetContactCustomFieldsEventDataDTO {
+struct SetContactCustomFieldsEventDataDTO: Sendable {
     
     // MARK: - Properties
     

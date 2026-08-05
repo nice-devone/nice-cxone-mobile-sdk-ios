@@ -16,7 +16,7 @@
 import Foundation
 
 /// Data for the ContactInboxAssigneeChanged event.
-struct ContactInboxAssigneeChangedDataDTO: Decodable, Equatable {
+struct ContactInboxAssigneeChangedDataDTO: Decodable, Equatable, Sendable {
 
     /// The contact for which this change applies.
     let `case`: ContactDTO

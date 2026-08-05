@@ -23,14 +23,14 @@ Call this method after user authentication:
 
 ```swift
 // Call early in your app lifecycle (e.g., after login)
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: yourEnvironment, 
     brandId: yourBrandId, 
     channelId: yourChannelId
 )
 
 // Set user identity if available
-try CXoneChat.shared.customer.set(
+try chatProvider.customer.set(
     customer: CustomerIdentity(
         id: userProfile.id,
         firstName: userProfile.firstName,
@@ -99,16 +99,16 @@ When users log in or out of your app, you need to manage the SDK state:
 
 ```swift
 // When user logs out:
-CXoneChat.signOut()
+chatProvider.signOut()
 
 // When a different user logs in:
 // Update customer identity before prepare() - no need to sign out
-try CXoneChat.shared.customer.set(customer: CustomerIdentity(
+try chatProvider.customer.set(customer: CustomerIdentity(
     id: newUserProfile.id,
     firstName: newUserProfile.firstName,
     lastName: newUserProfile.lastName
 ))
-try await CXoneChat.shared.connection.prepare(
+try await chatProvider.connection.prepare(
     environment: yourEnvironment,
     brandId: yourBrandId,
     channelId: yourChannelId
@@ -126,4 +126,4 @@ For a complete implementation reference, see:
 
 ## Need a Custom UI?
 
-If you need to build your own custom UI without using the UI module, please check our [Core SDK Integration Guide](cs-core-sdk-integration.md) for details on implementing the delegate methods, connecting manually, and handling all states yourself.
+If you need to build your own custom UI without using the UI module, please check our [Core SDK Integration Guide](cs-core-sdk-integration.md) for details on observing `ChatProvider.events()`, connecting manually, and handling all states yourself.

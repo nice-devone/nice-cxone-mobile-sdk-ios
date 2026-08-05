@@ -13,9 +13,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import CXoneGuideUtility
 import Foundation
 
-actor ClientLogManager {
+final class ClientLogManager: Sendable {
     
     // MARK: - Objects
     
@@ -31,12 +32,22 @@ actor ClientLogManager {
     private let loggerUrl: URL
     private let deviceFingerprint: DeviceFingerprintDTO
     
-    private(set) var isEnabled: Bool
+    private let _isEnabled = SafeAccessContainer<Bool>(true)
+
+    private(set) var isEnabled: Bool {
+        get { _isEnabled.content }
+        set {
+            _isEnabled.mutate { content in
+                content = newValue
+            }
+        }
+    }
     
     private static let program = "ios-dfo-chat"
     
     // MARK: - Init
     
+    @MainActor
     init?(connectionContext: ConnectionContext) {
         guard let loggerUrl = connectionContext.environment.loggerUrl(brandId: connectionContext.brandId, program: Self.program) else {
             LogManager.error("Unable to resolve logger post URL")
@@ -46,7 +57,6 @@ actor ClientLogManager {
         self.session = connectionContext.session
         self.loggerUrl = loggerUrl
         self.deviceFingerprint = DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken)
-        self.isEnabled = true
     }
     
     // MARK: - Methods

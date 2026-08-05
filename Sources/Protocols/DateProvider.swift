@@ -13,11 +13,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import CXoneGuideUtility
 import Foundation
 import Mockable
 
 @Mockable
-protocol DateProvider {
+protocol DateProvider: Sendable {
 
     var now: Date { get }
 }
@@ -27,7 +28,21 @@ struct DateProviderImpl: DateProvider {
 }
 
 extension Date {
-    static var provider: DateProvider = DateProviderImpl()
+    /// Test-only injection point for providing a custom ``DateProvider``.
+    ///
+    /// Backed by `SafeAccessContainer` so reads/writes are synchronized even if
+    /// tests ever set the provider from a non-main isolation domain. `DateProvider`
+    /// conforms to `Sendable` so the storage compiles without `nonisolated(unsafe)`.
+    private static let _provider = SafeAccessContainer<any DateProvider>(DateProviderImpl())
+
+    static var provider: any DateProvider {
+        get { _provider.content }
+        set {
+            _provider.mutate { provider in
+                provider = newValue
+            }
+        }
+    }
 
     static func provide() -> Date { provider.now }
 }

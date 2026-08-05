@@ -19,19 +19,30 @@ import Foundation
 
 extension Task where Success == Never, Failure == Never {
     
-    static func sleep(seconds: Double) async {
-        let duration = UInt64(seconds * TimeInterval.secondInNanoseconds)
-        
-        do {
-            try await Task.sleep(nanoseconds: duration)
-        } catch {
-            switch error {
-            case is CancellationError:
-                break
-            default:
-                error.logError()
-            }
+    /// Suspends the current task for the given number of seconds.
+    ///
+    /// - Note: Cancellation is **propagated** as `CancellationError` (the standard
+    ///   `Task.sleep(nanoseconds:)` behaviour). This is deliberate: a caller that relies on a
+    ///   real delay — e.g. reconnect exponential backoff — must be able to tell when the sleep
+    ///   was cut short rather than have it silently return as if the full interval had elapsed.
+    ///   Callers that intentionally want to ignore cancellation and fall through to their own
+    ///   `Task.isCancelled` check should call this with `try?`.
+    static func sleep(seconds: Double) async throws {
+        // Guard against non-finite or non-positive intervals: converting them to `UInt64` would
+        // trap at runtime. Treat them as "no delay" while still honouring cancellation.
+        guard seconds.isFinite, seconds > 0 else {
+            try Task.checkCancellation()
+
+            return
         }
+
+        // Clamp before converting: `UInt64(x)` traps when `x` exceeds `UInt64.max`
+        // (~584 years expressed in nanoseconds), so a very large finite `seconds` would crash
+        // instead of sleeping. Clamping keeps the helper total over its whole input domain.
+        let nanoseconds = seconds * TimeInterval.secondInNanoseconds
+        let duration = nanoseconds >= Double(UInt64.max) ? UInt64.max : UInt64(nanoseconds)
+
+        try await Task.sleep(nanoseconds: duration)
     }
 }
 
@@ -56,9 +67,15 @@ extension Task where Failure == Error {
                     }
                     
                     let delay = TimeInterval.calculateExponentialBackoffDelay(attempt: attempt)
-                    
-                    try await Task<Never, Never>.sleep(nanoseconds: UInt64(delay))
-                    
+
+                    // The sleep swallows its own cancellation (via `try?`) so a cut-short backoff
+                    // isn't misreported as an operation failure. The explicit `checkCancellation()`
+                    // below is what actually aborts a cancelled retry loop — without it, a cancelled
+                    // task would keep invoking `operation()` for every remaining attempt.
+                    try? await Task<Never, Never>.sleep(seconds: delay)
+
+                    try Task<Never, Never>.checkCancellation()
+
                     continue
                 }
             }

@@ -15,21 +15,23 @@
 
 import Foundation
 
-final class UserDefaultsServiceImpl {
+/// `@unchecked Sendable`: `UserDefaults` is not formally `Sendable` but is documented
+/// as thread-safe for its public API. All stored properties are `let` bindings.
+final class UserDefaultsServiceImpl: @unchecked Sendable {
     
     // MARK: - Properties
     
     private static let suiteName = "CXoneChatSDK"
     
-    private let userDefaults: UserDefaults?
+    private let _userDefaults: UserDefaults?
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let suiteName: String
-    
+
     // MARK: - Init
-    
+
     init(suiteName: String = UserDefaultsServiceImpl.suiteName) {
-        self.userDefaults = UserDefaults(suiteName: suiteName)
+        self._userDefaults = UserDefaults(suiteName: suiteName)
         self.suiteName = suiteName
     }
 }
@@ -39,14 +41,14 @@ final class UserDefaultsServiceImpl {
 extension UserDefaultsServiceImpl: UserDefaultsService {
     
     func remove(_ key: String) {
-        self.userDefaults?.removeObject(forKey: key)
+        _userDefaults?.removeObject(forKey: key)
         
-        self.userDefaults?.synchronize()
+        _userDefaults?.synchronize()
     }
     
     func set<T: Encodable>(_ obj: T?, for key: String) {
         defer {
-            self.userDefaults?.synchronize()
+            _userDefaults?.synchronize()
         }
         
         do {
@@ -54,19 +56,19 @@ extension UserDefaultsServiceImpl: UserDefaultsService {
                 throw CXoneChatError.missingParameter("obj")
             }
             
-            self.userDefaults?.set(try encoder.encode(obj), forKey: key)
+            _userDefaults?.set(try encoder.encode(obj), forKey: key)
         } catch {
-            self.userDefaults?.removeObject(forKey: key)
+            _userDefaults?.removeObject(forKey: key)
         }
     }
     
     func get<T: Decodable>(_ type: T.Type, for key: String) -> T? {
-        guard let data = self.userDefaults?.data(forKey: key) else {
+        guard let data = _userDefaults?.data(forKey: key) else {
             return nil
         }
         
         do {
-            return try decoder.decode(T.self, from: data)
+            return try JSONDecoder().decode(T.self, from: data)
         } catch {
             return nil
         }
@@ -75,8 +77,8 @@ extension UserDefaultsServiceImpl: UserDefaultsService {
     func purge() {
         LogManager.trace("Removing all keys from UserDefaults")
         
-        userDefaults?.removePersistentDomain(forName: suiteName)
+        _userDefaults?.removePersistentDomain(forName: suiteName)
         
-        userDefaults?.synchronize()
+        _userDefaults?.synchronize()
     }
 }

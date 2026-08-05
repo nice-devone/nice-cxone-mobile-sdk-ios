@@ -16,7 +16,7 @@
 import Foundation
 
 /// Represents statistics about the user.
-struct UserStatisticsDTO: Equatable {
+struct UserStatisticsDTO: Equatable, Sendable {
     
     // MARK: - Properties
     

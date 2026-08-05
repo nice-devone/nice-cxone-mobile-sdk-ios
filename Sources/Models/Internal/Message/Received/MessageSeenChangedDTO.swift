@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct MessageSeenChangedDTO: Equatable {
+struct MessageSeenChangedDTO: Equatable, Sendable {
     
     /// The unique identifier of the event.
     let eventId: String
@@ -32,7 +32,7 @@ struct MessageSeenChangedDTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension MessageSeenChangedDTO: ReceivedEvent {
-    static let eventType: EventType? = .messageSeenChanged
+    static let associatedEventType: EventType? = .messageSeenChanged
 
     var postbackEventType: EventType? { nil }
 }

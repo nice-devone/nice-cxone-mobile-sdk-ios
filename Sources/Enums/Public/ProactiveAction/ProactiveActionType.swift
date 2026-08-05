@@ -19,13 +19,8 @@ import Foundation
 ///
 /// Use this enum to specify which proactive action should be performed, such as displaying a custom popup
 /// or handling inactivity events.
-public enum ProactiveActionType {
+public enum ProactiveActionType: Sendable {
 
-    /// Triggers the display of a custom popup box with the provided data.
-    ///
-    /// - Parameter data: A dictionary containing the data required to configure the custom popup.
-    case customPopupBox(data: [String: Any])
-    
     /// Triggers the display of an inactivity popup.
     ///
     /// - Parameter inactivityPopup: The `InactivityPopup` instance associated with the inactivity event.

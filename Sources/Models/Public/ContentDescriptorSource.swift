@@ -16,7 +16,7 @@
 import Foundation
 
 /// describes the details of data attached to a `ContentDescriptor`
-public enum ContentDescriptorSource {
+public enum ContentDescriptorSource: Sendable {
     /// data is an array of bytes contained in a `Data` object
     case bytes(Data)
     /// data is referenced by URL

@@ -16,7 +16,7 @@
 import Foundation
 
 /// The details about the event to be sent.
-struct EventPayloadDTO {
+struct EventPayloadDTO: Sendable {
     
     // MARK: - Properties
     
@@ -32,7 +32,7 @@ struct EventPayloadDTO {
     /// The type of event to be sent.
     let eventType: EventType
     
-    /// The visitor to reconnect. Only used for the ReconnectCustomer event.
+    /// The visitor ID for the event, used by some event types (e.g., analytics).
     let visitorId: String?
 
     /// The data to be sent for the event.
@@ -83,8 +83,13 @@ extension EventPayloadDTO: Encodable {
             try visitorContainer.encodeIfPresent(visitorId, forKey: .id)
         }
     }
-    
-    private func codingKey(for eventType: EventType) -> CodingKeys {
+}
+
+// MARK: - Private methods
+
+private extension EventPayloadDTO {
+
+    func codingKey(for eventType: EventType) -> CodingKeys {
         switch eventType {
         case .sendMessage,
                 .recoverThread,
@@ -95,7 +100,6 @@ extension EventPayloadDTO: Encodable {
                 .senderTypingEnded,
                 .senderTypingStarted,
                 .messageSeenByCustomer,
-                .authorizeCustomer,
                 .fetchThreadList,
                 .loadThreadMetadata,
                 .updateThread,

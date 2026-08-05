@@ -15,22 +15,6 @@
 
 import Foundation
 
-/// Event received when a token has been successfully refreshed.
-struct TokenRefreshedEventDTO: Decodable, Equatable {
-
-    let eventId: String
-    
-    /// Type of event
-    let eventType: EventType?
-
-    let postback: TokenRefreshedEventPostbackDTO
-}
-
-// MARK: - ReceivedEvent
-
-extension TokenRefreshedEventDTO: ReceivedEvent {
-    
-    static let eventType: EventType? = .tokenRefreshed
-
-    var postbackEventType: EventType? { postback.eventType }
+struct HeartbeatDTO: Encodable {
+    let action: EventActionType = .heartbeat
 }

@@ -16,7 +16,7 @@
 import Foundation
 
 /// All info about data of a received thread.
-struct ReceivedThreadDataDTO: Equatable {
+struct ReceivedThreadDataDTO: Equatable, Sendable {
     
     // MARK: - Properties
 

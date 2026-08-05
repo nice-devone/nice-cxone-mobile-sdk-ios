@@ -29,7 +29,6 @@ enum InactivityPopupMapper {
             numberOfSeconds: entity.countdown.numberOfSeconds,
             startedAt: entity.countdown.startedAt,
             threadId: message.threadIdOnExternalPlatform,
-            threadIdString: message.threadIdOnExternalPlatformString,
             refreshButton: InactivityPopupButton(from: entity.refreshButton),
             expireButton: InactivityPopupButton(from: entity.expireButton)
         )
@@ -43,7 +42,6 @@ private extension InactivityPopupButton {
     init(from entity: InactivityPopupButtonElementDTO) {
         self.init(
             id: entity.id,
-            idString: entity.idString,
             text: entity.text,
             postback: entity.postback
         )

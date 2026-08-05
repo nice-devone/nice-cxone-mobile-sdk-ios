@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct UTMDTO: Encodable {
+struct UTMDTO: Encodable, Sendable {
     
     let source: String
 

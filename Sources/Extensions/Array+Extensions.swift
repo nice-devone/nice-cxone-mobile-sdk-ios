@@ -13,13 +13,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import Combine
 import Foundation
 
 // MARK: - Array
 
 extension Array {
-    
+
     /// Returns the element at the specified index if it is within bounds, otherwise nil.
     subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
@@ -29,32 +28,25 @@ extension Array {
 // MARK: - Array + Equatable
 
 extension Array where Element: Equatable {
-    
+
     mutating func remove(_ element: Element) {
         guard let index = firstIndex(where: { $0 == element }) else {
             return
         }
-        
+
         remove(at: index)
     }
 }
 
-// MARK: - Array + ChatThread
+// MARK: - Array + ChatThreadService
 
-extension Array where Element == ChatThread {
+extension Array where Element == ChatThreadService {
 
-    /// Returns `ChatThread` based on given thread ID.
+    /// Returns the `ChatThread` snapshot for the given thread ID, if any provider holds it.
     /// - Parameter threadId: The unique id of the thread.
-    /// - Returns: `ChatThread`, if it exists.
+    /// - Returns: The `ChatThread` snapshot, if found.
     func getThread(with threadId: String) -> ChatThread? {
-        self.first { $0.idString == threadId }
-    }
-    
-    /// Returns Index of thread based on given thread ID.
-    /// - Parameter threadId: The unique id of the thread.
-    /// - Returns: Index of found thread.
-    func index(of threadId: String) -> Int? {
-        self.firstIndex { $0.idString == threadId }
+        self.first { $0.chatThread.id == threadId }?.chatThread
     }
 }
 
@@ -62,31 +54,31 @@ extension Array where Element == ChatThread {
 
 extension Array where Element == CustomFieldDTO {
 
+    /// Merges `array` into the receiver, keeping the most recently updated entry when both sides
+    /// contain a field with the same `ident`.
+    ///
+    /// The receiver is first indexed into a dictionary keyed by `ident` (duplicates within the
+    /// receiver are resolved by keeping the last occurrence). Each entry in `array` is then
+    /// compared against the existing entry for the same `ident`: the one with the later
+    /// `updatedAt` timestamp wins. Fields present only in `array` are added unconditionally.
+    ///
+    /// - Parameter array: The incoming fields to merge into the receiver.
     mutating func merge(with array: Array) {
-        var result = self
-        
+        var byIdent = reduce(into: [String: CustomFieldDTO]()) { result, field in
+            result[field.ident] = field
+        }
+
         for newEntry in array {
-            if let oldEntry = self.first(where: { $0.ident == newEntry.ident }) {
-                result.remove(oldEntry)
-                result.append(newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry)
+            if let oldEntry = byIdent[newEntry.ident] {
+                byIdent[newEntry.ident] = newEntry.updatedAt > oldEntry.updatedAt ? newEntry : oldEntry
             } else {
-                result.append(newEntry)
+                byIdent[newEntry.ident] = newEntry
             }
         }
-        
-        self = result
-    }
-}
 
-// MARK: - Array + AnyCancellable
-
-extension Array where Element: AnyCancellable {
-
-    mutating func cancel() {
-        forEach {
-            $0.cancel()
-        }
-        
-        removeAll()
+        // Preserve receiver order: walk `self` first (each element replaced by the dict winner),
+        // then append new-only entries from `array` in arrival order.
+        let existingIdents = Set(map { $0.ident })
+        self = compactMap { byIdent[$0.ident] } + array.filter { !existingIdents.contains($0.ident) }
     }
 }

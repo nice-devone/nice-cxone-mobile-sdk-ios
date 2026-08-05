@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct SetPositionInQueueEventDataDTO: Equatable {
+struct SetPositionInQueueEventDataDTO: Equatable, Sendable {
 
     /// The contact ID for which this change applies.
     let consumerContact: String

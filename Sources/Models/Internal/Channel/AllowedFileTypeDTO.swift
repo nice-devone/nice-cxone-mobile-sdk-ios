@@ -16,7 +16,7 @@
 import Foundation
 
 /// Details about a file type allowed to be uploaded
-struct AllowedFileTypeDTO {
+struct AllowedFileTypeDTO: Sendable {
     /// Allowed mime type.
     ///
     /// This may be of the form [type/*] in which case any subtype is allowed

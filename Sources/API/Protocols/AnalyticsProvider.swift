@@ -16,19 +16,10 @@
 import Foundation
 
 /// The provider for report related properties and methods.
-public protocol AnalyticsProvider {
+public protocol AnalyticsProvider: Sendable {
     
     /// The id for the visitor.
-    @available(
-        *, deprecated,
-         renamed: "visitorIdString",
-         message: "Use `visitorIdString`. It preserves the original case-sensitive identifier from the backend."
-    )
-    var visitorId: UUID? { get }
-    // swiftlint:disable:previous no_uuid
-    
-    /// The id for the visitor.
-    var visitorIdString: String? { get }
+    var visitorId: String? { get }
     
     /// Reports to CXone that a some page/screen in the app has been viewed by the visitor.
     ///
@@ -93,51 +84,4 @@ public protocol AnalyticsProvider {
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func conversion(type: String, value: Double) async throws
-
-    /// Reports to CXone that a proactive action was displayed to the visitor.
-    ///
-    /// - Parameter data: The proactive action that was displayed.
-    ///
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    func proactiveActionDisplay(data: ProactiveActionDetails) async throws
-    
-    /// Reports to CXone that a proactive action was clicked or acted upon by the visitor.
-    ///
-    /// - Parameter data: The proactive action that was clicked.
-    ///
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    ///     if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    ///     method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    func proactiveActionClick(data: ProactiveActionDetails) async throws
-    
-    /// Reports to CXone that a proactive action was successful or fails and lead to a conversion.
-    ///
-    /// - Parameter data: The proactive action that was successful or fails.
-    /// - Throws: ``CXoneChatError/missingVisitorId``
-    ///     if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
-    ///     method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
-    ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
-    @available(*, deprecated, message: "Use ProactiveActionProvider.trigger(_:) instead")
-    func proactiveActionSuccess(_ isSuccess: Bool, data: ProactiveActionDetails) async throws
 }

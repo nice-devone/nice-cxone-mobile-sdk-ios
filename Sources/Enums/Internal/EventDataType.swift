@@ -36,12 +36,6 @@ enum EventDataType {
     
     case customerTypingData(CustomerTypingEventDataDTO)
     
-    case authorizeCustomerData(AuthorizeCustomerEventDataDTO)
-    
-    case reconnectCustomerData(ReconnectCustomerEventDataDTO)
-    
-    case refreshTokenPayload(RefreshTokenPayloadDataDTO)
-    
     // MARK: - Message
     
     case sendMessageData(SendMessageEventDataDTO)
@@ -81,13 +75,7 @@ extension EventDataType: Encodable {
             try container.encode(data)
         case .customerTypingData(let data):
             try container.encode(data)
-        case .authorizeCustomerData(let data):
-            try container.encode(data)
-        case .reconnectCustomerData(let data):
-            try container.encode(data)
         case .updateThreadData(let data):
-            try container.encode(data)
-        case .refreshTokenPayload(let data):
             try container.encode(data)
         case .sendOutboundMessageData(let data):
             try container.encode(data)

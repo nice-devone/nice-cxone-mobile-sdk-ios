@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct ThreadMetadataLoadedEventPostbackDTO: Decodable, Equatable {
+struct ThreadMetadataLoadedEventPostbackDTO: Decodable, Equatable, Sendable {
 
     let eventType: EventType
 

@@ -16,7 +16,7 @@
 import Foundation
 
 /// The different types of elements of message content.
-public enum MessageContentType: Equatable {
+public enum MessageContentType: Equatable, Sendable {
     
     /// A basic text message.
     case text(MessagePayload)

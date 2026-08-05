@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct PageViewEventDTO {
+struct PageViewEventDTO: Sendable {
 
     let title: String
     

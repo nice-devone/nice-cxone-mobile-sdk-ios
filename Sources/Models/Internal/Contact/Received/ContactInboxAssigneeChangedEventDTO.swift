@@ -18,7 +18,7 @@ import Foundation
 // CaseInboxAssigneeChanged
 
 /// Event response that the assigned agent for the contact has changed.
-struct ContactInboxAssigneeChangedEventDTO: Equatable {
+struct ContactInboxAssigneeChangedEventDTO: Equatable, Sendable {
 
     // MARK: - Properties
 
@@ -37,7 +37,7 @@ struct ContactInboxAssigneeChangedEventDTO: Equatable {
 // MARK: - ReceivedEvent
 
 extension ContactInboxAssigneeChangedEventDTO: ReceivedEvent {
-    static let eventType: EventType? = .contactInboxAssigneeChanged
+    static let associatedEventType: EventType? = .contactInboxAssigneeChanged
 
     var postbackEventType: EventType? { nil }
 }

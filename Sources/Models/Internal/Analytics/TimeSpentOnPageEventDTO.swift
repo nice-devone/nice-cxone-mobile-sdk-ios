@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct TimeSpentOnPageEventDTO: Encodable {
+struct TimeSpentOnPageEventDTO: Encodable, Sendable {
 
     let url: String
 
