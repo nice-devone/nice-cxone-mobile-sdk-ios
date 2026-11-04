@@ -15,7 +15,6 @@
 
 import Foundation
 
-// periphery:ignore - false positive
 protocol Endpoint {
     
     var environment: EnvironmentDetails { get }
@@ -26,6 +25,7 @@ protocol Endpoint {
     
     var url: URL? { get }
     
+    // periphery:ignore - only EndpointTests calls urlRequest(); production builds the socket URL from SocketEndpointDTO.url
     func urlRequest() throws -> URLRequest
 }
 
@@ -34,12 +34,18 @@ protocol Endpoint {
 extension Endpoint {
     
     var url: URL? {
-        var components = URLComponents(string: environment.chatURL)
+        makeUrl(withBase: environment.chatURL)
+    }
+    
+    /// The URL built from `baseURL` and this endpoint's `queryItems`.
+    func makeUrl(withBase baseURL: String) -> URL? {
+        var components = URLComponents(string: baseURL)
         components?.queryItems = queryItems
         
         return components?.url
     }
     
+    // periphery:ignore - only EndpointTests calls urlRequest(); production builds the socket URL from SocketEndpointDTO.url
     /// - Throws: ``CXoneChatError/invalidRequest`` if connection `url` is not set properly.
     func urlRequest() throws -> URLRequest {
         guard let url = self.url else {

@@ -45,6 +45,19 @@ private extension CustomEnvironment {
     private static let appPath = "app"
     private static let digitalOAuthPrefix = "digital-oauth"
 
+    /// The chat URL without its last path component, i.e. the base URL without the trailing "/chat".
+    ///
+    /// - Parameter chatUrl: The URL of the chat service.
+    /// - Returns: The base URL as a string if the chat URL is valid; otherwise, returns nil.
+    static func baseUrlString(from chatUrl: String) -> String? {
+        guard let url = URL(string: chatUrl) else {
+            LogManager.error("Invalid chat URL: \(chatUrl)")
+            return nil
+        }
+
+        return url.deletingLastPathComponent().absoluteString
+    }
+
     /// Evaluates the logger URL based on the provided chat URL.
     ///
     /// This method converts the chat URL (e.g. "https://channels-eu1-qa.brandembassy.com/chat/")
@@ -53,14 +66,11 @@ private extension CustomEnvironment {
     /// - Parameter chatUrl: The URL of the chat service.
     /// - Returns: A string representing the logger URL if the chat URL is valid; otherwise, returns nil.
     static func evaluateLoggerUrl(from chatUrl: String) -> String? {
-        guard let url = URL(string: chatUrl) else {
-            LogManager.error("Invalid chat URL: \(chatUrl)")
+        guard let baseUrl = baseUrlString(from: chatUrl) else {
             return nil
         }
 
-        let result = url
-            .deletingLastPathComponent() // Extract the base URL without the trailing slash "/chat"
-            .absoluteString // convert to String
+        let result = baseUrl
             .replacingOccurrences(of: Self.channelsPath, with: Self.appPath) // replace "channels" with "app"
             .appending(Self.loggerUrlSuffix) // append "/logger-public"
         // Verify the constructed URL
@@ -84,14 +94,11 @@ private extension CustomEnvironment {
     /// - Parameter chatUrl: The URL of the chat service.
     /// - Returns: A string representing the transaction token server base URL if the chat URL is valid; otherwise, returns nil.
     static func evaluateTokenServerUrl(from chatUrl: String) -> String? {
-        guard let url = URL(string: chatUrl) else {
-            LogManager.error("Invalid chat URL: \(chatUrl)")
+        guard let baseUrl = baseUrlString(from: chatUrl) else {
             return nil
         }
 
-        var result = url
-            .deletingLastPathComponent() // Extract the base URL without the trailing slash "/chat"
-            .absoluteString // convert to String
+        var result = baseUrl
             .replacingOccurrences(of: Self.channelsPath, with: Self.digitalOAuthPrefix) // replace "channels" with "digital-oauth"
             .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
 

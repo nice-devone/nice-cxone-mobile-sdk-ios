@@ -22,7 +22,7 @@ import Foundation
 public struct CustomFieldHierarchical {
     
     /// The unique key identifier for the SDK contact custom fields sendable via ``ContactCustomFieldsProvider/set(_:for:)``
-    /// and selected ``PrechatSurveyNode/value`` from the ``nodes``.
+    /// and selected ``CustomFieldHierarchicalNode/value`` from the ``nodes``.
     public let ident: String
     
     /// The title/placeholder for the textfield.

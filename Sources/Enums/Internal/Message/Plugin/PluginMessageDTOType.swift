@@ -19,6 +19,8 @@ enum PluginMessageDTOType: Equatable {
     
     case inactivityPopup(MessageInactivityPopupDTO)
     
+    case satisfactionSurvey(MessageSatisfactionSurveyDTO)
+    
     case unknown
 }
 
@@ -31,6 +33,8 @@ extension PluginMessageDTOType: Decodable {
         
         if let object = try? singleValueContainer.decode(MessageInactivityPopupDTO.self) {
             self = .inactivityPopup(object)
+        } else if let object = try? singleValueContainer.decode(MessageSatisfactionSurveyDTO.self) {
+            self = .satisfactionSurvey(object)
         } else {
             self = .unknown
         }
@@ -51,13 +55,25 @@ extension PluginMessageDTOType: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        guard case .inactivityPopup(let popup) = self else {
+        switch self {
+        case .inactivityPopup(let popup):
+            try encode(popup, to: &container)
+        case .satisfactionSurvey(let survey):
+            try encode(survey, to: &container)
+        case .unknown:
             throw EncodingError.invalidValue(
                 self,
                 EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported plugin message type")
             )
         }
-        
+    }
+}
+
+// MARK: - Private Methods
+
+private extension PluginMessageDTOType {
+    
+    func encode(_ popup: MessageInactivityPopupDTO, to container: inout KeyedEncodingContainer<CodingKeys>) throws {
         try container.encode(popup.id, forKey: .id)
         try container.encode(ElementType.inactivityPopup.rawValue, forKey: .type)
         
@@ -88,6 +104,18 @@ extension PluginMessageDTOType: Encodable {
                     isSessionRefresh: false
                 )
             )
+        ]
+        
+        try container.encode(elements, forKey: .elements)
+    }
+    
+    func encode(_ survey: MessageSatisfactionSurveyDTO, to container: inout KeyedEncodingContainer<CodingKeys>) throws {
+        try container.encode(survey.id, forKey: .id)
+        try container.encode(ElementType.satisfactionSurvey.rawValue, forKey: .type)
+        
+        let elements: [SatisfactionSurveyElementDTOType] = [
+            .text(survey.text),
+            .iframeButton(survey.button)
         ]
         
         try container.encode(elements, forKey: .elements)

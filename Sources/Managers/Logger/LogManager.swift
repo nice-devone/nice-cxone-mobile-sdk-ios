@@ -52,7 +52,8 @@ enum LogManager: StaticLogger {
     /// This method creates a `ClientLogManager` instance using the provided `ConnectionContext` for internal logging,
     /// which is used for user flow tracing in the SDK.
     ///
-    /// - Warning: This logger can be used only if the SDK has been already prepared, ie. ``ConnectionService.prepared(brandId:channelId:)`` has been called.
+    /// - Warning: This logger can be used only if the SDK has been already prepared, ie. one of the
+    ///   ``ConnectionProvider`` `prepare` methods has been called.
     /// - Parameter connectionContext: The `ConnectionContext` used to create the logger.
     @MainActor
     static func configureInternalLogger(connectionContext: ConnectionContext) async {

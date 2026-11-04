@@ -15,41 +15,49 @@
 
 import Foundation
 
-struct ProactiveEventDTO: Equatable, Sendable {
+/// Text/prompt element within a satisfaction survey.
+struct SatisfactionSurveyTextElementDTO: Equatable, Sendable {
 
     // MARK: - Properties
 
+    /// The unique identifier of the element.
     let id: String
-    let name: String
-    let type: ActionType
+
+    /// The prompt text.
+    let text: String
 }
 
-// MARK: - Mapper
+// MARK: - Decodable
 
-extension ProactiveEventDTO {
-    
-    init(from: ProactiveActionDetails) {
-        id = from.id
-        name = from.name
-        type = from.type
+extension SatisfactionSurveyTextElementDTO: Decodable {
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        #if DEBUG
+        case type
+        #endif
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.id = try container.decode(String.self, forKey: .id)
+        self.text = try container.decode(String.self, forKey: .text)
     }
 }
 
+#if DEBUG
 // MARK: - Encodable
 
-extension ProactiveEventDTO: Encodable {
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "actionId"
-        case name = "actionName"
-        case type = "actionType"
-    }
+extension SatisfactionSurveyTextElementDTO: Encodable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
+        try container.encode(ElementType.text.rawValue, forKey: .type)
         try container.encode(id, forKey: .id)
-        try container.encode(name, forKey: .name)
-        try container.encode(type, forKey: .type)
+        try container.encode(text, forKey: .text)
     }
 }
+#endif

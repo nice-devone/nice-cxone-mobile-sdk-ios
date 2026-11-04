@@ -51,6 +51,9 @@ enum ElementType: String, Codable {
     
     /// A button message content type used in legacy plugins.
     case button = "BUTTON"
+
+    /// A button opening an embedded web page, used in legacy plugins.
+    case iframeButton = "IFRAME_BUTTON"
     
     // MARK: - TORM SubElements
     
@@ -59,6 +62,9 @@ enum ElementType: String, Codable {
     
     /// Inactivity popup container element.
     case inactivityPopup = "INACTIVITY_POPUP"
+
+    /// Satisfaction survey container element.
+    case satisfactionSurvey = "SATISFACTION_SURVEY"
     
     case unknown
     

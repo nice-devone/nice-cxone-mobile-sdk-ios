@@ -119,7 +119,7 @@ Each field can be marked as `isRequired`, which means it must be filled in befor
 
 ```swift
 // Plug in your own LogWriter (or any custom implementation) to capture SDK logs.
-CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)
+CXoneChat.logWriter = PrintLogWriter().filter(level: .warning)
 ```
 
 ## Sample Code

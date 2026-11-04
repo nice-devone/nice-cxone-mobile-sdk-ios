@@ -15,13 +15,34 @@
 
 import Foundation
 
+// MARK: - ISO8601DateFormatter
+
+private extension ISO8601DateFormatter {
+    
+    static func decodingFormatter() -> ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone, .withColonSeparatorInTimeZone]
+        
+        return formatter
+    }
+    
+    static func encodingFormatter(withFractionalSeconds: Bool) -> ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        
+        if withFractionalSeconds {
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        }
+        
+        return formatter
+    }
+}
+
 // MARK: - KeyedDecodingContainer
 
 extension KeyedDecodingContainer {
     
     func decodeISODate(forKey key: Key) throws -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone, .withColonSeparatorInTimeZone]
+        let formatter = ISO8601DateFormatter.decodingFormatter()
         
         let stringValue = try decode(String.self, forKey: key)
         
@@ -33,8 +54,7 @@ extension KeyedDecodingContainer {
     }
     
     func decodeISODateIfPresent(forKey key: Key) throws -> Date? {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withFullTime, .withTimeZone, .withColonSeparatorInTimeZone]
+        let formatter = ISO8601DateFormatter.decodingFormatter()
         
         guard let stringValue = try decodeIfPresent(String.self, forKey: key) else {
             return nil
@@ -56,11 +76,7 @@ extension KeyedEncodingContainer {
             return
         }
         
-        let formatter = ISO8601DateFormatter()
-        
-        if withFractionalSeconds {
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        }
+        let formatter = ISO8601DateFormatter.encodingFormatter(withFractionalSeconds: withFractionalSeconds)
         
         let string = formatter.string(from: date)
         
@@ -72,11 +88,7 @@ extension KeyedEncodingContainer {
             return
         }
         
-        let formatter = ISO8601DateFormatter()
-        
-        if withFractionalSeconds {
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        }
+        let formatter = ISO8601DateFormatter.encodingFormatter(withFractionalSeconds: withFractionalSeconds)
         
         let string = formatter.string(from: date)
         

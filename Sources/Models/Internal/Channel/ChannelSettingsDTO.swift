@@ -43,7 +43,7 @@ struct ChannelSettingsDTO: Sendable {
     // MARK: - Computed properties
 
     /// Indication if  ``ChatThreadListProvider/load(with:)`` for ``ChatMode/liveChat``
-    /// triggers a ``CXoneChatError/recoveringThreadFailed`` error in case of non existing thread.
+    /// triggers an ``EventErrorCode/recoveringThreadFailed`` error in case of a nonexistent thread.
     ///
     /// - Enabled – the error means some kind of issue with the thread
     /// - Disabled – the error indicates non existing thread –> soft error.

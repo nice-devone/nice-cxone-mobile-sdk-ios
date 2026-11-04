@@ -157,11 +157,12 @@ private extension CustomerIdentityDTO {
     func credentialParameters() -> [CustomFieldDTO] {
         let firstName = self.firstName ?? ""
         let lastName = self.lastName ?? ""
+        let fullName = PersonNameComponentsFormatter.fullName(firstName: firstName, lastName: lastName) ?? ""
         
         return [
             CustomFieldDTO(ident: "customer.firstName", value: firstName, updatedAt: Date()),
             CustomFieldDTO(ident: "customer.lastName", value: lastName, updatedAt: Date()),
-            CustomFieldDTO(ident: "customer.fullName", value: "\(firstName) \(lastName)", updatedAt: Date())
+            CustomFieldDTO(ident: "customer.fullName", value: fullName, updatedAt: Date())
         ]
     }
 }

@@ -104,6 +104,9 @@ enum EventType: String, CaseIterable {
     /// An event received when the assigned agent changes for a contact.
     case contactInboxAssigneeChanged = "CaseInboxAssigneeChanged"
     
+    /// An event received when the party responsible for handling a contact changes.
+    case contactHandlerChanged = "ContactHandlerChanged"
+    
     // MARK: Custom fields
     
     /// An event to send to set custom field values for a contact (thread).

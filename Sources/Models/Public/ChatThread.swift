@@ -66,6 +66,16 @@ public struct ChatThread: Identifiable, Sendable {
     /// The position in the queue
     public let positionInQueue: Int?
 
+    /// The party currently responsible for handling the contact behind this thread.
+    ///
+    /// While an automated bot holds the contact, the customer is not queued for a human agent, so there is no
+    /// position in queue to report. Once the bot hands the conversation over, this becomes ``ContactHandler/cxone``
+    /// and the regular routing rules apply again.
+    ///
+    /// `nil` when the platform reports no handler for the channel, in which case the thread behaves exactly as it
+    /// did before handlers existed.
+    public let contactHandler: ContactHandler?
+
     // MARK: - Init
 
     /// Creates a `ChatThread` value, typically when synthesising threads for tests, previews, or seeding state.
@@ -84,6 +94,7 @@ public struct ChatThread: Identifiable, Sendable {
     ///   - ownerAssignee: The agent that owns the case, persisted across unassignment.
     ///   - scrollToken: Cursor for paging older messages; empty means no more history.
     ///   - positionInQueue: Position in queue for live-chat scenarios.
+    ///   - contactHandler: The party currently handling the contact, when the platform reports one.
     public init(
         id: String,
         state: ChatThreadState,
@@ -93,7 +104,8 @@ public struct ChatThread: Identifiable, Sendable {
         lastAssignedAgent: Agent? = nil,
         ownerAssignee: Agent? = nil,
         scrollToken: String = "",
-        positionInQueue: Int? = nil
+        positionInQueue: Int? = nil,
+        contactHandler: ContactHandler? = nil
     ) {
         self.id = id
         self.state = state
@@ -105,6 +117,7 @@ public struct ChatThread: Identifiable, Sendable {
         self.contactId = nil
         self.scrollToken = scrollToken
         self.positionInQueue = positionInQueue
+        self.contactHandler = contactHandler
     }
 
     init(
@@ -117,7 +130,8 @@ public struct ChatThread: Identifiable, Sendable {
         ownerAssignee: Agent? = nil,
         contactId: String? = nil,
         scrollToken: String = "",
-        positionInQueue: Int? = nil
+        positionInQueue: Int? = nil,
+        contactHandler: ContactHandler? = nil
     ) {
         self.id = id
         self.state = state
@@ -129,6 +143,7 @@ public struct ChatThread: Identifiable, Sendable {
         self.contactId = contactId
         self.scrollToken = scrollToken
         self.positionInQueue = positionInQueue
+        self.contactHandler = contactHandler
     }
 }
 
@@ -153,26 +168,16 @@ extension ChatThread {
 
         updatedMessages.sort { $0.createdAt < $1.createdAt }
 
-        return ChatThread(
-            id: id,
-            state: state,
-            name: name,
-            messages: updatedMessages,
-            assignedAgent: assignedAgent,
-            lastAssignedAgent: lastAssignedAgent,
-            ownerAssignee: ownerAssignee,
-            contactId: contactId,
-            scrollToken: scrollToken,
-            positionInQueue: positionInQueue
-        )
+        return copy(messages: updatedMessages)
     }
 
     /// Creates a copy of this ChatThread with updated properties from `ThreadRecoveredEventPostbackDataDTO`.
     ///
-    /// Convenience wrapper around ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:)``
+    /// Convenience wrapper around
+    /// ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:contactHandler:)``
     /// that destructures the recovery payload and applies it to the receiver. Messages from the
     /// payload are filtered (begin-live-chat-conversation / unsupported-message-type-answer /
-    /// inactivity-popup-answer text messages, and `.inactivityPopup` messages, are dropped) and
+    /// inactivity-popup-answer text messages, and `.inactivityPopup` / `.satisfactionSurvey` messages, are dropped) and
     /// merged into the existing message list; remaining fields follow the same
     /// "nil means keep existing" rule as the underlying `merging(...)` method.
     ///
@@ -186,13 +191,15 @@ extension ChatThread {
             name: data.thread.threadName,
             contactId: data.consumerContact.id,
             scrollToken: data.messagesScrollToken,
-            state: data.thread.canAddMoreMessages ? .ready : .closed
+            state: data.thread.recoveredState,
+            contactHandler: data.consumerContact.handler.map(ContactHandlerMapper.map)
         )
     }
 
     /// Creates a copy of this ChatThread with updated properties from `LiveChatRecoveredPostbackDataDTO`.
     ///
-    /// Convenience wrapper around ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:)``
+    /// Convenience wrapper around
+    /// ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:contactHandler:)``
     /// that destructures the live-chat recovery payload and applies it to the receiver. State is
     /// derived as `.loaded` / `.ready` / `.closed` based on `canAddMoreMessages` and whether an
     /// assignee is present; `positionInQueue` is explicitly cleared when an `inboxAssignee` is
@@ -210,19 +217,17 @@ extension ChatThread {
             name: data.thread.threadName,
             contactId: data.contact.id,
             scrollToken: data.messagesScrollToken,
-            state: data.thread.canAddMoreMessages ? .ready : .closed,
-            // Clear the position in queue if an `inboxAssignee` exists
-            positionInQueue: data.inboxAssignee == nil
-                ? self.positionInQueue
-                : nil
+            state: data.thread.recoveredState,
+            contactHandler: data.contact.handler.map(ContactHandlerMapper.map)
         )
 
         // A recovery payload is an authoritative snapshot: a nil `inboxAssignee` means the thread is currently
         // unassigned, so a previously stored `assignedAgent` must be cleared. The generic `merging(...)` treats
         // nil as "keep existing" and cannot express this, so rebuild via the initializer for the clear case.
         // The case owner (`ownerAssignee`) and previous assignee (`lastAssignedAgent`) are preserved.
+        // An assigned agent means the customer has left the queue; `merging(...)` can't clear the position either.
         guard data.inboxAssignee == nil else {
-            return merged
+            return merged.clearingPositionInQueue()
         }
 
         return ChatThread(
@@ -235,7 +240,8 @@ extension ChatThread {
             ownerAssignee: merged.ownerAssignee,
             contactId: merged.contactId,
             scrollToken: merged.scrollToken,
-            positionInQueue: merged.positionInQueue
+            positionInQueue: merged.positionInQueue,
+            contactHandler: merged.contactHandler
         )
     }
 
@@ -245,14 +251,14 @@ extension ChatThread {
     /// Use this when folding server-side data (`MessageDTO`s and partial field updates) into the
     /// existing thread — for example when handling a recovery, metadata-load, or message-created
     /// event. Messages are filtered (begin-live-chat-conversation / unsupported-message-type-answer /
-    /// inactivity-popup-answer text messages, and `.inactivityPopup` messages, are dropped) and
+    /// inactivity-popup-answer text messages, and `.inactivityPopup` / `.satisfactionSurvey` messages, are dropped) and
     /// **merged** into the existing message list via ``merged(with:)`` rather than replacing it.
     ///
     /// All field parameters follow the "nil means keep existing" rule — passing `nil` retains the
     /// receiver's current value. If you need to *clear* a field (set it to `nil`), construct a
     /// `ChatThread` via its initializer instead; this method has no way to express "set to nil."
     ///
-    /// Contrast with ``copy(state:name:messages:assignedAgent:lastAssignedAgent:ownerAssignee:contactId:scrollToken:positionInQueue:)``,
+    /// Contrast with ``copy(state:name:messages:assignedAgent:lastAssignedAgent:ownerAssignee:contactId:scrollToken:positionInQueue:contactHandler:)``,
     /// which takes already-mapped `Message` objects and **replaces** the message list outright
     /// rather than merging.
     ///
@@ -266,6 +272,7 @@ extension ChatThread {
     ///   - scrollToken: New scroll token. If nil, keeps existing scrollToken.
     ///   - state: New thread state. If nil, keeps existing state.
     ///   - positionInQueue: New position in queue. If nil, keeps existing positionInQueue.
+    ///   - contactHandler: New contact handler. If nil, keeps existing contactHandler.
     /// - Returns: A new ChatThread with the merged updates applied.
     func merging(
         messages: [MessageDTO]? = nil,
@@ -276,15 +283,16 @@ extension ChatThread {
         contactId: String? = nil,
         scrollToken: String? = nil,
         state: ChatThreadState? = nil,
-        positionInQueue: Int? = nil
+        positionInQueue: Int? = nil,
+        contactHandler: ContactHandler? = nil
     ) -> ChatThread {
         let filteredMessages = messages?.filter { message in
             switch message.contentType {
             case .text(let payload):
                 // Do not append content of the begin live chat conversation message, unsupported message type answer, or inactivity popup answer
                return payload.parameters.hasOneOf(.isBeginLiveChatConversation, .isUnsupportedMessageTypeAnswer, .isInactivityPopupAnswer) == false
-            case .inactivityPopup:
-                // Filter out inactivity popup messages (they are handled separately)
+            case .inactivityPopup, .satisfactionSurvey:
+                // Filter out inactivity popup and satisfaction survey messages (they are handled separately)
                 return false
             default:
                 return true
@@ -301,7 +309,8 @@ extension ChatThread {
             ownerAssignee: ownerAssignee ?? self.ownerAssignee,
             contactId: contactId ?? self.contactId,
             scrollToken: scrollToken ?? self.scrollToken,
-            positionInQueue: positionInQueue ?? self.positionInQueue
+            positionInQueue: positionInQueue ?? self.positionInQueue,
+            contactHandler: contactHandler ?? self.contactHandler
         )
 
         if let filteredMessages {
@@ -316,59 +325,7 @@ extension ChatThread {
     /// - Parameter message: The message to append.
     /// - Returns: A new ChatThread with the message appended.
     func appending(message: Message) -> ChatThread {
-        ChatThread(
-            id: id,
-            state: state,
-            name: name,
-            messages: messages + [message],
-            assignedAgent: assignedAgent,
-            lastAssignedAgent: lastAssignedAgent,
-            ownerAssignee: ownerAssignee,
-            contactId: contactId,
-            scrollToken: scrollToken,
-            positionInQueue: positionInQueue
-        )
-    }
-
-    /// Creates a copy of this ChatThread with the last message removed.
-    ///
-    /// - Returns: A new ChatThread with the last message removed.
-    func removingLastMessage() -> ChatThread {
-        ChatThread(
-            id: id,
-            state: state,
-            name: name,
-            messages: Array(messages.dropLast()),
-            assignedAgent: assignedAgent,
-            lastAssignedAgent: lastAssignedAgent,
-            ownerAssignee: ownerAssignee,
-            contactId: contactId,
-            scrollToken: scrollToken,
-            positionInQueue: positionInQueue
-        )
-    }
-
-    /// Creates a copy of this ChatThread with the last message removed, only if it matches the expected ID.
-    ///
-    /// - Parameter expectedId: The expected ID of the last message. If the last message doesn't match, returns self unchanged.
-    /// - Returns: A new ChatThread with the last message removed if ID matches, otherwise returns self.
-    func removingLastMessage(ifMatches expectedId: String) -> ChatThread {
-        guard let lastMessage = messages.last, lastMessage.id == expectedId else {
-            return self
-        }
-
-        return ChatThread(
-            id: id,
-            state: state,
-            name: name,
-            messages: Array(messages.dropLast()),
-            assignedAgent: assignedAgent,
-            lastAssignedAgent: lastAssignedAgent,
-            ownerAssignee: ownerAssignee,
-            contactId: contactId,
-            scrollToken: scrollToken,
-            positionInQueue: positionInQueue
-        )
+        copy(messages: messages + [message])
     }
 
     /// Replaces a message with the given ID with a new message.
@@ -385,17 +342,26 @@ extension ChatThread {
         var updatedMessages = messages
         updatedMessages[index] = newMessage
 
-        return ChatThread(
+        return copy(messages: updatedMessages)
+    }
+
+    /// Creates a copy of the thread without a queue position.
+    ///
+    /// ``copy(state:name:messages:assignedAgent:lastAssignedAgent:ownerAssignee:contactId:scrollToken:positionInQueue:contactHandler:)``
+    /// can't clear `positionInQueue`, because `nil` there means "keep the existing value".
+    func clearingPositionInQueue() -> ChatThread {
+        ChatThread(
             id: id,
             state: state,
             name: name,
-            messages: updatedMessages,
+            messages: messages,
             assignedAgent: assignedAgent,
             lastAssignedAgent: lastAssignedAgent,
             ownerAssignee: ownerAssignee,
             contactId: contactId,
             scrollToken: scrollToken,
-            positionInQueue: positionInQueue
+            positionInQueue: nil,
+            contactHandler: contactHandler
         )
     }
 
@@ -410,7 +376,7 @@ extension ChatThread {
     /// receiver's current value. If you need to *clear* a field (set it to `nil`), construct a
     /// `ChatThread` via its initializer instead; this method has no way to express "set to nil."
     ///
-    /// Contrast with ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:)``,
+    /// Contrast with ``merging(messages:inboxAssignee:previousInboxAssignee:ownerAssignee:name:contactId:scrollToken:state:positionInQueue:contactHandler:)``,
     /// which takes raw `MessageDTO`s from the server, filters out platform noise, and **merges**
     /// them into the existing message list rather than replacing it.
     ///
@@ -424,6 +390,7 @@ extension ChatThread {
     ///   - contactId: New contact ID. If nil, keeps existing contactId.
     ///   - scrollToken: New scroll token. If nil, keeps existing scrollToken.
     ///   - positionInQueue: New position in queue. If nil, keeps existing positionInQueue.
+    ///   - contactHandler: New contact handler. If nil, keeps existing contactHandler.
     /// - Returns: A new ChatThread with the specified fields replaced.
     func copy(
         state: ChatThreadState? = nil,
@@ -434,7 +401,8 @@ extension ChatThread {
         ownerAssignee: Agent? = nil,
         contactId: String? = nil,
         scrollToken: String? = nil,
-        positionInQueue: Int? = nil
+        positionInQueue: Int? = nil,
+        contactHandler: ContactHandler? = nil
     ) -> ChatThread {
         ChatThread(
             id: id,
@@ -446,7 +414,8 @@ extension ChatThread {
             ownerAssignee: ownerAssignee ?? self.ownerAssignee,
             contactId: contactId ?? self.contactId,
             scrollToken: scrollToken ?? self.scrollToken,
-            positionInQueue: positionInQueue ?? self.positionInQueue
+            positionInQueue: positionInQueue ?? self.positionInQueue,
+            contactHandler: contactHandler ?? self.contactHandler
         )
     }
 }

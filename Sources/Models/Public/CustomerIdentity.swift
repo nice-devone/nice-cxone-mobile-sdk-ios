@@ -20,8 +20,6 @@ public struct CustomerIdentity: Equatable, Sendable {
     
     // MARK: - Properties
     
-    private static let personNameComponentsFormatter = PersonNameComponentsFormatter()
-    
     /// The unique id for the customer identity.
     public let id: String
     
@@ -33,11 +31,7 @@ public struct CustomerIdentity: Equatable, Sendable {
     
     /// The full name of the customer.
     public var fullName: String? {
-        var nameComponents = PersonNameComponents()
-        nameComponents.givenName = firstName
-        nameComponents.familyName = lastName
-        
-        return Self.personNameComponentsFormatter.string(from: nameComponents)
+        PersonNameComponentsFormatter.fullName(firstName: firstName, lastName: lastName)
     }
     
     // MARK: - Init

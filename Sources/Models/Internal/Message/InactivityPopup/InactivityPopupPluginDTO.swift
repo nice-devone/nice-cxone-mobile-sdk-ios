@@ -113,8 +113,7 @@ private extension Array where Element == MessagePluginSubElementDTOType {
             case .button where T.self == InactivityPopupButtonElementDTO.self:
                 return true
             default:
-                LogManager.error("Unexpected element type found in inactivity popup: \(element)")
-                
+                // Not the requested type - other elements are expected here while searching, so this is not an error
                 return false
             }
         }

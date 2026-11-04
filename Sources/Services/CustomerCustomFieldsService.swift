@@ -49,20 +49,20 @@ final class CustomerCustomFieldsService: Sendable {
 extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
 
     func get() -> [String: String] {
-        Dictionary(uniqueKeysWithValues: customerFields.lazy.map { ($0.ident, $0.value) })
+        customerFields.valuesByIdent
     }
     
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func set(_ customFields: [String: String]) async throws {
         LogManager.trace("Setting custom fields for a contact (persists across all threads involving the customer).")
         
         try socketService.checkForConnection()
         
-        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) })
+        updateFields(customFields.customFieldDTOs)
         
         let data = try eventsService.create(
             .setCustomerCustomFields,
@@ -76,11 +76,21 @@ extension CustomerCustomFieldsService: CustomerCustomFieldsProvider {
     
     func updateFields(_ fields: [CustomFieldDTO]) {
         let fields = fields.filter { !$0.value.isEmpty }
-        
+
         if customerFields.isEmpty {
             customerFields = fields
         } else {
             customerFields.merge(with: fields)
         }
+    }
+
+    /// Drops the custom fields held for the current customer.
+    ///
+    /// These persist across every thread the customer takes part in, so they belong to the session
+    /// and must not outlive a sign-out on a reused SDK instance.
+    func clearStoredData() {
+        LogManager.info("Removing stored data for customer custom fields service")
+
+        customerFields = []
     }
 }

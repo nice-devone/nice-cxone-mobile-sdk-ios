@@ -140,7 +140,7 @@ func applicationDidEnterBackground() {
 5. **Logging**: Configure the SDK logger to track issues and state changes by assigning a `LogWriter` to the static `CXoneChat.logWriter` property
 
 ```swift
-CXoneChat.logWriter = PrintLogWriter().filter(minLevel: .warning)
+CXoneChat.logWriter = PrintLogWriter().filter(level: .warning)
 ```
 
 ## Sample Code
@@ -163,4 +163,4 @@ When using the UI module:
 - Connection management is handled internally
 - State changes are managed by the UI components
 
-For UI module integration, refer to the [Core SDK Integration](cs-core-sdk-integration.md) guide which demonstrates using the ChatCoordinator to leverage the pre-built UI components.
+For UI module integration, refer to the UI module's [Core UI Integration](https://github.com/nice-devone/nice-cxone-mobile-ui-ios/blob/main/docs/cs-core-ui-integration.md) guide which demonstrates using the `ChatCoordinator` to leverage the pre-built UI components.

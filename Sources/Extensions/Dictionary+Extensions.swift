@@ -13,6 +13,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
+import Foundation
+
 // MARK: - Dictionary<String, AnyValue>
 
 extension [String: AnyValue] {
@@ -64,5 +66,17 @@ extension [MessageParameter: AnyValue] {
     /// - Returns: `true` if any parameter is present with value `.bool(true)`; otherwise, `false`.
     func hasOneOf(_ parameters: MessageParameter...) -> Bool {
         parameters.first { self.contains($0, withValue: .bool(true)) } != nil
+    }
+}
+
+// MARK: - Dictionary<String, String>
+
+extension [String: String] {
+
+    /// The entries as custom fields, each stamped with the current date.
+    var customFieldDTOs: [CustomFieldDTO] {
+        map { entry in
+            CustomFieldDTO(ident: entry.key, value: entry.value, updatedAt: Date())
+        }
     }
 }

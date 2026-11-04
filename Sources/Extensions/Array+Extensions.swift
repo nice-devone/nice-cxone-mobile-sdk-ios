@@ -25,34 +25,41 @@ extension Array {
     }
 }
 
-// MARK: - Array + Equatable
-
-extension Array where Element: Equatable {
-
-    mutating func remove(_ element: Element) {
-        guard let index = firstIndex(where: { $0 == element }) else {
-            return
-        }
-
-        remove(at: index)
-    }
-}
-
 // MARK: - Array + ChatThreadService
 
 extension Array where Element == ChatThreadService {
+
+    /// Returns the provider holding the thread with the given ID, if any.
+    /// - Parameter threadId: The unique id of the thread.
+    /// - Returns: The `ChatThreadService`, if found.
+    func service(with threadId: String) -> ChatThreadService? {
+        first { service in
+            service.chatThread.id == threadId
+        }
+    }
 
     /// Returns the `ChatThread` snapshot for the given thread ID, if any provider holds it.
     /// - Parameter threadId: The unique id of the thread.
     /// - Returns: The `ChatThread` snapshot, if found.
     func getThread(with threadId: String) -> ChatThread? {
-        self.first { $0.chatThread.id == threadId }?.chatThread
+        service(with: threadId)?.chatThread
     }
 }
 
 // MARK: - Array + CustomFieldDTO
 
 extension Array where Element == CustomFieldDTO {
+
+    /// The field values keyed by their `ident`. When two fields share an `ident`, the later one wins.
+    var valuesByIdent: [String: String] {
+        let pairs = map { field in
+            (field.ident, field.value)
+        }
+
+        return Dictionary(pairs) { _, latest in
+            latest
+        }
+    }
 
     /// Merges `array` into the receiver, keeping the most recently updated entry when both sides
     /// contain a field with the same `ident`.

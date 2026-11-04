@@ -94,7 +94,7 @@ The `ChatEvent` enum covers every event the SDK emits:
 - `contactCustomFieldsSet` — custom fields for the current contact were set
 - `customerCustomFieldsSet` — custom fields for the customer were set
 - `error(_:)` — an SDK error occurred
-- `proactiveActionReceived(_:)` — a proactive action (e.g. inactivity popup) was received
+- `proactiveActionReceived(_:)` — a proactive action (e.g. inactivity popup, satisfaction survey) was received
 
 ```swift
 // Subscribe to SDK events. Retain the Task if you need to cancel it later.

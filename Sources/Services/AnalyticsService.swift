@@ -58,15 +58,16 @@ extension AnalyticsService: AnalyticsProvider {
     ///   - url: A URL uniquely identifying the page.
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     public func viewPage(title: String, url: String) async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
@@ -102,14 +103,15 @@ extension AnalyticsService: AnalyticsProvider {
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     ``Environment/chatURL`` is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     func viewPageEnded(title: String, url: String) async throws {
         guard let lastPageViewed else {
@@ -137,14 +139,15 @@ extension AnalyticsService: AnalyticsProvider {
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     public func chatWindowOpen() async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
@@ -163,14 +166,15 @@ extension AnalyticsService: AnalyticsProvider {
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     public func conversion(type: String, value: Double) async throws {
         guard connectionContext.chatState.isAnalyticsAvailable else {
@@ -233,14 +237,15 @@ private extension AnalyticsService {
     ///    - line: line number for logging purpose
     
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     func trigger(
         _ type: AnalyticsEventType,
@@ -274,9 +279,9 @@ private extension AnalyticsService {
     ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws:``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error if any value throws an error during encoding.
     func post(
         event: AnalyticsEventDTO,

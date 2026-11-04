@@ -38,7 +38,8 @@ protocol SocketDelegate: AnyObject, Sendable {
     /// - Parameter forceRefresh: When `true`, mint a fresh transaction token even if the cached one is
     ///   still valid by the device clock. Used from the second reconnect attempt onwards so a token the
     ///   server has invalidated (key rotation, session cleanup, backend deploy, admin revocation, clock
-    ///   skew) is replaced rather than replayed on every retry. Ignored for OAuth, whose token cannot be
-    ///   silently re-minted.
+    ///   skew) is replaced rather than replayed on every retry. Ignored only for the explicit OAuth flow's
+    ///   first exchange, which needs a fresh authorization code the SDK cannot obtain silently; an explicit
+    ///   reconnect mints through the implicit endpoint and honours this flag like any other type.
     func recreateSocketURL(forceRefresh: Bool) async throws -> URL
 }

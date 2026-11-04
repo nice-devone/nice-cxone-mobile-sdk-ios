@@ -24,6 +24,22 @@ that matches your app architecture:
 
 #### SwiftUI
 
+The SDK does not define a SwiftUI environment key for the provider. To pass it
+through the environment as below, declare one in your app:
+
+```swift
+private struct ChatProviderKey: EnvironmentKey {
+    static let defaultValue: ChatProvider? = nil
+}
+
+extension EnvironmentValues {
+    var chatProvider: ChatProvider? {
+        get { self[ChatProviderKey.self] }
+        set { self[ChatProviderKey.self] = newValue }
+    }
+}
+```
+
 ```swift
 @main
 struct MyApp: App {
@@ -43,8 +59,11 @@ struct MyApp: App {
 is the simplest holder at the app entry point. If your app needs to react to
 SDK state changes in SwiftUI, wrap `CXoneChat` in your own `ObservableObject`
 that exposes a `@Published var state: ChatState` mirror updated from an
-`events()` loop — see `sample/iOSSDKExample/Sources/ChatPresenter.swift` for an
-example.
+`events()` loop. The sample app holds the provider in an `ObservableObject`
+(`sample/iOSSDKExample/Sources/ChatPresenter.swift`) created as a `@StateObject`
+in `SDKDemoApp`. It injects that object with `.environmentObject(_:)`, and
+`AppDependencies` hands `chatPresenter.chatProvider` to its view models through
+their initializers.
 
 #### UIKit
 
@@ -74,10 +93,10 @@ This is a mechanical sweep. Examples:
 
 | Old | New |
 |---|---|
-| `CXoneChat.shared.connection.connect()` | `chatProvider.connection.connect()` |
-| `CXoneChat.shared.threads.create()` | `chatProvider.threads.create()` |
-| `CXoneChat.shared.customer.set(customer:)` | `chatProvider.customer.set(customer:)` |
-| `CXoneChat.shared.analytics.viewPage(title:url:)` | `chatProvider.analytics.viewPage(title:url:)` |
+| `CXoneChat.shared.connection.connect()` | `try await chatProvider.connection.connect()` |
+| `CXoneChat.shared.threads.create()` | `try await chatProvider.threads.create()` |
+| `CXoneChat.shared.customer.set(customer:)` | `try chatProvider.customer.set(customer:)` |
+| `CXoneChat.shared.analytics.viewPage(title:url:)` | `try await chatProvider.analytics.viewPage(title:url:)` |
 | `CXoneChat.shared.state.isChatAvailable` | `chatProvider.state.isChatAvailable` |
 | `CXoneChat.signOut()` | `chatProvider.signOut()` |
 
@@ -149,8 +168,20 @@ Calling `signOut()`:
    `.unexpectedDisconnect` event is emitted).
 2. **Purges persistent state**: the keychain entries and UserDefaults entries
    scoped to the SDK are erased.
-3. **Finishes all in-flight `events()` streams** — every subscribed
+3. **Discards the in-memory session state** — the loaded threads and their
+   messages, the customer and per-contact custom fields, the channel
+   configuration, and the brand, channel and environment the session was
+   prepared against. `chatProvider.state` returns to `.initial`, and
+   `threads.get()` returns an empty list until the next `prepare(...)` /
+   `connect()`.
+4. **Finishes all in-flight `events()` streams** — every subscribed
    `for await … in chatProvider.events()` loop exits cleanly.
+
+The device token and any listener registered with
+`CustomerProvider.setTokenDelegateListener(_:)` are deliberately **kept** —
+both belong to the application rather than to the chat session. A
+`prepare(...)` or `connect()` call still in flight when `signOut()` runs fails
+with `CXoneChatError.illegalChatState`.
 
 The `CXoneChat` instance itself is still alive and reusable after `signOut()`.
 You can call `prepare(...)` and `connect()` again to start a fresh session with

@@ -54,7 +54,7 @@ public enum ChatState: Comparable, Sendable {
     /// Each live chat channel has a defined availability when it is possible to connect to an agent.
     /// This state defines a situation where the channel is currently unavailable and will need to be connected later.
     ///
-    /// - Precondition: ``CXoneChat.status == .liveChat``
+    /// - Precondition: ``ChatProvider/mode`` is ``ChatMode/liveChat``
     case offline
     
     /// Socket connection is establishing for chat usage
@@ -82,7 +82,7 @@ public enum ChatState: Comparable, Sendable {
     /// Whenever a thread is closed, the application should disable the sending of further messages
     /// and display the End Contact Experience screen.
     ///
-    /// - Precondition: ``CXoneChat.status == .liveChat``
+    /// - Precondition: ``ChatProvider/mode`` is ``ChatMode/liveChat``
     case closed
     
     // MARK: - Properties

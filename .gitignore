@@ -5,6 +5,7 @@
 /*.xcodeproj
 xcuserdata/
 DerivedData/
+/periphery-results/
 .swiftpm
 local.yml
 *.resolved
@@ -54,3 +55,12 @@ jazzy_docs/
 
 # Local MCP config (generated from .mcp.json.dist)
 .mcp.json
+
+# Sample environment/channel config — mirrored via scripts/fetch_sample_environments.sh
+# from cxone-mobile-sdk-sample-environments, never committed. Ignore-all-then-unignore
+# (rather than naming today's upstream files) so anything the mirror adds later stays
+# ignored too.
+shared/*
+!shared/assets/
+shared/assets/*
+!shared/assets/.gitkeep

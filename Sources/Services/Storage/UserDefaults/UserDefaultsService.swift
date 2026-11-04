@@ -34,6 +34,10 @@ enum UserDefaultKeys: String, CaseIterable {
     /// two are told apart by the stored identity fingerprint before purging keychain data that may
     /// have survived an uninstall (see ``ConnectionContextImpl``).
     case installationMarker = "com.nice.cxonechat.installationMarker"
+    /// Identifiers of threads whose Satisfaction Survey has already been delivered to the integrating application.
+    ///
+    /// See ``SatisfactionSurveyDeliveryStore`` for why delivery has to be recorded at all and why it is keyed by thread.
+    case deliveredSatisfactionSurveyThreadIds = "com.nice.cxonechat.deliveredSatisfactionSurveyThreadIds"
 }
 
 // MARK: - Helpers

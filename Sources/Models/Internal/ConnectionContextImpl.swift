@@ -41,6 +41,7 @@ final class ConnectionContextImpl: ConnectionContext {
     private let _lastPageViewed: SafeAccessContainer<PageViewEventDTO?>
     private let _chatState: SafeAccessContainer<ChatState>
     private let _visitDetailsStore: SafeAccessContainer<CurrentVisitDetails?>
+    private let _sessionGeneration: SafeAccessContainer<Int>
 
     // MARK: - Computed Properties
 
@@ -184,6 +185,11 @@ final class ConnectionContextImpl: ConnectionContext {
         }
     }
 
+    /// Identifies the current session; incremented every time ``clear()`` runs.
+    var sessionGeneration: Int {
+        _sessionGeneration.content
+    }
+
     nonisolated var visitorId: String? {
         get { userDefaultsService.get(String.self, for: .visitorId) }
         set { userDefaultsService.set(newValue, for: .visitorId) }
@@ -222,44 +228,43 @@ final class ConnectionContextImpl: ConnectionContext {
         set { keychainService.set(newValue, for: .transactionToken) }
     }
 
-    private var visitDetailsStore: CurrentVisitDetails? {
-        get { _visitDetailsStore.content }
-        set {
-            _visitDetailsStore.mutate { content in
-                content = newValue
-            }
-        }
-    }
+    // MARK: - Static Properties
+
+    /// The channel configuration a context starts with, and returns to on ``clear()``.
+    static let defaultChannelConfig = ChannelConfigurationDTO(
+        settings: ChannelSettingsDTO(
+            hasMultipleThreadsPerEndUser: false,
+            isProactiveChatEnabled: false,
+            isSendTranscriptEnabled: false,
+            fileRestrictions: FileRestrictionsDTO(
+                allowedFileSize: 40,
+                allowedFileTypes: [],
+                isAttachmentsEnabled: false
+            ),
+            features: [:]
+        ),
+        isAuthorizationEnabled: false,
+        prechatSurvey: nil,
+        liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast),
+        authenticationType: .anonymous
+    )
+
+    /// The environment a context starts with, and returns to on ``clear()``.
+    static let defaultEnvironment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "", loggerURL: "", tokenURL: "")
 
     // MARK: - Init
 
     init(
         keychainService: any KeychainStorage,
         userDefaultsService: UserDefaultsService,
-        session: URLSession? = nil,
-        environment: EnvironmentDetails = CustomEnvironment(chatURL: "", socketURL: "", loggerURL: "", tokenURL: ""),
+        session: (any URLSessionProtocol)? = nil,
+        environment: EnvironmentDetails = ConnectionContextImpl.defaultEnvironment,
         brandId: Int = .min,
         deviceToken: String? = nil,
         authorizationCode: String = "",
         codeVerifier: String = "",
         contactId: String? = nil,
-        channelConfig: ChannelConfigurationDTO = ChannelConfigurationDTO(
-            settings: ChannelSettingsDTO(
-                hasMultipleThreadsPerEndUser: false,
-                isProactiveChatEnabled: false,
-                isSendTranscriptEnabled: false,
-                fileRestrictions: FileRestrictionsDTO(
-                    allowedFileSize: 40,
-                    allowedFileTypes: [],
-                    isAttachmentsEnabled: false
-                ),
-                features: [:]
-            ),
-            isAuthorizationEnabled: false,
-            prechatSurvey: nil,
-            liveChatAvailability: CurrentLiveChatAvailability(isChannelLiveChat: false, isOnline: false, expires: .distantPast),
-            authenticationType: .anonymous
-        ),
+        channelConfig: ChannelConfigurationDTO = ConnectionContextImpl.defaultChannelConfig,
         channelId: String = "",
         destinationId: String = LowercaseUUID().uuidString,
         visitDetailsStore: CurrentVisitDetails? = nil
@@ -287,15 +292,82 @@ final class ConnectionContextImpl: ConnectionContext {
         self._lastPageViewed = SafeAccessContainer(nil)
         self._chatState = SafeAccessContainer(.initial)
         self._visitDetailsStore = SafeAccessContainer(visitDetailsStore)
+        self._sessionGeneration = SafeAccessContainer(0)
 
         purgeKeychainOnFreshInstall()
     }
 
     // MARK: - Methods
 
+    /// Ends the current session: purges persisted identity and resets the in-memory session state.
+    ///
+    /// The two purges below only reach the keychain and `UserDefaults`. Every other property lives in
+    /// a `SafeAccessContainer` that they do not touch, so without the resets that follow a session's
+    /// state outlives the sign-out meant to end it. Two cases are actively wrong rather than merely
+    /// untidy: ``visitDetails`` reads its in-memory mirror before `UserDefaults` and so keeps serving
+    /// the visit its backing store just lost, and ``chatState`` is left at `.prepared` by the
+    /// disconnect that precedes this call — a state from which ``ConnectionProvider/connect()`` is
+    /// legal, against an identity that no longer exists.
+    ///
+    /// ``deviceToken`` and ``tokenDelegateListener`` are deliberately preserved. Both are
+    /// integrator-supplied registrations scoped to the application rather than to the chat session;
+    /// clearing them would silently break push delivery and implicit-flow token refresh until the
+    /// integrator happened to register them again.
+    ///
+    /// ``sessionGeneration`` is bumped first, before either purge, so a `prepare(brandId:channelId:)` or
+    /// `connect()` call from the session that just ended — suspended on an `await` when this ran — sees
+    /// the mismatch and abandons its remaining work as soon as it resumes, instead of racing the purges
+    /// (keychain and `UserDefaults` I/O, unlike the in-memory resets below) and resurrecting stale state.
     nonisolated func clear() {
+        _sessionGeneration.mutate { content in
+            content += 1
+        }
+
         keychainService.purge()
         userDefaultsService.purge()
+
+        _channelConfig.mutate { content in
+            content = Self.defaultChannelConfig
+        }
+        _environment.mutate { content in
+            content = Self.defaultEnvironment
+        }
+        _brandId.mutate { content in
+            content = .min
+        }
+        _channelId.mutate { content in
+            content = ""
+        }
+        _destinationId.mutate { content in
+            content = LowercaseUUID().uuidString
+        }
+        _contactId.mutate { content in
+            content = nil
+        }
+        _connectionToken.mutate { content in
+            content = nil
+        }
+        _connectionTokenExpiresAt.mutate { content in
+            content = nil
+        }
+        _authorizationCode.mutate { content in
+            content = ""
+        }
+        _codeVerifier.mutate { content in
+            content = ""
+        }
+        _persistedSetPositionInQueueEvent.mutate { content in
+            content = nil
+        }
+        _lastPageViewed.mutate { content in
+            content = nil
+        }
+        _visitDetailsStore.mutate { content in
+            content = nil
+        }
+        _chatState.mutate { content in
+            content = .initial
+        }
     }
 }
 

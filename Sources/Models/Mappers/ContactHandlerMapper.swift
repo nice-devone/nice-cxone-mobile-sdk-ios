@@ -15,18 +15,16 @@
 
 import Foundation
 
-/// Represents all info about details of a proactive action.
-struct ProactiveActionDetails {
-    
-    /// The unique id of the action.
-    let id: String
-    
-    /// The name of the action.
-    let name: String
-    
-    /// The type of proactive action.
-    let type: ActionType
-    
-    /// Proactive action data message content.
-    let content: ProactiveActionDataMessageContent?
+enum ContactHandlerMapper {
+
+    static func map(_ entity: ContactHandlerDTO) -> ContactHandler {
+        switch entity {
+        case .cxone:
+            return .cxone
+        case .cognigy:
+            return .cognigy
+        case .unknown:
+            return .unknown
+        }
+    }
 }

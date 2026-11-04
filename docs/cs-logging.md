@@ -87,7 +87,7 @@ CXoneChat.logWriter = PrintLogWriter()
 CXoneChat.logWriter = ForkLogWriter(
     PrintLogWriter().format(.simple),
     FileLogWriter(path: logFileURL).format(.full)
-).filter(minLevel: .warning)
+).filter(level: .warning)
 ```
 
 ### 2. Create Your Own Logger Implementation
@@ -108,6 +108,7 @@ class Log: StaticLogger {
 The sample application demonstrates how to configure multiple log destinations:
 
 ```swift
+@MainActor
 class func configure(
     format: LogFormatter = .full,
     isPrintEnabled: Bool = true,
@@ -121,7 +122,7 @@ class func configure(
         loggers.append(PrintLogWriter())
     }
     
-    if isWriteToFileEnabled, let url = getCurrentLogUrl() {
+    if isWriteToFileEnabled, let url = makeLogFileUrl() {
         loggers.append(FileLogWriter(path: url))
     }
 
@@ -168,9 +169,6 @@ Log.info("User successfully connected")
 Log.warning("Response timeout, retrying")
 Log.error("Connection failed: \(error.localizedDescription)")
 
-// Error extension utility
-error.logError("Connection attempt")
-
 // Scope tracking with automatic entry/exit logging
 Log.scope {
     // Code to be executed with automatic entry/exit logging
@@ -195,7 +193,7 @@ let logger = PrintLogWriter().filter { record in
 }
 
 // Only log messages at warning level or higher
-let logger = PrintLogWriter().filter(minLevel: .warning)
+let logger = PrintLogWriter().filter(level: .warning)
 
 // Filter by specific categories
 let logger = PrintLogWriter().filter(categories: "Network", "Authentication")
@@ -217,26 +215,23 @@ CXoneChat.logWriter = fileWriter
 
 ### Creating a Log Share Feature
 
-`ShareLink` (iOS 16+) takes the log file URLs directly and renders the system share sheet without a UIKit bridge:
+`ShareLink` (iOS 16+) takes the log file URL directly and renders the system share sheet without a UIKit bridge. The sample application writes all logs to a single file and exposes its URL (the sample's Settings screen opens it with `quickLookPreview`):
 
 ```swift
-// MARK: - Sample Application's SettingsView
+// MARK: - Settings View
 
 struct SettingsView: View {
     ...
-        var logsSectionView: some View {
-        Section(header: Text(L10n.Settings.Logs.title)) {
-            HStack {
-                ...
+    var logsSectionView: some View {
+        let logUrl = Log.logFileUrl
 
-                let logFileUrls = Log.logFileUrls
-
-                ShareLink(items: logFileUrls) {
-                    Text(L10n.Settings.Logs.Share.button)
+        return Section(header: Text("Logs")) {
+            if let logUrl {
+                ShareLink(item: logUrl) {
+                    Text("Share logs")
                 }
-                .disabled(logFileUrls.isEmpty)
             }
-            
+
             ...
         }
     }
@@ -249,17 +244,41 @@ struct SettingsView: View {
 
 class Log: StaticLogger {
     ...
-    @MainActor
-    class var logFileUrls: [URL] {
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return []
+    static let logsFolderName = "CXoneChatSampleAppLogs"
+    static let logFileName = "app.log"
+
+    /// URL of the single log file, or `nil` if it has not been created yet.
+    class var logFileUrl: URL? {
+        guard let url = logsFolderUrl?.appendingPathComponent(logFileName) else {
+            return nil
         }
 
-        let logsUrl = documentDirectory.appendingPathComponent("Logs")
-
-        return (try? FileManager.default.contentsOfDirectory(at: logsUrl, includingPropertiesForKeys: nil)) ?? []
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
     ...
+}
+
+private extension Log {
+
+    class var logsFolderUrl: URL? {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent(logsFolderName, isDirectory: true)
+    }
+
+    /// Creates the logs directory if needed and returns the log file URL.
+    class func makeLogFileUrl() -> URL? {
+        guard let logsUrl = logsFolderUrl else {
+            return nil
+        }
+
+        do {
+            try FileManager.default.createDirectory(at: logsUrl, withIntermediateDirectories: true, attributes: nil)
+
+            return logsUrl.appendingPathComponent(logFileName)
+        } catch {
+            return nil
+        }
+    }
 }
 ```
 

@@ -21,9 +21,6 @@ The SDK provides the following analytics events via `chatProvider.analytics`:
 | `viewPageEnded(title:url:)` | Records when a user exits a page/screen | Measure time spent on pages |
 | `chatWindowOpen()` | Records when chat UI is displayed | Trigger welcome messages |
 | `conversion(type:value:)` | Records business conversion events | Track purchases, signups |
-| `proactiveActionDisplay(data:)` | Records when proactive UI is shown | Measure impression rates |
-| `proactiveActionClick(data:)` | Records when proactive UI is clicked | Measure click-through rates |
-| `proactiveActionSuccess(_:data:)` | Records if proactive action converted | Track effectiveness |
 
 > **Important**: Analytics methods require the SDK to be at least in the `.prepared` state. Methods will throw an `illegalChatState` error if called in an invalid state.
 
@@ -139,21 +136,21 @@ Track when users open the chat interface:
 
 ```swift
 func showChatUI() {
+    // Report chat window opening — a failed report must not block the chat
     Task {
         do {
-            // Report chat window opening
             try await chatProvider.analytics.chatWindowOpen()
-            
-            // Present chat UI
-            chatCoordinator.start(
-                threadId: nil,
-                in: self,
-                presentModally: true
-            )
         } catch {
             print("Error reporting chat window open: \(error)")
         }
     }
+
+    // Present chat UI
+    let content = chatCoordinator.content(threadId: nil, presentModally: true) { [weak self] in
+        self?.dismiss(animated: true)
+    }
+
+    present(UIHostingController(rootView: content), animated: true)
 }
 ```
 
@@ -226,4 +223,4 @@ Analytics events can trigger automations in CXone:
 
 ## Sample Implementation
 
-For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/Sources/Utilities/Manager/AnalyticsReporter.swift).
+For a complete implementation reference, see the [Sample Application's AnalyticsReporter](https://github.com/nice-devone/nice-cxone-mobile-sample-ios/blob/main/iOSSDKExample/Sources/Utilities/Manager/AnalyticsReporter.swift).

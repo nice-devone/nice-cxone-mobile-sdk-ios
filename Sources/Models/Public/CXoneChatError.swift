@@ -20,14 +20,21 @@ public enum CXoneChatError: LocalizedError, Equatable {
 
     // MARK: Errors when calling any method
 
-    /// The feature is intentionally disabled in this version of the SDK and is not available for use.
+    /// The feature is not currently available for use.
     ///
-    /// This error indicates that the feature has been deliberately disabled in the current release
-    /// (for example, the explicit OAuth flow) and will be re-enabled in a future version. The
-    /// associated value carries the human-readable feature name (for example, `"Explicit OAuth"`)
-    /// so it can be surfaced in integrator-facing error messaging and logs.
-    /// - Source of problem: Feature intentionally disabled in the current SDK version.
-    /// - Attention: Don't use the feature, wait for a new release of the SDK.
+    /// This error indicates that a feature the SDK supports could not be used because the SDK has
+    /// deliberately disabled it in the current release. The associated value carries the
+    /// human-readable feature name so it can be surfaced in integrator-facing error messaging and logs.
+    /// - Source of problem: The feature is intentionally disabled in the current SDK version.
+    /// - Attention: Wait for a new release of the SDK.
+    @available(
+        *, deprecated,
+        message: """
+        No longer thrown by the SDK now that the explicit OAuth (PKCE) flow's token exchange is fully \
+        implemented — a rejected exchange now surfaces as `transactionTokenRequestFailed(statusCode:)`. \
+        Catch that instead. Will be removed in 5.0.0.
+        """
+    )
     case featureUnavailable(String)
 
     /// The SDK version being used is no longer supported.
@@ -111,7 +118,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// A invalid parameter has been passed to a method call.
     ///
     /// This is one of:
-    /// - ``ChatThreadProvider.send(_:)`` was called with no valid postback, empty text, and no attachments.
+    /// - ``ChatThreadProvider/send(_:)`` was called with no valid postback, empty text, and no attachments.
     case invalidParameter(String)
 
     /// The brand has configured pre-chat survey with contact custom fields which needs to be provided via ``ChatThreadListProvider/create(with:)`` method.
@@ -125,16 +132,15 @@ public enum CXoneChatError: LocalizedError, Equatable {
     ///
     /// CXone service handles only those custom fields that are configured in the brand settings and others are ignored.
     /// - Source of problem: SDK used incorrectly
-    /// - Attention: Check content of the ``ConnectionProvider/channelConfiguration``,
-    ///     specifically ``ChannelConfiguration/contactCustomFieldDefinitions`` or your brand settings.
+    /// - Attention: Check the contact custom fields configured in your brand settings
+    ///     or the fields offered by ``ChatThreadListProvider/preChatSurvey``.
     case unknownCaseCustomFields
     
     /// A provided custom field does not have a definition in the customer custom fields.
     ///
     /// CXone service handles only those custom fields that are configured in the brand settings and others are ignored.
     /// - Source of problem: SDK used incorrectly
-    /// - Attention: Check content of the ``ConnectionProvider/channelConfiguration``,
-    ///     specifically ``ChannelConfiguration/customerCustomFieldDefinitions`` or your brand settings.
+    /// - Attention: Check the customer custom fields configured in your brand settings.
     case unknownCustomerCustomFields
 
     /// The SDK instance could not get customer identity possibly because it may not have been set.
@@ -186,8 +192,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
 
     /// The connection request was invalid and couldn't be completed.
     ///
-    /// ``ConnectionProvider/connect()``
-    ///     or ``ConnectionProvider/connect()`` may throw this error in case of incorrectly set socket enpoint object.
+    /// ``ConnectionProvider/connect()`` may throw this error in case of incorrectly set socket endpoint object.
     /// - Source of problem: SDK used incorrectly/SDK issue
     /// - Attention: Check entered IDs and URLs. Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case invalidRequest
@@ -195,7 +200,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// Thread is missing the timestamp of when the message was created.
     ///
     /// Every thread message contains timestamp to be able to identify latest message for loading previously created
-    ///     and not yet loaded messages via ``ChatThreadProvider/loadMoreMessages`` method.
+    ///     and not yet loaded messages via ``ChatThreadProvider/loadMoreMessages()`` method.
     /// - Source of problem: DFO issue
     /// - Attention: Gather any information about how the error was encountered and contact the CXoneChat SDK team.
     case invalidOldestDate
@@ -216,7 +221,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// ``ConnectionProvider/connect()`` or an analytics event has been generated when no visitor id was available.
     ///
     /// - Attention: ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
-    /// ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// must be called before ``ConnectionProvider/connect()`` or any other analytics events are generated.
     case missingVisitorId
 
@@ -235,7 +240,7 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// Unable to trigger the required method because the chat thread is not in the required state.
     ///
     /// The chat thread has to be in correct state to trigger required operation. 
-    /// For example, to update thread name via ``ChatThreadListProvider/updateName(_:for:)``
+    /// For example, to update thread name via ``ChatThreadProvider/updateName(_:)``
     /// the thread can not be in ``ChatThreadState/closed`` state.
     ///
     /// Check ``ChatThreadState`` for more information.
@@ -275,6 +280,23 @@ public enum CXoneChatError: LocalizedError, Equatable {
     /// - Source of problem: SDK used incorrectly / OAuth provider issue
     /// - Attention: Obtain a fresh token from your OAuth provider and supply it to the SDK.
     case invalidAccessToken
+
+    /// The session's refresh token could not be used to recover the session automatically — it was rejected
+    /// by the backend, was never stored, or the refresh grant returned no new access token.
+    ///
+    /// This error occurs when a refresh-grant recovery attempt for the explicit OAuth flow cannot
+    /// succeed and no further automatic recovery is possible.
+    ///
+    /// - Parameter message: The backend's own description of the rejection, when it supplied one. It is a
+    ///     fixed string tied to the backend's error code rather than text from the OAuth provider, so it is
+    ///     useful for diagnostics and logging but should not be parsed or branched on. `nil` when the
+    ///     session could not be recovered without the backend rejecting anything — no refresh token was
+    ///     stored, or a successful response arrived without a new access token.
+    ///
+    /// - Source of problem: OAuth provider issue / refresh token revoked or expired
+    /// - Attention: The app owns re-authentication in this case — perform a new authorization-code (PKCE)
+    ///     grant to obtain a fresh access + refresh token pair, then supply it to the SDK.
+    case invalidRefreshToken(String?)
 
     // MARK: - Properties
 
@@ -346,6 +368,14 @@ public enum CXoneChatError: LocalizedError, Equatable {
             return "Failed to obtain transaction token from the server."
         case .invalidAccessToken:
             return "The provided access token is invalid, expired, or empty. Obtain a fresh token from your OAuth provider."
+        case .invalidRefreshToken(let message):
+            let base = "The refresh token could not be used to recover the session. The app must perform a new authorization flow."
+
+            guard let message, !message.isEmpty else {
+                return base
+            }
+
+            return "\(base) The server reported: \(message)"
         }
     }
 

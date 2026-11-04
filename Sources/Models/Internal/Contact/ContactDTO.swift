@@ -35,6 +35,11 @@ struct ContactDTO: Equatable, Sendable {
     let createdAt: Date
     
     let customFields: [CustomFieldDTO]
+
+    /// The party currently responsible for handling the contact.
+    ///
+    /// Only reported on channels where the capability is enabled; `nil` everywhere else.
+    let handler: ContactHandlerDTO?
 }
 
 // MARK: - Codable
@@ -52,6 +57,8 @@ extension ContactDTO: Codable {
         /// The timestamp of when the message was created.
         case createdAt
         case customFields
+        /// The party currently responsible for handling the contact.
+        case handler
     }
     
     init(from decoder: Decoder) throws {
@@ -62,6 +69,7 @@ extension ContactDTO: Codable {
         self.status = try container.decode(ContactStatus.self, forKey: .status)
         self.createdAt = try container.decodeISODate(forKey: .createdAt)
         self.customFields = try container.decode([CustomFieldDTO].self, forKey: .customFields)
+        self.handler = try container.decodeIfPresent(ContactHandlerDTO.self, forKey: .handler)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -72,5 +80,6 @@ extension ContactDTO: Codable {
         try container.encode(status, forKey: .status)
         try container.encodeISODate(createdAt, forKey: .createdAt)
         try container.encode(customFields, forKey: .customFields)
+        try container.encodeIfPresent(handler, forKey: .handler)
     }
 }

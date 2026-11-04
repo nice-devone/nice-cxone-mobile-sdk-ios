@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/min_iOS-16.0%2B-orange?style=flat) ![](https://img.shields.io/badge/Swift-5.10%2B-orange?style=flat) ![](https://img.shields.io/badge/security-BlackDuck-blue) ![](https://img.shields.io/badge/security-Veracode-blue)
+![](https://img.shields.io/badge/min_iOS-16.0%2B-orange?style=flat) ![](https://img.shields.io/badge/Swift-6.0%2B-orange?style=flat) ![](https://img.shields.io/badge/security-BlackDuck-blue) ![](https://img.shields.io/badge/security-Veracode-blue)
 
 # CXoneChatSDK
 
@@ -18,7 +18,7 @@ Developing an iOS app using the CXone Mobile package requires the following:
 ## Requirements
 
 - iOS 16.0+
-- Swift 5.10+
+- Swift 6.0+ (Xcode 16 or later)
 
 
 ## Modules
@@ -32,14 +32,16 @@ Developing an iOS app using the CXone Mobile package requires the following:
 ## SDK Integration
 
 1. Open Xcode.
-2. Navigate to `File > Swift Packages > Add Package Dependency...`
+2. Navigate to `File > Add Package Dependencies...`
 3. Enter the SDK repository URL https://github.com/nice-devone/nice-cxone-mobile-sdk-ios in the search bar.
 4. Select a **Dependency Rule** and specify where you want to save the project. Select your new Xcode project in  **Add to Project**.
 5. Finish package import process with click on **Add Package**.
 
 The sample comes from a sample app that you can get from [CXone Mobile SDK sample application](https://github.com/nice-devone/nice-cxone-mobile-sample-ios) or [UI Module](https://github.com/nice-devone/nice-cxone-mobile-ui-ios).
 
-> ⚠️ Important: To ensure the sustainability of SDK version support, only the last two major versions are permitted. Attempting to use an outdated version will result in a `CXoneChatSDKError.sdkVersionNotSupported` error from the `getChannelConfiguration(environment:brandId:channelId:)` method, which will prevent further use of CXone chat services.
+> ⚠️ Important: To ensure the sustainability of SDK version support, only the last two major versions are permitted. Attempting to use an outdated version will result in a `CXoneChatError.sdkVersionNotSupported` error from the `getChannelConfiguration(environment:brandId:channelId:)` method, which will prevent further use of CXone chat services.
+
+> Note: The channel configuration returned by `getChannelConfiguration(environment:brandId:channelId:)`, `getChannelConfiguration(chatURL:brandId:channelId:)` and `prepare(...)` is cached in memory for five minutes. Only the most recently fetched configuration is held — a call for a different brand, channel or environment replaces it. A configuration changed in the backend can therefore take up to five minutes to be reflected; `signOut()` clears the cache.
 
 
 ## Lifecycle
@@ -72,6 +74,21 @@ Pick the container that matches your app architecture. The SDK is indifferent �
 
 **SwiftUI**
 
+The SDK does not define a SwiftUI environment key for the provider. If you want to pass it through the environment, declare one in your app:
+
+```swift
+private struct ChatProviderKey: EnvironmentKey {
+    static let defaultValue: ChatProvider? = nil
+}
+
+extension EnvironmentValues {
+    var chatProvider: ChatProvider? {
+        get { self[ChatProviderKey.self] }
+        set { self[ChatProviderKey.self] = newValue }
+    }
+}
+```
+
 ```swift
 @main
 struct MyApp: App {
@@ -87,7 +104,7 @@ struct MyApp: App {
 }
 ```
 
-`CXoneChat` is a `@MainActor` reference type, so `@State` at the app entry point is the simplest holder. If you also need to react to SDK state changes in SwiftUI, wrap `CXoneChat` in your own `ObservableObject` that mirrors `state` from an `events()` loop into a `@Published` property — see `sample/iOSSDKExample/Sources/ChatPresenter.swift` in the sample app.
+`CXoneChat` is a `@MainActor` reference type, so `@State` at the app entry point is the simplest holder. If you also need to react to SDK state changes in SwiftUI, wrap `CXoneChat` in your own `ObservableObject` that mirrors `state` from an `events()` loop into a `@Published` property. The sample app holds the provider in an `ObservableObject` (`sample/iOSSDKExample/Sources/ChatPresenter.swift`) created as a `@StateObject` in `SDKDemoApp`. It injects that object with `.environmentObject(_:)`, and `AppDependencies` hands `chatPresenter.chatProvider` to its view models through their initializers.
 
 **UIKit**
 
@@ -123,7 +140,12 @@ Calling `signOut()`:
 
 1. Disconnects the WebSocket cleanly (no `.unexpectedDisconnect` is emitted).
 2. Purges the keychain + UserDefaults state scoped to the SDK.
-3. Finishes all in-flight `events()` streams — every `for await event in chatProvider.events()` loop exits.
+3. Discards the in-memory session state — the loaded threads and their messages, the customer and per-contact custom fields, the channel configuration, and the brand, channel and environment the session was prepared against. `state` returns to `.initial`, and `threads.get()` returns an empty list until the next `prepare(...)` / `connect()`.
+4. Finishes all in-flight `events()` streams — every `for await event in chatProvider.events()` loop exits.
+
+The device token and any listener registered with `CustomerProvider.setTokenDelegateListener(_:)` are deliberately **kept** — both belong to the application rather than to the chat session.
+
+A `prepare(...)` or `connect()` call still in flight when `signOut()` runs fails with `CXoneChatError.illegalChatState`.
 
 The instance is **reusable** after `signOut()` — you can call `prepare(...)` + `connect()` again with new credentials. Alternatively, discard the instance and construct a fresh `CXoneChat()` for a hard reset. Both patterns are supported.
 
@@ -211,7 +233,7 @@ Available `ChatEvent` cases (defined in `CXoneChatSDK.ChatEvent`):
 - `contactCustomFieldsSet` — contact custom fields were set on the backend.
 - `customerCustomFieldsSet` — customer custom fields were set on the backend.
 - `error(Error)` — an SDK error occurred.
-- `proactiveActionReceived(ProactiveActionType)` — a proactive action (e.g. inactivity popup) arrived.
+- `proactiveActionReceived(ProactiveActionType)` — a proactive action (e.g. inactivity popup, satisfaction survey) arrived.
 
 
 ## Thread handling
@@ -221,6 +243,13 @@ You will handle the CXone Mobile SDK for iOS as an extension of a manager. You h
 Set up your app to handle single-thread handling, multi-thread handling, or live chat. If your app is single-threaded, each of your contacts can have only one chat thread. Any interaction they have with your organization takes place in that one chat thread. If your app is multi-threaded, your customer can create as many threads as they want to discuss new topics. These threads can be active at the same time. Live chat is similar to the single-threaded configuration, but with the restriction that conversations cannot be initiated unless an agent is available.
 
 Use the [iOS SDK library](https://cautious-sniffle-1d4a9c48.pages.github.io/index.html) as you work.
+
+Besides its messages and assigned agent, a `ChatThread` exposes:
+- `ownerAssignee` — the agent that owns the case (the last agent it was actually assigned to). Unlike `assignedAgent`, the owner persists across unassignment and is restored on thread recovery.
+- `contactId` — the backend-provided identifier of the contact associated with the thread; `nil` when the thread has no associated contact yet.
+- `positionInQueue` and `contactHandler` — live chat queue information; see [Case Study: LiveChat](docs/cs-livechat.md#queue-position-and-contact-handler).
+
+Each `Message` exposes `isAiGenerated`, which is `true` when the backend marks the message content as generated by an AI agent, and `false` otherwise — including when the field is absent from the payload.
 
 > Important: The SDK utilizes a state-based architecture so it is not necessary to handle everything on your own. For example after establishing a connection, it is not necessary to load thread(s) on your own. The SDK automatically recovers existing or creates a new thread for single-threaded and loads thread metadata for multi-threaded channel configuration. However, if the chat channel contains a pre-chat survey, it is necessary to fill in the survey and manually create a new thread using the `ChatThreadListProvider.create(with:)` method, to which custom fields must be passed. 
 
@@ -301,19 +330,21 @@ In this moment, you should be already connected to the Web Socket with SDK metho
 2. *(optional)* In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method `create(with:)`.
     ```swift
     func createNewThread(with customFields: [String: String]? = nil) {
-        do {
-            if let customFields {
-                try chatProvider.threads.create(with: customFields)
-            } else {
-                try chatProvider.threads.create()
+        Task { [chatProvider] in
+            do {
+                if let customFields {
+                    try await chatProvider.threads.create(with: customFields)
+                } else {
+                    try await chatProvider.threads.create()
+                }
+            } catch {
+                ...
             }
-        } catch {
-            ...
         }
     }
     ```
 
-> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: Single Thread](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-single-thread.md).
+> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: Single Thread](docs/cs-single-thread.md).
 
 ### Multi-thread - Set Up the Thread List
 
@@ -350,22 +381,24 @@ As already mentioned, it is not necessary to load previously created threads bec
 
     ```swift
     func createNewThread(with customFields: [String: String]? = nil) {
-        do {
-            let provider: ChatThreadProvider
+        Task { [chatProvider] in
+            do {
+                let provider: ChatThreadProvider
 
-            if let customFields {
-                provider = try chatProvider.threads.create(with: customFields)
-            } else {
-                provider = try chatProvider.threads.create()
+                if let customFields {
+                    provider = try await chatProvider.threads.create(with: customFields)
+                } else {
+                    provider = try await chatProvider.threads.create()
+                }
+                ...
+            } catch {
+                ...
             }
-            ...
-        } catch {
-            ...
         }
     }
     ```
 
-> Note: For detailed information on how to handle multi-thread channel configuration, see [Case Study: Multi Thread](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-multi-thread.md).
+> Note: For detailed information on how to handle multi-thread channel configuration, see [Case Study: Multi Thread](docs/cs-multi-thread.md).
 
 ### LiveChat - Set Up the Thread Manager
 
@@ -420,24 +453,26 @@ In this moment, you should be already connected to the Web Socket with SDK metho
 2. *(optional)* In case you had to complete a pre-chat form, you have to provide those custom fields to the SDK with threads provider method `create(with:)`.
     ```swift
     func createNewThread(with customFields: [String: String]? = nil) {
-        do {
-            if let customFields {
-                try chatProvider.threads.create(with: customFields)
-            } else {
-                try chatProvider.threads.create()
+        Task { [chatProvider] in
+            do {
+                if let customFields {
+                    try await chatProvider.threads.create(with: customFields)
+                } else {
+                    try await chatProvider.threads.create()
+                }
+            } catch {
+                ...
             }
-        } catch {
-            ...
         }
     }
     ```
 
-> Note: For detailed information on how to handle single-thread channel configuration, see [Case Study: LiveChat](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/tree/main/docs/cs-livechat.md).
+> Note: For detailed information on how to handle live chat channel configuration, see [Case Study: LiveChat](docs/cs-livechat.md).
 
 
 ## Pre-Chat Survey
 
-Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from `ChatThreadListProvider.prechatSurvey`. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:
+Before starting a thread you need to check if you need to complete a pre-chat poll. The prechat survey model is available from `ChatThreadListProvider.preChatSurvey`. It consists of mandatory and optional parameters, which can be of 4 types - textfield, e-mail, list and hierarchical. To complete it, you will need:
 1. Check that a pre-chat has been defined for the channel.
     ```swift
     if let preChatSurvey = chatProvider.threads.preChatSurvey {
@@ -450,4 +485,4 @@ Before starting a thread you need to check if you need to complete a pre-chat po
 
 ## Configure Chat Functions
 
-How you configure your application to send, receive and display chat messages is unique to your situation. The [iOS Samples](https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/docs/samples.md) section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.
+How you configure your application to send, receive and display chat messages is unique to your situation. The [iOS Samples](docs/samples.md) section provides examples of how your application can send messages to an agent, send attachments to an agent, handle messages, perform analytics, and perform other important actions.

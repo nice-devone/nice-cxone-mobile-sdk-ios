@@ -28,14 +28,15 @@ public protocol AnalyticsProvider: Sendable {
     ///   - url: A URL uniquely identifying the page.
     ///
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     func viewPage(title: String, url: String) async throws
 
     /// CXone reporting that a visitor has left a certain page/screen in the application.
@@ -45,27 +46,29 @@ public protocol AnalyticsProvider: Sendable {
     ///   - url: A URL uniquely identifying the page.
     ///
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     func viewPageEnded(title: String, url: String) async throws
     
     /// Reports to CXone that the chat window/view has been opened by the visitor.
     ///
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     func chatWindowOpen() async throws
     
     /// Reports to CXone that a conversion has occurred.
@@ -75,13 +78,14 @@ public protocol AnalyticsProvider: Sendable {
     ///   - value: The value associated with the conversion (for example, unit amount). Can be any number.
     ///
     /// - Throws: ``CXoneChatError/missingVisitorId``
-    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or ``ConnectionProvider/prepare(chatURL:socketURL:brandId:channelId:)``
+    /// if ``ConnectionProvider/prepare(environment:brandId:channelId:)`` or
+    /// ``ConnectionProvider/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)``
     /// method was not called before triggering analytics event.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the URL cannot be parsed, most likely because
     ///     environment.chatURL is not a valid URL.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `NSError` object that indicates why the request failed
     func conversion(type: String, value: Double) async throws
 }

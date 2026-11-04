@@ -20,8 +20,6 @@ public struct Agent: Equatable, Sendable {
     
     // MARK: - Properties
     
-    private static let personNameComponentsFormatter = PersonNameComponentsFormatter()
-    
     /// The id of the agent.
     public let id: Int
 
@@ -50,11 +48,7 @@ public struct Agent: Equatable, Sendable {
     /// Returns `nil` when neither `firstName` nor `surname` is available — e.g. when the
     /// backend hides the agent's personal information — so callers can apply a fallback.
     public var fullName: String? {
-        var nameComponents = PersonNameComponents()
-        nameComponents.givenName = firstName
-        nameComponents.familyName = surname
-
-        return Self.personNameComponentsFormatter.string(from: nameComponents).nilIfEmpty()
+        PersonNameComponentsFormatter.fullName(firstName: firstName, lastName: surname)
     }
 
     // MARK: - Init

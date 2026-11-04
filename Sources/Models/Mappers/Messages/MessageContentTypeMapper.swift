@@ -33,6 +33,10 @@ enum MessageContentTypeMapper {
             LogManager.info("Inactivity popup is not supported in the chat history.")
             
             return nil
+        case .satisfactionSurvey:
+            LogManager.info("Satisfaction survey is not supported in the chat history.")
+            
+            return nil
         case .postback:
             LogManager.info("Postback is not supported in the chat history.")
             

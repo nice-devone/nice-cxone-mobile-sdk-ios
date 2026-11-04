@@ -43,9 +43,8 @@ final class SocketServiceImpl: NSObject, SocketService, EventReceiver, @unchecke
             }
         }
     }
-    /// Whether the socket is currently connected.
-    var isConnected: Bool {
-        connectionContext.chatState.isChatAvailable && _socket.content != nil
+    var hasSocket: Bool {
+        _socket.content != nil
     }
     var urlSession: URLSessionProtocol {
         connectionContext.session
@@ -191,9 +190,9 @@ final class SocketServiceImpl: NSObject, SocketService, EventReceiver, @unchecke
                 ref = 1
 
                 return true
+            } else {
+                return false
             }
-
-            return false
         }
 
         if didArmReconnect {
@@ -271,8 +270,8 @@ final class SocketServiceImpl: NSObject, SocketService, EventReceiver, @unchecke
         // Ensure the credential is fresh before ANY event reaches the backend — this is the single choke
         // point every outbound WS event passes through. The refresh policy lives on `ConnectionContext`
         // (`needsProactiveTokenRefresh`) so the socket layer doesn't own auth rules. Message-send paths that
-        // embed the JWT refresh it before serialization in `ChatThreadService` and pass `shouldCheck: false`,
-        // so a single refresh runs per event (matching the Android per-event guard).
+        // embed the credential refresh it before serialization in `ChatThreadService` and pass
+        // `shouldCheck: false`, so a single refresh runs per event (matching the Android per-event guard).
         if shouldCheck, connectionContext.needsProactiveTokenRefresh {
             // Fail fast rather than silently skipping the refresh — sending with an expiring
             // credential leads to backend rejections that are harder to recover from.
@@ -392,7 +391,7 @@ private extension SocketServiceImpl {
             self?.downloadEventContentFromS3(event)
         }
         addListener { [weak self] event in
-            self?.onOperationError(event)
+            self?.handleOperationError(event)
         }
     }
 
@@ -453,16 +452,6 @@ private extension SocketServiceImpl {
             }
         @unknown default:
             LogManager.warning("Listener did received unknown response case - \(message)")
-        }
-    }
-    
-    func onOperationError(_ error: OperationError) {
-        switch error.errorCode {
-        case .inconsistentData, .unknown:
-            broadcaster.send(.error(error))
-        case .recoveringThreadFailed, .recoveringLivechatFailed, .sendingTranscriptFailed:
-            // these are handled elsewhere
-            break
         }
     }
     
@@ -612,28 +601,7 @@ private extension SocketServiceImpl {
 
         LogManager.info("Attempting to reconnect (\(attempt)/\(Self.retryMaxAttempts))")
 
-        // `attempt` is the human-facing 1-based counter (1/20, 2/20, …). The backoff helper is
-        // 0-based (like `Task.retrying`), so subtract 1 to keep one convention SDK-wide — the first
-        // reconnect then waits `pow(1.3, 0)` rather than `pow(1.3, 1)`.
-        let delay = TimeInterval.calculateExponentialBackoffDelay(attempt: attempt - 1)
-
-        LogManager.info("Reconnect delayed by \(delay) seconds")
-
-        do {
-            try await reconnectBackoff(delay)
-        } catch is CancellationError {
-            // Backoff was cancelled (e.g. an explicit disconnect() during the wait) —
-            // abandon this reconnect instead of connecting anyway.
-            LogManager.trace("Reconnect cancelled during backoff")
-            return
-        } catch {
-            // Any other backoff failure is unexpected; don't connect on a broken delay.
-            LogManager.error("Reconnect backoff failed: \(error.localizedDescription)")
-            return
-        }
-
-        guard !Task.isCancelled else {
-            LogManager.trace("Reconnect cancelled during backoff")
+        guard await waitForReconnectBackoff(attempt: attempt) else {
             return
         }
 
@@ -649,7 +617,7 @@ private extension SocketServiceImpl {
                 LogManager.trace("Setting chat state to `.connecting`")
 
                 connectionContext.chatState = .connecting
-                broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+                broadcaster.send(connectionContext.chatUpdatedEvent)
             }
 
             // Rebuild the socket URL with a freshly-minted transaction token instead of replaying the
@@ -714,32 +682,70 @@ private extension SocketServiceImpl {
                 return
             }
 
-            // Re-open the duplicate-disconnect guard before re-handling. It is otherwise cleared only
-            // by `connect()`, but a throw from `recreateSocketURL()` (e.g. token minting failing) lands
-            // here *before* `connect()` runs, leaving the guard set. Without this reset, the recursive
-            // `handleWebSocketDisconnect` below would treat the failure as a duplicate and silently
-            // abandon the retry chain. Safe against the initial-drop dedupe race: this only runs after
-            // the backoff, by which point both concurrent disconnect reporters have already been seen.
-            _isHandlingDisconnect.mutate { flag in
-                flag = false
-            }
-
-            // Preserve `CXoneChatError` (e.g. `invalidAccessToken` from recreateSocketURL()'s
-            // token-mint / OAuth-refresh preflight) so consumers can detect token-related failures;
-            // only wrap genuine non-SDK failures as a protocol error.
-            let disconnectError: any Error
-            if let sdkError = error as? CXoneChatError {
-                disconnectError = sdkError
-            } else {
-                disconnectError = WebSocketError.protocolError(error)
-            }
-
-            await handleWebSocketDisconnect(error: disconnectError)
+            await handleFailedReconnect(error: error)
         }
     }
 
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// Waits out the exponential backoff before reconnect `attempt`.
+    ///
+    /// - Returns: `false` if the wait was cancelled or failed, so the caller must abandon this reconnect.
+    func waitForReconnectBackoff(attempt: Int) async -> Bool {
+        // `attempt` is the human-facing 1-based counter (1/20, 2/20, …). The backoff helper is
+        // 0-based (like `Task.retrying`), so subtract 1 to keep one convention SDK-wide — the first
+        // reconnect then waits `pow(1.3, 0)` rather than `pow(1.3, 1)`.
+        let delay = TimeInterval.calculateExponentialBackoffDelay(attempt: attempt - 1)
+
+        LogManager.info("Reconnect delayed by \(delay) seconds")
+
+        do {
+            try await reconnectBackoff(delay)
+        } catch is CancellationError {
+            // Backoff was cancelled (e.g. an explicit disconnect() during the wait) —
+            // abandon this reconnect instead of connecting anyway.
+            LogManager.trace("Reconnect cancelled during backoff")
+            return false
+        } catch {
+            // Any other backoff failure is unexpected; don't connect on a broken delay.
+            LogManager.error("Reconnect backoff failed: \(error.localizedDescription)")
+            return false
+        }
+
+        guard !Task.isCancelled else {
+            LogManager.trace("Reconnect cancelled during backoff")
+            return false
+        }
+
+        return true
+    }
+
+    /// Hands a failed (and not superseded) reconnect attempt back to the disconnect handling, which
+    /// schedules the next attempt or gives up once the retry budget is exhausted.
+    func handleFailedReconnect(error: any Error) async {
+        // Re-open the duplicate-disconnect guard before re-handling. It is otherwise cleared only
+        // by `connect()`, but a throw from `recreateSocketURL()` (e.g. token minting failing) lands
+        // here *before* `connect()` runs, leaving the guard set. Without this reset, the recursive
+        // `handleWebSocketDisconnect` below would treat the failure as a duplicate and silently
+        // abandon the retry chain. Safe against the initial-drop dedupe race: this only runs after
+        // the backoff, by which point both concurrent disconnect reporters have already been seen.
+        _isHandlingDisconnect.mutate { flag in
+            flag = false
+        }
+
+        // Preserve `CXoneChatError` (e.g. `invalidAccessToken`/`invalidRefreshToken` from
+        // recreateSocketURL()'s token-mint / OAuth-refresh preflight) so consumers can detect
+        // token-related failures; only wrap genuine non-SDK failures as a protocol error.
+        let disconnectError: any Error
+        if let sdkError = error as? CXoneChatError {
+            disconnectError = sdkError
+        } else {
+            disconnectError = WebSocketError.protocolError(error)
+        }
+
+        await handleWebSocketDisconnect(error: disconnectError)
+    }
+
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
     func downloadEventContentFromS3(_ object: EventInS3DTO) {
         LogManager.trace("Downloads the content of the `\(object.originEventType)` event stored in S3")
@@ -754,7 +760,7 @@ private extension SocketServiceImpl {
             do {
                 let (data, response) = try await self.connectionContext.session.fetch(for: request)
                 
-                guard let response = response as? HTTPURLResponse, (200 ... 299) ~= response.statusCode else {
+                guard let response = response as? HTTPURLResponse, response.isSuccess else {
                     LogManager.error("Error downloading s3 event")
                     return
                 }

@@ -26,12 +26,7 @@ protocol KeychainStorage: Sendable {
     @discardableResult
     func set<T: Encodable>(_ obj: T, for key: KeychainService.Keys) -> Bool
 
-    @discardableResult
-    func set<T: Encodable>(_ obj: T, for key: String) -> Bool
-
     func get<T: Decodable>(_ type: T.Type, for key: KeychainService.Keys) -> T?
-
-    func get<T: Decodable>(_ type: T.Type, for key: String) -> T?
 }
 
 /// `@unchecked Sendable` is required here because the superclass `KeychainSwift`

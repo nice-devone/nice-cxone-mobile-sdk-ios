@@ -42,8 +42,13 @@ If you're already using the UI module (ChatCoordinator), **the inactivity popup 
 **No extra code needed!** If your app already has:
 
 ```swift
-let chatCoordinator = ChatCoordinator()
-chatCoordinator.start(threadId: nil, in: self, presentModally: true)
+let chatCoordinator = ChatCoordinator(chatProvider: chatProvider)
+
+let content = chatCoordinator.content(threadId: nil, presentModally: true) { [weak self] in
+    self?.dismiss(animated: true)
+}
+
+present(UIHostingController(rootView: content), animated: true)
 ```
 
 Then the inactivity popup feature is **already working**. The UI module automatically:
