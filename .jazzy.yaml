@@ -15,7 +15,7 @@
 
 author: NiCE
 author_url: https://www.nice.com
-copyright: © 2025 NiCE
+copyright: © 2026 NiCE
 github_url: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios
 min_acl: public
 clean: true
@@ -24,8 +24,6 @@ module_version: 4.1.0
 swift_build_tool: xcodebuild
 output: jazzy_docs
 xcodebuild_arguments:
-  - -project
-  - ../sample/iOSSDKExample.xcodeproj
   - -scheme
   - CXoneChatSDK
   - -skipPackagePluginValidation
