@@ -16,7 +16,7 @@
 import CXoneGuideUtility
 import Foundation
 
-/// Broadcasts ``ChatEvent`` values to all active ``AsyncStream`` consumers.
+/// Broadcasts ``ChatEvent`` values to all active `AsyncStream` consumers.
 ///
 /// Thread-safe via ``SafeAccessContainer``. ``send(_:)`` is synchronous —
 /// services do not need `await` to fire events.
@@ -31,7 +31,7 @@ final class EventBroadcaster: Sendable {
     
     // MARK: - API
     
-    /// Creates a new ``AsyncStream`` subscription.
+    /// Creates a new `AsyncStream` subscription.
     ///
     /// Each caller receives its own independent stream. Events are broadcast to all active streams.
     /// The stream buffers at most ``streamBufferCapacity`` events for a slow consumer; older events

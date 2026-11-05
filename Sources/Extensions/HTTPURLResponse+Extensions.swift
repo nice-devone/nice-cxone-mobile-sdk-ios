@@ -17,6 +17,11 @@ import Foundation
 
 extension HTTPURLResponse {
     
+    /// Whether the response carries a successful (2xx) HTTP status code.
+    var isSuccess: Bool {
+        (200 ... 299).contains(statusCode)
+    }
+    
     func log(data: Data?, file: StaticString = #file, line: UInt = #line) {
         guard let urlString = url?.absoluteString else {
             return

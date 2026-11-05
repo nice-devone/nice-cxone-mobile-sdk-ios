@@ -24,9 +24,6 @@ struct SocketEndpointDTO: Endpoint, Sendable {
     let method: HTTPMethod
 
     var url: URL? {
-        var components = URLComponents(string: environment.socketURL)
-        components?.queryItems = queryItems
-
-        return components?.url
+        makeUrl(withBase: environment.socketURL)
     }
 }

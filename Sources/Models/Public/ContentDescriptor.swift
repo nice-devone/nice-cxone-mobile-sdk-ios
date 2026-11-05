@@ -47,7 +47,7 @@ public struct ContentDescriptor: Sendable {
     }
 
     /// - Parameters:
-    ///    - data: The actual data of the attachment.
+    ///    - url: The URL of the local file containing the attachment.
     ///    - mimeType: The MIME type relevant to the attachment type.
     ///    - fileName: The obscured name of the attachment file sent to the server.
     ///    - friendlyName: The friendly (original) name of the attachment file

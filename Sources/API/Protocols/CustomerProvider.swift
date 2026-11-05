@@ -85,20 +85,12 @@ public protocol CustomerProvider: Sendable {
     ///
     /// Call this before ``ConnectionProvider/connect()`` when using an explicit OAuth flow.
     ///
-    /// - Important: This setter stores the value without validating flow availability. While the
-    ///   explicit flow is unavailable, the failure surfaces later — ``ConnectionProvider/connect()``
-    ///   throws ``CXoneChatError/featureUnavailable(_:)`` during the token exchange.
-    ///
     /// - Parameter code: The authorization code received from the OAuth provider.
     func setAuthorizationCode(_ code: String)
 
     /// Sets the PKCE code verifier for the explicit OAuth flow.
     ///
     /// Call this before ``ConnectionProvider/connect()`` when using an explicit OAuth flow.
-    ///
-    /// - Important: This setter stores the value without validating flow availability. While the
-    ///   explicit flow is unavailable, the failure surfaces later — ``ConnectionProvider/connect()``
-    ///   throws ``CXoneChatError/featureUnavailable(_:)`` during the token exchange.
     ///
     /// - Parameter verifier: The PKCE code verifier generated locally before the authorization request.
     func setCodeVerifier(_ verifier: String)

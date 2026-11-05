@@ -126,42 +126,6 @@ private extension CustomFieldHierarchicalDTO {
     }
 }
 
-private extension [CustomFieldHierarchicalNodeDTO] {
-
-    func add(child: Element, to id: String) -> [CustomFieldHierarchicalNodeDTO] {
-        map { node in
-            if node.key == id {
-                return node.add(child: child)
-            } else if node.find(by: id) != nil {
-                return CustomFieldHierarchicalNodeDTO(
-                    key: node.key,
-                    value: node.value,
-                    children: node.children.add(child: child, to: id)
-                )
-            } else {
-                return node
-            }
-        }
-    }
-}
-
-private extension CustomFieldHierarchicalNodeDTO {
-    
-    func find(by key: String) -> CustomFieldHierarchicalNodeDTO? {
-        if self.key == key {
-            return self
-        }
-
-        for child in children {
-            if let match = child.find(by: key) {
-                return match
-            }
-        }
-
-        return nil
-    }
-}
-
 // MARK: - NodeDTO
 
 private struct NodeDTO: Decodable {

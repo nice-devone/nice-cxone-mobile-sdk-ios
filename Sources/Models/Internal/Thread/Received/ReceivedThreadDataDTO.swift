@@ -33,6 +33,20 @@ struct ReceivedThreadDataDTO: Equatable, Sendable {
     let canAddMoreMessages: Bool
 }
 
+// MARK: - Helpers
+
+extension ReceivedThreadDataDTO {
+
+    /// The state a thread takes when it is recovered: `.ready` if more messages can be added, `.closed` otherwise.
+    var recoveredState: ChatThreadState {
+        if canAddMoreMessages {
+            return .ready
+        } else {
+            return .closed
+        }
+    }
+}
+
 // MARK: - Decodable
 
 extension ReceivedThreadDataDTO: Decodable {

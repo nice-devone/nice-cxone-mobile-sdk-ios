@@ -51,7 +51,7 @@ final class ContactCustomFieldsService: Sendable {
 extension ContactCustomFieldsService: ContactCustomFieldsProvider {
     
     func get(for threadId: String) -> [String: String] {
-        Dictionary(uniqueKeysWithValues: contactFields[threadId]?.lazy.map { ($0.ident, $0.value) } ?? [])
+        contactFields[threadId]?.valuesByIdent ?? [:]
     }
     
     func set(_ customFields: [String: String], for threadId: String) async throws {
@@ -59,7 +59,7 @@ extension ContactCustomFieldsService: ContactCustomFieldsProvider {
 
         try socketService.checkForConnection()
         
-        updateFields(customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) }, for: threadId)
+        updateFields(customFields.customFieldDTOs, for: threadId)
         
         if let id = socketService.connectionContext.contactId {
             let data = try eventsService.create(

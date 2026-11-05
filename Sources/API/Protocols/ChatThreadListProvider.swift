@@ -49,15 +49,15 @@ public protocol ChatThreadListProvider: Sendable {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing.
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     ///
@@ -87,15 +87,15 @@ public protocol ChatThreadListProvider: Sendable {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     ///
@@ -117,7 +117,7 @@ public protocol ChatThreadListProvider: Sendable {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func load(with id: String?) async throws
     
     /// The delegate for the chat thread provider based on chat thread's unique identifier

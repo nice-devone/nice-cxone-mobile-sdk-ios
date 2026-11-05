@@ -13,7 +13,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 //
 
-import CXoneGuideUtility
 import Foundation
 
 /// A reference-type wrapper that holds a weak reference to an `AnyObject` instance.

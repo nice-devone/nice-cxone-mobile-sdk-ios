@@ -20,8 +20,6 @@ public struct SenderInfo {
     
     // MARK: - Properties
     
-    private static let personNameComponentsFormatter = PersonNameComponentsFormatter()
-    
     /// The unique id for the sender (agent or customer). Represents the id for a customer and the id for the agent.
     public let id: String
     
@@ -33,11 +31,7 @@ public struct SenderInfo {
     
     /// The full name of the sender.
     public var fullName: String? {
-        var nameComponents = PersonNameComponents()
-        nameComponents.givenName = firstName
-        nameComponents.familyName = lastName
-        
-        return Self.personNameComponentsFormatter.string(from: nameComponents)
+        PersonNameComponentsFormatter.fullName(firstName: firstName, lastName: lastName)
     }
     
     // MARK: - Init

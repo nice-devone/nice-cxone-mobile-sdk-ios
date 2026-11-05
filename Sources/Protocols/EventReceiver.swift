@@ -86,38 +86,4 @@ extension EventReceiver {
 
         listenerTasks.append(task)
     }
-
-    func addListener<Type: ReceivedEvent>(
-        file: StaticString = #file,
-        line: UInt = #line,
-        _ handler: @escaping @Sendable (Type) async throws -> Void
-    ) {
-        LogManager.trace(
-            "Add listener for: \(String(describing: Type.self))",
-            file: file,
-            line: line
-        )
-
-        let stream = eventBroadcast.makeStream()
-        let eventType = Type.associatedEventType
-        let task = Task {
-            for await event in stream {
-                if let eventType, event.realEventType != eventType {
-                    continue
-                }
-
-                guard let typed = event as? Type else {
-                    continue
-                }
-
-                do {
-                    try await handler(typed)
-                } catch {
-                    LogManager.error(error)
-                }
-            }
-        }
-
-        listenerTasks.append(task)
-    }
 }

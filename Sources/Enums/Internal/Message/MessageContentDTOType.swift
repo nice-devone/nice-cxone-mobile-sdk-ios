@@ -31,6 +31,8 @@ enum MessageContentDTOType: Equatable {
     
     case inactivityPopup(MessageInactivityPopupDTO)
     
+    case satisfactionSurvey(MessageSatisfactionSurveyDTO)
+    
     case postback(MessagePostbackDTO)
     
     case unknown(fallbackText: String?)
@@ -51,6 +53,8 @@ enum MessageContentDTOType: Equatable {
             return .timePicker
         case .inactivityPopup:
             return .inactivityPopup
+        case .satisfactionSurvey:
+            return .satisfactionSurvey
         case .postback:
             return .postback
         case .unknown:
@@ -109,10 +113,13 @@ extension MessageContentDTOType: Codable {
         case .plugin:
             let plugin = try container.decode(MessagePluginDTO.self, forKey: .payload)
             
-            if case .inactivityPopup(let entity) = plugin.type {
+            switch plugin.type {
+            case .inactivityPopup(let entity):
                 self = .inactivityPopup(entity)
-            } else {
-                // Only "INACITIVITY_POPUP" plugin is supported, other plugins are treated as unknown
+            case .satisfactionSurvey(let entity):
+                self = .satisfactionSurvey(entity)
+            case .unknown:
+                // Only "INACTIVITY_POPUP" and "SATISFACTION_SURVEY" plugins are supported, other plugins are treated as unknown
                 self = .unknown(fallbackText: try Self.getFallbackForUnsupportedMessage(from: container))
             }
         case .inactivityPopup:
@@ -153,6 +160,13 @@ extension MessageContentDTOType: Codable {
             try container.encode(MessagePluginDTO(type: .inactivityPopup(popup)), forKey: .payload)
             #else
                 LogManager.warning("Encoding of inactivity popup message type is not supported.")
+            #endif
+        case .satisfactionSurvey(let survey):
+            #if DEBUG
+            try container.encode(ElementType.plugin.rawValue, forKey: .type)
+            try container.encode(MessagePluginDTO(type: .satisfactionSurvey(survey)), forKey: .payload)
+            #else
+                LogManager.warning("Encoding of satisfaction survey message type is not supported.")
             #endif
         case .postback:
             LogManager.warning("Encoding of postback message type is not supported.")

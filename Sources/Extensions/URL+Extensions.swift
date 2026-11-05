@@ -62,4 +62,11 @@ internal extension URL {
 
         return components.string ?? absoluteString
     }
+
+    // MARK: - Endpoints
+
+    /// The channel configuration URL for the given brand and channel, relative to the chat server URL.
+    func channelUrl(brandId: Int, channelId: String) -> URL? {
+        self / "1.0" / "brand" / brandId / "channel" / channelId
+    }
 }

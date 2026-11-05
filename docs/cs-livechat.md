@@ -1,6 +1,6 @@
 # Case Study: Live Chat
 
-> **Quick Start**: To add live chat to your app using the UI module, call `prepare()` after user authentication, then use `ChatCoordinator.start()` for UIKit or `ChatCoordinator.content()` for SwiftUI when the user wants to chat. The UI module handles everything else automatically.
+> **Quick Start**: To add live chat to your app using the UI module, set the customer identity and call `prepare()` after user authentication, then use `ChatCoordinator.content(threadId:presentModally:onFinish:)` when the user wants to chat — embed the returned view in SwiftUI, or host it in a `UIHostingController` for UIKit. The UI module handles everything else automatically.
 
 ## What is Live Chat?
 
@@ -19,23 +19,23 @@ The UI module provides a complete, ready-to-use chat interface with all function
 
 ### Step 1: Prepare the SDK
 
-Call this method after user authentication:
+Call these methods after user authentication. The customer identity can only be set while the SDK is in the `.initial` state, so set it **before** `prepare()` — calling `customer.set(customer:)` afterwards throws `CXoneChatError.illegalChatState`:
 
 ```swift
-// Call early in your app lifecycle (e.g., after login)
-try await chatProvider.connection.prepare(
-    environment: yourEnvironment, 
-    brandId: yourBrandId, 
-    channelId: yourChannelId
-)
-
-// Set user identity if available
+// Set user identity if available — must happen before prepare()
 try chatProvider.customer.set(
     customer: CustomerIdentity(
         id: userProfile.id,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName
     )
+)
+
+// Call early in your app lifecycle (e.g., after login)
+try await chatProvider.connection.prepare(
+    environment: yourEnvironment, 
+    brandId: yourBrandId, 
+    channelId: yourChannelId
 )
 ```
 
@@ -47,18 +47,20 @@ The UI module supports both UIKit and SwiftUI integration. Choose the approach t
 
 ```swift
 // Create a coordinator (can be stored as a property)
-let chatCoordinator = ChatCoordinator()
+let chatCoordinator = ChatCoordinator(chatProvider: chatProvider)
 
-// UIKit integration - present the chat UI from a view controller
+// UIKit integration - host the chat UI in a UIHostingController from a view controller
 func showChatUI() {
-    chatCoordinator.start(
+    let content = chatCoordinator.content(
         threadId: nil,  // For a new conversation
-        in: navigationController,       // Your UINavigationController
-        presentModally: true, 
-        onFinish: {
+        presentModally: true,
+        onFinish: { [weak self] in
             // Handle chat completion
+            self?.dismiss(animated: true)
         }
     )
+
+    present(UIHostingController(rootView: content), animated: true)
 }
 ```
 
@@ -67,8 +69,8 @@ func showChatUI() {
 ```swift
 // In your SwiftUI view
 struct ContentView: View {
-    // Create a coordinator
-    let chatCoordinator = ChatCoordinator()
+    // Create a coordinator (or receive one created with your `chatProvider`)
+    let chatCoordinator: ChatCoordinator
     
     // State to control sheet presentation
     @State private var showingChat = false
@@ -102,7 +104,7 @@ When users log in or out of your app, you need to manage the SDK state:
 chatProvider.signOut()
 
 // When a different user logs in:
-// Update customer identity before prepare() - no need to sign out
+// signOut() returns the SDK to `.initial`, so the new identity can be set before prepare()
 try chatProvider.customer.set(customer: CustomerIdentity(
     id: newUserProfile.id,
     firstName: newUserProfile.firstName,
@@ -115,7 +117,27 @@ try await chatProvider.connection.prepare(
 )
 ```
 
-> **Note**: `signOut()` is intended for changing environments and should not be used in production. For switching between users, simply update the customer identity before calling `prepare()`.
+> **Note**: `signOut()` disconnects, purges the SDK's persisted data and in-memory session state, and returns `state` to `.initial` — the device token and any listener registered with `setTokenDelegateListener(_:)` are kept. The instance stays reusable: set the next customer's identity and call `prepare()` again. The customer identity cannot be changed on an already prepared session, so sign out before switching users.
+
+## Queue Position and Contact Handler
+
+On a live chat channel, a `ChatThread` reports where the customer stands while waiting for an agent:
+
+- `positionInQueue` — the position in the queue. It is `nil` once an agent is assigned or the thread is closed, including when a thread is recovered with an agent already assigned.
+- `contactHandler` — the party currently handling the contact: `.cxone` (CXone routing — the contact is queued for, or assigned to, a human agent), `.cognigy` (an automated bot), or `.unknown` (a handler this SDK version does not recognize). It is `nil` on channels where the platform reports no handler.
+
+While `contactHandler` is anything other than `.cxone`, the customer is not queued, so ignore `positionInQueue` until the contact is handed over to CXone routing. Treat both `.cognigy` and `.unknown` as "not handled by CXone":
+
+```swift
+case .threadUpdated(let thread):
+    if thread.contactHandler == nil || thread.contactHandler == .cxone, let position = thread.positionInQueue {
+        showQueuePosition(position)
+    } else {
+        hideQueuePosition()
+    }
+```
+
+The UI module already applies this rule: its position-in-queue view is not shown while a bot handles the conversation.
 
 ## Sample Implementation
 

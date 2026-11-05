@@ -64,3 +64,23 @@ extension AccessTokenDTO: Codable {
         try container.encode(createdDate, forKey: .createdDate)
     }
 }
+
+// MARK: - Methods
+
+extension AccessTokenDTO {
+
+    /// Returns a copy of this token with a different `refreshToken` value.
+    func copy(refreshToken: String?) -> AccessTokenDTO {
+        AccessTokenDTO(value: self.value, refreshToken: refreshToken, expiresIn: self.expiresIn, createdDate: self.createdDate)
+    }
+
+    /// Merges a freshly-obtained access token with the previously cached one, preserving `cached`'s
+    /// `refreshToken` when `fresh` omits it.
+    ///
+    /// A refresh-grant response's `refresh_token` is optional per RFC 6749 §6 — a backend that doesn't
+    /// rotate refresh tokens simply omits it and expects the client to keep using the one it already has.
+    /// Replacing it wholesale with `fresh` in that case would silently discard a still-valid refresh token.
+    static func merging(cached: AccessTokenDTO?, fresh: AccessTokenDTO) -> AccessTokenDTO {
+        fresh.refreshToken == nil ? fresh.copy(refreshToken: cached?.refreshToken) : fresh
+    }
+}

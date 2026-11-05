@@ -25,4 +25,19 @@ public enum ProactiveActionType: Sendable {
     ///
     /// - Parameter inactivityPopup: The `InactivityPopup` instance associated with the inactivity event.
     case inactivityPopup(InactivityPopup)
+
+    /// Delivers a satisfaction survey received from the chat.
+    ///
+    /// The survey is excluded from the chat transcript. Use its prompt and URL to present the survey in your application.
+    ///
+    /// The URL is supplied by the backend and is not validated or sanitised by the SDK. When loading it in a web view,
+    /// verify that it uses `https` and restrict navigation to the survey origin.
+    ///
+    /// A survey that arrives while the application is not connected is delivered when the thread is next recovered,
+    /// and only once — the SDK records delivery on this device when it emits the event and does not emit it again for
+    /// that thread. Present the survey when you receive it: there is no second delivery, and the SDK cannot detect
+    /// that your application was unable to present it.
+    ///
+    /// - Parameter satisfactionSurvey: The `SatisfactionSurvey` received from the chat.
+    case satisfactionSurvey(SatisfactionSurvey)
 }

@@ -19,7 +19,6 @@ import Mockable
 @Mockable
 protocol ConnectionContext: AnyObject, Sendable {
     
-    // periphery:ignore - false positive
     var keychainService: any KeychainStorage { get }
     
     var userDefaultsService: UserDefaultsService { get }
@@ -78,6 +77,14 @@ protocol ConnectionContext: AnyObject, Sendable {
     
     var lastPageViewed: PageViewEventDTO? { get set }
     
+    /// Identifies the current session; incremented every time ``clear()`` runs.
+    ///
+    /// A lifecycle call that spans an `await` (preparing the SDK, connecting the socket) captures this
+    /// value before waiting and compares it afterward. A mismatch means `clear()` ran while the call was
+    /// suspended — i.e. sign-out happened mid-flight — so the call must abandon its remaining work rather
+    /// than resurrect state onto the session that just replaced it.
+    var sessionGeneration: Int { get }
+
     func clear()
 }
 
@@ -134,7 +141,32 @@ extension ConnectionContext {
     /// explicit-PKCE access token, or an expiring implicit connection token. Owning the policy here keeps the
     /// socket layer from accreting auth knowledge and prevents the two triggers from drifting apart.
     var needsProactiveTokenRefresh: Bool {
-        transactionToken?.accessToken?.isExpired == true || isImplicitConnectionTokenExpiring
+        isExplicitAccessTokenExpired || isImplicitConnectionTokenExpiring
+    }
+
+    /// Whether the explicit-PKCE access token nested in the stored ``transactionToken`` has expired.
+    var isExplicitAccessTokenExpired: Bool {
+        transactionToken?.accessToken?.isExpired == true
+    }
+
+    /// Whether the stored explicit-PKCE access token carries a refresh token that can recover the session.
+    var hasStoredRefreshToken: Bool {
+        transactionToken?.accessToken?.refreshToken != nil
+    }
+
+    /// The token attached to outbound requests: the integrator-provided ``connectionToken`` (implicit flow),
+    /// falling back to the stored explicit-PKCE access token. Empty values are treated as absent.
+    var effectiveAccessToken: String? {
+        connectionToken?.nilIfEmpty() ?? transactionToken?.accessToken?.value.nilIfEmpty()
+    }
+
+    /// Whether this is an explicit-PKCE session reconnecting after its initial token exchange already
+    /// succeeded once — signaled by a stored ``transactionToken`` existing at all, even if it has since
+    /// expired. Distinguishes "first sign-in" (must run the `authorization_code` exchange) from "case 2/3
+    /// reconnect" (per DE-172253's token-expiry model): reconnect must never replay that single-use code,
+    /// so it routes through the implicit-endpoint mechanism instead, reusing the stored access token.
+    var isExplicitOAuthReconnect: Bool {
+        authenticationType == .oAuthExplicit && transactionToken != nil
     }
 
     /// The effective authentication mode at runtime, combining channel configuration with current credentials.
@@ -158,5 +190,10 @@ extension ConnectionContext {
         } else {
             return .singlethread
         }
+    }
+
+    /// The ``ChatEvent/chatUpdated(state:mode:)`` event describing the current chat state and mode.
+    var chatUpdatedEvent: ChatEvent {
+        .chatUpdated(state: chatState, mode: chatMode)
     }
 }

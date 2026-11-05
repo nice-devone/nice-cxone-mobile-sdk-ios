@@ -25,6 +25,6 @@ public enum TokenRequestReason: Sendable, Equatable {
     /// The current token expired (or is about to) — the SDK requests a fresh one before it becomes unusable.
     case tokenExpired
 
-    /// The backend rejected the token at connect time (HTTP 401); a fresh one is required to establish the session.
+    /// The backend rejected the token at connect time (HTTP 400); a fresh one is required to establish the session.
     case tokenInvalid
 }

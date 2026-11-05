@@ -68,7 +68,7 @@ extension UserDefaultsServiceImpl: UserDefaultsService {
         }
         
         do {
-            return try JSONDecoder().decode(T.self, from: data)
+            return try decoder.decode(T.self, from: data)
         } catch {
             return nil
         }

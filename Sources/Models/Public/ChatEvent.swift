@@ -87,12 +87,14 @@ public enum ChatEvent: Sendable {
     /// stream; subscribers continue receiving subsequent events.
     case error(Error)
 
-    /// A backend-triggered proactive action arrived — currently an inactivity popup that
-    /// asks whether the user wants to keep the conversation open.
+    /// A backend-triggered proactive action arrived, such as an inactivity popup or satisfaction survey.
     ///
-    /// Present the popup using the data in the associated value, then send the user's
-    /// response back via ``ProactiveActionProvider/trigger(_:)``. The UI module handles
-    /// this automatically; consumers building custom UI need to render the popup
-    /// themselves — see `cs-inactivity-popup.md`.
+    /// Switch on the associated value to present the action. Respond to an inactivity popup through
+    /// ``ProactiveActionProvider/trigger(_:)``; present a satisfaction survey using its prompt and URL
+    /// over the conversation its ``SatisfactionSurvey/threadId`` identifies — in multithread channels, hold it
+    /// until the customer views that thread rather than presenting it over another one.
+    /// CXoneChatUI currently handles both inactivity popups and satisfaction surveys automatically.
+    /// Consumers building a custom UI on `CXoneChatSDK` directly must present both themselves.
+    /// See `cs-inactivity-popup.md` for the inactivity-popup flow and `cs-satisfaction-survey.md` for the survey flow.
     case proactiveActionReceived(ProactiveActionType)
 }

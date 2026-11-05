@@ -29,6 +29,9 @@ protocol SocketService: AnyObject, Sendable {
 
     var listenerTasks: [Task<Void, Never>] { get set }
 
+    /// Whether the implementation currently holds a WebSocket.
+    var hasSocket: Bool { get }
+
     /// Opens a new WebSocket connection using the specified URL.
     ///
     /// - Parameter socketURL: The URL for the location of the WebSocket.
@@ -63,5 +66,22 @@ extension SocketService {
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     func send(data: Data, shouldCheck: Bool = true) async throws {
         try await send(data: data, shouldCheck: shouldCheck)
+    }
+
+    /// Whether the socket counts as connected: chat is available and a WebSocket exists.
+    var isConnected: Bool {
+        connectionContext.chatState.isChatAvailable && hasSocket
+    }
+
+    /// Routes an operation error received from the socket: errors the integrator needs to know about are
+    /// broadcast as ``ChatEvent/error(_:)``, the rest are handled by the services owning the failed operation.
+    func handleOperationError(_ error: OperationError) {
+        switch error.errorCode {
+        case .inconsistentData, .unknown:
+            broadcaster.send(.error(error))
+        case .recoveringThreadFailed, .recoveringLivechatFailed, .sendingTranscriptFailed:
+            // these are handled elsewhere
+            break
+        }
     }
 }

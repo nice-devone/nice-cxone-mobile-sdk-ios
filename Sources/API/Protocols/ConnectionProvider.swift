@@ -25,6 +25,12 @@ public protocol ConnectionProvider: Sendable {
     
     /// Makes an HTTP request to get the channel configuration details.
     ///
+    /// The most recently fetched configuration is cached in memory for five minutes, so repeated
+    /// calls for the same brand, channel and environment usually resolve without a network request,
+    /// and a configuration changed in the backend can take up to that long to be reflected. Only one
+    /// configuration is held at a time: a call targeting a different brand, channel or environment
+    /// replaces it rather than being cached alongside it. Signing out clears the cache.
+    ///
     /// - Parameters:
     ///   - environment: The CXone ``Environment`` used to connect. Relates to your location.
     ///   - brandId: The unique id of the brand for which to open the connection.
@@ -32,32 +38,37 @@ public protocol ConnectionProvider: Sendable {
     ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `DecodingError.dataCorrupted` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: `DecodingError.typeMismatch` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: `DecodingError.keyNotFound` if the response does not have an entry for the given key.
+    /// - Throws: `DecodingError.valueNotFound` if a response has a null value for the given key.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     ///
     /// - Returns: Channel configuration details
     func getChannelConfiguration(environment: Environment, brandId: Int, channelId: String) async throws -> ChannelConfiguration
     
     /// Makes an HTTP request to get the channel configuration details.
     ///
+    /// The most recently fetched configuration is cached in memory for five minutes, so repeated
+    /// calls for the same brand, channel and chat URL usually resolve without a network request, and
+    /// a configuration changed in the backend can take up to that long to be reflected. Only one
+    /// configuration is held at a time: a call targeting a different brand, channel or chat URL
+    /// replaces it rather than being cached alongside it. Signing out clears the cache.
+    ///
     /// - Parameters:
     ///   - chatURL: The chat URL for the custom environment.
     ///   - brandId: The unique id of the brand for which to open the connection.
     ///   - channelId: The unique id of the channel for the connection.
-    ///   - completion: Completion handler to be called when the request is successful or fails.
     ///
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if provided parameters do not create a valid URL.
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `DecodingError.dataCorrupted` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: `DecodingError.typeMismatch` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: `DecodingError.keyNotFound` if the response does not have an entry for the given key.
+    /// - Throws: `DecodingError.valueNotFound` if a response has a null value for the given key.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     ///
     /// - Returns: Channel configuration details
     func getChannelConfiguration(chatURL: String, brandId: Int, channelId: String) async throws -> ChannelConfiguration
@@ -74,12 +85,12 @@ public protocol ConnectionProvider: Sendable {
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `DecodingError.dataCorrupted` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: `DecodingError.typeMismatch` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: `DecodingError.keyNotFound` if the response does not have an entry for the given key.
+    /// - Throws: `DecodingError.valueNotFound` if a response has a null value for the given key.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
     func prepare(environment: Environment, brandId: Int, channelId: String) async throws
@@ -99,12 +110,12 @@ public protocol ConnectionProvider: Sendable {
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if connection`url` is not in correct format.
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
-    /// - Throws: ``DecodingError.dataCorrupted`` an indication that the data is corrupted or otherwise invalid.
-    /// - Throws: ``DecodingError.typeMismatch`` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
-    /// - Throws: ``DecodingError.keyNotFound`` if the response does not have an entry for the given key.
-    /// - Throws: ``DecodingError.valueNotFound`` if a response has a null value for the given key.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `DecodingError.dataCorrupted` an indication that the data is corrupted or otherwise invalid.
+    /// - Throws: `DecodingError.typeMismatch` if the encountered stored value is not a JSON object or otherwise cannot be converted to the required type.
+    /// - Throws: `DecodingError.keyNotFound` if the response does not have an entry for the given key.
+    /// - Throws: `DecodingError.valueNotFound` if a response has a null value for the given key.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: `EncodingError.invalidValue` if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is `.throw`.
     /// - Throws: An error if any value throws an error during encoding.
     func prepare(chatURL: String, socketURL: String, loggerURL: String, brandId: Int, channelId: String, tokenURL: String?) async throws
@@ -115,14 +126,16 @@ public protocol ConnectionProvider: Sendable {
     /// This method establishes the web socket connection. Once connected, subscribe to ``ChatProvider/events()``
     /// to receive ``ChatEvent`` values (thread updates, agent typing, proactive actions, errors, etc.).
     ///
-    /// - Precondition: Either ``prepare(environment:brandId:channelId:)`` or ``prepare(chatURL:socketURL:brandId:channelId:)`` method
+    /// - Precondition: Either ``prepare(environment:brandId:channelId:)`` or ``prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)`` method
     /// must be called before this method.
     ///
     /// - Throws: ``CXoneChatError/illegalChatState`` if the SDK is not in the required state to trigger the method.
-    /// - Throws: ``CXoneChatError/featureUnavailable(_:)`` if the method is triggered for OAuth explicit authentication type.
+    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` if the transaction-token exchange fails.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingAccessToken`` if the customer was successfully authorized, but an access token wasn't returned.
     /// - Throws: ``CXoneChatError/invalidAccessToken`` if the OAuth token was rejected or is missing.
+    /// - Throws: ``CXoneChatError/invalidRefreshToken(_:)`` if an explicit-PKCE reconnect's refresh-grant recovery
+    ///   fails and no further automatic recovery is possible — the app must perform a new authorization flow.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the socket endpoint URL has not been set properly
     /// - Throws: ``CXoneChatError/channelConfigFailure`` if the SDK could not prepare URL for URLRequest
@@ -130,9 +143,10 @@ public protocol ConnectionProvider: Sendable {
     /// - Throws: ``CXoneChatError/missingVisitorId`` if visitor ID is not set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to build the URL.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if unable to get cached transaction token.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: ``CXoneChatError/missingParameter(_:)`` if `setAuthorizationCode(_:)` or `setCodeVerifier(_:)` was not called for the explicit OAuth flow.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     func connect() async throws
 
     /// Disconnects from the CXone service and keeps the customer signed in.
@@ -148,7 +162,7 @@ public protocol ConnectionProvider: Sendable {
     /// - Throws: ``CXoneChatError/customerVisitorAssociationFailure`` if the customer could not be associated with a visitor.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` The SDK instance could not get customer identity possibly because it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: An error if any value throws an error during encoding.
     func executeTrigger(_ triggerId: String) async throws
 }

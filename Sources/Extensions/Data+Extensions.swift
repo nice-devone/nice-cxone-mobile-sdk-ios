@@ -36,9 +36,9 @@ extension Data {
         } catch {
             if let anotherError = try? JSONDecoder().decode(ServerError.self, from: self) {
                 throw anotherError
+            } else {
+                throw error
             }
-
-            throw error
         }
     }
 }

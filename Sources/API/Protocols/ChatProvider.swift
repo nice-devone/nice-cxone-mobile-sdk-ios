@@ -51,7 +51,7 @@ public protocol ChatProvider: AnyObject, Sendable {
     /// Use this provider to send user interaction results (e.g., "Continue", "Close", etc.) for proactive UI elements back to the backend.
     var proactiveAction: ProactiveActionProvider { get }
     
-    /// Returns a new ``AsyncStream`` of all SDK events.
+    /// Returns a new `AsyncStream` of all SDK events.
     ///
     /// Each call produces an **independent** stream — multiple components in your app can
     /// each subscribe and all receive every event. There is no fan-in or de-duplication
@@ -83,12 +83,19 @@ public protocol ChatProvider: AnyObject, Sendable {
     ///   `for await` body lightweight or hand off heavy work via `Task { }`.
     func events() -> AsyncStream<ChatEvent>
 
-    /// Signs the customer out, disconnects from the CXone service, and clears persistent state.
+    /// Signs the customer out, disconnects from the CXone service, and clears the session.
     ///
     /// Calling this method:
     /// 1. Disconnects the WebSocket cleanly (does **not** emit ``ChatEvent/unexpectedDisconnect``).
     /// 2. Purges the SDK's keychain entries and UserDefaults state.
-    /// 3. Finishes every active ``events()`` stream — observers see their `for await` loop exit normally.
+    /// 3. Discards the in-memory session state — the loaded threads and their messages, the customer
+    ///    and per-contact custom fields, the channel configuration, and the brand, channel and
+    ///    environment the session was prepared against. ``state`` returns to ``ChatState/initial``.
+    /// 4. Finishes every active ``events()`` stream — observers see their `for await` loop exit normally.
+    ///
+    /// The device token and any listener registered with
+    /// ``CustomerProvider/setTokenDelegateListener(_:)`` are deliberately **kept**: both belong to the
+    /// application rather than to the chat session, so they stay valid for the next one.
     ///
     /// The instance remains alive and **reusable** after `signOut()`. You can call
     /// ``ConnectionProvider/prepare(environment:brandId:channelId:)`` and

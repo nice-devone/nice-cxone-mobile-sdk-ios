@@ -123,6 +123,7 @@ extension Data {
                 case .threadRecovered:                return try decoder.decode(ThreadRecoveredEventDTO.self, from: self)
                 case .messageReadChanged:             return try decoder.decode(MessageReadByAgentEventDTO.self, from: self)
                 case .contactInboxAssigneeChanged:    return try decoder.decode(ContactInboxAssigneeChangedEventDTO.self, from: self)
+                case .contactHandlerChanged:          return try decoder.decode(ContactHandlerChangedEventDTO.self, from: self)
                 case .threadListFetched:              return generic
                 case .moreMessagesLoaded:             return try decoder.decode(MoreMessagesLoadedEventDTO.self, from: self)
                 case .threadArchived:                 return generic

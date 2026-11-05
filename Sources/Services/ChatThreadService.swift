@@ -105,7 +105,7 @@ extension ChatThreadService: ChatThreadProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.``
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func loadMoreMessages() async throws {
         LogManager.trace("Loading more messages.")
         
@@ -118,7 +118,7 @@ extension ChatThreadService: ChatThreadProvider {
             throw CXoneChatError.invalidOldestDate
         }
         
-        let thread = ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)
+        let thread = threadDTO
         let event = try eventsService.create(
             event: .loadMoreMessages,
             with: .loadMoreMessageData(LoadMoreMessagesEventDataDTO(scrollToken: chatThread.scrollToken, thread: thread, oldestMessageDatetime: oldestDate))
@@ -135,23 +135,23 @@ extension ChatThreadService: ChatThreadProvider {
         processMoreMessagesLoaded(response)
     }
     
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat thread is already closed.
     /// - Throws: ``CXoneChatError/attachmentError`` if the provided attachment was unable to be sent.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @MainActor
@@ -165,13 +165,13 @@ extension ChatThreadService: ChatThreadProvider {
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func updateName(_ name: String) async throws {
         LogManager.trace("Updating the name for a thread")
 
         try socketService.checkForConnection()
 
-        guard connectionContext.channelConfig.settings.hasMultipleThreadsPerEndUser else {
+        guard connectionContext.chatMode == .multithread else {
             throw CXoneChatError.unsupportedChannelConfig
         }
         guard chatThread.state != .closed else {
@@ -196,20 +196,20 @@ extension ChatThreadService: ChatThreadProvider {
 
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat thread is already closed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``OperationError`` if there is any operaton error received from the backend.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: An error if the backend rejects the archive request.
     func archive() async throws {
         LogManager.trace("Archiving thread")
         
         try socketService.checkForConnection()
         
-        guard connectionContext.channelConfig.settings.hasMultipleThreadsPerEndUser else {
+        guard connectionContext.chatMode == .multithread else {
             throw CXoneChatError.unsupportedChannelConfig
         }
         guard chatThread.state != .closed else {
@@ -221,7 +221,7 @@ extension ChatThreadService: ChatThreadProvider {
             
             let event = try eventsService.create(
                 event: .archiveThread,
-                with: .archiveThreadData(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+                with: .archiveThreadData(ThreadEventDataDTO(thread: threadDTO))
             )
             
             try await eventBroadcast.waitFor(
@@ -244,11 +244,11 @@ extension ChatThreadService: ChatThreadProvider {
 
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the channel is not configured for live chat.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if the `contactId` has not been set properly or it was unable to unwrap it as a required type.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func endContact() async throws {
         LogManager.trace("Sending EndContactEvent")
         
@@ -278,7 +278,7 @@ extension ChatThreadService: ChatThreadProvider {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func markRead() async throws {
         LogManager.trace("Marking thread as read")
         
@@ -294,7 +294,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             .messageSeenByCustomer,
-            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+            with: .messageSeenByCustomer(ThreadEventDataDTO(thread: threadDTO))
         )
         
         try await socketService.send(data: data)
@@ -305,7 +305,7 @@ extension ChatThreadService: ChatThreadProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func reportTypingStart(_ didStart: Bool) async throws {
         LogManager.trace("Reporting user start typing")
 
@@ -317,7 +317,7 @@ extension ChatThreadService: ChatThreadProvider {
         
         let data = try eventsService.create(
             didStart ? .senderTypingStarted : .senderTypingEnded,
-            with: .customerTypingData(CustomerTypingEventDataDTO(thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)))
+            with: .customerTypingData(CustomerTypingEventDataDTO(thread: threadDTO))
         )
         
         try await socketService.send(data: data)
@@ -376,23 +376,29 @@ extension ChatThreadService: ChatThreadProvider {
 
 extension ChatThreadService {
     
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat thread is already closed.
     /// - Throws: ``CXoneChatError/attachmentError`` if the provided attachment was unable to be sent.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/eventTimeout`` if the SDK did not receive a response within the specified time.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: ``CXoneChatError/invalidAccessToken`` if the credential needs a refresh but nothing is available to
+    ///     perform it — no registered token delegate listener for the implicit flow, or no socket delegate at all.
+    /// - Throws: ``CXoneChatError/invalidRefreshToken(_:)`` if the explicit-PKCE credential was expired and the
+    ///     refresh grant to renew it was rejected — the app must re-authenticate before it can send again.
+    /// - Throws: ``CXoneChatError/transactionTokenRequestFailed(statusCode:)`` if the explicit-PKCE credential was
+    ///     expired and renewing it failed for any other reason.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @MainActor
@@ -412,7 +418,8 @@ extension ChatThreadService {
 
         try socketService.checkForConnection()
 
-        // Ensure the implicit-flow JWT is fresh BEFORE it is embedded into the outbound payload below.
+        // Ensure the credential (implicit JWT or explicit transaction token) is fresh BEFORE it is embedded
+        // into the outbound payload below.
         try await refreshConnectionTokenIfNeeded()
 
         let contactFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
@@ -428,14 +435,14 @@ extension ChatThreadService {
         }
         
         let messageData = SendMessageEventDataDTO(
-            thread: ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name),
+            thread: threadDTO,
             contentType: .text(MessagePayloadDTO(text: message.text, postback: message.postback, parameters: parameters)),
             idOnExternalPlatform: LowercaseUUID().uuidString,
             customer: CustomerCustomFieldsDataDTO(customFields: customerFields ?? []),
             contact: ContactCustomFieldsDataDTO(customFields: contactFields ?? []),
             attachments: try await message.attachments.map(with: connectionContext),
             deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-            token: connectionContext.connectionToken ?? connectionContext.transactionToken?.accessToken?.value
+            token: connectionContext.effectiveAccessToken
         )
         
         // Ignore the message if it contains specific parameter
@@ -460,8 +467,8 @@ extension ChatThreadService {
             try await eventBroadcast.waitFor(
                 GenericEventDTO.self,
                 origin: try eventsService.create(event: .sendMessage, with: .sendMessageData(messageData)),
-                // The JWT was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
-                // `messageData`; skip the choke-point re-check so a single refresh runs per event.
+                // The credential was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded
+                // into `messageData`; skip the choke-point re-check so a single refresh runs per event.
                 checkTokenExpiration: false,
                 socketService: socketService,
                 eventsService: eventsService
@@ -551,6 +558,10 @@ extension ChatThreadService {
             LogManager.trace("Ignoring message – content is inactivity popup")
             
             return true
+        case .satisfactionSurvey:
+            LogManager.trace("Ignoring message – content is satisfaction survey")
+            
+            return true
         case .text(let payload):
             if let parsedWelcomeMessage, payload.text == parsedWelcomeMessage {
                 LogManager.trace("Ignoring message – content is welcome message")
@@ -580,22 +591,21 @@ extension ChatThreadService {
         }
     }
     
-    /// - Throws: ``CXoneChatError/illegalThreadState`` if the chat thread is not in the correct state.
+    /// - Throws: ``CXoneChatError/illegalChatState`` if the chat thread is already closed.
     /// - Throws: ``CXoneChatError/attachmentError`` if the provided attachment was unable to be sent.
     /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
-    ///     or  when the Data object cannot be successfully converted to a valid UTF-8 string
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     func sendBeginLiveChatConversation() async throws {
@@ -648,39 +658,58 @@ extension ChatThreadService: EventReceiver {
 
         broadcaster.send(.proactiveActionReceived(.inactivityPopup(inactivityPopup)))
     }
+
+    /// - Throws: ``CXoneChatError/invalidData`` if the message content type is not `.satisfactionSurvey`.
+    func processSatisfactionSurvey(_ message: MessageDTO) throws {
+        LogManager.trace("Processing satisfaction survey message for thread: \(chatThread.id)")
+
+        let satisfactionSurvey = try SatisfactionSurveyMapper.map(from: message, threadId: chatThread.id)
+
+        broadcaster.send(.proactiveActionReceived(.satisfactionSurvey(satisfactionSurvey)))
+    }
 }
 
 // MARK: - Private methods
 
 private extension ChatThreadService {
 
-    /// Refreshes an expiring implicit-flow connection token before it is embedded into an outbound payload.
+    /// The reference to the current thread attached to outbound events.
+    var threadDTO: ThreadDTO {
+        ThreadDTO(idOnExternalPlatform: chatThread.id, threadName: chatThread.name)
+    }
+
+    /// Refreshes an expiring credential — an implicit-flow connection token or an explicit-flow OAuth access
+    /// token — before it is embedded into an outbound payload.
     ///
-    /// No-op for non-implicit flows or when the token isn't near expiry. Routes through the socket delegate's
-    /// single-flighted refresh so concurrent sends coalesce. Throws ``CXoneChatError/invalidAccessToken`` when
-    /// the implicit token is expiring but no token delegate listener is registered to refresh it.
+    /// No-op when no credential is near expiry. Routes through the socket delegate's single-flighted
+    /// `refreshToken()`, which already branches on ``ConnectionContext/authenticationType`` (implicit vs.
+    /// explicit PKCE), so this helper owns only the "is a refresh due?" trigger, not the refresh itself.
+    /// Throws ``CXoneChatError/invalidAccessToken`` when the implicit token is expiring but no token delegate
+    /// listener is registered to refresh it, or when no socket delegate is available at all.
     func refreshConnectionTokenIfNeeded() async throws {
-        // TODO: DE-173276 — Explicit PKCE gap: this helper is implicit-only. Message sends bypass the
-        // SocketServiceImpl choke point (`shouldCheck: false` / `checkTokenExpiration: false`), which is the
-        // only place an expired explicit transaction token (`needsProactiveTokenRefresh`) is refreshed. That
-        // trigger is dormant while explicit OAuth is blocked (DE-164006); when explicit is unblocked, refresh
-        // the explicit token here too (or stop passing `false` for the explicit flow), or message sends won't
-        // refresh it.
-        guard connectionContext.isImplicitConnectionTokenExpiring else {
+        guard connectionContext.needsProactiveTokenRefresh else {
             return
         }
-        guard connectionContext.tokenDelegateListener != nil else {
-            LogManager.warning("Implicit OAuth connection token is expiring but no token delegate listener is registered")
 
-            throw CXoneChatError.invalidAccessToken
+        if connectionContext.isImplicitConnectionTokenExpiring {
+            guard connectionContext.tokenDelegateListener != nil else {
+                LogManager.warning("Implicit OAuth connection token is expiring but no token delegate listener is registered")
+
+                throw CXoneChatError.invalidAccessToken
+            }
         }
+
         guard let socketDelegate = socketService.delegate else {
-            LogManager.warning("Implicit OAuth connection token is expiring but the socket delegate is unavailable to refresh it")
+            LogManager.warning("The credential is expiring but the socket delegate is unavailable to refresh it")
 
             throw CXoneChatError.invalidAccessToken
         }
 
-        LogManager.trace("Implicit OAuth: refreshing an expiring connection token before sending")
+        if connectionContext.isImplicitConnectionTokenExpiring {
+            LogManager.trace("Implicit OAuth: refreshing an expiring connection token before sending")
+        } else {
+            LogManager.trace("Explicit PKCE: refreshing an expired access token before sending")
+        }
 
         try await socketDelegate.refreshToken()
     }
@@ -689,7 +718,7 @@ private extension ChatThreadService {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     @MainActor
     func sendWelcomeMessageIfNeeded() async throws {
         guard let parsedWelcomeMessage,
@@ -704,7 +733,8 @@ private extension ChatThreadService {
 
         try socketService.checkForConnection()
 
-        // Ensure the implicit-flow JWT is fresh BEFORE it is embedded into the outbound payload below.
+        // Ensure the credential (implicit JWT or explicit transaction token) is fresh BEFORE it is embedded
+        // into the outbound payload below.
         try await refreshConnectionTokenIfNeeded()
 
         let customFields = contactCustomFieldsService?.contactFields[chatThread.id]?.convertValueToIdentifier(
@@ -722,13 +752,13 @@ private extension ChatThreadService {
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
-                token: connectionContext.connectionToken ?? connectionContext.transactionToken?.accessToken?.value
+                token: connectionContext.effectiveAccessToken
             )
         )
         
         let data = try eventsService.create(.sendOutbound, with: eventData)
 
-        // The JWT was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
+        // The credential was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
         // `eventData`; skip the choke-point re-check so a single refresh runs per event.
         try await socketService.send(data: data, shouldCheck: false)
     }
@@ -741,13 +771,12 @@ private extension [ContentDescriptor] {
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing.
     /// - Throws: ``CXoneChatError/attachmentError`` if the provided attachment was unable to be sent.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     func map(
@@ -773,7 +802,7 @@ private extension [ContentDescriptor] {
             
             let (data, response) = try await connectionContext.session.fetch(for: request, file: file, line: line)
 
-            guard let response = response as? HTTPURLResponse, (200 ... 299) ~= response.statusCode else {
+            guard let response = response as? HTTPURLResponse, response.isSuccess else {
                 throw CXoneChatError.serverError
             }
             
@@ -809,7 +838,6 @@ private extension [ContentDescriptor] {
 
 private extension ContentDescriptorSource {
     
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     func fetch() async throws -> Data {
         switch self {
@@ -818,9 +846,9 @@ private extension ContentDescriptorSource {
         case .url(let url):
             if url.isStoredInDocuments() {
                 return try Data(contentsOf: url)
+            } else {
+                return try await url.readSecureData()
             }
-            
-            return try await url.readSecureData()
         }
     }
 }
@@ -830,10 +858,9 @@ private extension ContentDescriptor {
     static let megabyte: Int32 = 1024 * 1024
     static let encoder = JSONEncoder()
     
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     func httpBody(fileRestrictions: FileRestrictionsDTO) async throws -> Data {
@@ -859,7 +886,7 @@ private extension ContentDescriptor {
 
 private extension String {
     
-    /// - Throws: ``CXoneChatError/noSuchFile`` if the provided attachment was unable to be sent.
+    /// - Throws: ``CXoneChatError/attachmentError`` if the MIME type of the attachment could not be resolved.
     func isTypeValid(allowedTypes: [String]) throws -> Bool {
         let allowedMimeTypes = allowedTypes.compactMap(Self.resolve)
         
@@ -892,7 +919,6 @@ private extension String {
 
 private extension URL {
 
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     func readSecureData() async throws -> Data {
         try accessSecurelyScopedResource { url in
@@ -906,10 +932,6 @@ private extension URL {
         }
         
         return absoluteString.starts(with: documentsURL.absoluteString)
-    }
-    
-    func channelUrl(brandId: Int, channelId: String) -> URL? {
-        self / "1.0" / "brand" / brandId / "channel" / channelId
     }
 }
 

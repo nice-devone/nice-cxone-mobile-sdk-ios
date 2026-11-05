@@ -13,10 +13,16 @@
 # FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
 #
 
-targets:
-- CXoneChatSDK
+report_exclude:
+- ../cxone-guide-utility/**
 skip_build: true
-index_store_path: DerivedData/Index.noindex/DataStore/
+# Periphery's defaults plus `**/checkouts/**`: CI clones packages with -clonedSourcePackagesDirPath,
+# which puts them under <dir>/checkouts/ instead of SourcePackages/checkouts/
+index_exclude:
+- "**/*?.build/**/*"
+- "**/SourcePackages/checkouts/**"
+- "**/checkouts/**"
+index_store_path: derivedData/Index.noindex/DataStore/
 verbose: false
 relative_results: true
 quiet: true

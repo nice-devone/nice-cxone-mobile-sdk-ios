@@ -37,7 +37,7 @@ final class EventBroadcast: Sendable {
     ///
     /// Receiving this event in ``waitFor`` causes the scanner task to throw
     /// ``CXoneChatError/invalidData`` immediately, without waiting for the stream
-    /// to be closed by ``AsyncStream/Continuation/finish()``.
+    /// to be closed by `AsyncStream.Continuation.finish()`.
     struct BroadcastInvalidatedEvent: ReceivedEvent {
         
         static var associatedEventType: EventType? { nil }

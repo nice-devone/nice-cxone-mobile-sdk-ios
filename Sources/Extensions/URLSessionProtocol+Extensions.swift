@@ -21,7 +21,7 @@ private let _apiErrorDecoder = JSONDecoder()
 extension URLSessionProtocol {
 
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
-    /// - Throws: ``URLError`` or other errors from the underlying network request.
+    /// - Throws: `URLError` or other errors from the underlying network request.
     @discardableResult
     func fetch(from url: URL, file: StaticString = #file, line: UInt = #line) async throws -> (Data, URLResponse) {
         let request = URLRequest(url: url, method: .get)
@@ -30,7 +30,7 @@ extension URLSessionProtocol {
     }
     
     /// - Throws: ``CXoneChatError/sdkVersionNotSupported`` if the SDK version is not supported by the server.
-    /// - Throws: ``URLError`` or other errors from the underlying network request.
+    /// - Throws: `URLError` or other errors from the underlying network request.
     @discardableResult
     func fetch(
         for request: URLRequest,

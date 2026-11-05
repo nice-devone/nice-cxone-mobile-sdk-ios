@@ -57,6 +57,9 @@ final class ChatThreadListService: Sendable {
     private var userDefaultsService: UserDefaultsService {
         connectionContext.userDefaultsService
     }
+    private var satisfactionSurveyDeliveryStore: SatisfactionSurveyDeliveryStore {
+        SatisfactionSurveyDeliveryStore(userDefaultsService: userDefaultsService)
+    }
 
     // MARK: - Protocol Properties
 
@@ -117,15 +120,15 @@ extension ChatThreadListService: ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @discardableResult
@@ -142,15 +145,15 @@ extension ChatThreadListService: ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     @MainActor
@@ -172,7 +175,7 @@ extension ChatThreadListService: ChatThreadListProvider {
         let thread = ChatThread(id: LowercaseUUID().uuidString, state: .pending)
         
         if !customFields.isEmpty {
-            let mappedCustomFields = customFields.map { CustomFieldDTO(ident: $0.key, value: $0.value, updatedAt: Date()) }
+            let mappedCustomFields = customFields.customFieldDTOs
             
             contactCustomFieldsService?.updateFields(mappedCustomFields, for: thread.id)
         }
@@ -191,7 +194,7 @@ extension ChatThreadListService: ChatThreadListProvider {
         connectionContext.chatState = .ready
         
         if connectionContext.chatMode != .liveChat {
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
         }
 
         // Thread has been successfully created, store its ID for faster recovering
@@ -216,7 +219,7 @@ extension ChatThreadListService: ChatThreadListProvider {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func load(with threadId: String?) async throws {
         try socketService.checkForConnection()
 
@@ -235,11 +238,7 @@ extension ChatThreadListService: ChatThreadListProvider {
     /// - Parameter threadId: The id of the thread whose provider is being requested.
     /// - Throws: ``CXoneChatError/invalidThread`` if no provider matches `threadId` in the current thread list.
     func provider(for threadId: String) throws -> any ChatThreadProvider {
-        guard let provider = threadProviders.first(where: { $0.chatThread.id == threadId }) else {
-            throw CXoneChatError.invalidThread
-        }
-
-        return provider
+        try chatThreadService(for: threadId)
     }
 }
 
@@ -252,7 +251,7 @@ extension ChatThreadListService {
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError/invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func handleForCurrentChatMode(_ mode: ChatMode) async throws {
         switch mode {
         case .singlethread, .liveChat:
@@ -267,7 +266,7 @@ extension ChatThreadListService {
     /// - Throws: ``CXoneChatError/unsupportedChannelConfig`` if the method being called is not supported with the current channel configuration.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func fetchThreadList() async throws {
         guard connectionContext.chatMode == .multithread else {
             throw CXoneChatError.unsupportedChannelConfig
@@ -292,7 +291,7 @@ extension ChatThreadListService {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func recoverThread(threadId: String?) async throws {
         LogManager.trace("Loading the a thread for the customer and gets messages")
 
@@ -304,7 +303,7 @@ extension ChatThreadListService {
             connectionContext.chatState = .ready
 
             broadcaster.send(.threadUpdated(thread))
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
             return
         }
 
@@ -368,7 +367,7 @@ extension ChatThreadListService {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func loadInfo(for threadId: String) async throws {
         guard let thread = threadProviders.getThread(with: threadId) else {
             throw CXoneChatError.invalidThread
@@ -418,6 +417,9 @@ extension ChatThreadListService: EventReceiver {
             try self?.processContactInboxAssigneeChangedEvent(event)
         }
         addListener { [weak self] event in
+            try self?.processContactHandlerChangedEvent(event)
+        }
+        addListener { [weak self] event in
             try self?.processCaseStatusChangedEvent(event)
         }
         addListener { [weak self] event in
@@ -458,7 +460,7 @@ extension ChatThreadListService {
         let data = event.postback.data
         let baseThread = threadProviders.getThread(with: data.thread.idOnExternalPlatform) ?? ChatThread(
             id: data.thread.idOnExternalPlatform,
-            state: data.thread.canAddMoreMessages ? .ready : .closed
+            state: data.thread.recoveredState
         )
         let finalThread = baseThread.merging(from: data)
         let service = createAndStoreProviderIfNeeded(for: baseThread)
@@ -467,14 +469,17 @@ extension ChatThreadListService {
         connectionContext.chatState = .ready
 
         broadcaster.send(.threadUpdated(finalThread))
-        broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+        broadcaster.send(connectionContext.chatUpdatedEvent)
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     func processLiveChatRecoveredEvent(_ event: LiveChatRecoveredDTO) throws {
         LogManager.trace("Processing thread recovered with identifier - \(String(describing: event.postback.data?.thread.idOnExternalPlatform))")
-        
-        guard let data = event.postback.data, data.contact.status != .closed else {
+
+        // A closed contact is normally discarded, which starts a new conversation and takes any undelivered Satisfaction
+        // Survey with it. Such a thread is kept instead, so the survey below can still be emitted.
+        guard let data = event.postback.data,
+              data.contact.status != .closed || undeliveredSatisfactionSurveyMessage(in: data) != nil else {
             LogManager.trace(
                 event.postback.data == nil
                     ? "Live Chat recovered but there is no data available -> proceed to create a thread"
@@ -485,7 +490,7 @@ extension ChatThreadListService {
 
             connectionContext.chatState = .ready
 
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
             return
         }
 
@@ -496,29 +501,50 @@ extension ChatThreadListService {
 
         let baseThread = threadProviders.getThread(with: data.thread.idOnExternalPlatform) ?? ChatThread(
             id: data.thread.idOnExternalPlatform,
-            state: data.thread.canAddMoreMessages ? .ready : .closed
+            state: data.thread.recoveredState
         )
-        let finalThread = baseThread.merging(from: data)
+        // `merging(from:)` derives the state from `canAddMoreMessages`, which can disagree with the contact status.
+        // A thread only reaches this point on a closed contact to carry a survey, so it is forced closed - the same
+        // guarantee `closeStaleLivechatThread` gives on the ordinary closed-contact path.
+        let mergedThread = baseThread.merging(from: data)
+        let finalThread = data.contact.status == .closed ? mergedThread.copy(state: .closed).clearingPositionInQueue() : mergedThread
         let service = createAndStoreProviderIfNeeded(for: baseThread)
         service.chatThread = finalThread
 
-        // Process inactivity popup messages after thread update (they are filtered out during thread update) if it is the last message on the thread
+        // Process inactivity popup and satisfaction survey messages after thread update (they are filtered out during
+        // thread update) if it is the last message on the thread.
         // Notice it's mapped here as a `first` message but it's actually the last one as messages are sorted descending by `createdAt` date
-        if let message = data.messages.first, message.contentType.type == .inactivityPopup {
-            try service.processInactivityPopup(message)
+        if let message = data.messages.first {
+            switch message.contentType.type {
+            case .inactivityPopup:
+                try service.processInactivityPopup(message)
+            case .satisfactionSurvey:
+                // Delivery is recorded before the event is emitted, so a failure to present the survey on the
+                // application side cannot lead to it being offered twice. See `SatisfactionSurveyDeliveryStore`
+                // for why it would otherwise re-fire on every recovery, and for the trade-off that carries.
+                let deliveryStore = satisfactionSurveyDeliveryStore
+
+                if !deliveryStore.hasDelivered(threadId: finalThread.id) {
+                    deliveryStore.markDelivered(threadId: finalThread.id)
+
+                    try service.processSatisfactionSurvey(message)
+                }
+            default:
+                break
+            }
         }
 
         connectionContext.chatState = .ready
 
         broadcaster.send(.threadUpdated(finalThread))
-        broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+        broadcaster.send(connectionContext.chatUpdatedEvent)
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the threadsService is not correctly registered.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func processThreadListFetchedEvent(_ event: GenericEventDTO) async throws {
         LogManager.trace("Processing thread list fetched")
         
@@ -545,7 +571,7 @@ extension ChatThreadListService {
             LogManager.info("There are no threads for loading their metadata - setting chat state to `.ready`")
 
             connectionContext.chatState = .ready
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
             broadcaster.send(.threadsUpdated(threads))
             return
         }
@@ -555,7 +581,7 @@ extension ChatThreadListService {
         if filteredThreads.isEmpty {
             connectionContext.chatState = .ready
 
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
             broadcaster.send(.threadsUpdated(threads))
 
             // It is necessary notify also the only one thread in the array for singlethread and livechat modes
@@ -608,7 +634,7 @@ extension ChatThreadListService {
         if allLoaded {
             connectionContext.chatState = .ready
 
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
             broadcaster.send(.threadsUpdated(allThreads))
         }
     }
@@ -660,9 +686,7 @@ extension ChatThreadListService {
             return
         }
 
-        guard let service = threadProviders.first(where: { $0.chatThread.id == event.data.case.threadIdOnExternalPlatform }) else {
-            throw CXoneChatError.invalidThread
-        }
+        let service = try chatThreadService(for: event.data.case.threadIdOnExternalPlatform)
 
         let thread = service.chatThread
         let agent = event.data.inboxAssignee.map(AgentMapper.map)
@@ -676,8 +700,9 @@ extension ChatThreadListService {
                 return .closed
             } else if thread.state != .closed {
                 return .ready
+            } else {
+                return nil
             }
-            return nil
         }() : nil
 
         let updated = ChatThread(
@@ -690,11 +715,38 @@ extension ChatThreadListService {
             ownerAssignee: thread.ownerAssignee,
             contactId: thread.contactId,
             scrollToken: thread.scrollToken,
-            positionInQueue: nil
+            positionInQueue: nil,
+            contactHandler: event.data.case.handler.map(ContactHandlerMapper.map) ?? thread.contactHandler
         )
         service.chatThread = updated
 
         broadcaster.send(.threadUpdated(updated))
+    }
+
+    /// Processes a `ContactHandlerChanged` event - the party responsible for handling the contact has changed.
+    ///
+    /// An event that carries no handler is ignored rather than clearing a value the SDK already knows,
+    /// matching the behaviour of the other chat clients.
+    ///
+    /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
+    func processContactHandlerChangedEvent(_ event: ContactHandlerChangedEventDTO) throws {
+        LogManager.trace("Processing contact handler change")
+
+        guard let handler = event.data.contact.handler else {
+            LogManager.warning("ContactHandlerChanged event received without a handler")
+            return
+        }
+
+        if connectionContext.chatMode == .liveChat, threadProviders.getThread(with: event.data.contact.threadIdOnExternalPlatform) == nil {
+            LogManager.info("Event received for a thread other than the active thread")
+            return
+        }
+
+        let service = try chatThreadService(for: event.data.contact.threadIdOnExternalPlatform)
+
+        service.chatThread = service.chatThread.copy(contactHandler: ContactHandlerMapper.map(handler))
+
+        broadcaster.send(.threadUpdated(service.chatThread))
     }
 
     /// - Throws: ``CXoneChatError/invalidThread`` if the provided ID for the thread was invalid, so the action could not be performed.
@@ -702,17 +754,18 @@ extension ChatThreadListService {
     ///     Make sure you call the `connect` method first.
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``CXoneChatError/invalidData`` if the message content type is not `.inactivityPopup`.
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
+    /// - Throws: ``CXoneChatError/invalidData`` if an inactivity popup or satisfaction survey cannot be mapped from the message content.
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     func processMessageCreatedEvent(_ event: MessageCreatedEventDTO) throws {
         LogManager.trace("Processing message created")
         
-        guard let service = threadProviders.first(where: { $0.chatThread.id == event.data.thread.idOnExternalPlatform }) else {
-            throw CXoneChatError.invalidThread
-        }
+        let service = try chatThreadService(for: event.data.thread.idOnExternalPlatform)
 
         connectionContext.contactId = event.data.case.id
-        service.chatThread = service.chatThread.merging(contactId: event.data.case.id)
+        service.chatThread = service.chatThread.merging(
+            contactId: event.data.case.id,
+            contactHandler: event.data.case.handler.map(ContactHandlerMapper.map)
+        )
 
         // Promote the thread to .ready *before* any nested handler runs. The persisted
         // SetPositionInQueueEvent broadcast below reads the live storage state at the
@@ -740,6 +793,23 @@ extension ChatThreadListService {
                 // Cancel rest of the method processing since Inactivity popup event is not process as regular `MessageCreated` event
                 return
             }
+        }
+
+        // Unlike the inactivity popup above, satisfaction surveys are intentionally handled outside the live chat branch
+        // - they are delivered in both Live Chat and Messaging modes, so this must not be folded into the guard above
+        if case .satisfactionSurvey = event.data.message.contentType {
+            LogManager.trace("Processing satisfaction survey message")
+
+            // Recorded here as well as on the recovery path: the backend never marks a survey answered, so one
+            // delivered live is still the newest message when the thread is recovered later. Without this the
+            // recovery path would treat it as undelivered and offer it a second time.
+            // Marked in every mode, even though only Live Chat recovery reads the store today - gating on the mode
+            // would leave a survey unrecorded for whenever Messaging recovery lands (see `SatisfactionSurveyDeliveryStore`).
+            satisfactionSurveyDeliveryStore.markDelivered(threadId: service.chatThread.id)
+
+            try service.processSatisfactionSurvey(event.data.message)
+            broadcaster.send(.threadUpdated(service.chatThread))
+            return
         }
 
         // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
@@ -778,15 +848,15 @@ extension ChatThreadListService {
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
     /// - Throws: ``CXoneChatError/missingParameter(_:)`` if attachments upload `url` has not been set properly or attachment uploaded data object is missing
     /// - Throws: ``CXoneChatError/serverError`` if the server experienced an internal error and was unable to perform the action.
-    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the the outbound message has no ``postback``, empty ``text``, and empty ``attachments``.
-    /// - Throws: ``CXoneChatError/noSuchFile`` if an attached file could not be found.
+    /// - Throws: ``CXoneChatError/invalidParameter(_:)`` if the outbound message has no ``OutboundMessage/postback``,
+    ///   empty ``OutboundMessage/text``, and empty ``OutboundMessage/attachments``.
     /// - Throws: ``CXoneChatError/invalidFileSize`` if size of the attachment exceeds the allowed size
     /// - Throws: ``CXoneChatError/invalidFileType`` if type of the attachment is not included in the allowed file MIME type
     /// - Throws: ``CXoneChatError/invalidData`` if the conversion from object instance to data failed
     ///     or when the Data object cannot be successfully converted to a valid UTF-8 string
-    /// - Throws: ``EncodingError.invalidValue(_:_:)`` if the given value is invalid in the current context for this format.
-    /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
-    /// - Throws: ``NSError`` object that indicates why the request failed
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    /// - Throws: `URLError.badServerResponse` if the URL Loading system received bad data from the server.
+    /// - Throws: `NSError` object that indicates why the request failed
     /// - Throws: An error in the Cocoa domain, if `url` cannot be read.
     /// - Throws: An error if any value throws an error during encoding.
     func processRecoveringThreadFailedError(_ error: Error) async throws {
@@ -807,7 +877,7 @@ extension ChatThreadListService {
             clearStaleThreadsAfterRecoveryFailure()
 
             connectionContext.chatState = .ready
-            broadcaster.send(.chatUpdated(state: connectionContext.chatState, mode: connectionContext.chatMode))
+            broadcaster.send(connectionContext.chatUpdatedEvent)
         } else {
             LogManager.info("No thread available and no form needs to be filled-in -> automatically create a new one. Error: \(error.localizedDescription)")
 
@@ -825,12 +895,14 @@ extension ChatThreadListService {
         let threadId = event.data.case.threadIdOnExternalPlatform
         let shouldClose = connectionContext.chatMode == .liveChat && event.data.case.status == .closed
 
-        guard let service = threadProviders.first(where: { $0.chatThread.id == threadId }) else {
-            throw CXoneChatError.invalidThread
-        }
+        let service = try chatThreadService(for: threadId)
+
+        let contactHandler = event.data.case.handler.map(ContactHandlerMapper.map)
 
         if shouldClose {
-            service.chatThread = service.chatThread.copy(state: .closed, positionInQueue: nil)
+            service.chatThread = service.chatThread.copy(state: .closed, contactHandler: contactHandler).clearingPositionInQueue()
+        } else if contactHandler != nil {
+            service.chatThread = service.chatThread.copy(contactHandler: contactHandler)
         }
 
         broadcaster.send(.threadUpdated(service.chatThread))
@@ -856,7 +928,7 @@ extension ChatThreadListService {
     }
 
     func processAgentTypingEvent(_ event: AgentTypingEventDTO) {
-        let isTyping = event.eventType == .senderTypingStarted
+        let isTyping = event.agentTyping
 
         guard let agent = event.data.user else {
             LogManager.info("Received typing event for unassigned agent")
@@ -877,7 +949,31 @@ extension ChatThreadListService {
 // MARK: - Private methods
 
 private extension ChatThreadListService {
-    
+
+    /// - Throws: ``CXoneChatError/invalidThread`` if no provider matches `threadId` in the current thread list.
+    func chatThreadService(for threadId: String) throws -> ChatThreadService {
+        guard let service = threadProviders.service(with: threadId) else {
+            throw CXoneChatError.invalidThread
+        }
+
+        return service
+    }
+
+    /// The newest message on a recovered thread when it is a Satisfaction Survey that has not been delivered yet.
+    ///
+    /// Returns `nil` when the thread carries no survey, or when its survey has already been emitted on this device.
+    /// Messages arrive sorted descending by `createdAt`, so the newest one is `first`.
+    func undeliveredSatisfactionSurveyMessage(in data: LiveChatRecoveredPostbackDataDTO) -> MessageDTO? {
+        guard let message = data.messages.first, message.contentType.type == .satisfactionSurvey else {
+            return nil
+        }
+        guard !satisfactionSurveyDeliveryStore.hasDelivered(threadId: data.thread.idOnExternalPlatform) else {
+            return nil
+        }
+
+        return message
+    }
+
     func allPrechatCustomFieldsFilled(for threadId: String) -> Bool {
         guard let prechatSurveyCustomFields = connectionContext.channelConfig.prechatSurvey?.customFields else {
             return true
@@ -951,17 +1047,17 @@ private extension ChatThreadListService {
             if let existing = existingById[thread.id] {
                 existing.chatThread = thread
                 return existing
+            } else {
+                return ChatThreadService(
+                    chatThread: thread,
+                    contactFieldsProvider: customFields,
+                    customerFieldsProvider: customerCustomFields,
+                    socketService: socketService,
+                    eventsService: eventsService,
+                    welcomeMessageManager: welcomeMessageManager,
+                    broadcaster: broadcaster
+                )
             }
-
-            return ChatThreadService(
-                chatThread: thread,
-                contactFieldsProvider: customFields,
-                customerFieldsProvider: customerCustomFields,
-                socketService: socketService,
-                eventsService: eventsService,
-                welcomeMessageManager: welcomeMessageManager,
-                broadcaster: broadcaster
-            )
         }
     }
 
@@ -975,14 +1071,14 @@ private extension ChatThreadListService {
     /// is unambiguous.
     func closeStaleLivechatThread(matching threadId: String?) {
         let toClose = threadId.flatMap { id in
-            threadProviders.first { $0.chatThread.id == id }
+            threadProviders.service(with: id)
         } ?? threadProviders.first
         
         guard let toClose else {
             return
         }
         
-        toClose.chatThread = toClose.chatThread.copy(state: .closed)
+        toClose.chatThread = toClose.chatThread.copy(state: .closed).clearingPositionInQueue()
     }
 
     /// Returns the `ChatThreadService` for `thread.id`, creating and storing a new one if

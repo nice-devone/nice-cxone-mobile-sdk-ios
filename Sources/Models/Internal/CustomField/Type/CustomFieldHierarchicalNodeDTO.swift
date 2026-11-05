@@ -32,15 +32,6 @@ struct CustomFieldHierarchicalNodeDTO: Sendable {
         self.value = value
         self.children = children
     }
-    
-    // MARK: - Methods
-    
-    func add(child: CustomFieldHierarchicalNodeDTO) -> CustomFieldHierarchicalNodeDTO {
-        var result = self.children
-        result.append(child)
-        
-        return CustomFieldHierarchicalNodeDTO(key: self.key, value: self.value, children: result)
-    }
 }
 
 // MARK: - Equatable

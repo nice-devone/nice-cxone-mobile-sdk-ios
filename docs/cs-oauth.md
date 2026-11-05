@@ -11,11 +11,14 @@ Microsoft Entra, or your own OIDC-compliant identity service — and hands that 
 > backend). Other standards-compliant OIDC providers should work with matching channel-side
 > configuration, but have not been verified by NICE at time of writing.
 
-> **Migrating from 3.3.x?** The authorization-code + PKCE flow (`setAuthorizationCode`,
-> `setCodeVerifier`) is temporarily unavailable in 4.0. The setters themselves do not throw —
-> attempting the explicit flow fails with `CXoneChatError.featureUnavailable("Explicit OAuth")`
-> from `connect()` during the token exchange. It will re-enable in a future 4.0.x release. Migrate
-> to the implicit flow described below.
+> **Migrating from 4.0.x?** The authorization-code + PKCE flow (`setAuthorizationCode`,
+> `setCodeVerifier`), which 4.0.0 blocked with `CXoneChatError.featureUnavailable(_:)`,
+> is supported again as of this release — `featureUnavailable` is deprecated and no longer
+> thrown. See
+> [Explicit OAuth (PKCE)](cs-pkce-oauth.md) for the full walkthrough. If the backend/channel
+> isn't configured for it yet, `connect()` throws `CXoneChatError.transactionTokenRequestFailed(statusCode:)`
+> during the token exchange — check your channel's OAuth configuration, or fall back to the
+> implicit flow described below.
 
 ## When to use this flow
 
@@ -237,7 +240,7 @@ public typealias TokenDelegateListener =
 
 public enum TokenRequestReason: Sendable, Equatable {
     case tokenExpired   // proactive: current token is about to expire
-    case tokenInvalid   // reactive: backend rejected the token at connect (HTTP 401)
+    case tokenInvalid   // reactive: backend rejected the token at connect (HTTP 400)
 }
 ```
 
@@ -395,11 +398,13 @@ final class OAuthSignInUseCase {
 - **Send fails with `CXoneChatError.invalidAccessToken` mid-session.** Your listener threw
   and the guard couldn't recover. Catch the error at your send site, surface a "session
   expired" UI state, and drive the re-auth flow from there.
-- **`featureUnavailable("Explicit OAuth")` thrown from `connect()` after setting an authorization code.**
-  The explicit (PKCE) flow is disabled in 4.0 — `setAuthorizationCode(_:)` / `setCodeVerifier(_:)`
-  store their values without throwing, and the error surfaces when the token exchange attempts
-  the explicit path. It will re-enable in a future 4.0.x release once the backend dependency
-  lands. Use the implicit flow described in this document.
+- **`transactionTokenRequestFailed(statusCode:)` thrown from `connect()` after setting an authorization code.**
+  `setAuthorizationCode(_:)` / `setCodeVerifier(_:)` store their values without throwing; the
+  error surfaces when the token exchange returns a non-2xx response. The usual cause is a channel
+  that is not yet configured for the explicit flow — check its OAuth configuration, including the
+  redirect URI setting, first. A transient backend or gateway failure produces the same error, though,
+  so retry before concluding it is a misconfiguration. The implicit flow described in this document
+  remains available as a fallback.
 - **Reading `OIDAuthState` off the main thread.** AppAuth invokes the
   `performAction(freshTokens:)` callback on the main thread, but `OIDAuthState` is a
   reference-typed `NSObject` and is not documented as thread-safe. If you wrap AppAuth
