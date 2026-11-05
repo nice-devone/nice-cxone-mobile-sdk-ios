@@ -1,0 +1,63 @@
+#
+# Copyright (c) 2021-2026. NICE Ltd. All rights reserved.
+#
+# Licensed under the NICE License;
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/blob/main/LICENSE
+#
+# TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
+# AN "AS IS" BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+# OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
+#
+
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-documentation
+  cancel-in-progress: true
+
+env:
+  XCODE_VERSION: '26.5'
+
+jobs:
+  deploy_docs:
+    runs-on: macos-26
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v7
+
+    - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # 1.7.0
+      with:
+        xcode-version: ${{ env.XCODE_VERSION }}
+
+    - name: Setup Jazzy
+      run: |
+        gem install jazzy
+        jazzy --version
+
+    - name: Generate Documentation
+      run: jazzy
+
+    - name: Point README links to GitHub
+      # Relative links to `docs/*.md` from README.md would 404 on GitHub Pages, so point them to the repository.
+      run: |
+        sed -i '' -E 's#href="(docs/[^"]+\.md[^"]*)"#href="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.ref_name }}/\1"#g' jazzy_docs/index.html
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./jazzy_docs
