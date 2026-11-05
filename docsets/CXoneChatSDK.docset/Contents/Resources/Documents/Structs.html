@@ -17,7 +17,7 @@
     <a title="Structures  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="search.json">
@@ -42,25 +42,19 @@
               <li class="nav-group-task">
                 <a href="Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Enums/ActionType.html">ActionType</a>
+                <a href="Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ChatMode.html">ChatMode</a>
@@ -70,6 +64,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -93,7 +90,13 @@
                 <a href="Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -104,13 +107,13 @@
                 <a href="Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -125,10 +128,7 @@
                 <a href="Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -175,6 +175,12 @@
                 <a href="Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -193,6 +199,15 @@
                 <a href="Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -205,13 +220,21 @@
                 <a href="Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -248,7 +271,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Agent</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Agent</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -304,7 +327,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Attachment</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Attachment</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -360,7 +383,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ChatThread</span> <span class="p">:</span> <span class="kt">Identifiable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ChatThread</span> <span class="p">:</span> <span class="kt">Identifiable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -388,7 +411,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ContentDescriptor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ContentDescriptor</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -440,7 +463,7 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A single element of the <code>PreChatSurveyHierarchical/nodes</code> represented as a tree data structure.</p>
+                        <p>A single element of the <code><a href="Structs/CustomFieldHierarchical.html#/s:12CXoneChatSDK23CustomFieldHierarchicalV5nodesSayAA0deF4NodeVGvp">nodes</a></code> represented as a tree data structure.</p>
 
                         <a href="Structs/CustomFieldHierarchicalNode.html" class="slightly-smaller">See more</a>
                       </div>
@@ -537,7 +560,7 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CustomerIdentity</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CustomerIdentity</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -557,7 +580,17 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Details about file uploads allowed.</p>
+                        <p>A value type describing the constraints applied to file uploads.</p>
+
+<p>This model is used to determine whether attachments can be uploaded,
+the maximum allowed file size (in MiB, where 1 MiB = 1024×1024 bytes),
+and the list of permitted MIME types.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    If <code>isAttachmentsEnabled</code> is <code>false</code>, uploads should be disabled
+regardless of size or type.
+
+</div>
 
                         <a href="Structs/FileRestrictions.html" class="slightly-smaller">See more</a>
                       </div>
@@ -566,6 +599,84 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FileRestrictions</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/InactivityPopup"></a>
+                <a name="//apple_ref/swift/Section/InactivityPopup" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/InactivityPopup"></a>
+                  <h3 class="section-name"><span>InactivityPopup</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK15InactivityPopupV"></a>
+                    <a name="//apple_ref/swift/Struct/InactivityPopup" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK15InactivityPopupV">InactivityPopup</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Represents the structured data required to display and manage an inactivity popup within a chat session.</p>
+
+<p>The <code>InactivityPopup</code> encapsulates all information needed to present a user-facing popup when inactivity is detected.
+It includes the popup&rsquo;s title, message body, countdown timer, and associated action buttons for refreshing or expiring the session.
+This struct is typically used to prompt the user to take action before their session expires due to inactivity.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The countdown is managed using <code>numberOfSeconds</code> and <code>startedAt</code>, allowing calculation of the remaining time.
+
+</div>
+
+                        <a href="Structs/InactivityPopup.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">InactivityPopup</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK21InactivityPopupButtonV"></a>
+                    <a name="//apple_ref/swift/Struct/InactivityPopupButton" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK21InactivityPopupButtonV">InactivityPopupButton</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A button within an inactivity popup.</p>
+
+                        <a href="Structs/InactivityPopupButton.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">InactivityPopupButton</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -593,7 +704,7 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Message</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Message</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Message</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                         </div>
@@ -622,7 +733,7 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessagePayload</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessagePayload</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -650,7 +761,7 @@ and send picker <code>nodes</code> element&rsquo;s value; if necessary.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OutboundMessage</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OutboundMessage</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -682,7 +793,7 @@ and with a bigger count than buttons or quick replies.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageListPicker</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageListPicker</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -717,7 +828,7 @@ and the user can select only a single item.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageQuickReplies</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageQuickReplies</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -745,7 +856,7 @@ and the user can select only a single item.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageReplyButton</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageReplyButton</span> <span class="p">:</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -775,7 +886,99 @@ and the user can select only a single item.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageRichLink</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageRichLink</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK17MessageTimePickerV"></a>
+                    <a name="//apple_ref/swift/Struct/MessageTimePicker" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK17MessageTimePickerV">MessageTimePicker</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A time slot picker displays a list of options, and information about the time slot.</p>
+
+<p>A model representing a time picker message, including the text shown in the conversation,
+the sheet title, and the available time slots. Used to configure UI that presents time slot selection to the user.</p>
+
+                        <a href="Structs/MessageTimePicker.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageTimePicker</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK017MessageTimePickerE4SlotV"></a>
+                    <a name="//apple_ref/swift/Struct/MessageTimePickerTimeSlot" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK017MessageTimePickerE4SlotV">MessageTimePickerTimeSlot</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A single selectable time slot used by <code><a href="Structs/MessageTimePicker.html">MessageTimePicker</a></code></p>
+
+<p>It contains an identifier, duration, and the start date/time for the slot</p>
+
+                        <a href="Structs/MessageTimePickerTimeSlot.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageTimePickerTimeSlot</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK10OAuthTokenV"></a>
+                    <a name="//apple_ref/swift/Struct/OAuthToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK10OAuthTokenV">OAuthToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An OAuth access token and its expiry, returned by the token delegate for the implicit OAuth flow.</p>
+
+<p>Returned from the listener registered via <code><a href="Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP24setTokenDelegateListeneryyAA05OAuthG0VAA0G13RequestReasonOYaYbKcSgF">setTokenDelegateListener(_:)</a></code> so the SDK
+can both use the token for the connection and track when it expires to request a fresh one in time.</p>
+
+                        <a href="Structs/OAuthToken.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OAuthToken</span> <span class="p">:</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
 
                         </div>
                       </div>
@@ -866,12 +1069,25 @@ and the user can select only a single item.</p>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/SatisfactionSurvey"></a>
+                <a name="//apple_ref/swift/Section/SatisfactionSurvey" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/SatisfactionSurvey"></a>
+                  <h3 class="section-name"><span>SatisfactionSurvey</span>
+</h3>
+                </div>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK22ProactiveActionDetailsV"></a>
-                    <a name="//apple_ref/swift/Struct/ProactiveActionDetails" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK22ProactiveActionDetailsV">ProactiveActionDetails</a>
+                    <a name="/s:12CXoneChatSDK18SatisfactionSurveyV"></a>
+                    <a name="//apple_ref/swift/Struct/SatisfactionSurvey" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18SatisfactionSurveyV">SatisfactionSurvey</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -879,15 +1095,20 @@ and the user can select only a single item.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents all info about details of a proactive action.</p>
+                        <p>Represents the structured data of a satisfaction survey received within a chat session.</p>
 
-                        <a href="Structs/ProactiveActionDetails.html" class="slightly-smaller">See more</a>
+<p>The <code>SatisfactionSurvey</code> encapsulates the information needed to present a survey to the customer —
+a text prompt inviting the customer to fill out the survey, the URL of the survey web page,
+and the identifier of the thread the survey belongs to.
+Satisfaction survey messages are not part of the regular chat transcript; they are handled separately.</p>
+
+                        <a href="Structs/SatisfactionSurvey.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ProactiveActionDetails</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SatisfactionSurvey</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -943,7 +1164,7 @@ and the user can select only a single item.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">UserStatistics</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">UserStatistics</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                         </div>
                       </div>
@@ -983,8 +1204,8 @@ and the user can select only a single item.</p>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

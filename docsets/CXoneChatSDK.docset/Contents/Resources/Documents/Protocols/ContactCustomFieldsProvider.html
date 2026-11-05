@@ -17,7 +17,7 @@
     <a title="ContactCustomFieldsProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ContactCustomFieldsProvider</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ContactCustomFieldsProvider</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -239,9 +262,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK27ContactCustomFieldsProviderP3get3forSDyS2SG10Foundation4UUIDV_tF"></a>
+                    <a name="/s:12CXoneChatSDK27ContactCustomFieldsProviderP3get3forSDyS2SGSS_tF"></a>
                     <a name="//apple_ref/swift/Method/get(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK27ContactCustomFieldsProviderP3get3forSDyS2SG10Foundation4UUIDV_tF">get(for:<wbr>)</a>
+                    <a class="token" href="#/s:12CXoneChatSDK27ContactCustomFieldsProviderP3get3forSDyS2SGSS_tF">get(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -256,7 +279,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">get</span><span class="p">(</span><span class="k">for</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">get</span><span class="p">(</span><span class="k">for</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -289,10 +312,13 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK27ContactCustomFieldsProviderP3set_3forySDyS2SG_10Foundation4UUIDVtKF"></a>
+                    <a name="/s:12CXoneChatSDK27ContactCustomFieldsProviderP3set_3forySDyS2SG_SStYaKF"></a>
                     <a name="//apple_ref/swift/Method/set(_:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK27ContactCustomFieldsProviderP3set_3forySDyS2SG_10Foundation4UUIDVtKF">set(_:<wbr>for:<wbr>)</a>
+                    <a class="token" href="#/s:12CXoneChatSDK27ContactCustomFieldsProviderP3set_3forySDyS2SG_SStYaKF">set(_:<wbr>for:<wbr>)</a>
                     </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -300,7 +326,18 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Sets custom fields to be saved on a contact (specific thread).</p>
-<div class="aside aside-throws">
+
+<p>This method sets custom field(s) for a specific thread.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Can be used to provide additional custom field(s) to the chat thread that are not part of the pre-chat survey.</p>
+
+</div><div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>Additional custom field(s) must be defined in the channel configuration.
+Otherwise, the custom field(s) will cause the conversation initialization to fail.</p>
+
+</div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
 Make sure you call the <code>connect</code> method first.</p>
@@ -324,7 +361,7 @@ Make sure you call the <code>connect</code> method first.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">],</span> <span class="k">for</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customFields</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">],</span> <span class="k">for</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -367,8 +404,8 @@ Make sure you call the <code>connect</code> method first.</p>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

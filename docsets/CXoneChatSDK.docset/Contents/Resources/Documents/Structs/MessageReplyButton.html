@@ -17,7 +17,7 @@
     <a title="MessageReplyButton Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageReplyButton</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageReplyButton</span> <span class="p">:</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -266,6 +289,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:12CXoneChatSDK18MessageReplyButtonV11descriptionSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18MessageReplyButtonV11descriptionSSSgvp">description</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A more detailed description of the option</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:12CXoneChatSDK18MessageReplyButtonV8postbackSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/postback" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK18MessageReplyButtonV8postbackSSSgvp">postback</a>
@@ -289,33 +339,6 @@ can see in the UI as the content of the message.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">postback</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK18MessageReplyButtonV11descriptionSSSgvp"></a>
-                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK18MessageReplyButtonV11descriptionSSSgvp">description</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A more detailed description of the option</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -405,11 +428,130 @@ can see in the UI as the content of the message.</p>
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Init"></a>
+                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><span>Init</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK18MessageReplyButtonV4text11description8postback8iconName0J3Url0J8MimeTypeACSS_SSSgA2J10Foundation3URLVSgAJtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(text:description:postback:iconName:iconUrl:iconMimeType:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18MessageReplyButtonV4text11description8postback8iconName0J3Url0J8MimeTypeACSS_SSSgA2J10Foundation3URLVSgAJtcfc">init(text:<wbr>description:<wbr>postback:<wbr>iconName:<wbr>iconUrl:<wbr>iconMimeType:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code>MessageReplyButton</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">postback</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">iconName</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">iconUrl</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">iconMimeType</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>text</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The button label shown to the user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>description</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional secondary description displayed alongside the button.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>postback</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional opaque payload echoed back to the agent/bot when the user taps the button.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>iconName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Filename of an optional icon (256 KiB cap).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>iconUrl</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>URL of an optional icon (256 KiB cap).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>iconMimeType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>MIME type of the optional icon.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -17,7 +17,7 @@
     <a title="ConnectionProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ConnectionProvider</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ConnectionProvider</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -280,9 +303,19 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Makes an HTTP request to get the channel configuration details.</p>
+
+<p>The most recently fetched configuration is cached in memory for five minutes, so repeated
+calls for the same brand, channel and environment usually resolve without a network request,
+and a configuration changed in the backend can take up to that long to be reflected. Only one
+configuration is held at a time: a call targeting a different brand, channel or environment
+replaces it rather than being cached alongside it. Signing out clears the cache.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if provided parameters do not create a valid URL.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO22sdkVersionNotSupportedyA2CmF">sdkVersionNotSupported</a></code> if the SDK version is not supported by the server.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -315,7 +348,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getChannelConfiguration</span><span class="p">(</span><span class="nv">environment</span><span class="p">:</span> <span class="kt"><a href="../Enums/Environment.html">Environment</a></span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getChannelConfiguration</span><span class="p">(</span><span class="nv">environment</span><span class="p">:</span> <span class="kt"><a href="../Enums/Environment.html">Environment</a></span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a></span></code></pre>
 
                         </div>
                       </div>
@@ -386,9 +419,19 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Makes an HTTP request to get the channel configuration details.</p>
+
+<p>The most recently fetched configuration is cached in memory for five minutes, so repeated
+calls for the same brand, channel and chat URL usually resolve without a network request, and
+a configuration changed in the backend can take up to that long to be reflected. Only one
+configuration is held at a time: a call targeting a different brand, channel or chat URL
+replaces it rather than being cached alongside it. Signing out clears the cache.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if provided parameters do not create a valid URL.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO22sdkVersionNotSupportedyA2CmF">sdkVersionNotSupported</a></code> if the SDK version is not supported by the server.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -421,7 +464,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getChannelConfiguration</span><span class="p">(</span><span class="nv">chatURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">getChannelConfiguration</span><span class="p">(</span><span class="nv">chatURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a></span></code></pre>
 
                         </div>
                       </div>
@@ -465,18 +508,6 @@
                                 </div>
                               </td>
                             </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Completion handler to be called when the request is successful or fails.</p>
-                                </div>
-                              </td>
-                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -508,7 +539,7 @@
 <p>In order to use any <code><a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a></code> methods, you must first call this method.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the SDK is not in the required state to trigger the method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -557,7 +588,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">prepare</span><span class="p">(</span><span class="nv">environment</span><span class="p">:</span> <span class="kt"><a href="../Enums/Environment.html">Environment</a></span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">prepare</span><span class="p">(</span><span class="nv">environment</span><span class="p">:</span> <span class="kt"><a href="../Enums/Environment.html">Environment</a></span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -610,9 +641,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF"></a>
-                    <a name="//apple_ref/swift/Method/prepare(chatURL:socketURL:brandId:channelId:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:<wbr>socketURL:<wbr>brandId:<wbr>channelId:<wbr>)</a>
+                    <a name="/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:<wbr>socketURL:<wbr>loggerURL:<wbr>brandId:<wbr>channelId:<wbr>tokenURL:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Asynchronous
@@ -625,10 +656,10 @@
                       <div class="abstract">
                         <p>Prepares the SDK for establishing connection to the CXone service.</p>
 
-<p>In order to you use any <code><a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a></code> methods, it is necessary to call this method before invoking any of them.</p>
+<p>In order to use any <code><a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a></code> methods, it is necessary to call this method before invoking any of them.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the SDK is not in the required state to trigger the method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -677,7 +708,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">prepare</span><span class="p">(</span><span class="nv">chatURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">socketURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">prepare</span><span class="p">(</span><span class="nv">chatURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">socketURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">loggerURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">brandId</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">tokenURL</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -712,6 +743,18 @@
                             <tr>
                               <td>
                                 <code>
+                                <em>loggerURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The URL to be use for internal chat logger.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>brandId</em>
                                 </code>
                               </td>
@@ -730,6 +773,18 @@
                               <td>
                                 <div>
                                   <p>The unique id of the channel for the connection.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tokenURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The URL to be used for transaction token requests. If nil, the URL will be automatically derived from chatURL.</p>
                                 </div>
                               </td>
                             </tr>
@@ -757,15 +812,20 @@
                       <div class="abstract">
                         <p>Connects to the CXone service via web socket.</p>
 
-<p>This method establishes web socket connection to be able to receive chat events defined in <code><a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a></code>.</p>
+<p>This method establishes the web socket connection. Once connected, subscribe to <code><a href="../Protocols/ChatProvider.html#/s:12CXoneChatSDK0B8ProviderP6eventsScSyAA0B5EventOGyF">events()</a></code>
+to receive <code><a href="../Enums/ChatEvent.html">ChatEvent</a></code> values (thread updates, agent typing, proactive actions, errors, etc.).</p>
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
-    <p>Either <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code> method
+    <p>Either <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code> method
 must be called before this method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the SDK is not in the required state to trigger the method.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO29transactionTokenRequestFailedyACSi_tcACmF">transactionTokenRequestFailed(statusCode:)</a></code> if the transaction-token exchange fails.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -774,6 +834,15 @@ must be called before this method.</p>
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18missingAccessTokenyA2CmF">missingAccessToken</a></code> if the customer was successfully authorized, but an access token wasn&rsquo;t returned.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a></code> if the OAuth token was rejected or is missing.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO19invalidRefreshTokenyACSSSgcACmF">invalidRefreshToken(_:)</a></code> if an explicit-PKCE reconnect&rsquo;s refresh-grant recovery
+fails and no further automatic recovery is possible — the app must perform a new authorization flow.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -786,6 +855,26 @@ must be called before this method.</p>
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the SDK could not prepare URL for URLRequest</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if the pulse was not received</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code> if visitor ID is not set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if unable to build the URL.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if unable to get cached transaction token.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if <code>setAuthorizationCode(_:)</code> or <code>setCodeVerifier(_:)</code> was not called for the explicit OAuth flow.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -806,7 +895,7 @@ must be called before this method.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">connect</span><span class="p">()</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">connect</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -843,43 +932,13 @@ must be called before this method.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK18ConnectionProviderP4pingyyKF"></a>
-                    <a name="//apple_ref/swift/Method/ping()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK18ConnectionProviderP4pingyyKF">ping()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Pings the CXone chat server to ensure that a connection is established.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Deprecated as of 2.2.0")</span>
-<span class="kd">func</span> <span class="nf">ping</span><span class="p">()</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK18ConnectionProviderP14executeTriggeryy10Foundation4UUIDVKF"></a>
+                    <a name="/s:12CXoneChatSDK18ConnectionProviderP14executeTriggeryySSYaKF"></a>
                     <a name="//apple_ref/swift/Method/executeTrigger(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK18ConnectionProviderP14executeTriggeryy10Foundation4UUIDVKF">executeTrigger(_:<wbr>)</a>
+                    <a class="token" href="#/s:12CXoneChatSDK18ConnectionProviderP14executeTriggeryySSYaKF">executeTrigger(_:<wbr>)</a>
                     </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -889,7 +948,7 @@ must be called before this method.</p>
                         <p>Manually executes a trigger that was defined in CXone. This can be used to test that proactive actions are displaying.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if it was unable to trigger the required method because the SDK is not in the required state</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the SDK is not in the required state to trigger the method.</p>
 
 </div><div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -923,7 +982,7 @@ Make sure you call the <code>connect</code> method first.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">executeTrigger</span><span class="p">(</span><span class="n">_</span> <span class="nv">triggerId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">executeTrigger</span><span class="p">(</span><span class="n">_</span> <span class="nv">triggerId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -954,8 +1013,8 @@ Make sure you call the <code>connect</code> method first.</p>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

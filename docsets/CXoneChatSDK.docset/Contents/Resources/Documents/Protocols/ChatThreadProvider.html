@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ChatThreadProvider Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/ChatThreadProvider" class="dashAnchor"></a>
+    <a title="ChatThreadProvider Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CXoneChatSDK</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Protocols.html">Protocols</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        ChatThreadProvider Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CXoneChatSDKModule.html">CXoneChatSDKModule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>ChatThreadProvider</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ChatThreadProvider</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
+
+                </div>
+              </div>
+            <p>The provider for message related properties and methods.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP04chatD0AA0bD0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/chatThread" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP04chatD0AA0bD0Vvp">chatThread</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The delegate for the chat thread provider.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">chatThread</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChatThread.html">ChatThread</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP16loadMoreMessagesyyYaKF"></a>
+                    <a name="//apple_ref/swift/Method/loadMoreMessages()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP16loadMoreMessagesyyYaKF">loadMoreMessages()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Loads additional messages in the thread.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO14noMoreMessagesyA2CmF">noMoreMessages</a></code> if there aren&rsquo;t any other messages, so additional messages could not be loaded.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO17invalidOldestDateyA2CmF">invalidOldestDate</a></code> if Thread is missing the timestamp of when the message was created.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12eventTimeoutyA2CmF">eventTimeout</a></code> if the SDK did not receive a response within the specified time.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadMoreMessages</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP4sendyyAA15OutboundMessageVYaKF"></a>
+                    <a name="//apple_ref/swift/Method/send(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP4sendyyAA15OutboundMessageVYaKF">send(_:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a message in the chat thread through CXone chat.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the chat thread is already closed.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO010attachmentD0yA2CmF">attachmentError</a></code> if the provided attachment was unable to be sent.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if attachments upload <code>url</code> has not been set properly or attachment uploaded data object is missing.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO06serverD0yA2CmF">serverError</a></code> if the server experienced an internal error and was unable to perform the action.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16invalidParameteryACSScACmF">invalidParameter(_:)</a></code> if the outbound message has no <code><a href="../Structs/OutboundMessage.html#/s:12CXoneChatSDK15OutboundMessageV8postbackSSSgvp">postback</a></code>,
+empty <code><a href="../Structs/OutboundMessage.html#/s:12CXoneChatSDK15OutboundMessageV4textSSvp">text</a></code>, and empty <code><a href="../Structs/OutboundMessage.html#/s:12CXoneChatSDK15OutboundMessageV11attachmentsSayAA17ContentDescriptorVGvp">attachments</a></code>.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileSizeyA2CmF">invalidFileSize</a></code> if size of the attachment exceeds the allowed size</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO15invalidFileTypeyA2CmF">invalidFileType</a></code> if type of the attachment is not included in the allowed file MIME type</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> if the conversion from object instance to data failed
+or when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12eventTimeoutyA2CmF">eventTimeout</a></code> if the SDK did not receive a response within the specified time.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a></code> if the credential needs a refresh but nothing is available to
+perform it — no registered token delegate listener for the implicit flow, or no socket delegate at all.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO19invalidRefreshTokenyACSSSgcACmF">invalidRefreshToken(_:)</a></code> if the explicit-PKCE credential was expired and the
+refresh grant to renew it was rejected — the app must re-authenticate before it can send again.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO29transactionTokenRequestFailedyACSi_tcACmF">transactionTokenRequestFailed(statusCode:)</a></code> if the explicit-PKCE credential was
+expired and renewing it failed for any other reason.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>NSError</code> object that indicates why the request failed</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error in the Cocoa domain, if <code>url</code> cannot be read.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if any value throws an error during encoding.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/OutboundMessage.html">OutboundMessage</a></span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The content of the message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP10updateNameyySSYaKF"></a>
+                    <a name="//apple_ref/swift/Method/updateName(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP10updateNameyySSYaKF">updateName(_:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Updates the name for the thread.</p>
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>Should only be used on a channel configured for multiple threads.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a></code> if the method being called is not supported with the current channel configuration.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF">invalidThread</a></code> if the provided ID for the thread was invalid, so the action could not be performed.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">updateName</span><span class="p">(</span><span class="n">_</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The new name for the thread.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP7archiveyyYaKF"></a>
+                    <a name="//apple_ref/swift/Method/archive()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP7archiveyyYaKF">archive()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Archives the thread from the list of all threads.</p>
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>Should only be used on a channel configured for multiple threads.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the chat thread is already closed.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO24unsupportedChannelConfigyA2CmF">unsupportedChannelConfig</a></code> if the method being called is not supported with the current channel configuration.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO13invalidThreadyA2CmF">invalidThread</a></code> if the provided ID for the thread was invalid, so the action could not be performed.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12eventTimeoutyA2CmF">eventTimeout</a></code> if the SDK did not receive a response within the specified time.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>An error if the backend rejects the archive request.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">archive</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP8markReadyyYaKF"></a>
+                    <a name="//apple_ref/swift/Method/markRead()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP8markReadyyYaKF">markRead()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reports that the most recent message of the specified thread was read by the customer.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">markRead</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP10endContactyyYaKF"></a>
+                    <a name="//apple_ref/swift/Method/endContact()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP10endContactyyYaKF">endContact()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Invoke this when the customer wishes to end conversation.</p>
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>Should only be used on a channel configured for live chat.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the channel is not configured for live chat.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> if the <code>contactId</code> has not been set properly or it was unable to unwrap it as a required type.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">endContact</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP17reportTypingStartyySbYaKF"></a>
+                    <a name="//apple_ref/swift/Method/reportTypingStart(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP17reportTypingStartyySbYaKF">reportTypingStart(_:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reports that the customer has started or finished typing in the specified chat thread.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
+Make sure you call the <code>connect</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> if the SDK could not get customer identity and it may not have been set.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> if the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">reportTypingStart</span><span class="p">(</span><span class="n">_</span> <span class="nv">didStart</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>didStart</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Indicator for start of finish typing.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B14ThreadProviderP14sendTranscript2toySS_tYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendTranscript(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B14ThreadProviderP14sendTranscript2toySS_tYaKF">sendTranscript(to:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a transcript to the specified email address.</p>
+
+<p>This method validates the email and initiates delivery of the conversation transcript.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> If the method is called before establishing a connection.
+Ensure you call the <code>connect()</code> method first.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18illegalThreadStateyA2CmF">illegalThreadState</a></code> If the chat thread is not in the correct state.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20sendTranscriptFailedyA2CmF">sendTranscriptFailed</a></code> If the feature is disabled, the provided email is invalid, or an error occurs on the backend.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:)</a></code> If <code>contactID</code> is not set properly.</p>
+
+</div><div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO26customerAssociationFailureyA2CmF">customerAssociationFailure</a></code> If the SDK cannot retrieve the customer identity, which may not have been set.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">sendTranscript</span><span class="p">(</span><span class="n">to</span> <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>email</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The recipient’s email address.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

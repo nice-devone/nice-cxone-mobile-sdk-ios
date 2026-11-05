@@ -17,7 +17,7 @@
     <a title="ChannelConfiguration Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -235,6 +258,15 @@
           </section>
           <section class="section task-group-section">
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Properties"></a>
+                  <h3 class="section-name"><span>Properties</span>
+</h3>
+                </div>
+              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -311,6 +343,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isAuthorizationEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK20ChannelConfigurationV23isSendTranscriptEnabledSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isSendTranscriptEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK20ChannelConfigurationV23isSendTranscriptEnabledSbvp">isSendTranscriptEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicates whether the <strong>Send Transcript</strong> feature is enabled for the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isSendTranscriptEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -427,13 +486,207 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK20ChannelConfigurationV18authenticationTypeAA014AuthenticationG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/authenticationType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK20ChannelConfigurationV18authenticationTypeAA014AuthenticationG0Ovp">authenticationType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The authentication type for this channel.</p>
+
+<p>Determines which authentication method to use when connecting to this channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">authenticationType</span><span class="p">:</span> <span class="kt"><a href="../Enums/AuthenticationType.html">AuthenticationType</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Init"></a>
+                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><span>Init</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK20ChannelConfigurationV28hasMultipleThreadsPerEndUser011isProactiveB7Enabled0l13AuthorizationN00l14SendTranscriptN016fileRestrictions8features0L6Online0l4LiveB018authenticationTypeACSb_S3bAA04FileS0VSDySSSbGS2bAA014AuthenticationX0Otcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(hasMultipleThreadsPerEndUser:isProactiveChatEnabled:isAuthorizationEnabled:isSendTranscriptEnabled:fileRestrictions:features:isOnline:isLiveChat:authenticationType:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK20ChannelConfigurationV28hasMultipleThreadsPerEndUser011isProactiveB7Enabled0l13AuthorizationN00l14SendTranscriptN016fileRestrictions8features0L6Online0l4LiveB018authenticationTypeACSb_S3bAA04FileS0VSDySSSbGS2bAA014AuthenticationX0Otcfc">init(hasMultipleThreadsPerEndUser:<wbr>isProactiveChatEnabled:<wbr>isAuthorizationEnabled:<wbr>isSendTranscriptEnabled:<wbr>fileRestrictions:<wbr>features:<wbr>isOnline:<wbr>isLiveChat:<wbr>authenticationType:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a new channel configuration with the provided options and capabilities.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">hasMultipleThreadsPerEndUser</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">isProactiveChatEnabled</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">isAuthorizationEnabled</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">isSendTranscriptEnabled</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">fileRestrictions</span><span class="p">:</span> <span class="kt"><a href="../Structs/FileRestrictions.html">FileRestrictions</a></span><span class="p">,</span>
+    <span class="nv">features</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">],</span>
+    <span class="nv">isOnline</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">isLiveChat</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">authenticationType</span><span class="p">:</span> <span class="kt"><a href="../Enums/AuthenticationType.html">AuthenticationType</a></span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hasMultipleThreadsPerEndUser</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the channel supports multiple concurrent threads for the same end user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isProactiveChatEnabled</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Indicates if proactive chat features are enabled.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isAuthorizationEnabled</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Indicates if OAuth-based authorization is required/enabled for the channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isSendTranscriptEnabled</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the Send Transcript feature is enabled.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileRestrictions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Constraints describing allowed uploads for this channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>features</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A dictionary of feature flags currently handled by the client; if a feature is not present, it is considered on by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOnline</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the service is currently available.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isLiveChat</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the channel operates as live chat (as opposed to messaging).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>authenticationType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The authentication method required for this channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TokenRequestReason Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Enum/TokenRequestReason" class="dashAnchor"></a>
+    <a title="TokenRequestReason Enumeration Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CXoneChatSDK</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Enums.html">Enumerations</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        TokenRequestReason Enumeration Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CXoneChatSDKModule.html">CXoneChatSDKModule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>TokenRequestReason</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">TokenRequestReason</span> <span class="p">:</span> <span class="kt">Sendable</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+
+                </div>
+              </div>
+            <p>The reason the SDK is requesting a fresh connection token from the integrator.</p>
+
+<p>Passed to the listener registered via <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP24setTokenDelegateListeneryyAA05OAuthG0VAA0G13RequestReasonOYaYbKcSgF">setTokenDelegateListener(_:)</a></code> so integrators
+can log or branch on the context (e.g. silent refresh vs. full re-login). Implementations are free to
+ignore the reason and always perform the same token-fetch action.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK18TokenRequestReasonO12tokenExpiredyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenExpired" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18TokenRequestReasonO12tokenExpiredyA2CmF">tokenExpired</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The current token expired (or is about to) — the SDK requests a fresh one before it becomes unusable.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenExpired</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK18TokenRequestReasonO12tokenInvalidyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK18TokenRequestReasonO12tokenInvalidyA2CmF">tokenInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The backend rejected the token at connect time (HTTP 400); a fresh one is required to establish the session.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenInvalid</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

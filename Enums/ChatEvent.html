@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ChatEvent Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Enum/ChatEvent" class="dashAnchor"></a>
+    <a title="ChatEvent Enumeration Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CXoneChatSDK</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Enums.html">Enumerations</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        ChatEvent Enumeration Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CXoneChatSDKModule.html">CXoneChatSDKModule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>ChatEvent</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ChatEvent</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
+
+                </div>
+              </div>
+            <p>All events that can be emitted by the CXoneChat SDK.</p>
+
+<p>Subscribe via <code><a href="../Protocols/ChatProvider.html#/s:12CXoneChatSDK0B8ProviderP6eventsScSyAA0B5EventOGyF">events()</a></code> and <code>switch</code> over the cases your app cares about.
+Each case documents <em>when</em> it fires and what the consumer is typically expected to do.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO11chatUpdatedyAcA0B5StateO_AA0B4ModeOtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/chatUpdated(state:mode:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO11chatUpdatedyAcA0B5StateO_AA0B4ModeOtcACmF">chatUpdated(state:<wbr>mode:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The SDK&rsquo;s connection lifecycle has advanced or the channel mode resolved.</p>
+
+<p>Fires after <code>prepare(...)</code> and <code>connect()</code> complete (the <code>state</code> transitions through
+<code>.preparing</code> → <code>.prepared</code> → <code>.connecting</code> → <code>.connected</code> → <code>.ready</code>), and again on
+any later transition (e.g. to <code>.offline</code>). The <code>mode</code> reflects the channel&rsquo;s
+configuration (<code>.singlethread</code>, <code>.multithread</code>, <code>.liveChat</code>) and is stable for the
+session.</p>
+
+<p>Consumers typically use this to gate UI: enable the &ldquo;Open Chat&rdquo; button at
+<code>.ready</code>, show an offline state at <code>.offline</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">chatUpdated</span><span class="p">(</span><span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatState.html">ChatState</a></span><span class="p">,</span> <span class="nv">mode</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatMode.html">ChatMode</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO13threadUpdatedyAcA0B6ThreadVcACmF"></a>
+                    <a name="//apple_ref/swift/Element/threadUpdated(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO13threadUpdatedyAcA0B6ThreadVcACmF">threadUpdated(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A single thread changed — new messages arrived, the assigned agent changed, the
+thread name was updated, position in queue moved, etc.</p>
+
+<p>Refresh the corresponding view (single-thread and live-chat channels). For
+multi-thread channels this also fires when an individual thread you are observing
+changes; if you only need the list, observe <code><a href="../Enums/ChatEvent.html#/s:12CXoneChatSDK0B5EventO14threadsUpdatedyACSayAA0B6ThreadVGcACmF">threadsUpdated(_:)</a></code> instead.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">threadUpdated</span><span class="p">(</span><span class="kt"><a href="../Structs/ChatThread.html">ChatThread</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO14threadsUpdatedyACSayAA0B6ThreadVGcACmF"></a>
+                    <a name="//apple_ref/swift/Element/threadsUpdated(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO14threadsUpdatedyACSayAA0B6ThreadVGcACmF">threadsUpdated(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The full thread list changed — a thread was created, archived, or its
+last-message preview was updated. Multi-thread channels only.</p>
+
+<p>Refresh your thread-list UI.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">threadsUpdated</span><span class="p">([</span><span class="kt"><a href="../Structs/ChatThread.html">ChatThread</a></span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO20unexpectedDisconnectyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/unexpectedDisconnect" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO20unexpectedDisconnectyA2CmF">unexpectedDisconnect</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The WebSocket connection dropped without an explicit <code>disconnect()</code> or <code>signOut()</code>
+call — e.g. the device lost the network, the server closed the connection, or a
+transport error fired.</p>
+
+<p>The SDK does not auto-reconnect. Consumers typically retry <code>connect()</code> (possibly
+after a backoff) and surface a &ldquo;Reconnecting…&rdquo; state to the user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unexpectedDisconnect</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO06customD7MessageyAC10Foundation4DataVcACmF"></a>
+                    <a name="//apple_ref/swift/Element/customEventMessage(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO06customD7MessageyAC10Foundation4DataVcACmF">customEventMessage(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A custom plugin message was received from the agent side. The raw payload is
+delivered as <code>Data</code> so consumer-side handlers can decode app-specific schemas.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">customEventMessage</span><span class="p">(</span><span class="kt">Data</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO11agentTypingyACSb_AA5AgentVSStcACmF"></a>
+                    <a name="//apple_ref/swift/Element/agentTyping(isTyping:agent:threadId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO11agentTypingyACSb_AA5AgentVSStcACmF">agentTyping(isTyping:<wbr>agent:<wbr>threadId:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An agent started or stopped typing in a specific thread.</p>
+
+<p>Show or hide a typing indicator in the thread identified by <code>threadId</code>. The
+<code>agent</code> value carries the agent&rsquo;s display info; <code>isTyping == false</code> indicates the
+agent stopped (no separate &ldquo;stopped&rdquo; event).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">agentTyping</span><span class="p">(</span><span class="nv">isTyping</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">agent</span><span class="p">:</span> <span class="kt"><a href="../Structs/Agent.html">Agent</a></span><span class="p">,</span> <span class="nv">threadId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO22contactCustomFieldsSetyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/contactCustomFieldsSet" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO22contactCustomFieldsSetyA2CmF">contactCustomFieldsSet</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The currently active thread&rsquo;s contact custom fields were accepted by the server.</p>
+
+<p>Fires after a successful <code><a href="../Protocols/ContactCustomFieldsProvider.html#/s:12CXoneChatSDK27ContactCustomFieldsProviderP3set_3forySDyS2SG_SStYaKF">set(_:for:)</a></code> call.
+Consumers typically use this as confirmation to dismiss a &ldquo;saving…&rdquo; indicator.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">contactCustomFieldsSet</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO23customerCustomFieldsSetyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/customerCustomFieldsSet" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO23customerCustomFieldsSetyA2CmF">customerCustomFieldsSet</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The customer&rsquo;s custom fields were accepted by the server.</p>
+
+<p>Fires after a successful <code><a href="../Protocols/CustomerCustomFieldsProvider.html#/s:12CXoneChatSDK28CustomerCustomFieldsProviderP3setyySDyS2SGYaKF">set(_:)</a></code> call.
+Consumers typically use this as confirmation to dismiss a &ldquo;saving…&rdquo; indicator.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">customerCustomFieldsSet</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO5erroryACs5Error_pcACmF"></a>
+                    <a name="//apple_ref/swift/Element/error(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO5erroryACs5Error_pcACmF">error(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The SDK encountered an error outside of an explicit <code>try</code>/<code>throws</code> call site —
+typically a server-side problem delivered asynchronously, a malformed event from
+the server, or a token-refresh issue that surfaced after <code>connect()</code> returned.</p>
+
+<p>Consumers should surface the error to the user (or log + retry) according to their
+product&rsquo;s error-handling policy. Errors here do <strong>not</strong> terminate the events
+stream; subscribers continue receiving subsequent events.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">error</span><span class="p">(</span><span class="kt">Error</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0B5EventO23proactiveActionReceivedyAcA09ProactiveF4TypeOcACmF"></a>
+                    <a name="//apple_ref/swift/Element/proactiveActionReceived(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0B5EventO23proactiveActionReceivedyAcA09ProactiveF4TypeOcACmF">proactiveActionReceived(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A backend-triggered proactive action arrived, such as an inactivity popup or satisfaction survey.</p>
+
+<p>Switch on the associated value to present the action. Respond to an inactivity popup through
+<code><a href="../Protocols/ProactiveActionProvider.html#/s:12CXoneChatSDK23ProactiveActionProviderP7triggeryyAA0dE11TriggerTypeOYaKF">trigger(_:)</a></code>; present a satisfaction survey using its prompt and URL
+over the conversation its <code><a href="../Structs/SatisfactionSurvey.html#/s:12CXoneChatSDK18SatisfactionSurveyV8threadIdSSvp">threadId</a></code> identifies — in multithread channels, hold it
+until the customer views that thread rather than presenting it over another one.
+CXoneChatUI currently handles both inactivity popups and satisfaction surveys automatically.
+Consumers building a custom UI on <code>CXoneChatSDK</code> directly must present both themselves.
+See <code>cs-inactivity-popup.md</code> for the inactivity-popup flow and <code>cs-satisfaction-survey.md</code> for the survey flow.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">proactiveActionReceived</span><span class="p">(</span><span class="kt"><a href="../Enums/ProactiveActionType.html">ProactiveActionType</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>

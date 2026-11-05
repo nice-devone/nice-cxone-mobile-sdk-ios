@@ -17,7 +17,7 @@
     <a title="CustomerProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">CustomerProvider</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">CustomerProvider</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -263,69 +286,6 @@
                       <div>
                         <h4>Return Value</h4>
                         <p>Returns customer if it is set. Otherwise; returns <code>nil</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgKF"></a>
-                    <a name="//apple_ref/swift/Method/set(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP3setyyAA0D8IdentityVSgKF">set(_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Sets the customer currently using the app.</p>
-
-<p>If you set your customer ID, you must ensure that it is unique and that it is not used by any other customer.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    <p>Setting your own Customer ID may result in security vulnerabilities.
-It is recommended to use the customer ID provided by the SDK. If you want to update the customer name, use the <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP7setName05firstG004lastG0ySS_SStF">setName(firstName:lastName:)</a></code> method.</p>
-
-</div><div class="aside aside-warning">
-    <p class="aside-title">Warning</p>
-    <p>This method must be called before SDK initialization via <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code>.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO07illegalB5StateyA2CmF">illegalChatState</a></code> if the chat is already initialized.</p>
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "The method uses a shorthand unnamed parameter, which can obscure the meaning of the method for developers unfamiliar with the code.\n Please update your usage to the new method `set(customer:﹚`.")</span>
-<span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="n">_</span> <span class="nv">customer</span><span class="p">:</span> <span class="kt"><a href="../Structs/CustomerIdentity.html">CustomerIdentity</a></span><span class="p">?)</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>customer</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The customer. Might be <code>nil</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -382,7 +342,7 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                               </td>
                               <td>
                                 <div>
-                                  <p>The customer. Might be <code>nil</code>.</p>
+                                  <p>The customer identity. Can be <code>nil</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -487,6 +447,130 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:12CXoneChatSDK16CustomerProviderP18setConnectionToken_9expiresAtySS_10Foundation4DateVtF"></a>
+                    <a name="//apple_ref/swift/Method/setConnectionToken(_:expiresAt:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP18setConnectionToken_9expiresAtySS_10Foundation4DateVtF">setConnectionToken(_:<wbr>expiresAt:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Provides a connection token and its expiry to the SDK for the implicit OAuth flow.</p>
+
+<p>Call this before <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> with the JWT obtained from your OAuth provider,
+and again whenever the SDK reports the token is no longer valid by throwing
+<code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a></code> from an outbound method — obtain a fresh token, provide it
+here, and retry the operation that threw.</p>
+
+<p>The SDK uses <code>expiresAt</code> to detect an expired token before sending an event (a backend rejection of
+an already-open socket is not otherwise observable) and to signal you to refresh in time. The SDK
+never sources tokens on its own — it always obtains them from the integrator, either via this call
+or via the listener registered with <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP24setTokenDelegateListeneryyAA05OAuthG0VAA0G13RequestReasonOYaYbKcSgF">setTokenDelegateListener(_:)</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setConnectionToken</span><span class="p">(</span><span class="n">_</span> <span class="nv">token</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">expiresAt</span><span class="p">:</span> <span class="kt">Date</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A valid JWT obtained from the OAuth provider.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>expiresAt</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The absolute time at which <code>token</code> expires (e.g. derived from the provider&rsquo;s <code>expires_in</code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK16CustomerProviderP24setTokenDelegateListeneryyAA05OAuthG0VAA0G13RequestReasonOYaYbKcSgF"></a>
+                    <a name="//apple_ref/swift/Method/setTokenDelegateListener(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP24setTokenDelegateListeneryyAA05OAuthG0VAA0G13RequestReasonOYaYbKcSgF">setTokenDelegateListener(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a listener the SDK calls to obtain a fresh connection token for the implicit OAuth flow.</p>
+
+<p>When registered, the SDK requests a fresh token automatically — shortly before the current one expires
+(<code><a href="../Enums/TokenRequestReason.html#/s:12CXoneChatSDK18TokenRequestReasonO12tokenExpiredyA2CmF">tokenExpired</a></code>) or after the backend rejects it at connect (<code><a href="../Enums/TokenRequestReason.html#/s:12CXoneChatSDK18TokenRequestReasonO12tokenInvalidyA2CmF">tokenInvalid</a></code>).
+It pauses the pending operation, obtains the token, and resumes it, so outbound events are not interrupted.
+Concurrent operations queue behind a single refresh. The listener obtains a token from your OAuth provider
+and returns an <code><a href="../Structs/OAuthToken.html">OAuthToken</a></code>; if it throws, the pending operation fails with <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a></code>.</p>
+
+<p>The initial token is still provided via <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP18setConnectionToken_9expiresAtySS_10Foundation4DateVtF">setConnectionToken(_:expiresAt:)</a></code>; this listener handles
+subsequent refreshes. When no listener is registered, an expired token surfaces reactively as
+<code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a></code> from the outbound method.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setTokenDelegateListener</span><span class="p">(</span><span class="n">_</span> <span class="nv">listener</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a></span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>listener</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The token listener, or <code>nil</code> to remove a previously registered one.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:12CXoneChatSDK16CustomerProviderP20setAuthorizationCodeyySSF"></a>
                     <a name="//apple_ref/swift/Method/setAuthorizationCode(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK16CustomerProviderP20setAuthorizationCodeyySSF">setAuthorizationCode(_:<wbr>)</a>
@@ -497,15 +581,9 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets the authorization code from an OAuth provider in order to authorize the customer with authentication code.</p>
+                        <p>Sets the authorization code for the explicit OAuth flow (PKCE).</p>
 
-<p>This code must be provided before <code>connect(environment:brandId:channelId:)</code> or  <code>connect(chatURL:socketURL:brandId:channelId:)</code>.
-    if the channel is configured to use OAuth.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    <p>This is not an access token. This is the authorization code that one would use to obtain an access token.</p>
-
-</div>
+<p>Call this before <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> when using an explicit OAuth flow.</p>
 
                       </div>
                       <div class="declaration">
@@ -528,7 +606,7 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                               </td>
                               <td>
                                 <div>
-                                  <p>The authorization code from an OAuth provider.</p>
+                                  <p>The authorization code received from the OAuth provider.</p>
                                 </div>
                               </td>
                             </tr>
@@ -551,9 +629,9 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets the code verifier to be used for OAuth if the OAuth provider uses PKCE.</p>
+                        <p>Sets the PKCE code verifier for the explicit OAuth flow.</p>
 
-<p>This must be passed so that CXone can retrieve an auth token.</p>
+<p>Call this before <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> when using an explicit OAuth flow.</p>
 
                       </div>
                       <div class="declaration">
@@ -576,7 +654,7 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
                               </td>
                               <td>
                                 <div>
-                                  <p>The generated code verifier.</p>
+                                  <p>The PKCE code verifier generated locally before the authorization request.</p>
                                 </div>
                               </td>
                             </tr>
@@ -649,8 +727,8 @@ It is recommended to use the customer ID provided by the SDK. If you want to upd
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -17,7 +17,7 @@
     <a title="CXoneChatError Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -245,6 +268,82 @@
                 </div>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO18featureUnavailableyACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/featureUnavailable(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO18featureUnavailableyACSScACmF">featureUnavailable(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The feature is not currently available for use.</p>
+
+<p>This error indicates that a feature the SDK supports could not be used because the SDK has
+deliberately disabled it in the current release. The associated value carries the
+human-readable feature name so it can be surfaced in integrator-facing error messaging and logs.</p>
+
+<ul>
+<li>Source of problem: The feature is intentionally disabled in the current SDK version.</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Wait for a new release of the SDK.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">featureUnavailable</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO22sdkVersionNotSupportedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/sdkVersionNotSupported" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO22sdkVersionNotSupportedyA2CmF">sdkVersionNotSupported</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The SDK version being used is no longer supported.</p>
+
+<p>This error occurs when the SDK version is outdated and incompatible with the current API.</p>
+
+<ul>
+<li>Source of problem: Deprecated SDK version.</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Please upgrade to the latest version of the SDK to ensure compatibility and access to all features.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">sdkVersionNotSupported</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -306,7 +405,7 @@ or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18Connec
 <div class="aside aside-attention">
     <p class="aside-title">Attention</p>
     The channel is configured as a single-thread and called method requires a feature of multi-thread configuration,
-e.g.  <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6createAA0B6ThreadVyYaKF">create()</a></code>.
+e.g.  <code><a href="../Protocols/ChatThreadListProvider.html#/s:12CXoneChatSDK0B18ThreadListProviderP6createAA0bdF0_pyYaKF">create()</a></code>.
 
 </div></li>
 </ul>
@@ -582,48 +681,6 @@ or gather any information about how the error was encountered and contact the CX
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK0aB5ErrorO22recoveringThreadFailedyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/recoveringThreadFailed" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO22recoveringThreadFailedyA2CmF">recoveringThreadFailed</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The server experienced an error during recovering a messaging thread or server does not contain any existing chat thread.</p>
-
-<p>This error indicates that thread recovery failed, either because the thread does not exist or for some other server-specific cause.</p>
-
-<ul>
-<li>Source of problem: Information error/DFO issue</li>
-</ul><div class="aside aside-warning">
-    <p class="aside-title">Warning</p>
-    The SDK throws this error even in case of empty thread list.
-
-</div><div class="aside aside-attention">
-    <p class="aside-title">Attention</p>
-    Can be ignored in case of empty thread list.
-Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">recoveringThreadFailed</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF"></a>
                     <a name="//apple_ref/swift/Element/missingParameter(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO16missingParameteryACSScACmF">missingParameter(_:<wbr>)</a>
@@ -676,7 +733,7 @@ Otherwise, gather any information about how the error was encountered and contac
 <p>This is one of:</p>
 
 <ul>
-<li><code>MessagesProvider.send(message:)</code> was called with no valid postback, empty text, and no attachments.</li>
+<li><code><a href="../Protocols/ChatThreadProvider.html#/s:12CXoneChatSDK0B14ThreadProviderP4sendyyAA15OutboundMessageVYaKF">send(_:)</a></code> was called with no valid postback, empty text, and no attachments.</li>
 </ul>
 
                       </div>
@@ -704,14 +761,14 @@ Otherwise, gather any information about how the error was encountered and contac
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The brand has configured pre-chat survey with contact custom fields which needs to be provided via <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">create(with:)</a></code> method.</p>
+                        <p>The brand has configured pre-chat survey with contact custom fields which needs to be provided via <code><a href="../Protocols/ChatThreadListProvider.html#/s:12CXoneChatSDK0B18ThreadListProviderP6create4withAA0bdF0_pSDyS2SG_tYaKF">create(with:)</a></code> method.</p>
 
 <ul>
 <li>Source of problem: SDK used incorrectly</li>
 </ul><div class="aside aside-attention">
     <p class="aside-title">Attention</p>
-    Fill-up custom fields available in the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP03preB6SurveyAA03PrebG0VSgvp">preChatSurvey</a></code>
-and pass them as a parameter in the <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP6create4withAA0B6ThreadVSDyS2SG_tYaKF">create(with:)</a></code> method.
+    Fill-up custom fields available in the <code><a href="../Protocols/ChatThreadListProvider.html#/s:12CXoneChatSDK0B18ThreadListProviderP03preB6SurveyAA03PrebH0VSgvp">preChatSurvey</a></code>
+and pass them as a parameter in the <code><a href="../Protocols/ChatThreadListProvider.html#/s:12CXoneChatSDK0B18ThreadListProviderP6create4withAA0bdF0_pSDyS2SG_tYaKF">create(with:)</a></code> method.
 
 </div>
 
@@ -748,8 +805,8 @@ and pass them as a parameter in the <code><a href="../Protocols/ChatThreadsProvi
 <li>Source of problem: SDK used incorrectly</li>
 </ul><div class="aside aside-attention">
     <p class="aside-title">Attention</p>
-    Check content of the <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP20channelConfigurationAA07ChannelG0Vvp">channelConfiguration</a></code>,
-specifically <code>ChannelConfiguration/contactCustomFieldDefinitions</code> or your brand settings.
+    Check the contact custom fields configured in your brand settings
+or the fields offered by <code><a href="../Protocols/ChatThreadListProvider.html#/s:12CXoneChatSDK0B18ThreadListProviderP03preB6SurveyAA03PrebH0VSgvp">preChatSurvey</a></code>.
 
 </div>
 
@@ -786,8 +843,7 @@ specifically <code>ChannelConfiguration/contactCustomFieldDefinitions</code> or 
 <li>Source of problem: SDK used incorrectly</li>
 </ul><div class="aside aside-attention">
     <p class="aside-title">Attention</p>
-    Check content of the <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP20channelConfigurationAA07ChannelG0Vvp">channelConfiguration</a></code>,
-specifically <code>ChannelConfiguration/customerCustomFieldDefinitions</code> or your brand settings.
+    Check the customer custom fields configured in your brand settings.
 
 </div>
 
@@ -834,6 +890,43 @@ specifically <code>ChannelConfiguration/customerCustomFieldDefinitions</code> or
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="n">customerAssociationFailure</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO20sendTranscriptFailedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/sendTranscriptFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO20sendTranscriptFailedyA2CmF">sendTranscriptFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The SDK tried to send a transcript but something went wrong</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly/BE issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check if the feature is enabled via <code><a href="../Structs/ChannelConfiguration.html#/s:12CXoneChatSDK20ChannelConfigurationV23isSendTranscriptEnabledSbvp">isSendTranscriptEnabled</a></code>
+and the provided e-mail is valid. Otherwise, gather any information about how the error was encountered
+and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">sendTranscriptFailed</span></code></pre>
 
                         </div>
                       </div>
@@ -1018,8 +1111,7 @@ Otherwise, Gather any information about how the error was encountered and contac
                       <div class="abstract">
                         <p>The connection request was invalid and couldn&rsquo;t be completed.</p>
 
-<p><code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code>
-    or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> may throw this error in case of incorrectly set socket enpoint object.</p>
+<p><code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> may throw this error in case of incorrectly set socket endpoint object.</p>
 
 <ul>
 <li>Source of problem: SDK used incorrectly/SDK issue</li>
@@ -1057,7 +1149,7 @@ Otherwise, Gather any information about how the error was encountered and contac
                         <p>Thread is missing the timestamp of when the message was created.</p>
 
 <p>Every thread message contains timestamp to be able to identify latest message for loading previously created
-    and not yet loaded messages via <code><a href="../Protocols/MessagesProvider.html#/s:12CXoneChatSDK16MessagesProviderP8loadMore3foryAA0B6ThreadV_tKF">loadMore(for:)</a></code> method.</p>
+    and not yet loaded messages via <code><a href="../Protocols/ChatThreadProvider.html#/s:12CXoneChatSDK0B14ThreadProviderP16loadMoreMessagesyyYaKF">loadMoreMessages()</a></code> method.</p>
 
 <ul>
 <li>Source of problem: DFO issue</li>
@@ -1166,7 +1258,7 @@ Otherwise, gather any information about how the error was encountered and contac
 <div class="aside aside-attention">
     <p class="aside-title">Attention</p>
     <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
-<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code>
 must be called before <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7connectyyYaKF">connect()</a></code> or any other analytics events are generated.
 
 </div>
@@ -1235,7 +1327,7 @@ which leads to the <code><a href="../Enums/ChatState.html#/s:12CXoneChatSDK0B5St
                         <p>Unable to trigger the required method because the chat thread is not in the required state.</p>
 
 <p>The chat thread has to be in correct state to trigger required operation. 
-For example, to update thread name via <code><a href="../Protocols/ChatThreadsProvider.html#/s:12CXoneChatSDK0B15ThreadsProviderP10updateName_3forySS_10Foundation4UUIDVtKF">updateName(_:for:)</a></code>
+For example, to update thread name via <code><a href="../Protocols/ChatThreadProvider.html#/s:12CXoneChatSDK0B14ThreadProviderP10updateNameyySSYaKF">updateName(_:)</a></code>
 the thread can not be in <code><a href="../Enums/ChatThreadState.html#/s:12CXoneChatSDK0B11ThreadStateO6closedyA2CmF">closed</a></code> state.</p>
 
 <p>Check <code><a href="../Enums/ChatThreadState.html">ChatThreadState</a></code> for more information.</p>
@@ -1251,6 +1343,228 @@ the thread can not be in <code><a href="../Enums/ChatThreadState.html#/s:12CXone
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="n">illegalThreadState</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO12eventTimeoutyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/eventTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO12eventTimeoutyA2CmF">eventTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Did not receive a paired response from the server in the expected time.</p>
+
+<p>The SDK sent a request event to the server, but the server did not respond in the expected time.</p>
+
+<ul>
+<li>Source of problem: SDK issue, DFO issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">eventTimeout</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Errors%20when%20using%20transaction%20token%20authentication"></a>
+                <a name="//apple_ref/swift/Section/Errors when using transaction token authentication" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Errors%20when%20using%20transaction%20token%20authentication"></a>
+                  <h3 class="section-name"><span>Errors when using transaction token authentication</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO29transactionTokenRequestFailedyACSi_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/transactionTokenRequestFailed(statusCode:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO29transactionTokenRequestFailedyACSi_tcACmF">transactionTokenRequestFailed(statusCode:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The transaction token request failed.</p>
+
+<p>This error occurs when the SDK is unable to obtain a transaction token from the server.
+The token is required for WebSocket authentication when using secured cookie or third-party OAuth authentication modes.</p>
+
+<ul>
+<li>Source of problem: Network issue/Server issue/SDK issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Check network connectivity and ensure the channel is properly configured for transaction token authentication.
+Otherwise, gather any information about how the error was encountered and contact the CXoneChat SDK team.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">transactionTokenRequestFailed</span><span class="p">(</span><span class="nv">statusCode</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>statusCode</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The HTTP status code returned by the server.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Errors%20related%20to%20OAuth%20token%20handling"></a>
+                <a name="//apple_ref/swift/Section/Errors related to OAuth token handling" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Errors%20related%20to%20OAuth%20token%20handling"></a>
+                  <h3 class="section-name"><span>Errors related to OAuth token handling</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidAccessToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO18invalidAccessTokenyA2CmF">invalidAccessToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The provided access token is invalid.</p>
+
+<p>This error occurs when the token supplied via <code><a href="../Protocols/CustomerProvider.html#/s:12CXoneChatSDK16CustomerProviderP18setConnectionToken_9expiresAtySS_10Foundation4DateVtF">setConnectionToken(_:expiresAt:)</a></code>
+is empty, expired, or rejected by the backend.</p>
+
+<ul>
+<li>Source of problem: SDK used incorrectly / OAuth provider issue</li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    Obtain a fresh token from your OAuth provider and supply it to the SDK.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidAccessToken</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK0aB5ErrorO19invalidRefreshTokenyACSSSgcACmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidRefreshToken(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK0aB5ErrorO19invalidRefreshTokenyACSSSgcACmF">invalidRefreshToken(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The session&rsquo;s refresh token could not be used to recover the session automatically — it was rejected
+by the backend, was never stored, or the refresh grant returned no new access token.</p>
+
+<p>This error occurs when a refresh-grant recovery attempt for the explicit OAuth flow cannot
+succeed and no further automatic recovery is possible.</p>
+
+<ul>
+<li><p>Source of problem: OAuth provider issue / refresh token revoked or expired</p></li>
+</ul><div class="aside aside-attention">
+    <p class="aside-title">Attention</p>
+    <p>The app owns re-authentication in this case — perform a new authorization-code (PKCE)
+grant to obtain a fresh access + refresh token pair, then supply it to the SDK.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">invalidRefreshToken</span><span class="p">(</span><span class="kt">String</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The backend&rsquo;s own description of the rejection, when it supplied one. It is a
+fixed string tied to the backend&rsquo;s error code rather than text from the OAuth provider, so it is
+useful for diagnostics and logging but should not be parsed or branched on. <code>nil</code> when the
+session could not be recovered without the backend rejecting anything — no refresh token was
+stored, or a successful response arrived without a new access token.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -1326,7 +1640,7 @@ the thread can not be in <code><a href="../Enums/ChatThreadState.html#/s:12CXone
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="err">`</span><span class="k">Self</span><span class="err">`</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="err">`</span><span class="k">Self</span><span class="err">`</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="p">`</span><span class="nv">Self</span><span class="p">`,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="p">`</span><span class="nv">Self</span><span class="p">`)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -1338,8 +1652,8 @@ the thread can not be in <code><a href="../Enums/ChatThreadState.html#/s:12CXone
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -17,7 +17,7 @@
     <a title="Classes  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="search.json">
@@ -42,25 +42,19 @@
               <li class="nav-group-task">
                 <a href="Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Enums/ActionType.html">ActionType</a>
+                <a href="Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ChatMode.html">ChatMode</a>
@@ -70,6 +64,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -93,7 +90,13 @@
                 <a href="Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -104,13 +107,13 @@
                 <a href="Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -125,10 +128,7 @@
                 <a href="Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -175,6 +175,12 @@
                 <a href="Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -193,6 +199,15 @@
                 <a href="Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -205,13 +220,21 @@
                 <a href="Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -240,7 +263,24 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The implementation of the interface for interacting with chat features of the CXone platform.</p>
+                        <p>Entry point of the CXone Chat SDK and the canonical conformer of <code><a href="Protocols/ChatProvider.html">ChatProvider</a></code>.</p>
+
+<p>Construct one <code>CXoneChat</code> instance at app start with <code>init()</code> and hold the reference for
+the lifetime of your chat experience. Pass it through your app as the protocol type
+<code><a href="Protocols/ChatProvider.html">ChatProvider</a></code> to keep code testable. Use the provider properties (<code>connection</code>,
+<code>customer</code>, <code>threads</code>, <code>analytics</code>, <code>customerCustomFields</code>, <code>proactiveAction</code>) to
+drive the SDK; subscribe to <code>events()</code> for state changes, thread updates, and errors.</p>
+
+<p><code>CXoneChat</code> is <code>@MainActor</code>-isolated — call sites from background contexts must hop to the
+main actor (see the <code><a href="Protocols/ChatProvider.html">ChatProvider</a></code> protocol docs and the
+<a href="doc:migration-from-singleton">Migration Guide</a> for details).</p>
+<div class="aside aside-important">
+    <p class="aside-title">Important</p>
+    <p>Earlier SDK versions exposed <code>CXoneChat.shared</code> and <code>CXoneChatDelegate</code>. Both
+  are removed. See <a href="doc:migration-from-singleton">migration-from-singleton.md</a> for the
+  upgrade walkthrough.</p>
+
+</div>
 
                         <a href="Classes/CXoneChat.html" class="slightly-smaller">See more</a>
                       </div>
@@ -248,48 +288,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">CXoneChat</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ChatProvider.html">ChatProvider</a></span><span class="p">,</span> <span class="kt">EventReceiver</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Implementation"></a>
-                <a name="//apple_ref/swift/Section/Implementation" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Implementation"></a>
-                  <h3 class="section-name"><span>Implementation</span>
-</h3>
-                </div>
-              </div>
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK10LogManagerC"></a>
-                    <a name="//apple_ref/swift/Class/LogManager" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK10LogManagerC">LogManager</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The log manager of the CXoneChat SDK.</p>
-
-                        <a href="Classes/LogManager.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LogManager</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">CXoneChat</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ChatProvider.html">ChatProvider</a></span></code></pre>
 
                         </div>
                       </div>
@@ -301,8 +301,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

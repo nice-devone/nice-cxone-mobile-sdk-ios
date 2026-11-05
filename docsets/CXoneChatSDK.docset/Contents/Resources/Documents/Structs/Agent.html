@@ -17,7 +17,7 @@
     <a title="Agent Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Agent</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Agent</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -235,6 +258,15 @@
           </section>
           <section class="section task-group-section">
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Properties"></a>
+                  <h3 class="section-name"><span>Properties</span>
+</h3>
+                </div>
+              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -266,93 +298,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV11inContactIdSSSgvp"></a>
-                    <a name="//apple_ref/swift/Property/inContactId" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV11inContactIdSSSgvp">inContactId</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The id of the agent in the inContact (CXone) system.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")</span>
-<span class="kd">public</span> <span class="k">let</span> <span class="nv">inContactId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK5AgentV12emailAddressSSSgvp"></a>
-                    <a name="//apple_ref/swift/Property/emailAddress" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV12emailAddressSSSgvp">emailAddress</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The email address of the agent.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "The field is no longer accessible. It will always return `nil` value and it will be removed in a future release.")</span>
-<span class="kd">public</span> <span class="k">let</span> <span class="nv">emailAddress</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK5AgentV13loginUsernameSSvp"></a>
-                    <a name="//apple_ref/swift/Property/loginUsername" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV13loginUsernameSSvp">loginUsername</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The username of the agent used to log in.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "The field is no longer accessible. It will always return an empty string and it will be removed in a future release.")</span>
-<span class="kd">public</span> <span class="k">let</span> <span class="nv">loginUsername</span><span class="p">:</span> <span class="kt">String</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK5AgentV9firstNameSSvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV9firstNameSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/firstName" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV9firstNameSSvp">firstName</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV9firstNameSSSgvp">firstName</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -360,14 +308,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The first name of the agent.</p>
+                        <p>The first name of the agent, or <code>nil</code> when the backend omits or hides this field.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">firstName</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">firstName</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -377,9 +325,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV7surnameSSvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV7surnameSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/surname" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV7surnameSSvp">surname</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV7surnameSSSgvp">surname</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -387,14 +335,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The surname of the agent.</p>
+                        <p>The surname of the agent, or <code>nil</code> when the backend omits or hides this field.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">surname</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">surname</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -431,9 +379,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV9isBotUserSbvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV9isBotUserSbSgvp"></a>
                     <a name="//apple_ref/swift/Property/isBotUser" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV9isBotUserSbvp">isBotUser</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV9isBotUserSbSgvp">isBotUser</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -441,14 +389,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the agent is a bot.</p>
+                        <p>Whether the agent is a bot, or <code>nil</code> when the backend omits or hides this field.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isBotUser</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isBotUser</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -458,9 +406,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV12isSurveyUserSbvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV12isSurveyUserSbSgvp"></a>
                     <a name="//apple_ref/swift/Property/isSurveyUser" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV12isSurveyUserSbvp">isSurveyUser</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV12isSurveyUserSbSgvp">isSurveyUser</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -468,14 +416,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the agent is for automated surveys.</p>
+                        <p>Whether the agent is for automated surveys, or <code>nil</code> when the backend omits or hides this field.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isSurveyUser</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isSurveyUser</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -485,9 +433,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV8imageUrlSSvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV8imageUrlSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/imageUrl" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV8imageUrlSSvp">imageUrl</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV8imageUrlSSSgvp">imageUrl</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -495,26 +443,39 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The URL for the profile photo of the agent.</p>
+                        <p>The URL for the profile photo of the agent, or <code>nil</code> when unavailable or hidden by the backend.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">imageUrl</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">imageUrl</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Computed%20Properties"></a>
+                <a name="//apple_ref/swift/Section/Computed Properties" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Computed%20Properties"></a>
+                  <h3 class="section-name"><span>Computed Properties</span>
+</h3>
+                </div>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK5AgentV8fullNameSSvp"></a>
+                    <a name="/s:12CXoneChatSDK5AgentV8fullNameSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/fullName" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK5AgentV8fullNameSSvp">fullName</a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV8fullNameSSSgvp">fullName</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -524,14 +485,159 @@
                       <div class="abstract">
                         <p>The full name of the agent (readonly).</p>
 
+<p>Returns <code>nil</code> when neither <code><a href="../Structs/Agent.html#/s:12CXoneChatSDK5AgentV9firstNameSSSgvp">firstName</a></code> nor <code><a href="../Structs/Agent.html#/s:12CXoneChatSDK5AgentV7surnameSSSgvp">surname</a></code> is available — e.g. when the
+backend hides the agent&rsquo;s personal information — so callers can apply a fallback.</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">fullName</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">fullName</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Init"></a>
+                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><span>Init</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK5AgentV2id9firstName7surname8nickname9isBotUser0j6SurveyL08imageUrlACSi_SSSgA2KSbSgAlKtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:firstName:surname:nickname:isBotUser:isSurveyUser:imageUrl:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK5AgentV2id9firstName7surname8nickname9isBotUser0j6SurveyL08imageUrlACSi_SSSgA2KSbSgAlKtcfc">init(id:<wbr>firstName:<wbr>surname:<wbr>nickname:<wbr>isBotUser:<wbr>isSurveyUser:<wbr>imageUrl:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code>Agent</code> value, typically when synthesising agents for tests, previews, or mocks.</p>
+
+<p>Production code receives <code>Agent</code> values from the SDK on <code><a href="../Structs/ChatThread.html">ChatThread</a></code>s and
+in <code><a href="../Enums/ChatEvent.html#/s:12CXoneChatSDK0B5EventO11agentTypingyACSb_AA5AgentVSStcACmF">agentTyping(isTyping:agent:threadId:)</a></code> events.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">id</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span>
+    <span class="nv">firstName</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">surname</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">nickname</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">isBotUser</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">isSurveyUser</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">imageUrl</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Backend identifier for the agent.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>firstName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Agent&rsquo;s first name; <code>nil</code> when omitted or hidden by the backend.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>surname</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Agent&rsquo;s surname; <code>nil</code> when omitted or hidden by the backend.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>nickname</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional display nickname; UI typically prefers this over <code>firstName surname</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isBotUser</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>true</code> if the agent is an automated bot; <code>nil</code> when omitted or hidden by the backend.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isSurveyUser</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>true</code> if the agent represents an automated survey flow; <code>nil</code> when omitted or hidden by the backend.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>imageUrl</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>URL of the agent&rsquo;s profile photo; <code>nil</code> when unavailable or hidden.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -541,8 +647,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

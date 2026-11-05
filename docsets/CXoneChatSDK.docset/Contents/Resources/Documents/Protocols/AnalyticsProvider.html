@@ -17,7 +17,7 @@
     <a title="AnalyticsProvider Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">CXoneChatSDK 2.3.0 Docs</a> (100% documented)</p>
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
         <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -44,25 +44,19 @@
               <li class="nav-group-task">
                 <a href="../Classes/CXoneChat.html">CXoneChat</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager.html">LogManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Level.html">– Level</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/LogManager/Verbosity.html">– Verbosity</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/ActionType.html">ActionType</a>
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatMode.html">ChatMode</a>
@@ -72,6 +66,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
@@ -95,7 +92,13 @@
                 <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a>
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
               </li>
             </ul>
           </li>
@@ -106,13 +109,13 @@
                 <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CXoneChatDelegate.html">CXoneChatDelegate</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/ChatProvider.html">ChatProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ChatThreadsProvider.html">ChatThreadsProvider</a>
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
@@ -127,10 +130,7 @@
                 <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/LogDelegate.html">LogDelegate</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/MessagesProvider.html">MessagesProvider</a>
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
               </li>
             </ul>
           </li>
@@ -177,6 +177,12 @@
                 <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Message.html">Message</a>
               </li>
               <li class="nav-group-task">
@@ -195,6 +201,15 @@
                 <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
               </li>
               <li class="nav-group-task">
@@ -207,13 +222,21 @@
                 <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a>
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SenderInfo.html">SenderInfo</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
               </li>
             </ul>
           </li>
@@ -226,7 +249,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">AnalyticsProvider</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">AnalyticsProvider</span> <span class="p">:</span> <span class="kt">Sendable</span></code></pre>
 
                 </div>
               </div>
@@ -239,9 +262,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP9visitorId10Foundation4UUIDVSgvp"></a>
+                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP9visitorIdSSSgvp"></a>
                     <a name="//apple_ref/swift/Property/visitorId" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP9visitorId10Foundation4UUIDVSgvp">visitorId</a>
+                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP9visitorIdSSSgvp">visitorId</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -256,7 +279,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">visitorId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">visitorId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -283,7 +306,8 @@
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code>
 method was not called before triggering analytics event.</p>
 
 </div><div class="aside aside-throws">
@@ -314,7 +338,7 @@ environment.chatURL is not a valid URL.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">viewPage</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">viewPage</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -372,7 +396,8 @@ environment.chatURL is not a valid URL.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code>
 method was not called before triggering analytics event.</p>
 
 </div><div class="aside aside-throws">
@@ -403,7 +428,7 @@ environment.chatURL is not a valid URL.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">viewPageEnded</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">viewPageEnded</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -461,7 +486,8 @@ environment.chatURL is not a valid URL.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code>
 method was not called before triggering analytics event.
 
 </div><div class="aside aside-throws">
@@ -492,7 +518,7 @@ environment.chatURL is not a valid URL.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">chatWindowOpen</span><span class="p">()</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">chatWindowOpen</span><span class="p">()</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -519,7 +545,8 @@ environment.chatURL is not a valid URL.
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
     <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
+if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or
+<code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH006loggerH07brandId07channelL005tokenH0ySS_S2SSiS2SSgtYaKF">prepare(chatURL:socketURL:loggerURL:brandId:channelId:tokenURL:)</a></code>
 method was not called before triggering analytics event.</p>
 
 </div><div class="aside aside-throws">
@@ -550,7 +577,7 @@ environment.chatURL is not a valid URL.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">conversion</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">conversion</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span> <span class="k">async</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -588,307 +615,13 @@ environment.chatURL is not a valid URL.</p>
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP22proactiveActionDisplay4datayAA09ProactiveG7DetailsV_tYaKF"></a>
-                    <a name="//apple_ref/swift/Method/proactiveActionDisplay(data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP22proactiveActionDisplay4datayAA09ProactiveG7DetailsV_tYaKF">proactiveActionDisplay(data:<wbr>)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Asynchronous
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Reports to CXone that a proactive action was displayed to the visitor.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
-method was not called before triggering analytics event.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the URL cannot be parsed, most likely because
-environment.chatURL is not a valid URL.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue</code> if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is <code>.throw</code>.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>NSError</code> object that indicates why the request failed</p>
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">proactiveActionDisplay</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt"><a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a></span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>data</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The proactive action that was displayed.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP20proactiveActionClick4datayAA09ProactiveG7DetailsV_tYaKF"></a>
-                    <a name="//apple_ref/swift/Method/proactiveActionClick(data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP20proactiveActionClick4datayAA09ProactiveG7DetailsV_tYaKF">proactiveActionClick(data:<wbr>)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Asynchronous
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Reports to CXone that a proactive action was clicked or acted upon by the visitor.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
-method was not called before triggering analytics event.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the URL cannot be parsed, most likely because
-environment.chatURL is not a valid URL.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue</code> if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is <code>.throw</code>.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>NSError</code> object that indicates why the request failed</p>
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">proactiveActionClick</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt"><a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a></span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>data</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The proactive action that was clicked.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP22proactiveActionSuccess_4dataySb_AA09ProactiveG7DetailsVtYaKF"></a>
-                    <a name="//apple_ref/swift/Method/proactiveActionSuccess(_:data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP22proactiveActionSuccess_4dataySb_AA09ProactiveG7DetailsVtYaKF">proactiveActionSuccess(_:<wbr>data:<wbr>)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Asynchronous
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Reports to CXone that a proactive action was successful or fails and lead to a conversion.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO16missingVisitorIdyA2CmF">missingVisitorId</a></code>
-if <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare11environment7brandId07channelI0yAA11EnvironmentO_SiSStYaKF">prepare(environment:brandId:channelId:)</a></code> or <code><a href="../Protocols/ConnectionProvider.html#/s:12CXoneChatSDK18ConnectionProviderP7prepare7chatURL06socketH07brandId07channelK0ySS_SSSiSStYaKF">prepare(chatURL:socketURL:brandId:channelId:)</a></code>
-method was not called before triggering analytics event.
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO20channelConfigFailureyA2CmF">channelConfigFailure</a></code> if the URL cannot be parsed, most likely because
-environment.chatURL is not a valid URL.
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code>URLError.badServerResponse</code> if the URL Loading system received bad data from the server.
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code>EncodingError.invalidValue</code> if a non-conforming floating-point value is encountered during encoding, and the encoding strategy is <code>.throw</code>.
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <code>NSError</code> object that indicates why the request failed
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">proactiveActionSuccess</span><span class="p">(</span><span class="n">_</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">data</span><span class="p">:</span> <span class="kt"><a href="../Structs/ProactiveActionDetails.html">ProactiveActionDetails</a></span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>data</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The proactive action that was successful or fails.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12CXoneChatSDK17AnalyticsProviderP18customVisitorEvent4datayAA0gH8DataTypeO_tKF"></a>
-                    <a name="//apple_ref/swift/Method/customVisitorEvent(data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12CXoneChatSDK17AnalyticsProviderP18customVisitorEvent4datayAA0gH8DataTypeO_tKF">customVisitorEvent(data:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Reports to CXone that some event occurred with the visitor.</p>
-
-<p>This can be used to report any custom event that may not be covered by other existing methods.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO12notConnectedyA2CmF">notConnected</a></code> if an attempt was made to use a method without connecting first.
-Make sure you call the <code>connect</code> method first.</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code><a href="../Enums/CXoneChatError.html#/s:12CXoneChatSDK0aB5ErrorO11invalidDatayA2CmF">invalidData</a></code> when the Data object cannot be successfully converted to a valid UTF-8 string</p>
-
-</div><div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p><code>EncodingError.invalidValue(_:_:)</code> if the given value is invalid in the current context for this format.</p>
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Deprecated with 2.3.0. Sending `customVisitorEvent(data:﹚` via WebSocket is not supported.")</span>
-<span class="kd">func</span> <span class="nf">customVisitorEvent</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt"><a href="../Enums/VisitorEventDataType.html">VisitorEventDataType</a></span><span class="p">)</span> <span class="k">throws</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>data</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Any data associated with the event.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>© 2024 NICE</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

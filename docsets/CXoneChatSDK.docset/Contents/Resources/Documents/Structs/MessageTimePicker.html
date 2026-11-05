@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MessageTimePicker Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/MessageTimePicker" class="dashAnchor"></a>
+    <a title="MessageTimePicker Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CXoneChatSDK 4.1.0 Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/nice-devone/nice-cxone-mobile-sdk-ios"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CXoneChatSDK</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Structs.html">Structures</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        MessageTimePicker Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CXoneChat.html">CXoneChat</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AuthenticationType.html">AuthenticationType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CXoneChatError.html">CXoneChatError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatEvent.html">ChatEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatMode.html">ChatMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatState.html">ChatState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatThreadState.html">ChatThreadState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContactHandler.html">ContactHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentDescriptorSource.html">ContentDescriptorSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/CustomFieldType.html">CustomFieldType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageContentType.html">MessageContentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageDirection.html">MessageDirection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageStatus.html">MessageStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageSubElementType.html">MessageSubElementType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionTriggerType.html">ProactiveActionTriggerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ProactiveActionType.html">ProactiveActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TokenRequestReason.html">TokenRequestReason</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnalyticsProvider.html">AnalyticsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatProvider.html">ChatProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadListProvider.html">ChatThreadListProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChatThreadProvider.html">ChatThreadProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ConnectionProvider.html">ConnectionProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ContactCustomFieldsProvider.html">ContactCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerCustomFieldsProvider.html">CustomerCustomFieldsProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CustomerProvider.html">CustomerProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ProactiveActionProvider.html">ProactiveActionProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Agent.html">Agent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AllowedFileType.html">AllowedFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CXoneChatSDKModule.html">CXoneChatSDKModule</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelConfiguration.html">ChannelConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatThread.html">ChatThread</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ContentDescriptor.html">ContentDescriptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchical.html">CustomFieldHierarchical</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldHierarchicalNode.html">CustomFieldHierarchicalNode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldSelector.html">CustomFieldSelector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomFieldTextField.html">CustomFieldTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CustomerIdentity.html">CustomerIdentity</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileRestrictions.html">FileRestrictions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopup.html">InactivityPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/InactivityPopupButton.html">InactivityPopupButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageListPicker.html">MessageListPicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessagePayload.html">MessagePayload</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageQuickReplies.html">MessageQuickReplies</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageReplyButton.html">MessageReplyButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRichLink.html">MessageRichLink</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePicker.html">MessageTimePicker</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OAuthToken.html">OAuthToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OutboundMessage.html">OutboundMessage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurvey.html">PreChatSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PreChatSurveyCustomField.html">PreChatSurveyCustomField</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ProactiveActionDataMessageContent.html">ProactiveActionDataMessageContent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SatisfactionSurvey.html">SatisfactionSurvey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SenderInfo.html">SenderInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UserStatistics.html">UserStatistics</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:12CXoneChatSDK21TokenDelegateListenera">TokenDelegateListener</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>MessageTimePicker</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageTimePicker</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                </div>
+              </div>
+            <p>A time slot picker displays a list of options, and information about the time slot.</p>
+
+<p>A model representing a time picker message, including the text shown in the conversation,
+the sheet title, and the available time slots. Used to configure UI that presents time slot selection to the user.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK17MessageTimePickerV5titleSSvp"></a>
+                    <a name="//apple_ref/swift/Property/title" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK17MessageTimePickerV5titleSSvp">title</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text displayed in the conversation cell.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">title</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK17MessageTimePickerV10sheetTitleSSvp"></a>
+                    <a name="//apple_ref/swift/Property/sheetTitle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK17MessageTimePickerV10sheetTitleSSvp">sheetTitle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Title shown at the top of the time picker sheet.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">sheetTitle</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK17MessageTimePickerV9timeSlotsSayAA0defE4SlotVGvp"></a>
+                    <a name="//apple_ref/swift/Property/timeSlots" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK17MessageTimePickerV9timeSlotsSayAA0defE4SlotVGvp">timeSlots</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>List of available time slot options.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">timeSlots</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Init"></a>
+                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><span>Init</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12CXoneChatSDK17MessageTimePickerV5title10sheetTitle9timeSlotsACSS_SSSayAA0defE4SlotVGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(title:sheetTitle:timeSlots:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12CXoneChatSDK17MessageTimePickerV5title10sheetTitle9timeSlotsACSS_SSSayAA0defE4SlotVGtcfc">init(title:<wbr>sheetTitle:<wbr>timeSlots:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code>MessageTimePicker</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">sheetTitle</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">timeSlots</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MessageTimePickerTimeSlot.html">MessageTimePickerTimeSlot</a></span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>title</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Text displayed in the conversation cell.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sheetTitle</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Title shown at the top of the picker sheet when the user opens it.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>timeSlots</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The selectable time slots offered to the user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>© 2026 NiCE</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>
