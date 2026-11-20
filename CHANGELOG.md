@@ -2,6 +2,14 @@
 # [Unreleased]
 
 
+<a name="4.1.1"></a>
+# [4.1.1] - 2026-11-20
+
+## Fixes
+- On a channel with a welcome message, a new thread now keeps a single welcome message after the customer sends their first message. Since 4.1.0 the backend's copy of the welcome message was added next to the one the SDK had already shown, so the thread displayed the welcome message twice before the customer's message. It also stays single when the agent reads it, when older messages are loaded and when the thread is recovered.
+- On a channel with a welcome message, the customer's first message no longer sometimes appears above the welcome message. The SDK sent the customer's message right after the welcome message, so the backend could store the customer's message first. The SDK now waits until the backend has stored the welcome message, at most two seconds, before it sends the customer's first message.
+
+
 <a name="4.1.0"></a>
 # [4.1.0] - 2026-11-04
 
@@ -472,7 +480,8 @@
   - typing start/end
 
 
-[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/4.1.0...HEAD
+[Unreleased]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/4.1.1...HEAD
+[4.1.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/4.1.0...4.1.1
 [4.1.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/4.0.0...4.1.0
 [4.0.0]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.3.1...4.0.0
 [3.3.1]: https://github.com/nice-devone/nice-cxone-mobile-sdk-ios/compare/3.3.0...3.3.1

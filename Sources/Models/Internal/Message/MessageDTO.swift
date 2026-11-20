@@ -56,6 +56,20 @@ struct MessageDTO: Equatable, Sendable {
     let isAiGenerated: Bool
 }
 
+// MARK: - Properties
+
+extension MessageDTO {
+
+    /// Whether this is the backend's copy of the welcome message the SDK sent with the ``MessageParameter/isWelcomeMessage`` parameter.
+    var isWelcomeMessage: Bool {
+        if case .text(let payload) = contentType {
+            return payload.parameters.contains(.isWelcomeMessage, withValue: .bool(true))
+        } else {
+            return false
+        }
+    }
+}
+
 // MARK: - Decodable
 
 extension MessageDTO: Decodable {

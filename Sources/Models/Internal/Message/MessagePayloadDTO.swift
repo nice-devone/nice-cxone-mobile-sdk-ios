@@ -19,6 +19,9 @@ enum MessageParameter: String {
     case isBeginLiveChatConversation = "isInitialMessage"
     case isUnsupportedMessageTypeAnswer
     case isInactivityPopupAnswer
+    /// Marks the welcome message the SDK sends before the customer's first message. Unlike the other parameters,
+    /// it does not hide the message - it lets the SDK replace its local copy with the one from the backend.
+    case isWelcomeMessage
 }
 
 /// All info about a message payload.
