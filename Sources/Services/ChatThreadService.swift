@@ -24,6 +24,9 @@ final class ChatThreadService: Sendable {
     
     static let beginLiveChatConversationMessage = "Begin Conversation"
     static let unsupportedMessageTypeAnswerMessage = "The last agent's message is not supported in the mobile SDK"
+
+    /// How long the customer's first message waits for the backend's copy of the welcome message sent before it.
+    static let backendWelcomeMessageTimeout: Double = 2
     
     let socketService: SocketService
     let eventsService: EventsService
@@ -34,16 +37,17 @@ final class ChatThreadService: Sendable {
     private let customerCustomFieldsProvider: CustomerCustomFieldsProvider
     private let welcomeMessageManager: WelcomeMessageManager
     
-    private let _parsedWelcomeMessage = SafeAccessContainer<String?>(nil)
+    /// The welcome message the SDK added to a new thread itself, until the backend's copy of it replaces it.
+    ///
+    /// A single value, so whether the welcome message still has to be sent and which message to replace cannot disagree.
+    ///
+    /// Lock order: it is locked while ``chatThread``'s lock is held, never the other way round - a closure mutating it
+    /// must not read ``chatThread``.
+    private let _localWelcomeMessage = SafeAccessContainer<LocalWelcomeMessage?>(nil)
 
-    private var parsedWelcomeMessage: String? {
-        get { _parsedWelcomeMessage.content }
-        set {
-            _parsedWelcomeMessage.mutate { content in
-                content = newValue
-            }
-        }
-    }
+    /// The ID the welcome message is sent with - the same for every attempt. A send that reported an error may still
+    /// have reached the backend, so a retry could otherwise leave two copies there; with one ID, they merge into one message.
+    private let welcomeMessageOutboundId = LowercaseUUID().uuidString
 
     private var connectionContext: ConnectionContext {
         socketService.connectionContext
@@ -62,7 +66,9 @@ final class ChatThreadService: Sendable {
         get { _chatThread.content }
         set {
             _chatThread.mutate { content in
-                content = newValue
+                // A write built from a snapshot taken before the backend's copy of the welcome message replaced
+                // the local one must not bring the local copy back
+                content = reconcilingReplacedLocalWelcomeMessage(in: newValue)
             }
         }
     }
@@ -178,7 +184,10 @@ extension ChatThreadService: ChatThreadProvider {
             throw CXoneChatError.illegalThreadState
         }
 
-        chatThread = chatThread.copy(name: name)
+        // Atomic, so it cannot overwrite a concurrent change to the messages
+        _chatThread.mutate { thread in
+            thread = thread.copy(name: name)
+        }
 
         if chatThread.state == .ready {
             let data = try eventsService.create(
@@ -237,7 +246,10 @@ extension ChatThreadService: ChatThreadProvider {
             LogManager.trace("Thread does not exist in BE")
         }
 
-        chatThread = chatThread.copy(state: .closed)
+        // Atomic, so it cannot overwrite a concurrent change to the messages
+        _chatThread.mutate { thread in
+            thread = thread.copy(state: .closed)
+        }
 
         broadcaster.send(.threadUpdated(chatThread))
     }
@@ -456,7 +468,10 @@ extension ChatThreadService {
                 customer: connectionContext.customer.map(CustomerIdentityMapper.map)
             )
 
-            chatThread = chatThread.appending(message: mappedMessage)
+            // Atomic, like `merge(_:update:)`, so the two cannot overwrite each other's changes
+            _chatThread.mutate { thread in
+                thread = thread.appending(message: mappedMessage)
+            }
 
             broadcaster.send(.threadUpdated(chatThread))
 
@@ -496,7 +511,9 @@ extension ChatThreadService {
                 )
 
                 // Replace the message by ID to ensure we're updating the correct message
-                chatThread = chatThread.replacingMessage(withId: newMessage.id, with: failedMessage)
+                _chatThread.mutate { thread in
+                    thread = thread.replacingMessage(withId: newMessage.id, with: failedMessage)
+                }
 
                 broadcaster.send(.threadUpdated(chatThread))
             }
@@ -505,25 +522,10 @@ extension ChatThreadService {
         }
     }
     
+    /// Adds the welcome message to a new thread. It does not notify the subscribers - the caller broadcasts the thread itself.
+    ///
     /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    func handleWelcomeMessage(_ message: String) throws {
-        guard chatThread.state == .pending else {
-            // No available thread for handling welcome message or
-            // no need to handle welcome message for thread that exists on the BE side -> first message should be the welcome message
-            return
-        }
-        guard chatThread.messages.isEmpty else {
-            // Thread already contains some messages -> no need to append welcome message because it has been already added
-            return
-        }
-
-        chatThread = chatThread.merged(with: [try getParsedWelcomeMessage(message)])
-
-        broadcaster.send(.threadUpdated(chatThread))
-    }
-    
-    /// - Throws: ``CXoneChatError/customerAssociationFailure`` if the SDK could not get customer identity and it may not have been set.
-    func getParsedWelcomeMessage(_ welcomeMessage: String) throws -> Message {
+    func addLocalWelcomeMessage(_ message: String) throws {
         guard let customer = connectionContext.customer else {
             throw CXoneChatError.customerAssociationFailure
         }
@@ -531,10 +533,8 @@ extension ChatThreadService {
         let contactFields = contactCustomFieldsService?.contactFields[chatThread.id] ?? []
         let customerFields = customerCustomFieldsService?.customerFields ?? []
         
-        let parsedMessage = welcomeMessageManager.parse(welcomeMessage, contactFields: contactFields, customerFields: customerFields, customer: customer)
-        self.parsedWelcomeMessage = parsedMessage
-        
-        return Message(
+        let parsedMessage = welcomeMessageManager.parse(message, contactFields: contactFields, customerFields: customerFields, customer: customer)
+        let welcomeMessage = Message(
             id: LowercaseUUID().uuidString,
             threadId: chatThread.id,
             contentType: .text(MessagePayload(text: parsedMessage, postback: nil)),
@@ -547,11 +547,99 @@ extension ChatThreadService {
             authorEndUserIdentity: CustomerIdentityMapper.map(customer),
             status: .sent
         )
+
+        // Checked in the same atomic step as the insert
+        let isWelcomeMessageAdded = _chatThread.mutate { thread -> Bool in
+            // A thread existing on the backend or one that already has messages starts with the backend's history instead
+            guard thread.state == .pending, thread.messages.isEmpty else {
+                return false
+            }
+
+            thread = thread.merged(with: [welcomeMessage])
+
+            _localWelcomeMessage.mutate { localWelcomeMessage in
+                localWelcomeMessage = .notSent(messageId: welcomeMessage.id)
+            }
+
+            return true
+        }
+
+        // Logged outside the thread's lock - the integrator's log writer may read the thread
+        if !isWelcomeMessageAdded {
+            LogManager.warning("Welcome message not added - the thread is not a new empty thread")
+        }
     }
-    
+
+    /// Merges messages received from the backend into ``chatThread``.
+    ///
+    /// Use it, or ``applyRecoveredThread(_:recoveredMessages:)``, for every backend message that can be the backend's copy
+    /// of the welcome message: only these two recognize the copy, so it replaces the local one - the copy has a different ID,
+    /// so otherwise the thread would show the welcome message twice. Once replaced, every write to ``chatThread`` keeps it that way.
+    ///
+    /// The removal of the local copy, the merge and the optional `update` happen in one atomic step,
+    /// so a concurrent change to the thread cannot be overwritten and no reader sees the thread between them.
+    ///
+    /// - Parameters:
+    ///   - messages: The messages received from the backend.
+    ///   - update: Further changes applied to the thread in the same step. It runs while the thread is locked,
+    ///     so it must not read ``chatThread`` or log - the integrator's log writer runs synchronously and may read the thread,
+    ///     and the lock is not recursive.
+    /// - Returns: The merged messages, mapped to their public model.
+    @discardableResult
+    func merge(_ messages: [MessageDTO], update: (@Sendable (ChatThread) -> ChatThread)? = nil) -> [Message] {
+        let mappedMessages = messages.compactMap(MessageMapper.map)
+
+        replaceThread(ifReplacingLocalWelcomeMessageWith: backendWelcomeMessage(in: messages, mappedMessages: mappedMessages)) { thread in
+            // Not merged when empty - merging re-sorts the messages, which an empty page must not do
+            let mergedThread = mappedMessages.isEmpty ? thread : thread.merged(with: mappedMessages)
+
+            return update?(mergedThread) ?? mergedThread
+        }
+
+        return mappedMessages
+    }
+
+    /// Applies the recovered state to ``chatThread``, removing the local welcome message if the backend's copy of it
+    /// is among the recovered messages - see ``merge(_:update:)``.
+    ///
+    /// The recovered thread is built before the atomic step, because building it maps messages,
+    /// and mapping can log - a log writer reading the thread must not run while the thread is locked.
+    ///
+    /// - Parameters:
+    ///   - recoveredThread: The thread built from the recovery event.
+    ///   - recoveredMessages: The messages received in the recovery event.
+    func applyRecoveredThread(_ recoveredThread: ChatThread, recoveredMessages: [MessageDTO]) {
+        let backendWelcomeMessage = backendWelcomeMessage(in: recoveredMessages, mappedMessages: recoveredThread.messages)
+
+        replaceThread(ifReplacingLocalWelcomeMessageWith: backendWelcomeMessage) { _ in
+            recoveredThread
+        }
+    }
+
+    /// Replaces ``chatThread`` with its state from the backend and discards the local welcome message, in one atomic step.
+    ///
+    /// A thread listed by the backend already exists there, so its welcome message, if any, was already sent.
+    func replaceWithBackendThread(_ backendThread: ChatThread) {
+        _chatThread.mutate { thread in
+            thread = backendThread
+
+            _localWelcomeMessage.mutate { localWelcomeMessage in
+                // The ID is kept, so a write built from a snapshot taken before the replacement cannot bring the local copy back.
+                // A stored backend copy is dropped too: the backend thread starts without history, and re-adding the welcome
+                // message would make it the oldest message, so loading older messages would skip the history in between.
+                localWelcomeMessage = localWelcomeMessage.map { localWelcomeMessage in
+                    .discarded(messageId: localWelcomeMessage.messageId)
+                }
+            }
+        }
+    }
+
     /// Some messages should not appear into the chat history because of specific reason,
     /// e.g. Begin live chat conversation = Live chat thread is created with hard coded message
     /// that we don't want to present to the user
+    ///
+    /// The backend's copy of the welcome message is never ignored - it replaces the local copy,
+    /// see ``merge(_:update:)``.
     func shouldIgnoreMessage(_ message: MessageDTO) -> Bool {
         switch message.contentType {
         case .inactivityPopup:
@@ -563,15 +651,7 @@ extension ChatThreadService {
             
             return true
         case .text(let payload):
-            if let parsedWelcomeMessage, payload.text == parsedWelcomeMessage {
-                LogManager.trace("Ignoring message – content is welcome message")
-                
-                self.parsedWelcomeMessage = nil
-                
-                // Ignore the welcome message only if the thread is in `.pending` state
-                // (welcome message is appended manually in pending state, it does not yet exist in the chat history)
-                return chatThread.state == .pending
-            } else if payload.parameters.contains(.isBeginLiveChatConversation, withValue: .bool(true)) {
+            if payload.parameters.contains(.isBeginLiveChatConversation, withValue: .bool(true)) {
                 LogManager.trace("Ignoring message – content is begin live conversation")
                 
                 return true
@@ -637,14 +717,15 @@ extension ChatThreadService: EventReceiver {
     func processMoreMessagesLoaded(_ event: MoreMessagesLoadedEventDTO) {
         LogManager.trace("More messages loaded for thread: \(chatThread.id)")
             
-        if event.postback.data.messages.isEmpty {
-            chatThread = chatThread.copy(scrollToken: "")
-        } else {
-            let messages = event.postback.data.messages
-                .filter { !shouldIgnoreMessage($0) }
-                .compactMap(MessageMapper.map)
+        let messages = event.postback.data.messages.filter { message in
+            !shouldIgnoreMessage(message)
+        }
 
-            chatThread = chatThread.merged(with: messages).copy(scrollToken: event.postback.data.scrollToken)
+        // An empty page means there are no older messages
+        let scrollToken = event.postback.data.messages.isEmpty ? "" : event.postback.data.scrollToken
+
+        merge(messages) { thread in
+            thread.copy(scrollToken: scrollToken)
         }
 
         broadcaster.send(.threadUpdated(chatThread))
@@ -672,6 +753,43 @@ extension ChatThreadService: EventReceiver {
 // MARK: - Private methods
 
 private extension ChatThreadService {
+
+    /// Changes the thread in one atomic step, then removes the local welcome message if `backendWelcomeMessage` is given
+    /// or the backend's copy has replaced it before.
+    ///
+    /// `transform` runs inside the thread's lock, so it must not log - a log writer reading the thread would deadlock.
+    ///
+    /// - Parameter backendWelcomeMessage: The backend's copy of the welcome message among the written messages, if any.
+    ///   Mapped by the caller before the thread's lock is taken - mapping can log.
+    func replaceThread(ifReplacingLocalWelcomeMessageWith backendWelcomeMessage: Message?, transform: @Sendable (ChatThread) -> ChatThread) {
+        let isLocalWelcomeMessageRemoved = _chatThread.mutate { thread -> Bool in
+            thread = transform(thread)
+
+            // Decided inside the thread's lock, so no other write to the thread can bring the local copy back in between.
+            // Marked as replaced in every state - a send that reported an error may still have reached the backend.
+            if let backendWelcomeMessage {
+                _localWelcomeMessage.mutate { localWelcomeMessage in
+                    // Not overwritten once replaced - `reconcilingReplacedLocalWelcomeMessage(in:)` keeps the stored copy current
+                    if case .replaced? = localWelcomeMessage {
+                        return
+                    } else if let messageId = localWelcomeMessage?.messageId {
+                        localWelcomeMessage = .replaced(messageId: messageId, backendWelcomeMessage: backendWelcomeMessage)
+                    }
+                }
+            }
+
+            // Applied after `transform`, because a recovered thread built from an earlier snapshot can still contain it
+            let messageCount = thread.messages.count
+            thread = reconcilingReplacedLocalWelcomeMessage(in: thread)
+
+            return thread.messages.count != messageCount
+        }
+
+        // Logged outside the thread's lock, see above
+        if isLocalWelcomeMessageRemoved {
+            LogManager.trace("Replaced the local welcome message with the one from the backend")
+        }
+    }
 
     /// The reference to the current thread attached to outbound events.
     var threadDTO: ThreadDTO {
@@ -721,14 +839,144 @@ private extension ChatThreadService {
     /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
     @MainActor
     func sendWelcomeMessageIfNeeded() async throws {
-        guard let parsedWelcomeMessage,
-              chatThread.messages.count == 1,
-              case .text(let message) = chatThread.messages.first?.contentType,
-              parsedWelcomeMessage == message.text
-        else {
-            return
+        // Wait for a welcome message send started by a concurrent `send(_:)`, so the customer's message cannot overtake it.
+        // The send leaves the `.sending` state before it finishes; if it failed, the welcome message can be sent below again.
+        while case .sending(_, let welcomeMessageSend) = _localWelcomeMessage.content {
+            _ = await welcomeMessageSend.result
         }
-        
+
+        // Checked and claimed in one step inside the thread's lock, so a backend message merged meanwhile cannot slip
+        // in front of the welcome message, and a concurrent `send(_:)` waits for this send instead of starting its own.
+        // The task cannot start before it is stored - both run on the main actor.
+        let welcomeMessageSend = _chatThread.mutate { thread -> Task<Void, any Error>? in
+            guard thread.messages.count == 1,
+                  let welcomeMessage = thread.messages.first,
+                  case .text(let message) = welcomeMessage.contentType
+            else {
+                return nil
+            }
+
+            return _localWelcomeMessage.mutate { localWelcomeMessage -> Task<Void, any Error>? in
+                guard case .notSent(welcomeMessage.id) = localWelcomeMessage else {
+                    return nil
+                }
+
+                // Weak, so the stored task does not keep a dropped service alive before it starts;
+                // once running, it holds the service until the send returns
+                let welcomeMessageSend = Task { @MainActor [weak self] in
+                    guard let self else {
+                        return
+                    }
+
+                    do {
+                        try await sendWelcomeMessage(message.text)
+
+                        finishWelcomeMessageSend(messageId: welcomeMessage.id, didSend: true)
+                    } catch {
+                        // Lets a later `send(_:)` send it again - with the same ID, see `welcomeMessageOutboundId`
+                        finishWelcomeMessageSend(messageId: welcomeMessage.id, didSend: false)
+
+                        throw error
+                    }
+                }
+
+                localWelcomeMessage = .sending(messageId: welcomeMessage.id, task: welcomeMessageSend)
+
+                return welcomeMessageSend
+            }
+        }
+
+        do {
+            // Not cancelled together with this `send(_:)` - a concurrent `send(_:)` may be waiting for it
+            try await welcomeMessageSend?.value
+        } catch {
+            switch _localWelcomeMessage.content {
+            case .replaced?, .discarded?, nil:
+                // The welcome message is known to be on the backend - its copy replaced the local one, or the thread
+                // was replaced with its backend state - so the customer's message is sent as usual
+                break
+            default:
+                // Not known to be on the backend - a later `send(_:)` sends it again, possibly one waiting right now
+                throw error
+            }
+        }
+    }
+
+    /// The backend's copy of the welcome message among `messages`, taken from `mappedMessages` that were already mapped from them.
+    func backendWelcomeMessage(in messages: [MessageDTO], mappedMessages: [Message]) -> Message? {
+        guard let welcomeMessage = messages.first(where: \.isWelcomeMessage) else {
+            return nil
+        }
+
+        return mappedMessages.first { message in
+            message.id == welcomeMessage.idOnExternalPlatform
+        }
+    }
+
+    /// Replaces the local welcome message in `thread` with the backend's copy, once the backend's copy has replaced it.
+    ///
+    /// Besides removing the local copy, it re-adds the stored backend copy when `thread` lacks it,
+    /// and stores the thread's newer version of the backend copy when `thread` has one.
+    /// Once the thread was replaced with its backend state (`.discarded`), it only removes the local copy.
+    ///
+    /// Applied to every write to the thread, so one built from an earlier snapshot cannot bring the local copy back.
+    /// It also puts the backend's copy back when such a snapshot does not have it, so the welcome message does not disappear.
+    /// Called inside the thread's lock, so it must not log.
+    func reconcilingReplacedLocalWelcomeMessage(in thread: ChatThread) -> ChatThread {
+        switch _localWelcomeMessage.content {
+        case .replaced(let messageId, let backendWelcomeMessage):
+            return reconcilingReplacedLocalWelcomeMessage(in: thread, messageId: messageId, backendWelcomeMessage: backendWelcomeMessage)
+        case .discarded(let messageId):
+            let messages = thread.messages.filter { message in
+                message.id != messageId
+            }
+
+            return messages.count == thread.messages.count ? thread : thread.copy(messages: messages)
+        default:
+            return thread
+        }
+    }
+
+    /// Removes the local copy `messageId` from `thread` and keeps `backendWelcomeMessage` in it - see ``reconcilingReplacedLocalWelcomeMessage(in:)``.
+    func reconcilingReplacedLocalWelcomeMessage(in thread: ChatThread, messageId: String, backendWelcomeMessage: Message) -> ChatThread {
+        let messages = thread.messages.filter { message in
+            message.id != messageId
+        }
+
+        let currentBackendWelcomeMessage = messages.first { message in
+            message.id == backendWelcomeMessage.id
+        }
+
+        if let currentBackendWelcomeMessage {
+            // The thread's version is the latest one (seen, read) - kept for a later write that lacks the copy
+            if currentBackendWelcomeMessage != backendWelcomeMessage {
+                _localWelcomeMessage.mutate { localWelcomeMessage in
+                    localWelcomeMessage = .replaced(messageId: messageId, backendWelcomeMessage: currentBackendWelcomeMessage)
+                }
+            }
+
+            return messages.count == thread.messages.count ? thread : thread.copy(messages: messages)
+        } else {
+            return thread.copy(messages: messages).merged(with: [backendWelcomeMessage])
+        }
+    }
+
+    /// Leaves the `.sending` state of the welcome message `messageId` - unless the backend's copy has meanwhile replaced
+    /// the local one, or the thread was replaced with its backend state.
+    func finishWelcomeMessageSend(messageId: String, didSend: Bool) {
+        _localWelcomeMessage.mutate { localWelcomeMessage in
+            if case .sending(messageId, _) = localWelcomeMessage {
+                localWelcomeMessage = didSend ? .sent(messageId: messageId) : .notSent(messageId: messageId)
+            }
+        }
+    }
+
+    /// - Throws: ``CXoneChatError/notConnected`` if an attempt was made to use a method without connecting first.
+    ///     Make sure you call the `connect` method first.
+    /// - Throws: ``CXoneChatError/invalidData`` when the Data object cannot be successfully converted to a valid UTF-8 string
+    /// - Throws: `EncodingError.invalidValue(_:_:)` if the given value is invalid in the current context for this format.
+    @MainActor
+    func sendWelcomeMessage(_ text: String) async throws {
         LogManager.trace("Sending an outbound message.")
 
         try socketService.checkForConnection()
@@ -743,12 +991,9 @@ private extension ChatThreadService {
 
         let eventData = EventDataType.sendOutboundMessageData(
             SendOutboundMessageEventDataDTO(
-                thread: ThreadDTO(
-                    idOnExternalPlatform: chatThread.id,
-                    threadName: chatThread.messages.isEmpty ? nil : chatThread.name
-                ),
-                contentType: .text(MessagePayloadDTO(text: message.text, postback: nil, parameters: [String: AnyValue]())),
-                idOnExternalPlatform: LowercaseUUID().uuidString,
+                thread: threadDTO,
+                contentType: .text(MessagePayloadDTO(text: text, postback: nil, parameters: [MessageParameter.isWelcomeMessage: .bool(true)])),
+                idOnExternalPlatform: welcomeMessageOutboundId,
                 contactCustomFields: customFields ?? [],
                 attachments: [],
                 deviceFingerprint: DeviceFingerprintDTO(deviceToken: connectionContext.deviceToken),
@@ -758,9 +1003,107 @@ private extension ChatThreadService {
         
         let data = try eventsService.create(.sendOutbound, with: eventData)
 
+        // Subscribed before sending, so the backend's copy cannot arrive before the SDK listens for it.
+        // Cancelled on every exit, which also ends the subscription.
+        let backendWelcomeMessage = waitForBackendWelcomeMessage(in: eventBroadcast.makeStream(), threadId: chatThread.id)
+        defer {
+            backendWelcomeMessage.cancel()
+        }
+
         // The credential was already freshened by `refreshConnectionTokenIfNeeded()` above and embedded into
         // `eventData`; skip the choke-point re-check so a single refresh runs per event.
         try await socketService.send(data: data, shouldCheck: false)
+
+        // The backend handles the welcome message and the customer's message independently, so a customer's message sent
+        // right away can be stored first and the thread, sorted by the backend's times, shows it above the welcome message.
+        // Once the backend's copy arrives, the welcome message is stored, so the customer's message is stored after it.
+        let waitStart = ContinuousClock.now
+
+        let didReceiveBackendWelcomeMessage = await withTaskGroup(of: Bool.self) { group in
+            group.addTask {
+                await backendWelcomeMessage.value
+            }
+            group.addTask {
+                try? await Task.sleep(seconds: Self.backendWelcomeMessageTimeout)
+
+                return false
+            }
+
+            let didReceive = await group.next() ?? false
+
+            // Cancelling the group does not cancel the awaited task, and the group waits for all its tasks before returning
+            backendWelcomeMessage.cancel()
+            group.cancelAll()
+
+            return didReceive
+        }
+
+        // The customer's message is shown only after this wait, so its length is logged to confirm it stays short
+        let waitDuration = ContinuousClock.now - waitStart
+
+        if didReceiveBackendWelcomeMessage {
+            LogManager.trace("The backend's copy of the welcome message arrived after \(waitDuration)")
+        } else {
+            // Not blocking the customer's message - it is sent anyway, at the risk of being shown above the welcome message
+            LogManager.warning(
+                "The backend's copy of the welcome message did not arrive within \(waitDuration) (timeout or connection reset), "
+                    + "sending the customer's message anyway"
+            )
+        }
+    }
+
+    /// Starts listening for the backend's copy of the welcome message in thread `threadId`.
+    ///
+    /// - Returns: A task that returns `true` once the copy arrives, or `false` when the connection resets first.
+    func waitForBackendWelcomeMessage(in events: AsyncStream<any ReceivedEvent>, threadId: String) -> Task<Bool, Never> {
+        Task {
+            for await event in events {
+                if event is EventBroadcast.BroadcastInvalidatedEvent {
+                    return false
+                }
+
+                if let event = event as? MessageCreatedEventDTO,
+                   event.data.message.isWelcomeMessage,
+                   event.data.thread.idOnExternalPlatform.lowercased() == threadId.lowercased() {
+                    return true
+                }
+            }
+
+            return false
+        }
+    }
+}
+
+// MARK: - LocalWelcomeMessage
+
+private extension ChatThreadService {
+
+    /// The welcome message the SDK added to a new thread itself.
+    enum LocalWelcomeMessage: Sendable {
+
+        // MARK: - Cases
+
+        /// Not sent to the backend yet - it is sent before the customer's first message.
+        case notSent(messageId: String)
+        /// Being sent to the backend. A concurrent `send(_:)` waits for `task` before sending its own message.
+        case sending(messageId: String, task: Task<Void, any Error>)
+        /// Sent to the backend - waiting for the backend's copy of it to replace the local one.
+        case sent(messageId: String)
+        /// Replaced with `backendWelcomeMessage`. Every later write has the local copy removed and the backend's copy kept,
+        /// so one built from an earlier snapshot neither brings the local copy back nor drops the welcome message.
+        case replaced(messageId: String, backendWelcomeMessage: Message)
+        /// The thread was replaced with its backend state, which already has the welcome message. Every later write
+        /// has the local copy removed, so one built from an earlier snapshot cannot bring it back; it is never sent again.
+        case discarded(messageId: String)
+
+        // MARK: - Properties
+
+        var messageId: String {
+            switch self {
+            case .notSent(let messageId), .sending(let messageId, _), .sent(let messageId), .replaced(let messageId, _), .discarded(let messageId):
+                return messageId
+            }
+        }
     }
 }
 

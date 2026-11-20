@@ -186,9 +186,9 @@ extension ChatThreadListService: ChatThreadListProvider {
 
         let service = createAndStoreProviderIfNeeded(for: thread)
 
+        // Not broadcast here - the thread is broadcast once at the end, after the chat state is updated
         if let message = userDefaultsService.get(String.self, for: .welcomeMessage) {
-            service.chatThread = thread.merged(with: [try service.getParsedWelcomeMessage(message)])
-            try service.handleWelcomeMessage(message)
+            try service.addLocalWelcomeMessage(message)
         }
         
         connectionContext.chatState = .ready
@@ -464,11 +464,11 @@ extension ChatThreadListService {
         )
         let finalThread = baseThread.merging(from: data)
         let service = createAndStoreProviderIfNeeded(for: baseThread)
-        service.chatThread = finalThread
+        service.applyRecoveredThread(finalThread, recoveredMessages: data.messages)
 
         connectionContext.chatState = .ready
 
-        broadcaster.send(.threadUpdated(finalThread))
+        broadcaster.send(.threadUpdated(service.chatThread))
         broadcaster.send(connectionContext.chatUpdatedEvent)
     }
 
@@ -509,7 +509,7 @@ extension ChatThreadListService {
         let mergedThread = baseThread.merging(from: data)
         let finalThread = data.contact.status == .closed ? mergedThread.copy(state: .closed).clearingPositionInQueue() : mergedThread
         let service = createAndStoreProviderIfNeeded(for: baseThread)
-        service.chatThread = finalThread
+        service.applyRecoveredThread(finalThread, recoveredMessages: data.messages)
 
         // Process inactivity popup and satisfaction survey messages after thread update (they are filtered out during
         // thread update) if it is the last message on the thread.
@@ -536,7 +536,7 @@ extension ChatThreadListService {
 
         connectionContext.chatState = .ready
 
-        broadcaster.send(.threadUpdated(finalThread))
+        broadcaster.send(.threadUpdated(service.chatThread))
         broadcaster.send(connectionContext.chatUpdatedEvent)
     }
 
@@ -607,24 +607,21 @@ extension ChatThreadListService {
     func processThreadMetadataLoadedEvent(_ event: ThreadMetadataLoadedEventDTO) throws {
         LogManager.trace("Processing thread metadata loaded")
         
-        let message = MessageMapper.map(event.postback.data.lastMessage)
-
         guard let service = try provider(for: event.postback.data.lastMessage.threadIdOnExternalPlatform) as? ChatThreadService else {
             throw CXoneChatError.invalidThread
         }
 
-        var updated = service.chatThread
-        if let message {
-            updated = updated.merged(with: [message])
+        // Intended: the metadata-loaded event carries only `ownerAssignee`, which is mapped into
+        // `assignedAgent` here. This behavior is long-standing (in place for several years) and is
+        // deliberately left as-is; do not change it to populate `ownerAssignee` instead.
+        let assignedAgent = event.postback.data.ownerAssignee.map(AgentMapper.map)
+
+        service.merge([event.postback.data.lastMessage]) { thread in
+            thread.copy(
+                state: thread.state != .closed ? .loaded : thread.state,
+                assignedAgent: assignedAgent
+            )
         }
-        updated = updated.copy(
-            state: updated.state != .closed ? .loaded : updated.state,
-            // Intended: the metadata-loaded event carries only `ownerAssignee`, which is mapped into
-            // `assignedAgent` here. This behavior is long-standing (in place for several years) and is
-            // deliberately left as-is; do not change it to populate `ownerAssignee` instead.
-            assignedAgent: event.postback.data.ownerAssignee.map(AgentMapper.map)
-        )
-        service.chatThread = updated
 
         let allThreads = threadProviders.map(\.chatThread)
         let allLoaded = allThreads.allSatisfy { $0.state == .pending || $0.state.isLoaded }
@@ -645,15 +642,13 @@ extension ChatThreadListService {
 
         let threadId = event.data.message.threadIdOnExternalPlatform
 
-        // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
+        // Don't handle specific messages (Begin liveChat conversation, etc.)
         guard let service = try provider(for: threadId) as? ChatThreadService, !service.shouldIgnoreMessage(event.data.message) else {
             LogManager.trace("Skip message read change for non-relevant message")
             return
         }
 
-        if let mapped = MessageMapper.map(event.data.message) {
-            service.chatThread = service.chatThread.merged(with: [mapped])
-        }
+        service.merge([event.data.message])
 
         broadcaster.send(.threadUpdated(service.chatThread))
     }
@@ -664,15 +659,13 @@ extension ChatThreadListService {
 
         let threadId = event.message.threadIdOnExternalPlatform
 
-        // Don't handle specific messages (welcome message, Begin live chat conversation, etc.)
+        // Don't handle specific messages (Begin live chat conversation, etc.)
         guard let service = try provider(for: threadId) as? ChatThreadService, !service.shouldIgnoreMessage(event.message) else {
             LogManager.trace("Skip message seen change for non-relevant message")
             return
         }
 
-        if let mapped = MessageMapper.map(event.message) {
-            service.chatThread = service.chatThread.merged(with: [mapped])
-        }
+        service.merge([event.message])
 
         broadcaster.send(.threadUpdated(service.chatThread))
     }
@@ -720,7 +713,8 @@ extension ChatThreadListService {
         )
         service.chatThread = updated
 
-        broadcaster.send(.threadUpdated(updated))
+        // The stored thread, not `updated` - storing can remove a replaced local welcome message from it
+        broadcaster.send(.threadUpdated(service.chatThread))
     }
 
     /// Processes a `ContactHandlerChanged` event - the party responsible for handling the contact has changed.
@@ -812,17 +806,13 @@ extension ChatThreadListService {
             return
         }
 
-        // Don't handle specific messages (Welcome message, Begin liveChat conversation, etc.
+        // Don't handle specific messages (Begin liveChat conversation, etc.)
         if service.shouldIgnoreMessage(event.data.message) {
-            LogManager.trace("Skipping merging other message created event - it's content is begin live chat conversation or welcome message")
+            LogManager.trace("Skipping merging other message created event - it's content is begin live chat conversation or another hidden message")
         } else {
             LogManager.trace("Adding message to the thread")
 
-            let message = MessageMapper.map(event.data.message)
-
-            if let message {
-                service.chatThread = service.chatThread.merged(with: [message])
-            }
+            let message = service.merge([event.data.message]).first
 
             // Send information that the message is not supported to an agent
             if case .unknown(let fallbackText) = message?.contentType, service.chatThread.state == .ready {
@@ -1045,7 +1035,8 @@ private extension ChatThreadListService {
         
         return beThreads.map { thread in
             if let existing = existingById[thread.id] {
-                existing.chatThread = thread
+                existing.replaceWithBackendThread(thread)
+
                 return existing
             } else {
                 return ChatThreadService(

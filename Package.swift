@@ -34,7 +34,7 @@ let package = Package(
         // instead of `compiler(>=6.0)`), which clashes with swift-issue-reporting pulled in by swift-custom-dump.
         // Revisit once Mockable fixes the check upstream.
         .package(url: "https://github.com/Kolos65/Mockable", exact: "0.6.2"),
-        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "4.1.0")
+        .package(url: "https://github.com/nice-devone/nice-cxone-mobile-guide-utility-ios.git", from: "4.1.1")
     ],
     targets: [
         .target(
